@@ -55,7 +55,7 @@ The plugin does not support multisite configurations. A donation may help fixing
 == Frequently Asked Questions ==
 
 = How do I donate? =
-Write to me, and we can arrange! - My contact information is available here https://www.bitwise-it.dk/contact
+Putting this question in the "frequently" asked questions section is of course some mixture of humour, sarcasm and wishful thinking. In case there really is someone out there wanting to donate, you can simply write to me, and we can arrange. My contact information is available here https://www.bitwise-it.dk/contact. I have paypal and of course an ordinary bank account.
 
 = How do I set the WebP quality? =
 I will provide a setting for this in a future update. Until then, you can set it manually in the generated .htaccess. Look for the text saying "quality=80". Change the number to any number between 0-100. The setting only applies to jpegs, not png's
