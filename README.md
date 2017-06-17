@@ -42,7 +42,11 @@ The plugin does not support multisite configurations. A donation may help fixing
 * The plugin does not work with multisite. 
 * The plugin requires PHP > 5.5.0 compiled with webp support
 * The plugin has only been tested in Wordpress 4.7.5, but I expect it to work in other versions.
-* The plugin has not been tested in all possible Wordpress configurations. It has been tested in the following configurations: root install, subdir install, and subdir install with redirect from root (described as method 1 (here)[https://codex.wordpress.org/Giving_WordPress_Its_Own_Directory]). 
+* The plugin has not been tested in all possible Wordpress configurations. It has been tested in the following configurations: root install, subdir install, and subdir install with redirect from root (described as method 1 (here)[https://codex.wordpress.org/Giving_WordPress_Its_Own_Directory]).
+* There might be compatability issues with other plugins. For example .htaccess rules from other plugins might interfere.
+
+## Known compatability issues
+* W3TotalCache: When CDN is enabled, W3TotalCache creates some .htaccess rules which interferes when they appear before the rules created by this plugin. You can move them by manually editing the .htaccess file
 
 ## Frequently Asked Questions
 
