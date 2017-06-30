@@ -32,6 +32,3 @@ if ( get_option( 'webp-express-deactivate' ) ) {
   delete_option( 'webp-express-deactivate' );
 }
 
-
-
-

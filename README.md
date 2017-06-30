@@ -73,8 +73,6 @@ The image converter is using the [imagewebp()](http://php.net/manual/en/function
 
 * Make conversion of png optional (right now its hardcoded in the htaccess - you can change the htaccess manually)
 * Add quality option (right now its hardcoded in the htaccess - you can change the htaccess manually)
-* Use cweb converter (when imagewebp isn't available)
-* Use imagemagic webp converter (when imagewebp isn't available)
 * Add option to strip metadata
 
 

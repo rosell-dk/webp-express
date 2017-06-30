@@ -57,11 +57,11 @@ class WebPExpressActivate {
 
     // Calculate destination folder
     $our_upload_url = $upload_dir['baseurl'] . '/' . 'webp-express';
-    $plugin_dir = untrailingslashit(plugin_dir_path( WEBPEXPRESS_PLUGIN ));
-    $destination_folder = WebPExpressHelpers::get_rel_dir($plugin_dir, $our_upload_dir);
+//    $plugin_dir = untrailingslashit(plugin_dir_path( WEBPEXPRESS_PLUGIN ));
+    $destination_root = WebPExpressHelpers::get_rel_dir(untrailingslashit(ABSPATH), $our_upload_dir);
 
     // Calculate url path to image converter
-    $converter_url = plugins_url('webp-convert.php', WEBPEXPRESS_PLUGIN);
+    $converter_url = plugins_url('webp-convert/webp-convert.php', WEBPEXPRESS_PLUGIN);
     $converter_url_path = parse_url($converter_url)['path'];
 
     // Calculate upload url path
@@ -73,7 +73,7 @@ class WebPExpressActivate {
 
     // Calculate relative path between wordpress "ABSPATH" and Document Root
     // webp-convert.php needs this, because it has no direct access to ABSPATH    
-    $wp_abs_rel = WebPExpressHelpers::get_rel_dir($_SERVER['DOCUMENT_ROOT'], untrailingslashit(ABSPATH)); // ie "subdir/" or ""
+    $wp_root_folder = untrailingslashit(WebPExpressHelpers::get_rel_dir($_SERVER['DOCUMENT_ROOT'], untrailingslashit(ABSPATH))); // ie "subdir" or ""
 
     
 	  $rules = "<IfModule mod_rewrite.c>\n" .
@@ -81,7 +81,7 @@ class WebPExpressActivate {
       "  RewriteBase /\n" .
       "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
       "  RewriteCond %{DOCUMENT_ROOT}" . trailingslashit($our_upload_url_path) . "$1.$2.webp !-f\n" .
-      "  RewriteRule ^(.*)\.(jpe?g|png)$ " . $converter_url_path . "?file=$1.$2&quality=80&absrel=" . $wp_abs_rel . "&destination-folder=" . $destination_folder . " [T=image/webp,E=accept:1]\n" .
+      "  RewriteRule ^(.*)\.(jpe?g|png)$ " . $converter_url_path . "?source=$1.$2&quality=80&root-folder=" . $wp_root_folder . "&destination-root=" . $destination_root . "&preferred-converters=imagick,cwebp,gd&serve-image=yes [T=image/webp,E=accept:1]\n" .
       "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
       "  RewriteCond %{DOCUMENT_ROOT}" . trailingslashit($our_upload_url_path) . "$1.$2.webp -f\n" .
       "  RewriteRule ^(.*)\.(jpe?g|png)$ " . trailingslashit($our_upload_url_path) . "$1.$2.webp [T=image/webp,E=accept:1]\n" .
