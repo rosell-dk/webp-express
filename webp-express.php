@@ -10,25 +10,49 @@
  */
 
 
-define( 'WEBPEXPRESS_PLUGIN', __FILE__ );
+define('WEBPEXPRESS_PLUGIN', __FILE__);
+define('WEBPEXPRESS_PLUGIN_DIR', __DIR__);
 
+add_action( 'admin_menu', function() {
 
-register_activation_hook( __FILE__, function(){
-  include( plugin_dir_path( __FILE__ ) . 'lib/activate.php');
-} );
+    //Add Settings Page
+    add_options_page(
+        'WebP Express Settings', //Page Title
+        __( 'WebP Express', 'yasr' ), //Menu Title
+        'manage_options', //capability
+        'webp_express_settings_page', //menu slug
+        'webp_express_settings_page_content' //The function to be called to output the content for this page.
+    );
+});
 
-register_deactivation_hook( __FILE__, function(){
-  include( plugin_dir_path( __FILE__ ) . 'lib/deactivate.php');
-} );
+include(plugin_dir_path(__FILE__) . 'lib/options.php');
 
-if ( get_option( 'webp-express-message-pending') ) {
-  include( plugin_dir_path( __FILE__ ) . 'lib/message.php');
+if (get_option('webp-express-htaccess-needs-updating')) {
+    delete_option('webp-express-htaccess-needs-updating');
+    //include(plugin_dir_path(__FILE__) . 'lib/helpers.php');
+    include_once 'lib/helpers.php';
+
+    $rules = WebPExpressHelpers::generateHTAccessRules();
+    WebPExpressHelpers::insert_htaccess_rules($rules);
 
 }
-if ( get_option( 'webp-express-deactivate' ) ) {
-  add_action('admin_init', function() {
-    deactivate_plugins( plugin_basename( __FILE__ ) );
-  });
-  delete_option( 'webp-express-deactivate' );
+
+
+register_activation_hook(__FILE__, function () {
+    include(plugin_dir_path(__FILE__) . 'lib/activate.php');
+});
+
+register_deactivation_hook(__FILE__, function () {
+    include(plugin_dir_path(__FILE__) . 'lib/deactivate.php');
+});
+
+if (get_option('webp-express-message-pending')) {
+    include(plugin_dir_path(__FILE__) . 'lib/message.php');
 }
 
+if (get_option('webp-express-deactivate')) {
+    add_action('admin_init', function () {
+        deactivate_plugins(plugin_basename(__FILE__));
+    });
+    delete_option('webp-express-deactivate');
+}
