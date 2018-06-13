@@ -16,8 +16,6 @@ use WebPConvert\Converters\ConverterHelper;
 // TODO:
 // Much of this file could be moved into the libraries.
 // Ie:
-// - WebPConvert could allow converting using a single converter at the time
-// - Failure texts (ie "The converter declined converting") could ie be moved into the exceptions
 // - Report (such as "trying gd", "successfully...", "file size (original)") could be part of WebPConvertAndServe
 //     ($REPORT_AS_IMAGE and $REPORT actions could show complete report, and convertAndReport too)
 //   - or even be part of WebPConvert - ie the log could be returned in a variable passed by reference.
@@ -32,6 +30,8 @@ $options = [
     'method' => intval($_GET['method']),
     'converters' => [$converter],
 ];
+
+/*
 switch ($converter) {
     case 'ewww':
         if (isset($_GET['key'])) {
@@ -48,7 +48,27 @@ switch ($converter) {
             $options['skip-pngs'] = boolval($_GET['skip-pngs'] == 'true');
         }
         break;
+}*/
+
+$converterClassName = 'WebPConvert\\Converters\\' . ucfirst($converter);
+$availOptions = array_column($converterClassName::$extraOptions, 'type', 'name');
+//print_r($availOptions);
+foreach ($availOptions as $optionName => $optionType) {
+    switch ($optionType) {
+        case 'string':
+            if (isset($_GET[$optionName])) {
+                //echo $parameterName . ':' . $_GET[$parameterName] . '<br>';
+                $options[$optionName] = $_GET[$optionName];
+            }
+            break;
+        case 'boolean':
+            if (isset($_GET[$optionName])) {
+                $options[$optionName] = ($_GET[$optionName] == 'true');
+            }
+            break;
+    }
 }
+
 
 //echo '<pre>' . print_r($options, true) . '</pre>';
 

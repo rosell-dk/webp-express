@@ -1,12 +1,5 @@
 <?php
 /*
-
-TODO:
-
-Denne version er nyere end den på github!
-
-
-
 URL parameters:
 
 source: Path to source file.
@@ -37,11 +30,33 @@ metadata (optional):
 
 converters (optional):
     Comma-separated list of converters. Ie. "cwebp,gd".
-    Options for the converters can be passed as parameters with names like this: [converter]-[option-name] (ie "ewww-key")
+    To pass options to the individual converters, see next.
+    Also, check out the WebPConvert docs
+
+[converter-id]-[option-name] (optional):
+    This pattern is used for setting options on the individual converters.
+    Ie, in order to set the "key" option of the "ewww" converter, you pass "ewww-key".
+
+[converter-id]-[n]-[option-name] (optional):
+    Use this pattern for targeting options of a converter, that are used multiple times. However, use the pattern above
+    for targeting the first occurence. `n` stands for the nth occurence of that converter in the `converters` option.
+    Example: `...&converters=cwebp,ewww,ewww,gd,ewww&ewww-key=xxx&ewww-2-key=yyy&ewww-3-key=zzz&gd-skip-pngs=1`
+
+converters (optional):
+    Comma-separated list of converters. Ie. "cwebp,gd".
+    Passing options to the individual converters is done by passing options named like this:
+    [converter-name]-[option-name] (see below)
+
+    See WebPConvert documentation for more info
+
+[converter]-[option-name] (optional):
+    Options for the converters can be passed as parameters with names like this: [converter]-[option-name].
+    Ie, in order to set the "key" option of the "ewww" converter, you pass "ewww-key".
 
     If the same converter is going to be used with different configurations, you can add "-[n]" after the converter id.
-    Ie: ...&converters=ewww,ewww-2&ewww-key=xxx&ewww-2-key=yyy
-    - or is this better? ...&converters=ewww,ewww&ewww-key=xxx&ewww-key-2=yyy
+    Ie: ...&converters=ewww,ewww&ewww-key=xxx&ewww-2-key=yyy
+
+    See WebPConvert documentation for more info
 
 debug (optional):
     If set, a report will be served (as text) instead of an image
@@ -72,6 +87,7 @@ namespace WebPOnDemand;
 use WebPConvertAndServe\WebPConvertAndServe;
 use WebPConvert\WebPConvert;
 use WebPOnDemand\PathHelper;
+use WebPConvert\Converters\ConverterHelper;
 
 class WebPOnDemand
 {
@@ -111,7 +127,14 @@ class WebPOnDemand
             foreach ($conv as $i => $converter_name) {
                 $options['converters'][] = ['converter' => $converter_name, 'options' => []];
             }
+        } else {
+            // Copy default converters.
+            // We need them in case some has options
+            foreach (ConverterHelper::$defaultOptions['converters'] as $i => $converter_name) {
+                $options['converters'][] = ['converter' => $converter_name, 'options' => []];
+            }
         }
+
 
         // Converter options
         $counts = [];
@@ -125,11 +148,12 @@ class WebPOnDemand
             else {
                 $counts[$converter]++;
             }
+            /*
             $availOptions = [];
             switch ($converter) {
                 case 'ewww':
                     $availOptions = [
-                        'key' => 'string',  // todo: add option to tell if it is sensitive data
+                        'key' => 'string-sensitive',
                     ];
                     break;
                 case 'gd':
@@ -142,7 +166,22 @@ class WebPOnDemand
                         'use-nice' => 'boolean',
                     ];
                     break;
-            }
+                case 'wpc':
+                    $availOptions = [
+                        'url' => 'string-sensitive',
+                        'secret' => 'string-sensitive',
+                    ];
+                    break;
+
+            }*/
+            //print_r($availOptions);
+            //echo '<br>';
+            //print_r(\WebPConvert\Converters\Cwebp::$extraOptions);
+            //$converterId = 'cwebp';
+            $className = 'WebPConvert\\Converters\\' . ucfirst($converter);
+            $availOptions = array_column($className::$extraOptions, 'type', 'name');
+            //print_r($availOptions);
+
             foreach ($availOptions as $optionName => $optionType) {
                 $parameterName = $converter . (($counts[$converter] > 1 ? '-' . $counts[$converter] : '')) . '-' . $optionName;
                 switch ($optionType) {
@@ -161,8 +200,7 @@ class WebPOnDemand
             }
         }
 
-        //echo '<h3>options</h3><pre>' . print_r($options, true) . '</pre>';
-
+        // Failure actions
         $failCodes = [
             "original" => WebPConvertAndServe::$ORIGINAL,
             "404" => WebPConvertAndServe::$HTTP_404,
@@ -185,14 +223,15 @@ class WebPOnDemand
         if (!$debug) {
             return WebPConvertAndServe::convertAndServeImage($source, $destination, $options, $fail, $criticalFail);
         } else {
+            echo 'GET parameters:<br>';
             // TODO!!!
             // Do not leak api keys!
             // Right now, you can see all options, including api keys, by appending "?debug" after an image URL!
-            echo 'GET parameters:<br>';
             foreach ($_GET as $key => $value) {
                 echo '<i>' . $key . '</i>: ' . htmlspecialchars($value) . '<br>';
             }
             echo '<br>';
+            //echo $_SERVER['DOCUMENT_ROOT'];
             WebPConvertAndServe::convertAndReport($source, $destination, $options);
             return 1;
         }
