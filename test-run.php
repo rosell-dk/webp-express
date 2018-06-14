@@ -28,7 +28,6 @@ $converter = $_GET['converter'];
 $options = [
     'quality' => intval($_GET['quality']),
     'method' => intval($_GET['method']),
-    'converters' => [$converter],
 ];
 
 /*
@@ -53,12 +52,32 @@ switch ($converter) {
 $converterClassName = 'WebPConvert\\Converters\\' . ucfirst($converter);
 $availOptions = array_column($converterClassName::$extraOptions, 'type', 'name');
 //print_r($availOptions);
+
+$hasFallback = false;
+$options2 = [];
+foreach ($availOptions as $optionName => $optionType) {
+    if (isset($_GET[$optionName . '-2'])) {
+        if ($_GET[$optionName . '-2'] != '') {
+            $hasFallback = true;
+            $options2 = $options;
+//            echo 'value:' . $_GET[$optionName . '-2'];
+            break;
+        }
+    }
+}
+
 foreach ($availOptions as $optionName => $optionType) {
     switch ($optionType) {
         case 'string':
             if (isset($_GET[$optionName])) {
-                //echo $parameterName . ':' . $_GET[$parameterName] . '<br>';
                 $options[$optionName] = $_GET[$optionName];
+            }
+            if (isset($_GET[$optionName. '-2'])) {
+                $options2[$optionName] = $_GET[$optionName . '-2'];
+            } else {
+                if ($hasFallback) {
+                    $options2[$optionName] = $options[$optionName];
+                }
             }
             break;
         case 'boolean':
@@ -69,8 +88,8 @@ foreach ($availOptions as $optionName => $optionType) {
     }
 }
 
-
 //echo '<pre>' . print_r($options, true) . '</pre>';
+//echo '<pre>' . print_r($options2, true) . '</pre>';
 
 //echo '';
 ?>
@@ -103,41 +122,50 @@ foreach ($availOptions as $optionName => $optionType) {
 
 //WebPConvertAndServe::convertAndReport($source, $destination, $options);
 
-$beginTime = microtime(true);
+function testRun($converter, $source, $destination, $options) {
+    $beginTime = microtime(true);
 
-try {
-    ConverterHelper::callConvert($converter, $source, $destination, $options);
-} catch (\WebPConvert\Exceptions\WebPConvertBaseException $e) {
-    $failure = $e->description;
-    $msg = $e->getMessage();
-} catch (\Exception $e) {
-    $failure = 'Unancipated failure';
-    $msg = $e->getMessage();
+    try {
+        ConverterHelper::callConvert($converter, $source, $destination, $options);
+    } catch (\WebPConvert\Exceptions\WebPConvertBaseException $e) {
+        $failure = $e->description;
+        $msg = $e->getMessage();
+    } catch (\Exception $e) {
+        $failure = 'Unancipated failure';
+        $msg = $e->getMessage();
+    }
+
+    $endTime = microtime(true);
+    $duration = $endTime - $beginTime;
+
+    if (isset($msg)) {
+        echo '<h3 class="error">Test conversion failed (in ' . round($duration * 1000) . ' ms)</h3>';
+        echo '<label>Problem:</label>';
+        echo '<p class="failure">' . $failure . '</p>';
+        echo '<label>Details:</label>';
+        echo '<p class="error-msg">' . $msg . '</p>';
+    } else {
+        echo '<p>Successfully converted test image in ' . round($duration * 1000) . ' ms</p>';
+
+        if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
+            echo '<img src="' . $_GET['destinationUrl'] . '" width=48%><br><br>';
+        }
+        if (filesize($source) < 10000) {
+            echo 'file size (original): ' . round(filesize($source)) . ' bytes<br>';
+            echo 'file size (converted): ' . round(filesize($destination)) . ' bytes<br>';
+        }
+        else {
+            echo 'file size (original): ' . round(filesize($source)/1000) . ' kb<br>';
+            echo 'file size (converted): ' . round(filesize($destination)/1000) . ' kb<br>';
+        }
+    }
 }
 
-$endTime = microtime(true);
-$duration = $endTime - $beginTime;
+testRun($converter, $source, $destination, $options);
 
-if (isset($msg)) {
-    echo '<h3 class="error">Test conversion failed (in ' . round($duration * 1000) . ' ms)</h3>';
-    echo '<label>Problem:</label>';
-    echo '<p class="failure">' . $failure . '</p>';
-    echo '<label>Details:</label>';
-    echo '<p class="error-msg">' . $msg . '</p>';
-} else {
-    echo '<p>Successfully converted test image in ' . round($duration * 1000) . ' ms</p>';
-
-    if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
-        echo '<img src="' . $_GET['destinationUrl'] . '" width=48%><br><br>';
-    }
-    if (filesize($source) < 10000) {
-        echo 'file size (original): ' . round(filesize($source)) . ' bytes<br>';
-        echo 'file size (converted): ' . round(filesize($destination)) . ' bytes<br>';
-    }
-    else {
-        echo 'file size (original): ' . round(filesize($source)/1000) . ' kb<br>';
-        echo 'file size (converted): ' . round(filesize($destination)/1000) . ' kb<br>';
-    }
+if ($hasFallback) {
+    echo '<h2>Testing fallback</h2>';
+    testRun($converter, $source, $destination, $options2);
 }
 
 

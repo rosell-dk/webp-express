@@ -35,24 +35,51 @@ window.convertersMap = {};
 
 window.currentlyEditing = '';
 
+window.defaultConverters = [
+    {
+        'converter': 'cwebp',
+        'options': {
+            'use-nice': false
+        },
+    },
+    {
+        'converter': 'wpc',
+    },
+    {
+        'converter': 'gd',
+        'options': {
+            'skip-pngs': true
+        },
+    },
+    {
+        'converter': 'ewww',
+    },
+    {
+        'converter': 'imagick',
+    },
+]
+
 function resetToDefaultConverters() {
-    window.converters = [
-        {
-            'converter': 'cwebp',
-            'options': {
-                'use-nice': false
-            },
-        },
-        {
-            'converter': 'gd',
-            'options': {
-                'skip-pngs': true
-            },
-        },
-        {
-            'converter': 'imagick',
+    window.converters = window.defaultConverters;
+}
+
+function addMissingConverters() {
+    // check if all available converters are in the array.
+    // if not - add!
+    // the double loop could be avoided with map. But arrays are so small, so not worth it
+    for (var i=0; i<window.defaultConverters.length; i++) {
+        var checkMe = window.defaultConverters[i]['converter'];
+        var found = false;
+        for (var j=0; j<window.converters.length; j++) {
+            if (window.converters[j]['converter'] == checkMe) {
+                found = true;
+            }
         }
-    ]
+        if (!found) {
+            window.converters.push(window.defaultConverters[i]);
+        }
+
+    }
 }
 function generateConverterHTML(converter) {
     html = '<li data-id="' + converter['id'] + '" class="' + (converter.deactivated ? 'deactivated' : '') + '">';
@@ -71,6 +98,7 @@ html += '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox=
         html += '<a class="deactivate-converter btn" onclick=deactivateConverter(\'' + converter['id'] + '\')>deactivate</a>';
     }
 
+/*
     switch (converter['converter']) {
         case 'ewww':
         case 'wpc':
@@ -80,7 +108,7 @@ html += '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox=
         case 'imagick':
         case 'gd':
             break;
-    }
+    }*/
     html += '</li>';
     return html;
 }
@@ -163,6 +191,7 @@ function setConvertersHTML() {
 
 document.addEventListener('DOMContentLoaded', function() {
     //resetToDefaultConverters();
+    addMissingConverters();
     setConvertersHTML();
 
 
@@ -194,10 +223,13 @@ function configureConverter(id) {
     switch (converter['converter']) {
         case 'ewww':
             document.getElementById('ewww_key').value = getConverterOption(converter, 'key', '');
+            document.getElementById('ewww_key_2').value = getConverterOption(converter, 'key-2', '');
             break;
         case 'wpc':
             document.getElementById('wpc_url').value = getConverterOption(converter, 'url', '');
             document.getElementById('wpc_secret').value = getConverterOption(converter, 'secret', '');
+            document.getElementById('wpc_url_2').value = getConverterOption(converter, 'url-2', '');
+            document.getElementById('wpc_secret_2').value = getConverterOption(converter, 'secret-2', '');
             break;
         case 'gd':
             document.getElementById('gd_skip_pngs').checked = getConverterOption(converter, 'skip-pngs', '');
@@ -216,10 +248,13 @@ function updateConverterOptions() {
     switch (converter['converter']) {
         case 'ewww':
             setConverterOption(converter, 'key', document.getElementById('ewww_key').value);
+            setConverterOption(converter, 'key-2', document.getElementById('ewww_key_2').value);
             break;
         case 'wpc':
             setConverterOption(converter, 'url', document.getElementById('wpc_url').value);
             setConverterOption(converter, 'secret', document.getElementById('wpc_secret').value);
+            setConverterOption(converter, 'url-2', document.getElementById('wpc_url_2').value);
+            setConverterOption(converter, 'secret-2', document.getElementById('wpc_secret_2').value);
             break;
         case 'gd':
             setConverterOption(converter, 'skip-pngs', document.getElementById('gd_skip_pngs').checked);
@@ -271,6 +306,7 @@ function testConverter(id) {
     tb_show("Test running converter: " + converter['id'], url);
 }
 
+/*
 function removeConverter(id) {
     for (var i=0; i<window.converters.length; i++) {
         if (window.converters[i]['id'] == id) {
@@ -279,7 +315,7 @@ function removeConverter(id) {
             break;
         }
     }
-}
+}*/
 
 function addConverter(id) {
     window.converters.push({

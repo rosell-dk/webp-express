@@ -16,7 +16,7 @@ add_action('admin_enqueue_scripts', function () {
         'webp-express-options-page',
         plugins_url('../js/webp-express-options-page.js', __FILE__),
         ['sortable'],
-        '1.0.3'
+        '1.0.4'
     );
     wp_enqueue_script('webp-express-options-page');
 
@@ -32,7 +32,7 @@ add_action('admin_enqueue_scripts', function () {
         'webp-express-options-page-css',
         plugins_url('../css/webp-express-options-page.css', __FILE__),
         null,
-        '1.0.2'
+        '1.0.5'
     );
     wp_enqueue_style('webp-express-options-page-css');
 });
@@ -230,6 +230,12 @@ function webp_express_settings_page_content()
                       <input type="text" id="ewww_key" placeholder="Your API key here">
                   </div>
                   <br>
+                  <h4>Fallback (optional)</h4>
+                  <div>
+                      <label for="ewww_key_2">key</label>
+                      <input type="text" id="ewww_key_2" placeholder="In case the first one expires...">
+                  </div>
+                  <br>
                   <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
                   <!-- <a href="javascript: tb_remove();">close</a> -->
                 </div>
@@ -246,19 +252,29 @@ function webp_express_settings_page_content()
                       <input type="text" id="wpc_secret" placeholder="Secret (must match secret on server side)">
                   </div>
                   <br>
+                  <h4>Fallback (optional)</h4>
+                  <div>
+                      <label for="wpc_url_2">URL</label>
+                      <input type="text" id="wpc_url_2" placeholder="Url to your other WPC instance">
+                  </div>
+                  <div>
+                      <label for="wpc_secret_2">Secret</label>
+                      <input type="text" id="wpc_secret_2" placeholder="Secret (must match secret on server side)">
+                  </div>
+                  <br>
                   <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
                 </div>
             </div>
+            <!--
             <div id="add-cloud-converter-id" style="display:none;">
                 <p>
                   Select cloud converter to add:
 
-                  <!--<a href="javascript: tb_remove();">Ewww</a>-->
                   <button onclick="addConverter('ewww')" class="button button-primary" type="button">Add ewww converter</button>
-                  <!--<a href="#TB_inline?width=600&height=550&inlineId=ewww" class="thickbox">Ewww</a>-->
                 </p>
             </div>
             <button class="button button-secondary" onclick="addConverterClick()" type="button">Add cloud converter</button>
+            -->
             <?php
 
 

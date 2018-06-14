@@ -10,7 +10,7 @@ input[name=webp_express_converters] {
     line-height: 1.4em;
     background-color: #fafafa;
     padding: 10px;
-    max-width: 450px;
+    max-width: 400px;
 }
 #converters li:hover {
     border-color: #999;
@@ -62,9 +62,10 @@ input[name=webp_express_converters] {
 
 }
 
+/*
 #converters li > a.remove-converter {
     color: red;
-}
+}*/
 
 
 .converter-options label {
