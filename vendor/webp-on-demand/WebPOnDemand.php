@@ -42,6 +42,13 @@ converters (optional):
     for targeting the first occurence. `n` stands for the nth occurence of that converter in the `converters` option.
     Example: `...&converters=cwebp,ewww,ewww,gd,ewww&ewww-key=xxx&ewww-2-key=yyy&ewww-3-key=zzz&gd-skip-pngs=1`
 
+[converter-id]-[option-name]-[2] (optional):
+    This is an alternative, and simpler pattern than the above, for providing fallback for a single converter.
+    If WebPOnDemand detects that such an option is provided (ie ewww-key-2=yyy), it will automatically insert an extra
+    converter into the array (immidiately after), configured with the options with the '-2' postfix.
+    Example: `...&converters=cwebp,ewww,gd&ewww-key=xxx&ewww-key-2=yyy`
+    - will result in converter order: cwebp, ewww (with key=xxx), ewww (with key=yyy), gd
+
 converters (optional):
     Comma-separated list of converters. Ie. "cwebp,gd".
     Passing options to the individual converters is done by passing options named like this:
@@ -91,6 +98,45 @@ use WebPConvert\Converters\ConverterHelper;
 
 class WebPOnDemand
 {
+    private static function transformFallbackOptions($converters) {
+        foreach ($converters as $i => &$converter) {
+            $duplicateConverter = false;
+            foreach ($converter['options'] as $optionName => $optionValue) {
+                if (substr($optionName, -2) === '-2') {
+                    $duplicateConverter = true;
+                    break;
+                }
+            }
+            if ($duplicateConverter) {
+                $options2 = [];
+                foreach ($converter['options'] as $optionName => $optionValue) {
+                    if (substr($optionName, -2) === '-2') {
+                        $options2[substr($optionName, 0, -2)] = $optionValue;
+                        unset($converter['options'][$optionName]);
+                    }
+                }
+                array_splice($converters, $i+1, 0, [['converter' => $converter['converter'], 'options' => $options2]]);
+            }
+        }
+        return $converters;
+    }
+
+    private static function setOption(&$array, $parameterName, $optionName, $optionType)
+    {
+        if (!isset($_GET[$parameterName])) {
+            return;
+        }
+        switch ($optionType) {
+            case 'string':
+                //$options['converters'][$i]['options'][$optionName] = $_GET[$parameterName];
+                $array[$optionName] = $_GET[$parameterName];
+            break;
+            case 'boolean':
+                //$options['converters'][$i]['options'][$optionName] = ($_GET[$parameterName] == '1');
+                $array[$optionName] = ($_GET[$parameterName] == '1');
+            break;
+        }
+    }
     public static function serve($root)
     {
 
@@ -148,58 +194,24 @@ class WebPOnDemand
             else {
                 $counts[$converter]++;
             }
-            /*
-            $availOptions = [];
-            switch ($converter) {
-                case 'ewww':
-                    $availOptions = [
-                        'key' => 'string-sensitive',
-                    ];
-                    break;
-                case 'gd':
-                    $availOptions = [
-                        'skip-pngs' => 'boolean',
-                    ];
-                    break;
-                case 'cwebp':
-                    $availOptions = [
-                        'use-nice' => 'boolean',
-                    ];
-                    break;
-                case 'wpc':
-                    $availOptions = [
-                        'url' => 'string-sensitive',
-                        'secret' => 'string-sensitive',
-                    ];
-                    break;
 
-            }*/
-            //print_r($availOptions);
-            //echo '<br>';
-            //print_r(\WebPConvert\Converters\Cwebp::$extraOptions);
-            //$converterId = 'cwebp';
-            $className = 'WebPConvert\\Converters\\' . ucfirst($converter);
+            $className = ConverterHelper::getClassNameOfConverter($converter);
             $availOptions = array_column($className::$extraOptions, 'type', 'name');
             //print_r($availOptions);
 
             foreach ($availOptions as $optionName => $optionType) {
                 $parameterName = $converter . (($counts[$converter] > 1 ? '-' . $counts[$converter] : '')) . '-' . $optionName;
-                switch ($optionType) {
-                    case 'string':
-                        if (isset($_GET[$parameterName])) {
-                            //echo $parameterName . ':' . $_GET[$parameterName] . '<br>';
-                            $options['converters'][$i]['options'][$optionName] = $_GET[$parameterName];
-                        }
-                        break;
-                    case 'boolean':
-                        if (isset($_GET[$parameterName])) {
-                            $options['converters'][$i]['options'][$optionName] = ($_GET[$parameterName] == '1');
-                        }
-                        break;
-                }
+
+                self::setOption($options['converters'][$i]['options'], $parameterName, $optionName, $optionType);
+                self::setOption($options['converters'][$i]['options'], $parameterName . '-2', $optionName . '-2', $optionType);
+
             }
         }
 
+        // transform options with '-2' postfix into new converters
+        $options['converters'] = self::transformFallbackOptions($options['converters']);
+
+        echo '<pre>' . print_r($options, true) . '</pre>';
         // Failure actions
         $failCodes = [
             "original" => WebPConvertAndServe::$ORIGINAL,
