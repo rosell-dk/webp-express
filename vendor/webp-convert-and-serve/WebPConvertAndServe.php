@@ -3,6 +3,7 @@ namespace WebPConvertAndServe;
 
 use WebPConvert\WebPConvert;
 use WebPConvertAndServe\PathHelper;
+use WebPConvert\Loggers\EchoLogger;
 
 class WebPConvertAndServe
 {
@@ -118,9 +119,15 @@ class WebPConvertAndServe
         echo '<i>options:</i> ' . print_r($options, true) . '<br>';
         echo '<br>';
 
+        $logger = new EchoLogger();
+
         try {
-            $success = WebPConvert::convert($source, $destination, $options);
+            $success = WebPConvert::convert($source, $destination, $options, $logger);
+        } catch (\WebPConvert\Exceptions\WebPConvertBaseException $e) {
+            // This exception has already been logged in WebPConvert, no reason to repeat it
+            // $failure = $e->description;
         } catch (\Exception $e) {
+            //echo 'report:' . $report;
             $success = false;
 
             $msg = $e->getMessage();
@@ -128,11 +135,26 @@ class WebPConvertAndServe
             echo '<b>' . $msg . '</b>';
             exit;
         }
+        //echo 'report:' . $report;
 
+        if ($success) {
+            $logger->logLn('');
+            if (filesize($source) < 10000) {
+                $logger->logLn('file size (original): ' . round(filesize($source)) . ' bytes');
+                $logger->logLn('file size (converted): ' . round(filesize($destination)) . ' bytes');
+            }
+            else {
+                $logger->logLn('file size (original): ' . round(filesize($source)/1000) . ' kb');
+                $logger->logLn('file size (converted): ' . round(filesize($destination)/1000) . ' kb');
+            }
+        }
+
+
+/*
         if ($success) {
             echo 'ok';
         } else {
             echo '<b>Conversion failed. None of the tried converters are operational</b>';
-        }
+        }*/
     }
 }

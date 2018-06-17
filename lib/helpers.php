@@ -174,9 +174,11 @@ class WebPExpressHelpers
         #RewriteRule ^(.*)\.(jpe?g|png)$ /webp-cache/$1.$2.webp [NC,T=image/webp,E=accept:1,QSD]
         */
 
-        $options = '&quality=' . get_option('webp_express_quality');
-        $options = '&method=' . get_option('webp_express_method');
-        $options .= '&fail=original&critical-fail=report';
+        $options = '';
+        $options .= '&quality=' . get_option('webp_express_quality');
+        $options .= '&method=' . get_option('webp_express_method');
+        $options .= '&fail=' . get_option('webp_express_failure_response');
+        $options .= '&critical-fail=report';
 
         $converters_and_options = json_decode(get_option('webp_express_converters'), true);
 

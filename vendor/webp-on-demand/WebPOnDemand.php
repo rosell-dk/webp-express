@@ -75,17 +75,17 @@ fail:
    Possible values:
    - "original":        Serves the original image (source)
    - "404":             Serves a 404 header
-   - "text":            Serves the error message as plain text
-   - "error-as-image":  Serves the error message as an image
+   - "report":          Serves the error message as plain text
+   - "report-as-image":  Serves the error message as an image
 
 critical-fail:
-  Default:  "error-as-image"
+  Default:  "report-as-image"
   What to serve if conversion fails and source image is not available
 
   Possible values:
   - "404":             Serves a 404 header
-  - "text":            Serves the error message as plain text
-  - "error-as-image":  Serves the error message as an image
+  - "report":          Serves the error message as plain text
+  - "report-as-image":  Serves the error message as an image
 
 */
 
@@ -161,6 +161,11 @@ class WebPOnDemand
             $options['quality'] = $_GET['quality'];
         }
 
+        // method
+        if (isset($_GET['method'])) {
+            $options['method'] = $_GET['method'];
+        }
+
         // metadata
         if (isset($_GET['metadata'])) {
             $options['metadata'] = $_GET['metadata'];
@@ -211,12 +216,12 @@ class WebPOnDemand
         // transform options with '-2' postfix into new converters
         $options['converters'] = self::transformFallbackOptions($options['converters']);
 
-        echo '<pre>' . print_r($options, true) . '</pre>';
+        //echo '<pre>' . print_r($options, true) . '</pre>';
         // Failure actions
         $failCodes = [
             "original" => WebPConvertAndServe::$ORIGINAL,
             "404" => WebPConvertAndServe::$HTTP_404,
-            "error-as-image" => WebPConvertAndServe::$REPORT_AS_IMAGE,
+            "report-as-image" => WebPConvertAndServe::$REPORT_AS_IMAGE,
             "report" => WebPConvertAndServe::$REPORT,
         ];
 

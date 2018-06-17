@@ -54,7 +54,7 @@ function webp_express_option_group_init()
         'webp_express_quality', //The name of an option to sanitize and save.
         [
             'type' => 'integer',
-            'default' => '85',
+            'default' => '70',
             'sanitize_callback' => 'sanitize_text_field',
         ]
     );
@@ -69,11 +69,20 @@ function webp_express_option_group_init()
     );
     register_setting(
         'webp_express_option_group',
+        'webp_express_failure_response',
+        [
+            'type' => 'string',
+            'default' => 'original',
+            'sanitize_callback' => 'sanitize_text_field',
+        ]
+    );
+    register_setting(
+        'webp_express_option_group',
         'webp_express_converters',
         [
             'type' => 'string',
             // TODO: test on new installation
-            'default' => '[{"converter":"cwebp","id":"cwebp"},{"converter":"gd","id":"gd"},{"converter":"imagick","id":"imagick"}]',
+            'default' => '[{"converter":"cwebp","id":"cwebp"},{"converter":"wpc","id":"wpc"},{"converter":"gd","id":"gd"},{"converter":"imagick","id":"imagick"}]',
             //'sanitize_callback' => 'sanitize_text_field',
         ]
     );
@@ -91,7 +100,26 @@ function webp_express_option_group_init()
     add_settings_field('webp_express_method_id', 'Method (0-6)', function () {
         $method = get_option('webp_express_method');
         echo "<input type='text' name='webp_express_method' value='" . $method . "' />";
+        echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
     }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
+
+    add_settings_field('webp_express_failure_response', 'Response on failure', function () {
+        $failureResponse = get_option('webp_express_failure_response');
+        echo '<select name="webp_express_failure_response">';
+        echo '<option value="original"' . ($failureResponse == 'original' ? ' selected' : '') . '>Original image</option>';
+        echo '<option value="404"' . ($failureResponse == '404' ? ' selected' : '') . '>404</option>';
+        echo '<option value="report"' . ($failureResponse == 'report' ? ' selected' : '') . '>Error report (in plain text)</option>';
+        echo '<option value="report-as-image"' . ($failureResponse == 'report-as-image' ? ' selected' : '') . '>Error report as image</option>';
+        echo '</select>';
+        echo '<p>Determines what the converter should serve, in case the image conversion should fail. For production servers, recommended value is "Original image". For development servers, recommended value is anything but that</p>';
+    }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
+
+/*
+    public static $CONVERTED_IMAGE = 1;
+    public static $ORIGINAL = -1;
+    public static $HTTP_404 = -2;
+    public static $REPORT_AS_IMAGE = -3;
+    public static $REPORT = -4;*/
 
     add_settings_field('webp_express_converters', '', function () {
         $converters = get_option('webp_express_converters');
@@ -265,6 +293,17 @@ function webp_express_settings_page_content()
                   <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
                 </div>
             </div>
+            <?php
+            //print_r($urls);
+            //echo $urls['urls']['webpExpressRoot'];
+            if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
+                echo 'Your browser supports webp... So you can test if everything, including the redirect magic works using these links:<br>';
+                $webpExpressRoot = WebPExpressHelpers::calculateUrlsAndPaths()['urls']['webpExpressRoot'];
+                echo '<a href="' . $webpExpressRoot . '/test/test.jpg" target="_blank">Convert test image</a><br>';
+                echo '<a href="' . $webpExpressRoot . '/test/test.jpg?debug" target="_blank">Convert test image (show debug)</a><br>';
+            }
+             ?>
+
             <!--
             <div id="add-cloud-converter-id" style="display:none;">
                 <p>
@@ -291,6 +330,7 @@ add_action('updated_option', function($option_name, $old_value, $value) {
         case 'webp_express_quality':
         case 'webp_express_method':
         case 'webp_express_converters':
+        case 'webp_express_failure_response':
             //update_option('webp-express-htaccess-needs-updating', true, false);
 
             $rules = WebPExpressHelpers::generateHTAccessRules();

@@ -126,7 +126,7 @@ function testRun($converter, $source, $destination, $options) {
     $beginTime = microtime(true);
 
     try {
-        ConverterHelper::callConvert($converter, $source, $destination, $options);
+        ConverterHelper::runConverter($converter, $source, $destination, $options);
     } catch (\WebPConvert\Exceptions\WebPConvertBaseException $e) {
         $failure = $e->description;
         $msg = $e->getMessage();

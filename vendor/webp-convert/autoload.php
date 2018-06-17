@@ -2,14 +2,16 @@
 
 function autoloadWebPConvert()
 {
-    // load base class, which are required for other classes
+    // load base classes, which are required for other classes
     require_once(__DIR__  . '/Exceptions/WebPConvertBaseException.php');
+    require_once(__DIR__  . '/Loggers/BaseLogger.php');
 
     $dirsToAutoload = [
         '.',
         'Converters',
         'Exceptions',
         'Converters/Exceptions',
+        'Loggers',
     ];
     foreach ($dirsToAutoload as $dir) {
         $dirAbs = __DIR__  . '/' . $dir;
