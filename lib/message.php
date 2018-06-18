@@ -122,7 +122,13 @@ add_action( 'admin_notices', function() {
     printf(
       '<div class="%1$s"><p>%2$s</p></div>',
       esc_attr( 'notice notice-info is-dismissible' ),
-      esc_html( __( 'WebP Express was installed successfully. A subfolder has been successfully created in your uploads folder for storing generated WebP images. Also, rules have been successfully inserted into your .htaccess file. These rules takes care of redirecting jpeg and png files to the generator or -- if a generated WebP image exists -- directly to that image. If you at some point change the upload directory or move Wordpress from subfolder to root or the other way, these rules will have to be updated. You do this by deactivating and reactivating the plugin.', 'webp-express' ) )
+      'WebP Express was installed successfully. <a href="http://playground/webp-express-test/wordpress/wp-admin/options-general.php?page=webp_express_settings_page">Configure it here</a>.'
+    );
+
+    printf(
+      '<div class="%1$s"><p>%2$s</p></div>',
+      esc_attr( 'notice notice-info is-dismissible' ),
+      esc_html( __( 'If you at some point change the upload directory or move Wordpress, you will have to disable and reenable WebPExpress', 'webp-express' ) )
     );
   }
 });

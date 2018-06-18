@@ -3,49 +3,6 @@
 class WebPExpressHelpers
 {
 
-    public static function testConverters($convertersToTest)
-    {
-        include_once __DIR__ . '/../vendor/webp-convert/autoload.php';
-
-        $upload_dir = wp_upload_dir();
-        $uploadDir = trailingslashit($upload_dir['basedir']) . 'webp-express';
-        $converterDir = WEBPEXPRESS_PLUGIN_DIR;
-        $source = trailingslashit($converterDir) . 'test/test.jpg';
-        $destination = $uploadDir . '/test.jpg.webp';
-
-        $result = [];
-        $numOperationalConverters = 0;
-        foreach ($convertersToTest as $converter) {
-            $msg = 'Not operational';
-            try {
-                $options = [
-                    'converters' => [$converter]
-                ];
-                $success = WebPConvert\WebPConvert::convert($source, $destination, $options);
-            } catch (\Exception $e) {
-                $success = false;
-                $msg = $e->getMessage();
-            }
-            if ($success) {
-                $result[] = [
-                    'converter' => $converter,
-                    'success' => true
-                ];
-                $numOperationalConverters++;
-            } else {
-                $result[] = [
-                    'converter' => $converter,
-                    'success' => false,
-                    'message' => $msg
-                ];
-            }
-        }
-        return [
-            'numOperationalConverters' => $numOperationalConverters,
-            'results' => $result
-        ];
-    }
-
     public static function calculateUrlsAndPaths()
     {
         // Calculate URL's
@@ -94,8 +51,10 @@ class WebPExpressHelpers
 
     public static function generateHTAccessRules()
     {
-        // TODO: Use calculateUrlsAndPaths() call
 
+
+        // TODO: Use calculateUrlsAndPaths() call
+/*
         // Calculate URL's
         $upload_dir = wp_upload_dir();
         $uploadUrlAbs = $upload_dir['baseurl'] . '/' . 'webp-express';
@@ -133,46 +92,7 @@ class WebPExpressHelpers
 
         $destinationRoot = untrailingslashit(WebPExpressHelpers::get_rel_dir($converterDir, $uploadDir));
         //echo 'destination root:' . $destinationRoot . '<br>';
-
-
-        /*
-        $rules = "<IfModule mod_rewrite.c>\n" .
-        "  RewriteEngine On\n" .
-        "  RewriteBase /\n" .
-        "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
-        "  RewriteCond %{DOCUMENT_ROOT}" . trailingslashit($uploadUrlPath) . "$1.$2.webp !-f\n" .
-        "  RewriteRule ^(.*)\.(jpe?g|png)$ " . $converterUrlPath . "?source=$1.$2&quality=80&root-folder=" . $wp_root_folder . "&destination-root=" . $destinationRoot . "&preferred-converters=imagick,cwebp,gd&serve-image=yes [T=image/webp,E=accept:1]\n" .
-        "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
-        "  RewriteCond %{DOCUMENT_ROOT}" . trailingslashit($uploadUrlPath) . "$1.$2.webp -f\n" .
-        "  RewriteRule ^(.*)\.(jpe?g|png)$ " . trailingslashit($uploadUrlPath) . "$1.$2.webp [T=image/webp,E=accept:1]\n" .
-        "</IfModule>\n\n" .
-        "<IfModule mod_headers.c>\n" .
-        "  Header append Vary Accept env=REDIRECT_accept\n" .
-        "</IfModule>\n\n" .
-        "AddType image/webp .webp\n";
-        #  RewriteEngine On
-        #  RewriteBase /
-        #  RewriteCond %{HTTP_ACCEPT} image/webp
-        #  RewriteCond %{DOCUMENT_ROOT}/webp-express-test/wordpress/wp-content/uploads/webp-express/$1.$2.webp !-f
-        #  RewriteRule ^(.*)\.(jpe?g|png)$ /webp-express-test/wordpress/wp-content/plugins/webp-express/webp-convert/webp-convert.php?source=$1.$2&quality=80&root-folder=webp-express-test/wordpress&destination-root=wp-content/uploads/webp-express/&preferred-converters=imagick,cwebp,gd&serve-image=yes [T=image/webp,E=accept:1]
-        #  RewriteCond %{HTTP_ACCEPT} image/webp
-        #  RewriteCond %{DOCUMENT_ROOT}/webp-express-test/wordpress/wp-content/uploads/webp-express/$1.$2.webp -f
-        #  RewriteRule ^(.*)\.(jpe?g|png)$ /webp-express-test/wordpress/wp-content/uploads/webp-express/$1.$2.webp [T=image/webp,E=accept:1]
-
-        */
-
-        /*
-        RewriteEngine On
-        RewriteCond %{HTTP_ACCEPT} image/webp
-        RewriteCond %{QUERY_STRING} (^reconvert.*)|(^debug.*) [OR]
-        RewriteCond %{DOCUMENT_ROOT}/webp-cache/$1.$2.webp !-f
-        RewriteCond %{QUERY_STRING} (.*)
-        RewriteRule ^(.*)\.(jpe?g|png)$ wp-content/plugins/webp-express/convert.php?source=$1.$2&destination-root=../../webp-cache&quality=80&fail=original&critical-fail=report&%1 [NC,T=image/webp,E=accept:1]
-        #RewriteCond %{HTTP_ACCEPT} image/webp
-        #RewriteCond %{QUERY_STRING} !((^reconvert.*)|(^debug.*))
-        #RewriteCond %{DOCUMENT_ROOT}/webp-cache/$1.$2.webp -f
-        #RewriteRule ^(.*)\.(jpe?g|png)$ /webp-cache/$1.$2.webp [NC,T=image/webp,E=accept:1,QSD]
-        */
+*/
 
         $options = '';
         $options .= '&quality=' . get_option('webp_express_quality');
@@ -195,8 +115,28 @@ class WebPExpressHelpers
         $options .= '&converters=' . implode(',', $converters);
         $options .= $converter_options;
 
+        $urlsAndPaths = WebPExpressHelpers::calculateUrlsAndPaths();
+        $urls = $urlsAndPaths['urls'];
+        $filePaths = $urlsAndPaths['filePaths'];
 
+        $rules = "<IfModule mod_rewrite.c>\n" .
+        "  RewriteEngine On\n" .
+        "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
+        "  RewriteCond %{QUERY_STRING} (^reconvert.*)|(^debug.*) [OR]\n" .
+        "  RewriteCond %{DOCUMENT_ROOT}" . $urls['destinationRoot'] . "/$1.$2.webp !-f\n" .
+        "  RewriteCond %{QUERY_STRING} (.*)\n" .
+        "  RewriteRule ^(.*)\.(jpe?g|png)$ " . $urls['converterUrlPathRelativeToSiteUrl'] . "convert.php?source=" . $urls['siteUrlPathRelativeToConverterPath'] . "$1.$2&destination-root=" . $filePaths['uploadPathRelativeToWebExpressRoot'] . $options . "&%1 [NC,T=image/webp,E=accept:1]\n" .
+        "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
+        "  RewriteCond %{QUERY_STRING} !((^reconvert.*)|(^debug.*))\n" .
+        "  RewriteCond %{DOCUMENT_ROOT}" . $urls['destinationRoot'] . "/$1.$2.webp -f\n" .
+        "  RewriteRule ^(.*)\.(jpe?g|png)$ " . $urls['destinationRoot'] . "/$1.$2.webp [NC,T=image/webp,E=accept:1,QSD]\n" .
+        "</IfModule>\n" .
+        "<IfModule mod_headers.c>\n" .
+        "  Header append Vary Accept env=REDIRECT_accept\n" .
+        "</IfModule>\n" .
+        "AddType image/webp .webp\n";
 
+/*
         $rules = "<IfModule mod_rewrite.c>\n" .
         "  RewriteEngine On\n" .
         "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
@@ -212,7 +152,8 @@ class WebPExpressHelpers
         "<IfModule mod_headers.c>\n" .
         "  Header append Vary Accept env=REDIRECT_accept\n" .
         "</IfModule>\n" .
-        "AddType image/webp .webp\n";
+        "AddType image/webp .webp\n";*/
+
 
         //echo '<pre>' . $rules . '</pre>';
         return $rules;
