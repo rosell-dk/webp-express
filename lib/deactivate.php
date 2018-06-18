@@ -1,12 +1,11 @@
 <?php
-include( plugin_dir_path( __FILE__ ) . 'helpers.php');
+include_once( plugin_dir_path( __FILE__ ) . 'helpers.php');
 
 class WebPExpressDeactivate {
 
   public function deactivate() {
-    WebPExpressHelpers::insert_htaccess_rules("# deactivated");
+    WebPExpressHelpers::insertHTAccessRules("# deactivated");
   }
 }
 
 WebPExpressDeactivate::deactivate();
-

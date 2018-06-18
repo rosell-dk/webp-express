@@ -218,11 +218,13 @@ class WebPExpressHelpers
         return $rules;
     }
 
-    public static function insert_htaccess_rules($rules)
+    public static function insertHTAccessRules($rules)
     {
+        //update_option('webp-express-htaccess-not-writable', true, false);
+        //update_option('webp-express-deactivate', true, false);
+        //return;
     //    esc_html_e( 'Insertion failed');
     //    die();
-
     // taken from the "job_board_rewrite" example at:
     // https://hotexamples.com/examples/-/-/insert_with_markers/php-insert_with_markers-function-examples.html
 
@@ -235,9 +237,9 @@ class WebPExpressHelpers
         // Try to make .htaccess writable if its not
         if (file_exists($root_path . '.htaccess') && !is_writable($root_path . '.htaccess')) {
             $file_existing_permission = substr(decoct(fileperms($root_path . '.htaccess')), -4);
-            if (!chmod($root_path . '.htaccess', 0777)) {
-                set_transient('webp-express-hcaccess-not-writable', true, 5);
-                set_transient('webp-express-deactivate', true, 60);
+            if (!chmod($root_path . '.htaccess', 0770)) {
+                update_option('webp-express-htaccess-not-writable', true, false);
+                update_option('webp-express-deactivate', true, false);
             }
         }
         /* Appending .htaccess  */
@@ -246,8 +248,8 @@ class WebPExpressHelpers
                 require_once ABSPATH . 'wp-admin/includes/misc.php';
             }
             if (!insert_with_markers($root_path . '.htaccess', 'WebP Express', $rules)) {
-                set_transient('webp-express-failed-inserting-rules', true, 5);
-                set_transient('webp-express-deactivate', true, 60);
+                update_option('webp-express-failed-inserting-rules', true, false);
+                update_option('webp-express-deactivate', true, false);
             }
             else {
                 //set_transient('webp-express-inserted-rules-ok', true, 60);

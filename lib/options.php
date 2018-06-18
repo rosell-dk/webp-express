@@ -334,7 +334,7 @@ add_action('updated_option', function($option_name, $old_value, $value) {
             //update_option('webp-express-htaccess-needs-updating', true, false);
 
             $rules = WebPExpressHelpers::generateHTAccessRules();
-            WebPExpressHelpers::insert_htaccess_rules($rules);
+            WebPExpressHelpers::insertHTAccessRules($rules);
 
             break;
     }

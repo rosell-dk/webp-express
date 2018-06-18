@@ -33,7 +33,7 @@ if (get_option('webp-express-htaccess-needs-updating')) {
     include_once 'lib/helpers.php';
 
     $rules = WebPExpressHelpers::generateHTAccessRules();
-    WebPExpressHelpers::insert_htaccess_rules($rules);
+    WebPExpressHelpers::insertHTAccessRules($rules);
 
 }
 

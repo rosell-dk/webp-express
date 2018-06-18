@@ -98,12 +98,13 @@ add_action( 'admin_notices', function() {
       return;
     }
 
-    if ( get_option( 'webp-express-hcaccess-not-writable' ) ) {
-      delete_option( 'webp-express-hcaccess-not-writable');
+    if ( get_option( 'webp-express-htaccess-not-writable' ) ) {
+      delete_option( 'webp-express-htaccess-not-writable');
       printf(
         '<div class="%1$s"><p>%2$s</p></div>',
         esc_attr( 'notice notice-error is-dismissible' ),
-        esc_html( __( 'WebP Express failed writing rules to .htaccess. The file is not writable and could not be made writable either. Probably this is due to a misconfiguration. Check the file permissions and ownership', 'webp-express' ) )
+        '<b>.htaccess is not writable</b>. The plugin has been disabled. To fix this, make .htaccess writable and try activating the plugin again. <a target="_blank" href="https://github.com/rosell-dk/webp-express/wiki/Error-messages-and-warnings#htaccess-is-not-writable">Click here</a> for more information.'
+        //esc_html( __( '.htaccess is not writable. As WebP Express needs to write its redirection rules to .htaccess in order to function, the plugin has been disabled. To fix this, make .htaccess writable and try activating the plugin again. The file is located in the root of your wordpress installation.', 'webp-express' ) )
       );
       return;
     }

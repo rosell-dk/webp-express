@@ -44,7 +44,7 @@ class WebPExpressActivate {
 
     // Create upload dir
     $rules = WebPExpressHelpers::generateHTAccessRules();
-    WebPExpressHelpers::insert_htaccess_rules($rules);
+    WebPExpressHelpers::insertHTAccessRules($rules);
 
 
   }
