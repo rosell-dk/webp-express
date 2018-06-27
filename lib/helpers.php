@@ -44,6 +44,7 @@ class WebPExpressHelpers
             'filePaths' => [
                 'destinationRoot' => untrailingslashit($uploadDir),
                 'webpExpressRoot' => untrailingslashit(WEBPEXPRESS_PLUGIN_DIR),
+                'uploadPath' => $uploadDir,
                 'uploadPathRelativeToWebExpressRoot' => $uploadPathRelativeToWebExpressRoot
             ]
         ];

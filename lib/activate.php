@@ -35,8 +35,20 @@ class WebPExpressActivate {
     }
 
 
-
     // Create upload dir
+    $urlsAndPaths = WebPExpressHelpers::calculateUrlsAndPaths();
+    $ourUploadDir = $urlsAndPaths['filePaths']['uploadPath'];
+
+    if ( ! file_exists( $ourUploadDir ) ) {
+      wp_mkdir_p( $ourUploadDir );
+    }
+    if ( ! file_exists( $ourUploadDir ) ) {
+      update_option( 'webp-express-failed-creating-upload-dir', true, false );
+      update_option( 'webp-express-deactivate', true, false );
+      return;
+    }
+
+    // Add rules to .htaccess
     $rules = WebPExpressHelpers::generateHTAccessRules();
     WebPExpressHelpers::insertHTAccessRules($rules);
 

@@ -75,7 +75,8 @@ add_action( 'admin_notices', function() {
       printf(
         '<div class="%1$s"><p>%2$s</p></div>',
         esc_attr( 'notice notice-error is-dismissible' ),
-        esc_html( __( 'WebP Express could not create a subfolder in your upload folder. Check your file permissions', 'webp-express' ) )
+        //esc_html( __( 'WebP Express could not create a subfolder in your upload folder. Check your file permissions', 'webp-express' ) )
+        '<b>WebP Express could not create a subfolder in your upload folder</b>. Check your file permissions. <a target="_blank" href="https://github.com/rosell-dk/webp-express/wiki/Error-messages-and-warnings#webp-express-could-not-create-a-subfolder-in-your-upload-folder">Click here</a> for more information.'
       );
       return;
     }
