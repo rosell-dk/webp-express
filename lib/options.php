@@ -317,7 +317,7 @@ function webp_express_settings_page_content()
             <?php
 
 
-            submit_button('Save!');
+            submit_button('Save settings');
             ?>
         </form>
     </div>
