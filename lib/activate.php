@@ -28,18 +28,12 @@ class WebPExpressActivate {
       return;
     }
 
-  /*
     if (!version_compare(PHP_VERSION, '5.5.0', '>=')) {
       update_option( 'webp-express-php-too-old', true, false );
-      update_option( 'webp-express-deactivate', true, false );
+      //update_option( 'webp-express-deactivate', true, false );
       return;
     }
 
-    if (!function_exists(imagewebp)) {
-      update_option( 'webp-express-imagewebp-not-available', true, false );
-      update_option( 'webp-express-deactivate', true, false );
-      return;
-    }*/
 
 
     // Create upload dir

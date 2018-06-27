@@ -59,34 +59,16 @@ add_action( 'admin_notices', function() {
       );
       return;
     }
-/*
+
     if (get_option( 'webp-express-php-too-old' ) ) {
       delete_option( 'webp-express-php-too-old');
       printf(
         '<div class="%1$s"><p>%2$s</p></div>',
-        esc_attr( 'notice notice-error is-dismissible' ),
-        esc_html( sprintf(__( 'Sorry, WebP Express requires PHP >=5.5.0. You are on version %s', 'webp-express' ), phpversion() ) )
+        esc_attr( 'notice notice-warning is-dismissible' ),
+        esc_html( sprintf(__( 'You are on a very old version of PHP (%s). WebP Express may not work as intended.', 'webp-express' ), phpversion() ) )
       );
       return;
     }
-
-    if (get_option( 'webp-express-imagewebp-not-available' ) ) {
-      delete_option( 'webp-express-imagewebp-not-available');
-      $text = sprintf(__('Sorry, WebP Express requires that the %simagewebp%s function is available to PHP.'), '<a href="http://php.net/manual/en/function.imagewebp.php">', '</a>');
-
-      if (version_compare(PHP_VERSION, '7.0.0', '>=')) {
-        $text .= sprintf(__(' Your PHP version is great enough (%s), however on PHP >= 7.0.0, PHP must be configured with the "--with-webp-dir=DIR" option in order for the imagewebp function to be available. Read more about that %shere%s.'), phpversion(), '<a href="http://il1.php.net/manual/en/image.installation.php">', '</a>');
-      }
-      else {
-        $text .= sprintf(__(' Your PHP version is great enough (%s), however on PHP >= 5.5.0, but less than 7.0.0, PHP must be configured with the "--with-vpx-dir=DIR" option in order for the imagewebp function to be available. Read more about that %shere%s.'), phpversion(), '<a href="http://il1.php.net/manual/en/image.installation.php">', '</a>');
-      }
-      printf(
-        '<div class="%1$s"><p>%2$s</p></div>',
-        esc_attr( 'notice notice-error is-dismissible' ),
-        $text
-      );
-      return;
-    }*/
 
     if ( get_option( 'webp-express-failed-creating-upload-dir' ) ) {
       delete_option( 'webp-express-failed-creating-upload-dir');
