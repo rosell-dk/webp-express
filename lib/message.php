@@ -98,6 +98,7 @@ add_action( 'admin_notices', function() {
       return;
     }
 
+/*
     if ( get_option( 'webp-express-htaccess-not-writable' ) ) {
       delete_option( 'webp-express-htaccess-not-writable');
       printf(
@@ -115,6 +116,16 @@ add_action( 'admin_notices', function() {
         '<div class="%1$s"><p>%2$s</p></div>',
         esc_attr( 'notice notice-error is-dismissible' ),
         esc_html( __( 'WebP Express failed writing rules to .htaccess. The file is writable, but something went wrong writing to it anyway. More precicely, the Wordpress function "insert_with_markers" returned false. The .htaccess rules are needed for this plugin to function, and the plugin has therefore been deactivated.', 'webp-express' ) )
+      );
+      return;
+    }*/
+
+    if ( get_option( 'webp-express-failed-inserting-rules' ) ) {
+      delete_option( 'webp-express-failed-inserting-rules');
+      printf(
+        '<div class="%1$s"><p>%2$s</p></div>',
+        esc_attr( 'notice notice-error is-dismissible' ),
+        '<b>.htaccess is not writable</b>. To fix this, make .htaccess writable and try activating the plugin again. <a target="_blank" href="https://github.com/rosell-dk/webp-express/wiki/Error-messages-and-warnings#htaccess-is-not-writable">Click here</a> for more information.'
       );
       return;
     }

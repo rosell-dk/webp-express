@@ -199,6 +199,13 @@ function webp_express_settings_page_content()
                 ]
             ];
 
+/*
+            echo WebPExpressHelpers::insertHTAccessRules('#testing');
+            $root_path = get_home_path();
+            //chmod($root_path . '.htaccess', octdec('0440'));
+            $file_existing_permission = substr(decoct(fileperms($root_path . '.htaccess')), -4);
+            echo $file_existing_permission;*/
+
             echo '<h2>Converters</h2>';
             $dragIcon = '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="17px" height="17px" viewBox="0 0 100.000000 100.000000" preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,100.000000) scale(0.100000,-0.100000)" fill="#444444" stroke="none"><path d="M415 920 l-80 -80 165 0 165 0 -80 80 c-44 44 -82 80 -85 80 -3 0 -41 -36 -85 -80z"/><path d="M0 695 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M0 500 l0 -40 500 0 500 0 0 40 0 40 -500 0 -500 0 0 -40z"/><path d="M0 305 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M418 78 l82 -83 82 83 83 82 -165 0 -165 0 83 -82z"/></g></svg>';
 
