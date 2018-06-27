@@ -77,17 +77,27 @@ class WebPExpressHelpers
         $urls = $urlsAndPaths['urls'];
         $filePaths = $urlsAndPaths['filePaths'];
 
+        $imageTypes = get_option('webp_express_image_types_to_convert');
+        $fileExtensions = [];
+        if ($imageTypes & 1) {
+          $fileExtensions[] = 'jpe?g';
+        }
+        if ($imageTypes & 2) {
+          $fileExtensions[] = 'png';
+        }
+        $fileExt = implode('|', $fileExtensions);
+
         $rules = "<IfModule mod_rewrite.c>\n" .
         "  RewriteEngine On\n" .
         "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
         "  RewriteCond %{QUERY_STRING} (^reconvert.*)|(^debug.*) [OR]\n" .
         "  RewriteCond %{DOCUMENT_ROOT}" . $urls['destinationRoot'] . "/$1.$2.webp !-f\n" .
         "  RewriteCond %{QUERY_STRING} (.*)\n" .
-        "  RewriteRule ^(.*)\.(jpe?g|png)$ " . $urls['converterUrlPathRelativeToSiteUrl'] . "convert.php?source=" . $urls['siteUrlPathRelativeToConverterPath'] . "$1.$2&destination-root=" . $filePaths['uploadPathRelativeToWebExpressRoot'] . $options . "&%1 [NC,T=image/webp,E=accept:1]\n" .
+        "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " . $urls['converterUrlPathRelativeToSiteUrl'] . "convert.php?source=" . $urls['siteUrlPathRelativeToConverterPath'] . "$1.$2&destination-root=" . $filePaths['uploadPathRelativeToWebExpressRoot'] . $options . "&%1 [NC,T=image/webp,E=accept:1]\n" .
         "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
         "  RewriteCond %{QUERY_STRING} !((^reconvert.*)|(^debug.*))\n" .
         "  RewriteCond %{DOCUMENT_ROOT}" . $urls['destinationRoot'] . "/$1.$2.webp -f\n" .
-        "  RewriteRule ^(.*)\.(jpe?g|png)$ " . $urls['destinationRoot'] . "/$1.$2.webp [NC,T=image/webp,E=accept:1,QSD]\n" .
+        "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " . $urls['destinationRoot'] . "/$1.$2.webp [NC,T=image/webp,E=accept:1,QSD]\n" .
         "</IfModule>\n" .
         "<IfModule mod_headers.c>\n" .
         "  Header append Vary Accept env=REDIRECT_accept\n" .

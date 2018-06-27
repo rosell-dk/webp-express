@@ -58,6 +58,15 @@ function webp_express_option_group_init()
             'sanitize_callback' => 'sanitize_text_field',
         ]
     );
+    register_setting(
+        'webp_express_option_group',
+        'webp_express_image_types_to_convert',
+        [
+            'type' => 'integer',
+            'default' => '3',
+            'sanitize_callback' => 'sanitize_text_field',
+        ]
+    );
     /*
     register_setting(
         'webp_express_option_group',
@@ -96,6 +105,23 @@ function webp_express_option_group_init()
     add_settings_field('webp_express_quality_id', 'Quality (0-100)', function () {
         $quality = get_option('webp_express_quality');
         echo "<input type='text' name='webp_express_quality' value='" . $quality . "' />";
+    }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
+
+    add_settings_field('webp_express_image_types_to_convert_id', 'Image types to convert', function () {
+        // bitmask
+        // 1: JPEGs
+        // 2: PNG's
+        // Converting only jpegs is thus "1"
+        // Converting both jpegs and pngs is (1+2) = 3
+        $imageTypes = get_option('webp_express_image_types_to_convert');
+
+        echo '<select name="webp_express_image_types_to_convert">';
+        echo '<option value="1"' . ($imageTypes == 1 ? ' selected' : '') . '>Only convert jpegs</option>';
+        echo '<option value="3"' . ($imageTypes == 3 ? ' selected' : '') . '>Convert both jpegs and pngs</option>';
+        echo '</select>';
+
+        //echo '<input type="checkbox" ' . ($types == 1 ? ' checked=checked' : '') . '>';
+
     }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
 
 /*
@@ -340,6 +366,7 @@ add_action('updated_option', function($option_name, $old_value, $value) {
         case 'webp_express_quality':
         //case 'webp_express_method':
         case 'webp_express_converters':
+        case 'webp_express_image_types_to_convert':
         case 'webp_express_failure_response':
             //update_option('webp-express-htaccess-needs-updating', true, false);
 
