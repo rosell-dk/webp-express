@@ -96,7 +96,7 @@ class WebPExpressHelpers
 
         $options = '';
         $options .= '&quality=' . get_option('webp_express_quality');
-        $options .= '&method=' . get_option('webp_express_method');
+        //$options .= '&method=' . get_option('webp_express_method');
         $options .= '&fail=' . get_option('webp_express_failure_response');
         $options .= '&critical-fail=report';
 

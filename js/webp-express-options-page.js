@@ -291,7 +291,7 @@ function testConverter(id) {
     url += '&destinationUrl=' + urls['destinationRoot'] + '/' + filename + '.webp';
     url += '&converter=' + converter['converter'];
     url += '&quality=' + document.getElementsByName('webp_express_quality')[0].value;
-    url += '&method=' + document.getElementsByName('webp_express_method')[0].value;
+    //url += '&method=' + document.getElementsByName('webp_express_method')[0].value;
 
     if (converter.options) {
         for (var option in converter.options) {

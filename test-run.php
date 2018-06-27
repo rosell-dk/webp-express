@@ -27,8 +27,11 @@ $converter = $_GET['converter'];
 
 $options = [
     'quality' => intval($_GET['quality']),
-    'method' => intval($_GET['method']),
 ];
+
+if (isset($_GET['method'])) {
+  $options['method'] = intval($_GET['method']);
+}
 
 /*
 switch ($converter) {

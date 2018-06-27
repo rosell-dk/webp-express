@@ -16,7 +16,7 @@ add_action('admin_enqueue_scripts', function () {
         'webp-express-options-page',
         plugins_url('../js/webp-express-options-page.js', __FILE__),
         ['sortable'],
-        '1.0.4'
+        '1.0.6'
     );
     wp_enqueue_script('webp-express-options-page');
 
@@ -32,7 +32,7 @@ add_action('admin_enqueue_scripts', function () {
         'webp-express-options-page-css',
         plugins_url('../css/webp-express-options-page.css', __FILE__),
         null,
-        '1.0.5'
+        '1.0.6'
     );
     wp_enqueue_style('webp-express-options-page-css');
 });
@@ -58,6 +58,7 @@ function webp_express_option_group_init()
             'sanitize_callback' => 'sanitize_text_field',
         ]
     );
+    /*
     register_setting(
         'webp_express_option_group',
         'webp_express_method',
@@ -66,7 +67,7 @@ function webp_express_option_group_init()
             'default' => '6',
             'sanitize_callback' => 'sanitize_text_field',
         ]
-    );
+    );*/
     register_setting(
         'webp_express_option_group',
         'webp_express_failure_response',
@@ -97,11 +98,13 @@ function webp_express_option_group_init()
         echo "<input type='text' name='webp_express_quality' value='" . $quality . "' />";
     }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
 
+/*
     add_settings_field('webp_express_method_id', 'Method (0-6)', function () {
         $method = get_option('webp_express_method');
         echo "<input type='text' name='webp_express_method' value='" . $method . "' />";
         echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
     }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
+    */
 
     add_settings_field('webp_express_failure_response', 'Response on failure', function () {
         $failureResponse = get_option('webp_express_failure_response');
@@ -297,7 +300,7 @@ function webp_express_settings_page_content()
             //print_r($urls);
             //echo $urls['urls']['webpExpressRoot'];
             if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
-                echo 'Your browser supports webp... So you can test if everything, including the redirect magic works using these links:<br>';
+                echo 'Your browser supports webp... So you can test if everything works (including the redirect magic) - using these links:<br>';
                 $webpExpressRoot = WebPExpressHelpers::calculateUrlsAndPaths()['urls']['webpExpressRoot'];
                 echo '<a href="' . $webpExpressRoot . '/test/test.jpg" target="_blank">Convert test image</a><br>';
                 echo '<a href="' . $webpExpressRoot . '/test/test.jpg?debug" target="_blank">Convert test image (show debug)</a><br>';
@@ -328,7 +331,7 @@ function webp_express_settings_page_content()
 add_action('updated_option', function($option_name, $old_value, $value) {
     switch ($option_name) {
         case 'webp_express_quality':
-        case 'webp_express_method':
+        //case 'webp_express_method':
         case 'webp_express_converters':
         case 'webp_express_failure_response':
             //update_option('webp-express-htaccess-needs-updating', true, false);
