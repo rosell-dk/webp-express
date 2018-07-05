@@ -17,7 +17,9 @@ class ConverterHelper
     public static $allowedExtensions = ['jpg', 'jpeg', 'png'];
 
     public static $defaultOptions = [
-        'quality' => 85,
+        'quality' => 'auto',
+        'max-quality' => 85,
+        'default-quality' => 80,
         'metadata' => 'none',
         'method' => 6,
         'low-memory' => false,
@@ -39,10 +41,14 @@ class ConverterHelper
     /* Call the "convert" method on a converter, by id.
        - but also prepares options (merges in the $extraOptions of the converter),
          prepares destination folder, and runs some standard validations */
-    public static function runConverter($converterId, $source, $destination, $options = [], $prepareDestinationFolder = true)
+    public static function runConverter($converterId, $source, $destination, $options = [], $prepareDestinationFolder = true, $logger = null)
     {
         if ($prepareDestinationFolder) {
             ConverterHelper::prepareDestinationFolderAndRunCommonValidations($source, $destination);
+        }
+
+        if (!isset($logger)) {
+            $logger = new \WebPConvert\Loggers\VoidLogger();
         }
 
         $className = self::getClassNameOfConverter($converterId);
@@ -61,18 +67,64 @@ class ConverterHelper
         // -  Merge $defaultOptions into provided options
         $options = array_merge($defaultOptions, $options);
 
+        // Individual converters do not accept quality = auto. They need a number.
+        if ($options['quality'] == 'auto') {
+            $options['quality'] = ConverterHelper::detectQualityOfJpg($source);
+            $logger->log('Quality set to auto... Quality of source: ');
+            if (!$options['quality']) {
+              $options['quality'] = $options['default-quality'];
+              $logger->logLn('could not be established (Imagick or GraphicsMagick is required) - Using default instead (' . $options['default-quality'] . ').');
+            } else {
+              $logger->log($options['quality']);
+            }
+            if ($options['quality'] > $options['max-quality']) {
+              $logger->log('. This is higher than max-quality, so using that instead (' . $options['max-quality'] . ')');
+            }
+            $logger->ln();
+            $options['quality'] = min($options['quality'], $options['max-quality']);
+            //$logger->logLn('Using quality: ' . $options['quality']);
+        }
+
         call_user_func(
             [$className, 'doConvert'],
             $source,
             $destination,
             $options,
-            $prepareDestinationFolder
+            $logger
         );
 
         if (!file_exists($destination)) {
             throw new ConverterFailedException('Destination file is not there');
         }
     }
+
+    /* Try to detect quality of jpeg.
+       If not possible, nothing is returned (null). Otherwise quality is returned (int)
+        */
+    public static function detectQualityOfJpg($filename)
+    {
+      // Try Imagick extension
+      if (extension_loaded('imagick') && class_exists('Imagick')) {
+        $img = new Imagick($filename);
+        return $img->getImageCompressionQuality();
+      }
+
+      if (function_exists('shell_exec')) {
+
+        // Try Imagick
+        $quality = shell_exec("identify -format '%Q' " . $filename);
+        if ($quality) {
+          return intval($quality);
+        }
+
+        // Try GraphicsMagick
+        $quality = shell_exec("gm identify -format '%Q' " . $filename);
+        if ($quality) {
+          return intval($quality);
+        }
+      }
+    }
+
 
     public static function getExtension($filePath)
     {
