@@ -3,7 +3,8 @@ namespace WebPConvertAndServe;
 
 use WebPConvert\WebPConvert;
 use WebPConvertAndServe\PathHelper;
-use WebPConvert\Loggers\EchoLogger;
+use WebPConvert\Converters\ConverterHelper;
+//use WebPConvert\Loggers\EchoLogger;
 
 class WebPConvertAndServe
 {
@@ -70,8 +71,18 @@ class WebPConvertAndServe
         $criticalFail = false;
 
         $success = false;
+
+        $echoLogger = null;
+        if (class_exists('WebPConvert\Loggers\EchoLogger')) {
+          $echoLogger = new \WebPConvert\Loggers\EchoLogger();
+        }
+
         try {
-            $success = WebPConvert::convert($source, $destination, $options);
+            ob_start();
+            $success = WebPConvert::convert($source, $destination, $options, $echoLogger);
+            $conversionInsights = ob_get_contents();
+            ob_end_clean();
+
             if (!$success) {
                 $msg = 'No converters are operational';
             }
@@ -105,7 +116,10 @@ class WebPConvertAndServe
                     self::serveErrorMessageImage($msg);
                     break;
                 case WebPConvertAndServe::$REPORT:
-                    echo $msg;
+                    echo '<h1>' . $msg . '</h1>';
+                    if ($echoLogger) {
+                      echo '<p>This is how conversion process went:</p>' . $conversionInsights;
+                    }
                     break;
             }
             return $action;
@@ -114,20 +128,55 @@ class WebPConvertAndServe
 
     public static function convertAndReport($source, $destination, $options)
     {
-        echo '<i>source:</i> ' . $source . '<br>';
-        echo '<i>destination:</i> ' . $destination . '<br>';
-        echo '<i>options:</i> ' . print_r($options, true) . '<br>';
+        echo '<html><style>td {vertical-align: top} table {color: #666}</style>';
+        echo '<body><table>';
+        echo '<tr><td><i>source:</i></td><td>' . $source . '</td></tr>';
+        echo '<tr><td><i>destination:</i></td><td>' . $destination . '<td></tr>';
+
+        // Take care of not displaing sensitive converter options.
+        // (psst: the is_callable check is needed in order to work with WebPConvert v1.0)
+
+        if (is_callable('ConverterHelper', 'getClassNameOfConverter')) {
+
+          $printable_options = $options;
+          if (isset($printable_options['converters'])) {
+            foreach ($printable_options['converters'] as &$converter) {
+              if (is_array($converter)) {
+                //echo '::' . $converter['converter'] . '<br>';
+                $className = ConverterHelper::getClassNameOfConverter($converter['converter']);
+
+                // (pstt: the isset check is needed in order to work with WebPConvert v1.0)
+                if (isset($className::$extraOptions)) {
+                  foreach ($className::$extraOptions as $extraOption) {
+                    if ($extraOption['sensitive']) {
+                      if (isset($converter['options'][$extraOption['name']])) {
+                        $converter['options'][$extraOption['name']] = '*******';
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          echo '<tr><td><i>options:</i></td><td>' . print_r($printable_options, true) . '</td></tr>';
+        }
+        echo '</table>';
+
+        // TODO:
+        // We could display warning if unknown options are set
+        // but that requires that WebPConvert also describes its general options
+
+
+
         echo '<br>';
 
-        $logger = new EchoLogger();
-
         try {
-            $success = WebPConvert::convert($source, $destination, $options, $logger);
-        } catch (\WebPConvert\Exceptions\WebPConvertBaseException $e) {
-            // This exception has already been logged in WebPConvert, no reason to repeat it
-            // $failure = $e->description;
+            $echoLogger = null;
+            if (class_exists('WebPConvert\Loggers\EchoLogger')) {
+              $echoLogger = new \WebPConvert\Loggers\EchoLogger();
+            }
+            $success = WebPConvert::convert($source, $destination, $options, $echoLogger);
         } catch (\Exception $e) {
-            //echo 'report:' . $report;
             $success = false;
 
             $msg = $e->getMessage();
@@ -135,26 +184,12 @@ class WebPConvertAndServe
             echo '<b>' . $msg . '</b>';
             exit;
         }
-        //echo 'report:' . $report;
 
         if ($success) {
-            $logger->logLn('');
-            if (filesize($source) < 10000) {
-                $logger->logLn('file size (original): ' . round(filesize($source)) . ' bytes');
-                $logger->logLn('file size (converted): ' . round(filesize($destination)) . ' bytes');
-            }
-            else {
-                $logger->logLn('file size (original): ' . round(filesize($source)/1000) . ' kb');
-                $logger->logLn('file size (converted): ' . round(filesize($destination)/1000) . ' kb');
-            }
-        }
-
-
-/*
-        if ($success) {
-            echo 'ok';
+            //echo 'ok';
         } else {
             echo '<b>Conversion failed. None of the tried converters are operational</b>';
-        }*/
+        }
+        echo '</body></html>';
     }
 }

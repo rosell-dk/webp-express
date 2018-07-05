@@ -240,14 +240,16 @@ class WebPOnDemand
         if (!$debug) {
             return WebPConvertAndServe::convertAndServeImage($source, $destination, $options, $fail, $criticalFail);
         } else {
+
+            // TODO
+            // As we do not want to leak api keys, I have commented out the following.
+            /*
             echo 'GET parameters:<br>';
-            // TODO!!!
-            // Do not leak api keys!
-            // Right now, you can see all options, including api keys, by appending "?debug" after an image URL!
             foreach ($_GET as $key => $value) {
                 echo '<i>' . $key . '</i>: ' . htmlspecialchars($value) . '<br>';
             }
             echo '<br>';
+            */
             //echo $_SERVER['DOCUMENT_ROOT'];
             WebPConvertAndServe::convertAndReport($source, $destination, $options);
             return 1;
