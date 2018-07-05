@@ -21,7 +21,7 @@ class Cwebp
     {
         ConverterHelper::runConverter('cwebp', $source, $destination, $options, true);
     }
-    
+
     // System paths to look for cwebp binary
     private static $cwebpDefaultPaths = [
         '/usr/bin/cwebp',
@@ -37,6 +37,8 @@ class Cwebp
         'SunOS' => [ 'cwebp-sol', '1febaffbb18e52dc2c524cda9eefd00c6db95bc388732868999c0f48deb73b4f'],
         'FreeBSD' => [ 'cwebp-fbsd', 'e5cbea11c97fadffe221fdf57c093c19af2737e4bbd2cb3cd5e908de64286573'],
         'Linux' => [ 'cwebp-linux', '916623e5e9183237c851374d969aebdb96e0edc0692ab7937b95ea67dc3b2568']
+        //'Linux' => [ 'cwebp-linux', 'ccc36f61b93db140fbf4d65fac3a2aec7aef75c3f6518840eac3734794569e5e']
+
     ];
 
     private static function escapeFilename($string)
@@ -87,10 +89,21 @@ class Cwebp
         // Init with common system paths
         $cwebpPathsToTest = self::$cwebpDefaultPaths;
 
+
+
+
         // Remove paths that doesn't exist
+        // Disable default error, in order to suppress open basedir restriction warnings
+        // (https://stackoverflow.com/questions/21427211/check-if-open-basedir-restriction-is-in-effect)
+        //set_error_handler(null);
+
         $cwebpPathsToTest = array_filter($cwebpPathsToTest, function ($binary) {
-            return file_exists($binary);
+            //return file_exists($binary);
+            //return @is_readable($binary);
+            return false;
         });
+        // Restore previous error handler
+        //restore_error_handler();
 
         // Add supplied binary to array (if available for OS, and hash is correct)
         if (isset(self::$suppliedBinariesInfo[PHP_OS])) {
@@ -100,18 +113,32 @@ class Cwebp
             $hash = $info[1];
 
             $binaryFile = __DIR__ . '/Binaries/' . $file;
+            //$binaryFile = __DIR__ . $file;
 
             // The file should exist, but may have been removed manually. That would be ok, I suppose
 
-            if (file_exists($binaryFile)) {
+            if (@is_readable($binaryFile)) {
+
                 // File exists, now generate its hash
                 $binaryHash = hash_file('sha256', $binaryFile);
 
                 // Throw an exception if binary file checksum & deposited checksum do not match
                 if ($binaryHash != $hash) {
-                    throw new ConverterNotOperationalException('Binary checksum is invalid.');
+                    throw new ConverterNotOperationalException('Binary checksum is invalid (' . $binaryFile . '). Checksum is: ' . $binaryHash . '. It was supposed to be:' . $hash);
                 }
-                $cwebpPathsToTest[] = $binaryFile;
+
+                //$cwebpPathsToTest[] = $binaryFile;
+                $cwebpPathsToTest[] = $file;
+
+
+/*
+                error_reporting(E_ALL);
+                $handle = popen($binaryFile . ' 2>&1', 'r');
+                echo "'$handle'; " . gettype($handle) . "\n";
+                $read = fread($handle, 2096);
+                echo $read;
+                pclose($handle);*/
+
             }
         }
 
@@ -160,11 +187,31 @@ class Cwebp
 
         $commandOptions = implode(' ', $commandOptionsArray);
 
+/*
+$testCommand = __DIR__ . '/Binaries/hostid';
+echo 'test call: ' . `$testCommand`;
+exec($testCommand, $output, $returnCode);
+echo 'return:' . $returnCode;
+*/
+
+///usr/bin/dig
+//echo 'hi';
+//echo ":: ".`which convert`;
+//echo ":: ".`date`;
+// https://www.litespeedtech.com/support/forum/threads/php-and-exec.6289/
         // Try all paths
+        $log = '';
         foreach ($cwebpPathsToTest as $index => $binary) {
-            $command = $nice . $binary . ' ' . $commandOptions;
+            //$command = $nice . $binary . ' ' . $commandOptions;
+            $command = './' . $binary . ' ' . $commandOptions;
+
+            $log .= 'Trying to execute: ' . $command . '<br>';
+            $log .= 'current dir:' . __DIR__ . '<br>';
+            $log .= 'pwd:' . shell_exec('pwd') . '<br>';
 
             //throw new ConverterNotOperationalException($command);
+            //chmod($binary, 0777);
+
             exec($command, $output, $returnCode);
 
             if ($returnCode == 0) { // Everything okay!
@@ -179,13 +226,25 @@ class Cwebp
 
                 $success = true;
                 break;
+            } else {
+
+              $log .= "<br>failed. error code:" . $returnCode;
+
+              if ($returnCode == 126) {
+                $log .= '<br>126 means "Command invoked cannot execute". It is a permission problem, or command is not an executable.';
+              }
+              $log .= '<br>See http://tldp.org/LDP/abs/html/exitcodes.html for failcodes';
+
+              //$log .= '<br><br>Result:<br>';
+              //$log .= trim(`$command`);
+              //$log .= '<br>umask: ' . exec('umask');
             }
 
             $success = false;
         }
 
         if (!$success) {
-            throw new ConverterNotOperationalException('No working binaries were found');
+            throw new ConverterNotOperationalException('No working binaries were found.<br><br>' . $log);
         }
     }
 }

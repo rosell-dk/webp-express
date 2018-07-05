@@ -18,9 +18,13 @@ class WebPExpressActivate {
       return;
     }
 
-    if (!( strpos( strtolower($_SERVER['SERVER_SOFTWARE']), 'apache') !== false )) {
+
+    if ( strpos( strtolower($_SERVER['SERVER_SOFTWARE']), 'litespeed') !== false ) {
+      update_option( 'webp-express-not-tested-on-litespeed', true, false );
+    } else if (!( strpos( strtolower($_SERVER['SERVER_SOFTWARE']), 'apache') !== false )) {
       update_option( 'webp-express-not-apache', true, false );
     }
+
 
     if ( is_multisite() ) {
       update_option( 'webp-express-no-multisite', true, false );

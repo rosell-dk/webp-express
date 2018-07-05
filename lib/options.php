@@ -116,6 +116,7 @@ function webp_express_option_group_init()
         $imageTypes = get_option('webp_express_image_types_to_convert');
 
         echo '<select name="webp_express_image_types_to_convert">';
+        echo '<option value="0"' . ($imageTypes == 0 ? ' selected' : '') . '>Do not convert any images!</option>';
         echo '<option value="1"' . ($imageTypes == 1 ? ' selected' : '') . '>Only convert jpegs</option>';
         echo '<option value="3"' . ($imageTypes == 3 ? ' selected' : '') . '>Convert both jpegs and pngs</option>';
         echo '</select>';
@@ -226,11 +227,56 @@ function webp_express_settings_page_content()
             ];
 
 /*
+http://php.net/manual/en/function.set-include-path.php
+
             echo WebPExpressHelpers::insertHTAccessRules('#testing');
             $root_path = get_home_path();
             //chmod($root_path . '.htaccess', octdec('0440'));
             $file_existing_permission = substr(decoct(fileperms($root_path . '.htaccess')), -4);
             echo $file_existing_permission;*/
+            echo 'pwd:' . shell_exec('pwd') .'<br>';
+            echo 'whoami:' . shell_exec('whoami');
+
+            //echo phpinfo();
+            echo 'hostid:' . shell_exec('../wp-content/plugins/webp-express/vendor/webp-convert/Converters/Binaries/hostid') . '<br>';
+            //echo 'cwebp-linux:' . shell_exec('../wp-content/plugins/webp-express/vendor/webp-convert/Converters/Binaries/cwebp-linux');
+
+            exec('../wp-content/plugins/webp-express/vendor/webp-convert/Converters/Binaries/hostid', $output, $returnCode);
+            echo 'hostid: ' . print_r($output, true) . '. Return code:' . $returnCode . '<br>';
+
+            exec('../wp-content/plugins/webp-express/vendor/webp-convert/Converters/Binaries/cwebp-linux', $output2, $returnCode2);
+            echo 'cwebp-linux: ' . print_r($output2, true) . '. Return code:' . $returnCode2 . '<br>';
+
+            exec('touch ../wp-content/plugins/webp-express/vendor/webp-convert/Converters/Binaries/test', $output21, $returnCode2);
+            echo 'touch: ' . print_r($output21, true) . '. Return code:' . $returnCode2 . '<br>';
+
+            exec('ls -lah ../wp-content/plugins/webp-express/vendor/webp-convert/Converters/Binaries/', $output4, $returnCode4); // ok
+            echo 'ls -lah: ' . print_r($output4, true) . '. Return code:' . $returnCode4; //  -rwxrwxrwx 1 rosell z84733 27K Jun 27 15:03 hostid
+/*
+            exec('pwd', $output3, $returnCode3);  // ok
+            echo 'output3: ' . print_r($output3, true) . '. Return code:' . $returnCode3 . '<br>';
+
+
+            exec('ls /usr/bin', $output5, $returnCode5); // ok
+            echo 'output5: ' . print_r($output5, true) . '. Return code:' . $returnCode5;
+
+            exec('wc ../wp-content/plugins/webp-express/vendor/webp-convert/Converters/Binaries/cwebp-linux', $output5, $returnCode5); // ok
+            echo 'output5: ' . print_r($output5, true) . '. Return code:' . $returnCode5;
+            //exec('getsebool httpd_can_network_connect', $output5, $returnCode5);
+
+            exec('getenforce', $output5, $returnCode5); // ok
+            echo 'getenforce: ' . print_r($output5, true) . '. Return code:' . $returnCode5;
+
+            exec('/usr/sbin/getenforce', $output6, $returnCode5); // ok
+            echo 'getenforce2: ' . print_r($output6, true) . '. Return code:' . $returnCode5; // Array ( [0] => Disabled
+*/
+exec('/usr/sbin/getsebool -a', $output6, $returnCode5); // ok
+echo 'All se bools: ' . print_r($output6, true) . '. Return code:' . $returnCode5;
+
+
+
+
+
 
             echo '<h2>Converters</h2>';
             $dragIcon = '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="17px" height="17px" viewBox="0 0 100.000000 100.000000" preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,100.000000) scale(0.100000,-0.100000)" fill="#444444" stroke="none"><path d="M415 920 l-80 -80 165 0 165 0 -80 80 c-44 44 -82 80 -85 80 -3 0 -41 -36 -85 -80z"/><path d="M0 695 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M0 500 l0 -40 500 0 500 0 0 40 0 40 -500 0 -500 0 0 -40z"/><path d="M0 305 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M418 78 l82 -83 82 83 83 82 -165 0 -165 0 83 -82z"/></g></svg>';

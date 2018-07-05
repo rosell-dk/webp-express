@@ -45,8 +45,17 @@ add_action( 'admin_notices', function() {
       printf(
         '<div class="%1$s"><p>%2$s</p></div>',
         esc_attr( 'notice notice-warning is-dismissible' ),
-        esc_html( __( 'You are not on Apache server. WebP Express has only been tested on Apache - continue at own risk (but please tell me if it works!)', 'webp-express' ) )
+        esc_html( __( 'You are not on Apache server. WebP Express has only been tested on Apache - continue at own risk (but please tell me if it works!). Your server is: ' . $_SERVER['SERVER_SOFTWARE'], 'webp-express' ) )
       );
+    }
+    if ( get_option( 'webp-express-not-tested-on-litespeed' ) ) {
+      delete_option( 'webp-express-not-tested-on-litespeed');
+      printf(
+        '<div class="%1$s"><p>%2$s</p></div>',
+        esc_attr( 'notice notice-warning is-dismissible' ),
+        esc_html( __( 'You are on LiteSpeed server. WebP Express has only been tested sporadic on LiteSpeed... Continue at own risk', 'webp-express' ) )
+      );
+      return;
     }
 
 
@@ -116,7 +125,7 @@ add_action( 'admin_notices', function() {
     printf(
       '<div class="%1$s"><p>%2$s</p></div>',
       esc_attr( 'notice notice-info is-dismissible' ),
-      'WebP Express was installed successfully. <a href="http://playground/webp-express-test/wordpress/wp-admin/options-general.php?page=webp_express_settings_page">Configure it here</a>.'
+      'WebP Express was installed successfully. <a href="options-general.php?page=webp_express_settings_page">Configure it here</a>.'
     );
 
     printf(

@@ -87,23 +87,28 @@ class WebPExpressHelpers
         }
         $fileExt = implode('|', $fileExtensions);
 
-        $rules = "<IfModule mod_rewrite.c>\n" .
-        "  RewriteEngine On\n" .
-        "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
-        "  RewriteCond %{QUERY_STRING} (^reconvert.*)|(^debug.*) [OR]\n" .
-        "  RewriteCond %{DOCUMENT_ROOT}" . $urls['destinationRoot'] . "/$1.$2.webp !-f\n" .
-        "  RewriteCond %{QUERY_STRING} (.*)\n" .
-        "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " . $urls['converterUrlPathRelativeToSiteUrl'] . "convert.php?source=" . $urls['siteUrlPathRelativeToConverterPath'] . "$1.$2&destination-root=" . $filePaths['uploadPathRelativeToWebExpressRoot'] . $options . "&%1 [NC,T=image/webp,E=accept:1]\n" .
-        "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
-        "  RewriteCond %{QUERY_STRING} !((^reconvert.*)|(^debug.*))\n" .
-        "  RewriteCond %{DOCUMENT_ROOT}" . $urls['destinationRoot'] . "/$1.$2.webp -f\n" .
-        "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " . $urls['destinationRoot'] . "/$1.$2.webp [NC,T=image/webp,E=accept:1,QSD]\n" .
-        "</IfModule>\n" .
-        "<IfModule mod_headers.c>\n" .
-        "  Header append Vary Accept env=REDIRECT_accept\n" .
-        "</IfModule>\n" .
-        "AddType image/webp .webp\n";
-
+        if ($imageTypes == 0) {
+          $rules = '# Configured not to convert anything!';
+          //$rules .= 'php_value include_path ".:/usr/local/lib/php:/your/dir"';
+          $rules .= 'php_value include_path ".:/usr/local/lib/php:/hsphere/local/home/z84733/mingo.net/wp-content/plugins/webp-express/vendor/webp-convert/Converters/Binaries"';
+        } else {
+          $rules = "<IfModule mod_rewrite.c>\n" .
+          "  RewriteEngine On\n" .
+          "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
+          "  RewriteCond %{QUERY_STRING} (^reconvert.*)|(^debug.*) [OR]\n" .
+          "  RewriteCond %{DOCUMENT_ROOT}" . $urls['destinationRoot'] . "/$1.$2.webp !-f\n" .
+          "  RewriteCond %{QUERY_STRING} (.*)\n" .
+          "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " . $urls['converterUrlPathRelativeToSiteUrl'] . "convert.php?source=" . $urls['siteUrlPathRelativeToConverterPath'] . "$1.$2&destination-root=" . $filePaths['uploadPathRelativeToWebExpressRoot'] . $options . "&%1 [NC,T=image/webp,E=accept:1]\n" .
+          "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
+          "  RewriteCond %{QUERY_STRING} !((^reconvert.*)|(^debug.*))\n" .
+          "  RewriteCond %{DOCUMENT_ROOT}" . $urls['destinationRoot'] . "/$1.$2.webp -f\n" .
+          "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " . $urls['destinationRoot'] . "/$1.$2.webp [NC,T=image/webp,E=accept:1,QSD]\n" .
+          "</IfModule>\n" .
+          "<IfModule mod_headers.c>\n" .
+          "  Header append Vary Accept env=REDIRECT_accept\n" .
+          "</IfModule>\n" .
+          "AddType image/webp .webp\n";
+        }
         return $rules;
     }
 
