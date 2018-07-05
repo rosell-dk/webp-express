@@ -51,10 +51,10 @@ function webp_express_option_group_init()
     );*/
     register_setting(
         'webp_express_option_group', // A settings group name. Must exist prior to the register_setting call. This must match the group name in settings_fields()
-        'webp_express_quality', //The name of an option to sanitize and save.
+        'webp_express_max_quality', //The name of an option to sanitize and save.
         [
             'type' => 'integer',
-            'default' => '70',
+            'default' => '85',
             'sanitize_callback' => 'sanitize_text_field',
         ]
     );
@@ -102,11 +102,6 @@ function webp_express_option_group_init()
         //echo 'here you set conversion options';
     }, 'webp_express_settings_page');
 
-    add_settings_field('webp_express_quality_id', 'Quality (0-100)', function () {
-        $quality = get_option('webp_express_quality');
-        echo "<input type='text' name='webp_express_quality' value='" . $quality . "' />";
-    }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
-
     add_settings_field('webp_express_image_types_to_convert_id', 'Image types to convert', function () {
         // bitmask
         // 1: JPEGs
@@ -143,6 +138,12 @@ function webp_express_option_group_init()
         echo '</select>';
         echo '<p>Determines what the converter should serve, in case the image conversion should fail. For production servers, recommended value is "Original image". For development servers, recommended value is anything but that</p>';
     }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
+
+    add_settings_field('webp_express_max_quality_id', 'Max quality (0-100)', function () {
+        echo "<input type='text' name='webp_express_max_quality' value='" . get_option('webp_express_max_quality') . "' />";
+        echo '<p>Converted jpeg images will get same quality as original, but not more than this setting. 85 is recommended for most websites.</p>';
+    }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
+
 
 /*
     public static $CONVERTED_IMAGE = 1;
@@ -369,7 +370,7 @@ http://php.net/manual/en/function.set-include-path.php
 
 add_action('updated_option', function($option_name, $old_value, $value) {
     switch ($option_name) {
-        case 'webp_express_quality':
+        case 'webp_express_max_quality':
         //case 'webp_express_method':
         case 'webp_express_converters':
         case 'webp_express_image_types_to_convert':

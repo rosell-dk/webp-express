@@ -290,7 +290,7 @@ function testConverter(id) {
     url += '&destination=' + paths['destinationRoot'] + '/' + filename + '.webp';
     url += '&destinationUrl=' + urls['destinationRoot'] + '/' + filename + '.webp';
     url += '&converter=' + converter['converter'];
-    url += '&quality=' + document.getElementsByName('webp_express_quality')[0].value;
+    url += '&max-quality=' + document.getElementsByName('webp_express_max_quality')[0].value;
     //url += '&method=' + document.getElementsByName('webp_express_method')[0].value;
 
     if (converter.options) {

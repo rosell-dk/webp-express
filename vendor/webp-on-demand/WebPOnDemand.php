@@ -21,7 +21,13 @@ destination-root (optional):
     "webp-cache/images/2017/cool.jpg.webp".
 
 quality (optional):
-    The quality of the generated WebP image, 0-100.
+    The quality of the generated WebP image, "auto" or 0-100. Defaults to "auto"
+
+max-quality (optional):
+    The maximum quality. Only relevant when quality is set to "auto"
+
+default-quality (optional):
+    Fallback value for quality, if it isn't possible to detect quality of jpeg. Only relevant when quality is set to "auto"
 
 metadata (optional):
     If set to "none", all metadata will be stripped
@@ -158,7 +164,21 @@ class WebPOnDemand
 
         // quality
         if (isset($_GET['quality'])) {
-            $options['quality'] = $_GET['quality'];
+            if ($_GET['quality'] == 'auto') {
+                $options['quality'] = 'auto';
+            } else {
+                $options['quality'] = intval($_GET['quality']);
+            }
+        }
+
+        // max-quality
+        if (isset($_GET['max-quality'])) {
+            $options['max-quality'] = intval($_GET['max-quality']);
+        }
+
+        // default-quality
+        if (isset($_GET['default-quality'])) {
+            $options['default-quality'] = intval($_GET['default-quality']);
         }
 
         // method
