@@ -250,14 +250,18 @@ http://php.net/manual/en/function.set-include-path.php
             ?>
             <div id="cwebp" style="display:none;">
                 <div class="cwebp converter-options">
-                  <h3>cwebp options</h3>
+                  <h3>cwebp</h3>
                   <div class="info">
-                      This converter works by executing cwebp binary by google.
-                      <br><br>Enabling "use nice" saves system resources at the cost of slightly slower conversion
+                      cwebp works by executing the cwebp binary from Google. This should be your first choice.
+                      Its best in terms of quality, speed and options. The only catch is that it requires the exec function to be enabled,
+                      and that the webserver user is allowed to execute the cwebp binary (either at known system locations, or one of the precompiled binaries,
+                      that comes with this library). If you are on a shared host that doesn't allow that, the second best choice would probably be the wpc cloud converter.
                   </div>
+                  <h3>cweb options</h3>
                   <div>
                       <label for="cwebp_use_nice">Use nice</label>
                       <input type="checkbox" id="cwebp_use_nice">
+                      <br>Enabling "use nice" saves system resources at the cost of slightly slower conversion
 
                   </div>
                   <br>
@@ -267,6 +271,14 @@ http://php.net/manual/en/function.set-include-path.php
             </div>
             <div id="gd" style="display:none;">
                 <div class="ewww converter-options">
+                  <h3>Gd</h3>
+                  <p>
+                    The gd converter uses the Gd extension to do the conversion. It is per default placed below the cloud converters for two reasons.
+                    Firstly, it does not seem to produce quite as good quality as cwebp.
+                    Secondly, it provides no conversion options, besides quality.
+                    The Gd extension is pretty common, so the main feature of this converter is that it <i>may</i> work out of the box.
+                    This is in contrast to the cloud converters, which requires that the user does some setup.
+                  </p>
                   <h3>Gd options</h3>
                   <div class="info">
                       Gd neither supports copying metadata nor exposes any WebP options. Lacking the option to set lossless encoding results in poor encoding of PNGs - the filesize is generally much larger than the original. For this reason, the converter defaults to skip PNG's.
@@ -281,10 +293,15 @@ http://php.net/manual/en/function.set-include-path.php
                 </div>
             </div>
             <div id="imagick" style="display:none;">
-                <div class="ewww converter-options">
+                <div class="imagick converter-options">
+                  <h3>Imagick</h3>
+                  <p>
+                    imagick would be your last choice. For some reason it produces conversions that are only marginally better than the originals.
+                    See <a href="https://github.com/rosell-dk/webp-convert/issues/43" target="_blank">this issue</a>. But it is fast.
+                  </p>
                   <h3>Imagick options</h3>
                   <div class="info">
-                      imagick has no special options.
+                      imagick has no extra options.
                   </div>
                   <br>
                   <!--
@@ -295,6 +312,13 @@ http://php.net/manual/en/function.set-include-path.php
             </div>
             <div id="ewww" style="display:none;">
                 <div class="ewww converter-options">
+                  <h3>Ewww</h3>
+                  <p>
+                    <a href="https://ewww.io/" target="_blank">ewww</a> is a cloud service. It is a decent alternative for those who don't have the technical know-how to install wpc.
+                    ewww is using cwebp to do the conversion, so quality is great.
+                    ewww however only provides one conversion option (quality), and it is not free.
+                    But very cheap. Like in almost free.
+                  </p>
                   <h3>Ewww options</h3>
                   <div>
                       <label for="ewww_key">Key</label>
@@ -312,18 +336,31 @@ http://php.net/manual/en/function.set-include-path.php
                 </div>
             </div>
             <div id="wpc" style="display:none;">
-                <div class="ewww converter-options">
+                <div class="wpc converter-options">
+                  <h3>WebPConvert Cloud Service</h3>
+                  wpc is an open source cloud converter based on <a href="https://github.com/rosell-dk/webp-convert" target="_blank">WebPConvert</a>
+                  (this plugin also happens to be based on WebPConvert).
+                  Conversions will of course be slower than cwebp, as images need to go back and forth to the cloud converter.
+                  As images usually just needs to be converted once, the slower conversion
+                  speed is probably acceptable. The conversion quality and options of wpc matches cwebp.
+                  The only catch is that you will need to install the WPC library on a server (or have someone do it for you).
+                  <a href="https://github.com/rosell-dk/webp-convert-cloud-service" target="blank">Visit WPC on github</a>.
+                  If this is a problem, we suggest you turn to ewww.
+                  (PS: A Wordpress plugin is planned, making it easier to set up a WPC instance. Or perhaps the functionality will even be part of this plugin)
+
                   <h3>Options for WebPConvert Cloud Service</h3>
                   <div>
                       <label for="wpc_url">URL</label>
                       <input type="text" id="wpc_url" placeholder="Url to your WPC instance">
                   </div>
+
                   <div>
                       <label for="wpc_secret">Secret</label>
                       <input type="text" id="wpc_secret" placeholder="Secret (must match secret on server side)">
                   </div>
                   <br>
                   <h4>Fallback (optional)</h4>
+                  <p>In case the first is down, the fallback will be used.</p>
                   <div>
                       <label for="wpc_url_2">URL</label>
                       <input type="text" id="wpc_url_2" placeholder="Url to your other WPC instance">
