@@ -77,11 +77,9 @@ class WebPConvertAndServe
           $echoLogger = new \WebPConvert\Loggers\EchoLogger();
         }
 
+        ob_start();
         try {
-            ob_start();
             $success = WebPConvert::convert($source, $destination, $options, $echoLogger);
-            $conversionInsights = ob_get_contents();
-            ob_end_clean();
 
             if (!$success) {
                 $msg = 'No converters are operational';
@@ -95,6 +93,8 @@ class WebPConvertAndServe
         } catch (\Exception $e) {
             $msg = $e->getMessage();
         }
+        $conversionInsights = ob_get_contents();
+        ob_end_clean();
 
         if ($success) {
             header('Content-type: image/webp');
