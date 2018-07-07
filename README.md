@@ -10,14 +10,13 @@ The plugin works by .htaccess magic coupled with an image converter. Basically, 
 
 The approach has the benefit that is works regardless of how an image found its way into your site. The plugin does not need to hook into Media Library events, Gallery events etc, because it does not need to maintain a complete collection of converted images. It makes it so much simpler -- and lighter.
 
-
-Note:
+*Note:*
 The rules created in .htaccess are sensitive to the location of your image folder and the location of wordpress. If you at some point change one of these, the rules will have to be updated. .htaccess rules are updated whenever you change a setting (all configuration is actually stored in .htaccess, which allows the converter to run faster, than if it had the overhead of bootstrapping Wordpress)
 
-Note:
+*Note:*
 Do not simply remove the plugin without deactivating it first. Deactivation takes care of removing the rules in the .htaccess file. With the rules there, but converter gone, your Google Chrome visitors will not see any jpeg images.
 
-Note:
+*Note:*
 The plugin does not support multisite configurations. A donation may help fixing that ;)
 
 
@@ -25,10 +24,9 @@ The plugin does not support multisite configurations. A donation may help fixing
 
 1. Upload the plugin files to the `/wp-content/plugins/webp-express` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
-3. Configure it (the plugin doesn't do anything, before it is configured)
+3. Configure it (the plugin doesn't do anything until configured)
 4. Verify that it works
 
-## Configuration / testing
 You configure the plugin in Settings > WebP Express.
 
 The *Image types to convert* option is initially set to "Do not convert any images!". This allows you to test that there is a working converter, before redirecting images to the converter.
@@ -83,5 +81,5 @@ Putting this question in the "frequently" asked questions section is of course s
 # Roadmap
 
 * Test on multisite
-* Display whether the server is able to detect quality of jpegs
+* Display whether the server is able to detect quality of jpegs or not
 * Make the fallback quality configurable (the quality to use, when quality of source file cannot be determined)
