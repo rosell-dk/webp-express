@@ -41,18 +41,20 @@ These different converting methods are called *converters*.
 The best converter is cwebp. So the first thing you should do is test whether the cwebp converter is working. Simply click "test" next to the converter. If it doesn't work, you can disable that converter (or try to make it work, by changing the server setup).
 The next converter to try is wpc, which is equally good as cwebp in terms of quality / filesize ratio, but which is slower. wpc is an open source cloud service, which you will have to install on some other server. If this is too much work, continue to the next converter. In the converter settings, you can read about the individual converters. You can also head to the WebPConvert readme for more information.
 
-Once, you have a converter, that works, when you click the "test"-button, you are ready to test the whole stack. To do this, you must first make sure to select something other than "Do not convert any images!" in *Image types to convert*
-Next, click "Save settings". This will save settings, as well as update the .htaccess.
+Once, you have a converter, that works, when you click the "test"-button, you are ready to test the whole stack, and the rewrite rules. To do this, first make sure to select something other than "Do not convert any images!" in *Image types to convert*. Next, click "Save settings". This will save settings, as well as update the .htaccess.
 
 If you are working in a browser that supports webp (ie Google Chrome), you will see a link "Convert test image (show debug)" just above the "Save settings" button. Click that to test if it works. The screen should show a textual report of the conversion process. If it shows an image, it means that the .htaccess redirection isn't working. It may be that your server just needs some time. Some servers has set up caching.
 
-Note that the plugin does not change any HTML. In the HTML the image src is still set to ie "example.jpg". To verify that the plugin is working (without clicking the test-button), do the following:
+Note that the plugin does not change any HTML. In the HTML the image src is still set to ie "example.jpg". To verify that the plugin is working (without clicking the test button), do the following:
 
 - Open the page in Google Chrome
 - Right-click the page and choose "Inspect"
 - Click the "Network" tab
 - Reload the page
 - Find a jpeg or png image in the list. In the "type" column, it should say "webp"
+
+You can also append ?debug after any image url, in order to run a conversion, and see the conversion report. Btw: If you append ?reconvert after an image url, you will force a reconversion of the image.
+
 
 ## Limitations
 
