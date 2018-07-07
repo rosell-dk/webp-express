@@ -27,17 +27,18 @@ The plugin has not been tested in multisite configurations. It's on the roadmap!
 3. Configure it (the plugin doesn't do anything until configured)
 4. Verify that it works
 
-You configure the plugin in Settings > WebP Express.
+You configure the plugin in *Settings > WebP Express*.
 
 The *Image types to convert* option is initially set to "Do not convert any images!". This allows you to test that there is a working converter, before redirecting images to the converter.
 
 WebPExpress uses [WebPConvert](https://github.com/rosell-dk/webp-convert) to convert images. This is how WebPConvert describes itself:
+
 *The current state of WebP conversion in PHP is this: There are several ways to do it, but they all require something of the server setup. What works on one shared host might not work on another. WebPConvert combines these methods by iterating over them (optionally in the desired order) until one of them is successful - or all of them fail.*
 
 These different converting methods are called *converters*.
 
-The best converter is cwebp. So the first thing you should do is test whether the cwebp converter is working. Simply click "test" next to the converter. If it doesn't work, you can disable that converter (or try to make it work, by changing the server setup).
-The next converter to try is wpc, which is equally good as cwebp in terms of quality / filesize ratio, but which is slower. wpc is an open source cloud service, which you will have to install on some other server. If this is too much work, continue to the next converter. In the converter settings, you can read about the individual converters. You can also head to the WebPConvert readme for more information.
+The best converter is *cwebp*. So the first thing you should do is test whether the cwebp converter is working. Simply click "test" next to the converter. If it doesn't work, you can disable that converter (or try to make it work, by changing the server setup).
+The next converter to try is *wpc*, which is equally good as cwebp in terms of quality / filesize ratio, but which is slower. wpc is an open source cloud service, which you will have to install on some other server. If this is too much work, continue to the next converter. In the converter settings, you can read about the individual converters. You can also head to the WebPConvert readme for more information.
 
 Once, you have a converter, that works, when you click the "test"-button, you are ready to test the whole stack, and the rewrite rules. To do this, first make sure to select something other than "Do not convert any images!" in *Image types to convert*. Next, click "Save settings". This will save settings, as well as update the .htaccess.
 
@@ -51,7 +52,7 @@ Note that the plugin does not change any HTML. In the HTML the image src is stil
 - Reload the page
 - Find a jpeg or png image in the list. In the "type" column, it should say "webp"
 
-You can also append ?debug after any image url, in order to run a conversion, and see the conversion report. Btw: If you append ?reconvert after an image url, you will force a reconversion of the image.
+You can also append `?debug` after any image url, in order to run a conversion, and see the conversion report. Btw: If you append `?reconvert` after an image url, you will force a reconversion of the image.
 
 
 ## Limitations
