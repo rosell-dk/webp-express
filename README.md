@@ -69,7 +69,7 @@ You can also append `?debug` after any image url, in order to run a conversion, 
 ## Frequently Asked Questions
 
 ### How do I set the WebP quality?
-You don't. The plugin will try to detect the quality of the source file, and use same quality as that. You do however have an option to select a maximum quality - usefull, because there is seldom any need for a quality above 85 on ordinary web content. In case quality of the source file cannot be determined (that feature requires that Imagick or GraphicsMagick is installed), it will be set to 70.
+You don't. The plugin will try to detect the quality of the source file, and use same quality as that. You do however have an option to select a maximum quality - usefull, because there is seldom any need for a quality above 85 on ordinary web content. In case quality of the source file cannot be determined (that feature requires that Imagick or GraphicsMagick is installed), it will be set to 80.
 
 ### How do I make this work with a CDN?
 Chances are that the default setting of your CDN is not to forward any headers to your origin server. But the plugin needs the "Accept" header, because this is where the information is whether the browser accepts webp images or not. You will therefore have to make sure to configure your CDN to forward the "Accept" header.
