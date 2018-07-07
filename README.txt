@@ -1,10 +1,11 @@
-=== WebP express ===
+=== WebP Express ===
 Contributors: rosell.dk
 Donate link: https://www.bitwise-it.dk/contact
 Tags: webp, images, performance
 Requires at least: 4.7.5
 Tested up to: 4.9.7
-Stable tag: 0.2  (Stable tag should indicate the Subversion "tag" of the latest stable version, or "trunk,")
+Stable tag: 0.2
+Requires PHP: 5.5
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,6 +96,9 @@ To verify that the plugin is working (without clicking the test button), do the 
 You can also append ?debug after any image url, in order to run a conversion, and see the conversion report.
 Btw: If you append ?reconvert after an image url, you will force a reconversion of the image.
 
+== Screenshots ==
+
+
 == Limitations ==
 
 * The plugin does not work on Microsoft IIS server
@@ -134,6 +138,7 @@ I have paypal and of course an ordinary bank account.
 
 == Screenshots ==
 
+1. WebP Express settings
 
 == Changelog ==
 
