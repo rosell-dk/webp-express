@@ -25,9 +25,9 @@ $source = $_GET['source'];
 $destination = $_GET['destination'];
 $converter = $_GET['converter'];
 
-$options = [
-    'quality' => intval($_GET['quality']),
-];
+if (isset($_GET['max-quality'])) {
+  $options['max-quality'] = intval($_GET['max-quality']);
+}
 
 if (isset($_GET['method'])) {
   $options['method'] = intval($_GET['method']);
