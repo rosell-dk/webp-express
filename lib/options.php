@@ -3,12 +3,12 @@
 // Maybe go away from using Settings API ?
 // https://wpshout.com/wordpress-options-page/
 
-add_thickbox();
 
 include_once 'helpers.php';
 
 add_action('admin_enqueue_scripts', function () {
     // https://github.com/RubaXa/Sortable
+
     wp_register_script('sortable', plugins_url('../js/sortable.min.js', __FILE__), [], '1.9.0');
     wp_enqueue_script('sortable');
 
@@ -16,7 +16,7 @@ add_action('admin_enqueue_scripts', function () {
         'webp-express-options-page',
         plugins_url('../js/webp-express-options-page.js', __FILE__),
         ['sortable'],
-        '1.0.7'
+        '0.2.0'
     );
     wp_enqueue_script('webp-express-options-page');
 
@@ -32,9 +32,11 @@ add_action('admin_enqueue_scripts', function () {
         'webp-express-options-page-css',
         plugins_url('../css/webp-express-options-page.css', __FILE__),
         null,
-        '1.0.7'
+        '0.2.0'
     );
     wp_enqueue_style('webp-express-options-page-css');
+
+    add_thickbox();
 });
 
 
@@ -136,7 +138,7 @@ function webp_express_option_group_init()
         echo '<option value="report"' . ($failureResponse == 'report' ? ' selected' : '') . '>Error report (in plain text)</option>';
         echo '<option value="report-as-image"' . ($failureResponse == 'report-as-image' ? ' selected' : '') . '>Error report as image</option>';
         echo '</select>';
-        echo '<p>Determines what the converter should serve, in case the image conversion should fail. For production servers, recommended value is "Original image". For development servers, recommended value is anything but that</p>';
+        echo '<p>Determines what the converter should serve, in case the image conversion should fail. For production servers, recommended value is "Original image". For development servers, choose anything you like, but that</p>';
     }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
 
     add_settings_field('webp_express_max_quality_id', 'Max quality (0-100)', function () {
