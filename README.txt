@@ -39,7 +39,7 @@ rules in the .htaccess file. With the rules there, but converter gone, your Goog
 not see any jpeg images.
 
 Note:
-The plugin does not support multisite configurations. A donation may help fixing that more quickly ;)
+The plugin has not been tested in multisite configurations. It's on the roadmap!
 
 
 == Installation ==

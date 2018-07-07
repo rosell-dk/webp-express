@@ -17,7 +17,7 @@ The rules created in .htaccess are sensitive to the location of your image folde
 Do not simply remove the plugin without deactivating it first. Deactivation takes care of removing the rules in the .htaccess file. With the rules there, but converter gone, your Google Chrome visitors will not see any jpeg images.
 
 *Note:*
-The plugin does not support multisite configurations. A donation may help fixing that ;)
+The plugin has not been tested in multisite configurations. It's on the roadmap!
 
 
 ## Installation
