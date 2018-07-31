@@ -2,9 +2,6 @@
 
 //require 'webp-on-demand/vendor/autoload.php';
 
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
-
 
 //require 'vendor/webp-convert-and-serve/autoload.php';
 require 'vendor/webp-on-demand/autoload.php';

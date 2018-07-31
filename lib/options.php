@@ -178,9 +178,6 @@ function webp_express_settings_page_content()
             settings_fields('webp_express_option_group');
             do_settings_sections('webp_express_settings_page');
 
-            //error_reporting(E_ALL);
-            //ini_set('display_errors', 1);
-
 
             //echo '<pre>' . print_r(WebPExpressHelpers::calculateUrlsAndPaths(), true) . '</pre>';
 

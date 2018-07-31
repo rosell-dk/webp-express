@@ -61,12 +61,13 @@ class WebPConvertAndServe
 
     public static function convertAndServeImage($source, $destination, $options, $failAction, $criticalFailAction, $debug = false)
     {
+      /*
         if ($debug) {
             error_reporting(E_ALL);
             ini_set('display_errors', 'On');
         } else {
             ini_set('display_errors', 'Off');
-        }
+        }*/
 
         $criticalFail = false;
 
