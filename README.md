@@ -81,6 +81,7 @@ Putting this question in the "frequently" asked questions section is of course s
 
 # Roadmap
 
+* Share converter with other sites. Optionally provide conversion service for other sites, which will be able to connect to it using the "wpc" converter.
 * Test on multisite
 * Display whether the server is able to detect quality of jpegs or not
 * Make the fallback quality configurable (the quality to use, when quality of source file cannot be determined)

@@ -4,7 +4,7 @@ Donate link: https://www.bitwise-it.dk/contact
 Tags: webp, images, performance
 Requires at least: 4.7.5
 Tested up to: 4.9.7
-Stable tag: 0.2
+Stable tag: 0.2.0
 Requires PHP: 5.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -99,7 +99,7 @@ Putting this question in the "frequently" asked questions section is of course s
 
 == Roadmap ==
 
-* Optionally provide conversion service for other sites
+* Share converter with other sites. Optionally provide conversion service for other sites, which will be able to connect to it using the "wpc" converter.
 * Test on multisite
 * Display whether the server is able to detect quality of jpegs or not
 * Make the fallback quality configurable (the quality to use, when quality of source file cannot be determined)
