@@ -54,6 +54,18 @@ class WebPExpressHelpers
                 'webpExpressRoot' => $WebExpressRoot,
                 'destinationRootRelativeToWebExpressRoot' => $destinationRootRelativeToWebExpressRoot,
                 'destinationRootRelativeToWordpressRoot' => $destinationRootRelativeToWordpressRoot
+            ],
+            // TODO: read up on this, and make complete tests
+            // https://wordpress.stackexchange.com/questions/188448/whats-the-difference-between-get-home-path-and-abspath
+            'pathsForHtaccess' => [
+                //$basePath, $destinationRoot, $scriptPath
+                'basePath' => untrailingslashit(WebPExpressHelpers::get_rel_dir($_SERVER['DOCUMENT_ROOT'], untrailingslashit(ABSPATH))),
+                'destinationRoot' => $destinationRootRelativeToWordpressRoot,   //  Where to place converted files, relative to the base path.
+                'scriptPath' => untrailingslashit($converterUrlPathRelativeToSiteUrl),
+
+                //'abspath' => ABSPATH,
+                //'dr' => $_SERVER['DOCUMENT_ROOT'],
+                //'bp' => str_replace($_SERVER['DOCUMENT_ROOT'] . '/', '', untrailingslashit(ABSPATH)),
             ]
         ];
     }
@@ -95,12 +107,17 @@ class WebPExpressHelpers
         }
         $fileExt = implode('|', $fileExtensions);
 
+        $paths = $urlsAndPaths['pathsForHtaccess'];
+        return self::generateHTAccessRules2($fileExt, $paths['basePath'], $paths['destinationRoot'], $paths['scriptPath'], $options);
+    }
+/*
         if ($imageTypes == 0) {
           $rules = '# Configured not to convert anything!';
           //$rules .= 'php_value include_path ".:/usr/local/lib/php:/your/dir"';
           $rules .= 'php_value include_path ".:/usr/local/lib/php:/hsphere/local/home/z84733/mingo.net/wp-content/plugins/webp-express/vendor/webp-convert/Converters/Binaries"';
         } else {
           $rules = "<IfModule mod_rewrite.c>\n" .
+
           "  RewriteEngine On\n\n" .
           "  # Redirect to existing converted image (under appropriate circumstances)\n" .
           "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
@@ -116,17 +133,75 @@ class WebPExpressHelpers
           "  RewriteRule ^\\/?(.*)\.(" . $fileExt . ")$ " . $urls['converterUrlPathRelativeToSiteUrl'] . "convert.php?htaccess-path=" . $filePaths['wordpressRoot'] . '&destination-root-rel-to-htaccess-path=' . $filePaths['destinationRootRelativeToWordpressRoot'] . '&source-rel-to-htaccess-path=$1.$2' . $options . "&%1 [NC,E=webpaccept:1,E=WEBPNEW]\n" .
 
           "</IfModule>\n" .
+
           "<IfModule mod_headers.c>\n" .
           "  # Apache appends \"REDIRECT_\" in front of the environment variables, but LiteSpeed does not\n" .
           "  # These next three lines are for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
           "  SetEnvIf REDIRECT_WEBPACCEPT 1 WEBPACCEPT=1\n" .
           "  SetEnvIf REDIRECT_WEBPEXISTING 1 WEBPEXISTING=1\n" .
-          "  SetEnvIf REDIRECT_WEBPNEW 1 WEBPNEW=1\n" .
+          "  SetEnvIf REDIRECT_WEBPNEW 1 WEBPNEW=1\n\n" .
 
-          "  Header append Vary Accept env=WEBPACCEPT\n" .
+          "  # Make CDN caching possible." .
+          "  Header append Vary Accept env=WEBPACCEPT\n\n" .
+
+          "  # Add headers for debugging\n" .
           "  Header append X-WebP-Express \"Routed to existing converted image\" env=WEBPEXISTING\n" .
           "  Header append X-WebP-Express \"Routed to image converter\" env=WEBPNEW\n" .
-          "</IfModule>\n" .
+          "</IfModule>\n\n" .
+          "AddType image/webp .webp\n";
+        }
+        return $rules;
+    }
+        */
+    /**
+     Create rewrite rules for WebP On Demand.
+
+     @param $fileExt            To convert both jpegs and pngs, use "jpe?g|png". To disable converting, use ""
+     @param $basePath           Path of the .htaccess relative to document root. Ie "." or "my-sub-site"
+     @param $destinationRoot    Where to place converted files, relative to the base path.
+     @param $scriptPath         Url path to webp-on-demand.php, relative to the base directory.
+     @param $options            String of options. If not empty, it must start with "&". Ie "&converters=cwebp,gd&quality=auto"
+
+     Note: None of the paths supplied may start or end with a forward slash.
+     */
+    private static function generateHTAccessRules2($fileExt, $basePath, $destinationRoot, $scriptPath, $options)
+    {
+        $rules = '';
+        if ($fileExt == '') {
+          $rules .= '# Configured not to convert anything!';
+        } else {
+          $rules .= "<IfModule mod_rewrite.c>\n" .
+
+          "  RewriteEngine On\n\n" .
+
+          "  # Redirect to existing converted image (under appropriate circumstances)\n" .
+          "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
+          "  RewriteCond %{QUERY_STRING} !((^reconvert.*)|(^debug.*))\n" .
+          "  RewriteCond %{DOCUMENT_ROOT}/" . $basePath . "/" . $destinationRoot . "/$1.$2.webp -f\n" .
+          "  RewriteRule ^\/?(.*)\.(jpe?g|png)$ /" . $basePath . "/" . $destinationRoot . "/$1.$2.webp [NC,T=image/webp,E=WEBPACCEPT:1,E=WEBPEXISTING:1,QSD]\n\n" .
+
+          "  # Redirect to converter (under appropriate circumstances)\n" .
+          "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
+          "  RewriteCond %{QUERY_STRING} (^reconvert.*)|(^debug.*) [OR]\n" .
+          "  RewriteCond %{DOCUMENT_ROOT}/" . $basePath . "/" . $destinationRoot . "/$1.$2.webp !-f\n" .
+          "  RewriteCond %{QUERY_STRING} (.*)\n" .
+          "  RewriteRule ^\/?(.*)\.(jpe?g|png)$ " . $scriptPath . "/webp-on-demand.php?base-path=" . $basePath . "&destination-root=" . $destinationRoot . "&source=$1.$2" . $options . "&%1 [NC,E=WEBPACCEPT:1,E=WEBPNEW:1]\n" .
+          "</IfModule>\n\n" .
+
+          "<IfModule mod_headers.c>\n" .
+          "  # Apache appends \"REDIRECT_\" in front of the environment variables, but LiteSpeed does not\n" .
+          "  # These next three lines are for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
+          "  SetEnvIf REDIRECT_WEBPACCEPT 1 WEBPACCEPT=1\n" .
+          "  SetEnvIf REDIRECT_WEBPEXISTING 1 WEBPEXISTING=1\n" .
+          "  SetEnvIf REDIRECT_WEBPNEW 1 WEBPNEW=1\n\n" .
+
+          "  # Make CDN caching possible.\n" .
+          "  Header append Vary Accept env=WEBPACCEPT\n\n" .
+
+          "  # Add headers for debugging\n" .
+          "  Header append X-WebP-On-Demand \"Routed to existing converted image\" env=WEBPEXISTING\n" .
+          "  Header append X-WebP-On-Demand \"Routed to image converter\" env=WEBPNEW\n" .
+          "</IfModule>\n\n" .
           "AddType image/webp .webp\n";
         }
         return $rules;

@@ -2,23 +2,33 @@
 /*
 URL parameters:
 
+base-path:
+    Sets the base path used for "source" and "destination-root" options.
+    Must be relative to document root, or absolute (not recommended)
+    When used in .htaccess, set it to the folder containing the .htaccess file, relative to document root.
+    If for example document root is /var/www/example.com/ and you have a subdirectory "wordpress", which you
+    want WebPOnDemand to work on, you should place .htaccess rules in the "wordpress" directory, and
+    your "base-path" will be "wordpress"
+    If not set, it defaults to be the path of webp-on-demand.php
+
 source: Path to source file.
-    Can be absolute or relative to $root, that is passed in
-    If it starts with "/", it is considered an absolute path.
+    Path to source file, relative to 'base-path' option.
+    The final path is calculated like this:
+        [base-path] + [path to source file] + ".webp".
+    absolute path is depreciated, but supported for backwards compatability.
 
-destination-root (optional):
-    The final destination will be calculated like this:
-        [destination-root] + [relative path of source file] + ".webp".
-
-    - Both absolute paths and relative paths are accepted (if the path starts with "/", it is considered an absolute
-      path).
-    - Double-dots in paths are allowed, ie "../webp-cache"
-
+destination-root:
+    The path of where you want the converted files to reside, relative to the 'base-path' option.
     If you want converted files to be put in the same folder as the originals, you can set destination-root to ".", or
     leave it blank. If you on the other hand want all converted files to reside in their own folder, set the
     destination-root to point to that folder. The converted files will be stored in a hierarchy that matches the source
     files. With destination-root set to "webp-cache", the source file "images/2017/cool.jpg" will be stored at
     "webp-cache/images/2017/cool.jpg.webp".
+    Double-dots in paths are allowed, ie "../webp-cache"
+    The final destination is calculated like this:
+        [base-path] + [destination-root] + [path to source file] + ".webp".
+    Default is "."
+    You can also supply an absolute path
 
 quality (optional):
     The quality of the generated WebP image, "auto" or 0-100. Defaults to "auto"
@@ -99,11 +109,12 @@ namespace WebPOnDemand;
 
 use WebPConvertAndServe\WebPConvertAndServe;
 use WebPConvert\WebPConvert;
-use WebPOnDemand\PathHelper;
 use WebPConvert\Converters\ConverterHelper;
 
 class WebPOnDemand
 {
+    // transform options with '-2' postfix into new converters
+    // Idea: rename function to ie "transformFallbackOptionsIntoNewConverters"
     private static function transformFallbackOptions($converters) {
         foreach ($converters as $i => &$converter) {
             $duplicateConverter = false;
@@ -143,31 +154,78 @@ class WebPOnDemand
             break;
         }
     }
-    public static function serve($root)
+    private static function removeDoubleSlash($str)
     {
+        return preg_replace('/\/\//', '/', $str);
+    }
+    private static function getRelDir($from_dir, $to_dir)
+    {
+        $fromDirParts = explode('/', str_replace('\\', '/', $from_dir));
+        $toDirParts = explode('/', str_replace('\\', '/', $to_dir));
+        $i = 0;
+        while (($i < count($fromDirParts)) && ($i < count($toDirParts)) && ($fromDirParts[$i] == $toDirParts[$i])) {
+            $i++;
+        }
+        $rel = "";
+        for ($j = $i; $j < count($fromDirParts); $j++) {
+            $rel .= "../";
+        }
+
+        for ($j = $i; $j < count($toDirParts); $j++) {
+            $rel .= $toDirParts[$j];
+            if ($j < count($toDirParts)-1) {
+                $rel .= '/';
+            }
+        }
+        return $rel;
+    }
+
+    public static function serve($scriptPath)
+    {
+
         $debug = (isset($_GET['debug']) ? ($_GET['debug'] != 'no') : false);
 
-        $htaccessPath = $_GET['htaccess-path'];
-        $destinationRootRelToHtaccessPath = $_GET['destination-root-rel-to-htaccess-path'];
-        $sourceRelToHtaccessPath = $_GET['source-rel-to-htaccess-path'];
-
-        $source = PathHelper::removeDoubleSlash($htaccessPath . '/' . $sourceRelToHtaccessPath);
-        $destination = PathHelper::removeDoubleSlash($htaccessPath . '/' . $destinationRootRelToHtaccessPath . '/' . $sourceRelToHtaccessPath . '.webp');
-
-
-//$source = $_GET['source']
-/*
         //$source = $root . '/' . $_GET['source'];
-        $source = PathHelper::abspath($_GET['source'], $root);
-        $source = PathHelper::removeDoubleSlash($source);
 
-
-        if (isset($_GET['destination-root'])) {
-            $destination = PathHelper::getDestinationPath($source, $_GET['destination-root'], $root);
+        if (!isset($_GET['base-path'])) {
+            $basePath = $scriptPath;
         } else {
-            $destination = $source . '.webp';
+            $basePath = $_GET['base-path'];
+            if ((substr($basePath, 0, 1) == '/')) {
+            } else {
+                $basePath = $_SERVER["DOCUMENT_ROOT"] . '/' . $basePath;
+            }
         }
-        */
+
+        // Calculate $source and $sourceRelToBasePath (needed for calculating $destination)
+        $sourcePath = $_GET['source'];  // this path includes filename
+        if ((substr($sourcePath, 0, 1) == '/')) {
+            $sourcePathAbs = $sourcePath;
+            $sourceRelToBasePath = self::getRelDir($basePath, $sourcePathAbs);
+            //echo $basePath . '<br>' . $sourcePathAbs . '<br>' . $sourceRelToBasePath . '<br><br>';
+
+        } else {
+            $sourceRelToBasePath = $sourcePath;
+            $sourcePathAbs = $basePath . '/' . $sourcePath;
+        }
+        $source = self::removeDoubleSlash($sourcePathAbs);
+
+        // Calculate $destination from destination-root and $basePath
+        if (!isset($_GET['destination-root'])) {
+            $destinationRoot = '.';
+        } else {
+            $destinationRoot = $_GET['destination-root'];
+        }
+        if ((substr($destinationRoot, 0, 1) == '/')) {
+            // absolute path - overrides basepath
+            $destinationRootAbs = $destinationRoot;
+        } else {
+            $destinationRootAbs = $basePath . '/' . $destinationRoot;
+        }
+        $destination = self::removeDoubleSlash($destinationRootAbs . '/' . $sourceRelToBasePath . '.webp');
+
+
+
 
         $options = [];
 
@@ -273,34 +331,15 @@ class WebPOnDemand
             // TODO
             // As we do not want to leak api keys, I have commented out the following.
 
-/*
             echo 'GET parameters:<br>';
             foreach ($_GET as $key => $value) {
                 echo '<i>' . $key . '</i>: ' . htmlspecialchars($value) . '<br>';
             }
-            echo '<br>';*/
+            echo '<br>';
 
             //echo $_SERVER['DOCUMENT_ROOT'];
             WebPConvertAndServe::convertAndReport($source, $destination, $options);
             return 1;
         }
     }
-    /*
-$root = (
-    isset($_GET['root-folder']) ?
-        PathHelper::removeDoubleSlash($_SERVER['DOCUMENT_ROOT'] . '/' . $_GET['root-folder']) :
-        null
-);*/
-/*
-destination (optional): (TODO)
-    Path to destination file. Can be absolute or relative (relative to document root).
-    You can choose not to specify destination. In that case, the path will be created based upon source,
-    destination-root and root-folder settings. If all these are blank, the destination will be same folder as source,
-    and the filename will have ".webp" appended to it (ie image.jpeg.webp)
-
-root-folder (optional):
-    Usually, you will not need to supply anything. Might be relevant in rare occasions where the converter that
-    generates the URL cannot pass all of the relative path. For example, an .htaccess located in a subfolder may have
-    trouble passing the parent folders.*/
-//$source = PathHelper::abspath($_GET['source'], $root);*/
 }
