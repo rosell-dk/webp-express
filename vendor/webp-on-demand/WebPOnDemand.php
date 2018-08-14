@@ -330,12 +330,12 @@ class WebPOnDemand
 
             // TODO
             // As we do not want to leak api keys, I have commented out the following.
-
+/*
             echo 'GET parameters:<br>';
             foreach ($_GET as $key => $value) {
                 echo '<i>' . $key . '</i>: ' . htmlspecialchars($value) . '<br>';
             }
-            echo '<br>';
+            echo '<br>';*/
 
             //echo $_SERVER['DOCUMENT_ROOT'];
             WebPConvertAndServe::convertAndReport($source, $destination, $options);

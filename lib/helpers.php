@@ -166,6 +166,9 @@ class WebPExpressHelpers
      */
     private static function generateHTAccessRules2($fileExt, $basePath, $destinationRoot, $scriptPath, $options)
     {
+        if ($basePath == '') {
+          //$basePath = '.';
+        }
         $rules = '';
         if ($fileExt == '') {
           $rules .= '# Configured not to convert anything!';
@@ -287,6 +290,9 @@ class WebPExpressHelpers
 
     for ($j = $i; $j < count($to_dir_parts); $j++) {
       $rel .= $to_dir_parts[$j] . '/';
+    }
+    if ($rel == '') {
+        $rel = '.';
     }
     return $rel;
   }

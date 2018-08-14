@@ -179,7 +179,7 @@ function webp_express_settings_page_content()
             do_settings_sections('webp_express_settings_page');
 
 
-            echo '<pre>' . print_r(WebPExpressHelpers::calculateUrlsAndPaths(), true) . '</pre>';
+            //echo '<pre>' . print_r(WebPExpressHelpers::calculateUrlsAndPaths(), true) . '</pre>';
 
             $localConverters = ['cwebp', 'imagick', 'gd'];
 
