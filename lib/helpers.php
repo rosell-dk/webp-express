@@ -188,7 +188,7 @@ class WebPExpressHelpers
           "  RewriteCond %{QUERY_STRING} (^reconvert.*)|(^debug.*) [OR]\n" .
           "  RewriteCond %{DOCUMENT_ROOT}/" . $basePath . "/" . $destinationRoot . "/$1.$2.webp !-f\n" .
           "  RewriteCond %{QUERY_STRING} (.*)\n" .
-          "  RewriteRule ^\/?(.*)\.(jpe?g|png)$ " . $scriptPath . "/webp-on-demand.php?base-path=" . $basePath . "&destination-root=" . $destinationRoot . "&source=$1.$2" . $options . "&%1 [NC,E=WEBPACCEPT:1,E=WEBPNEW:1]\n" .
+          "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ " . $scriptPath . "/webp-on-demand.php?base-path=" . $basePath . "&destination-root=" . $destinationRoot . "&source=$1.$2" . $options . "&%1 [NC,E=WEBPACCEPT:1,E=WEBPNEW:1]\n" .
           "</IfModule>\n\n" .
 
           "<IfModule mod_headers.c>\n" .
