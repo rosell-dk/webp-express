@@ -52,6 +52,8 @@ Note that the plugin does not change any HTML. In the HTML the image src is stil
 - Reload the page
 - Find a jpeg or png image in the list. In the "type" column, it should say "webp"
 
+In order to test that the image is not being reconverted every time, look at the Response headers of the image. There should be a "X-WebP-On-Demand" header. It should say Routed to image converter" the first time, but "Routed to existing converted image" on subsequent requests (WebP-Express is based upon WebP On Demand).
+
 You can also append `?debug` after any image url, in order to run a conversion, and see the conversion report. Btw: If you append `?reconvert` after an image url, you will force a reconversion of the image.
 
 

@@ -7,15 +7,15 @@ class WebPExpressHelpers
     {
         // Calculate URL's
         $upload_dir = wp_upload_dir();
-        $uploadUrlAbs = $upload_dir['baseurl'] . '/' . 'webp-express';
+        $destinationRootUrlPathAbs = $upload_dir['baseurl'] . '/' . 'webp-express';
 
         // Calculate url path to directory of image converter
         $pluginUrlAbs = plugins_url('', WEBPEXPRESS_PLUGIN);
 
         $converterUrlPath = parse_url($pluginUrlAbs)['path'];
 
-        // Calculate upload url path
-        $uploadUrlPath = parse_url($uploadUrlAbs)['path'];
+        // Calculate destination root url path
+        $destinationRootUrlPath = parse_url($destinationRootUrlPathAbs)['path'];
 
         // Calculate Wordpress url path
         // If site for example is accessed example.com/blog/, then the url path is "blog"
@@ -28,24 +28,32 @@ class WebPExpressHelpers
         // Calculate file dirs
         // --------------------
 
-        $uploadDir = trailingslashit($upload_dir['basedir']) . 'webp-express';
+        $destinationRoot = trailingslashit($upload_dir['basedir']) . 'webp-express';
 
-        $uploadPathRelativeToWebExpressRoot = untrailingslashit(WebPExpressHelpers::get_rel_dir(WEBPEXPRESS_PLUGIN_DIR, $uploadDir));
+        $WebExpressRoot = untrailingslashit(WEBPEXPRESS_PLUGIN_DIR);
+
+        $destinationRootRelativeToWebExpressRoot = untrailingslashit(WebPExpressHelpers::get_rel_dir($WebExpressRoot, $destinationRoot));
+
+        // $destinationRoot is ie '/webp-express-test/wordpress/wp-content/uploads/webp-express/'
+        // $wordpressRoot is ie '/mnt/Work/playground/webp-express-test/wordpress/'
+        $wordpressRoot = untrailingslashit(ABSPATH);
+        $destinationRootRelativeToWordpressRoot = untrailingslashit(WebPExpressHelpers::get_rel_dir($wordpressRoot . '/', $destinationRoot));
 
         return [
             'urls' => [
                 'webpExpressRoot' => untrailingslashit($converterUrlPath),
                 'convert' => untrailingslashit($converterUrlPath) . 'convert.php',
-                'destinationRoot' => untrailingslashit($uploadUrlPath),
+                'destinationRoot' => untrailingslashit($destinationRootUrlPath),
                 'wpRoot' => untrailingslashit($wpUrlPath),  // ie "/blog" or ""
                 'converterUrlPathRelativeToSiteUrl' => $converterUrlPathRelativeToSiteUrl,
                 'siteUrlPathRelativeToConverterPath' => $siteUrlPathRelativeToConverterPath
             ],
             'filePaths' => [
-                'destinationRoot' => untrailingslashit($uploadDir),
-                'webpExpressRoot' => untrailingslashit(WEBPEXPRESS_PLUGIN_DIR),
-                'uploadPath' => $uploadDir,
-                'uploadPathRelativeToWebExpressRoot' => $uploadPathRelativeToWebExpressRoot
+                'wordpressRoot' => $wordpressRoot,
+                'destinationRoot' => $destinationRoot,
+                'webpExpressRoot' => $WebExpressRoot,
+                'destinationRootRelativeToWebExpressRoot' => $destinationRootRelativeToWebExpressRoot,
+                'destinationRootRelativeToWordpressRoot' => $destinationRootRelativeToWordpressRoot
             ]
         ];
     }
@@ -98,16 +106,26 @@ class WebPExpressHelpers
           "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
           "  RewriteCond %{QUERY_STRING} !((^reconvert.*)|(^debug.*))\n" .
           "  RewriteCond %{DOCUMENT_ROOT}" . $urls['destinationRoot'] . "/$1.$2.webp -f\n" .
-          "  RewriteRule ^\\/?(.*)\.(" . $fileExt . ")$ " . $urls['destinationRoot'] . "/$1.$2.webp [NC,T=image/webp,E=accept:1,QSD]\n\n" .
+          "  RewriteRule ^\\/?(.*)\.(" . $fileExt . ")$ " . $urls['destinationRoot'] . "/$1.$2.webp [NC,T=image/webp,E=webpaccept:1,E=WEBPEXISTING:1,QSD]\n\n" .
           "  # Redirect to image converter (under appropriate circumstances)\n" .
           "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
           "  RewriteCond %{QUERY_STRING} (^reconvert.*)|(^debug.*) [OR]\n" .
           "  RewriteCond %{DOCUMENT_ROOT}" . $urls['destinationRoot'] . "/$1.$2.webp !-f\n" .
           "  RewriteCond %{QUERY_STRING} (.*)\n" .
-          "  RewriteRule ^\\/?(.*)\.(" . $fileExt . ")$ " . $urls['converterUrlPathRelativeToSiteUrl'] . "convert.php?source=" . $urls['siteUrlPathRelativeToConverterPath'] . "$1.$2&destination-root=" . $filePaths['uploadPathRelativeToWebExpressRoot'] . $options . "&%1 [NC,E=accept:1]\n" .
+          //"  RewriteRule ^\\/?(.*)\.(" . $fileExt . ")$ " . $urls['converterUrlPathRelativeToSiteUrl'] . "convert.php?source=" . $urls['siteUrlPathRelativeToConverterPath'] . "$1.$2&destination-root=" . $filePaths['destinationRootRelativeToWebExpressRoot'] . $options . "&%1 [NC,E=accept:1]\n" .
+          "  RewriteRule ^\\/?(.*)\.(" . $fileExt . ")$ " . $urls['converterUrlPathRelativeToSiteUrl'] . "convert.php?htaccess-path=" . $filePaths['wordpressRoot'] . '&destination-root-rel-to-htaccess-path=' . $filePaths['destinationRootRelativeToWordpressRoot'] . '&source-rel-to-htaccess-path=$1.$2' . $options . "&%1 [NC,E=webpaccept:1,E=WEBPNEW]\n" .
+
           "</IfModule>\n" .
           "<IfModule mod_headers.c>\n" .
-          "  Header append Vary Accept env=REDIRECT_accept\n" .
+          "  # Apache appends \"REDIRECT_\" in front of the environment variables, but LiteSpeed does not\n" .
+          "  # These next three lines are for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
+          "  SetEnvIf REDIRECT_WEBPACCEPT 1 WEBPACCEPT=1\n" .
+          "  SetEnvIf REDIRECT_WEBPEXISTING 1 WEBPEXISTING=1\n" .
+          "  SetEnvIf REDIRECT_WEBPNEW 1 WEBPNEW=1\n" .
+
+          "  Header append Vary Accept env=WEBPACCEPT\n" .
+          "  Header append X-WebP-Express \"Routed to existing converted image\" env=WEBPEXISTING\n" .
+          "  Header append X-WebP-Express \"Routed to image converter\" env=WEBPNEW\n" .
           "</IfModule>\n" .
           "AddType image/webp .webp\n";
         }
@@ -170,8 +188,17 @@ class WebPExpressHelpers
         from:   /var/www/wordpress/wp-content/plugins/webp-express
         to:     /var/www/wordpress/wp-content/uploads
         result: ../../uploads/
+
+     or
+        from:  /mnt/Work/playground/webp-express-test/wordpress/
+        to:    /mnt/Work/playground/webp-express-test/wordpress/wp-content/uploads/webp-express
+        result: wp-content/uploads/webp-express
+
      */
   public static function get_rel_dir($from_dir, $to_dir) {
+    $from_dir = untrailingslashit($from_dir);
+    $to_dir = untrailingslashit($to_dir);
+
     $from_dir_parts = explode('/', str_replace( '\\', '/', $from_dir ));
     $to_dir_parts = explode('/', str_replace( '\\', '/', $to_dir ));
     $i = 0;

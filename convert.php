@@ -2,9 +2,9 @@
 
 //require 'webp-on-demand/vendor/autoload.php';
 
-
-//require 'vendor/webp-convert-and-serve/autoload.php';
 require 'vendor/webp-on-demand/autoload.php';
+//require 'vendor/webp-convert-and-serve/autoload.php';
+//require 'vendor/webp-on-demand/autoload.php';
 
 //echo '<br>done';
 

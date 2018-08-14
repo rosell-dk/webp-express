@@ -41,7 +41,7 @@ class WebPExpressActivate {
 
     // Create upload dir
     $urlsAndPaths = WebPExpressHelpers::calculateUrlsAndPaths();
-    $ourUploadDir = $urlsAndPaths['filePaths']['uploadPath'];
+    $ourUploadDir = $urlsAndPaths['filePaths']['destinationRoot'];
 
     if ( ! file_exists( $ourUploadDir ) ) {
       wp_mkdir_p( $ourUploadDir );

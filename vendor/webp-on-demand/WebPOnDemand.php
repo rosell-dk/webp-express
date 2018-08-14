@@ -145,12 +145,20 @@ class WebPOnDemand
     }
     public static function serve($root)
     {
-
         $debug = (isset($_GET['debug']) ? ($_GET['debug'] != 'no') : false);
 
+        $htaccessPath = $_GET['htaccess-path'];
+        $destinationRootRelToHtaccessPath = $_GET['destination-root-rel-to-htaccess-path'];
+        $sourceRelToHtaccessPath = $_GET['source-rel-to-htaccess-path'];
+
+        $source = PathHelper::removeDoubleSlash($htaccessPath . '/' . $sourceRelToHtaccessPath);
+        $destination = PathHelper::removeDoubleSlash($htaccessPath . '/' . $destinationRootRelToHtaccessPath . '/' . $sourceRelToHtaccessPath . '.webp');
+
+
+//$source = $_GET['source']
+/*
         //$source = $root . '/' . $_GET['source'];
         $source = PathHelper::abspath($_GET['source'], $root);
-
         $source = PathHelper::removeDoubleSlash($source);
 
 
@@ -159,6 +167,7 @@ class WebPOnDemand
         } else {
             $destination = $source . '.webp';
         }
+        */
 
         $options = [];
 
@@ -263,13 +272,14 @@ class WebPOnDemand
 
             // TODO
             // As we do not want to leak api keys, I have commented out the following.
-            /*
+
+/*
             echo 'GET parameters:<br>';
             foreach ($_GET as $key => $value) {
                 echo '<i>' . $key . '</i>: ' . htmlspecialchars($value) . '<br>';
             }
-            echo '<br>';
-            */
+            echo '<br>';*/
+
             //echo $_SERVER['DOCUMENT_ROOT'];
             WebPConvertAndServe::convertAndReport($source, $destination, $options);
             return 1;

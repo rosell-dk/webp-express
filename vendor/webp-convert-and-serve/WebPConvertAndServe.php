@@ -61,6 +61,8 @@ class WebPConvertAndServe
 
     public static function convertAndServeImage($source, $destination, $options, $failAction, $criticalFailAction, $debug = false)
     {
+        header("X-WebP-Convert: yes");
+
       /*
         if ($debug) {
             error_reporting(E_ALL);
@@ -97,6 +99,8 @@ class WebPConvertAndServe
         $conversionInsights = ob_get_contents();
         ob_end_clean();
 
+        //header("WebP-Convert-Result: " . $conversionInsights);
+
         if ($success) {
             header('Content-type: image/webp');
             // Should we add Content-Length header?
@@ -129,6 +133,9 @@ class WebPConvertAndServe
 
     public static function convertAndReport($source, $destination, $options)
     {
+        header("WebP-Convert: yes");
+        header("Pragma: no-cache");
+
         echo '<html><style>td {vertical-align: top} table {color: #666}</style>';
         echo '<body><table>';
         echo '<tr><td><i>source:</i></td><td>' . $source . '</td></tr>';
