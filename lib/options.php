@@ -180,7 +180,6 @@ function webp_express_settings_page_content()
 
 
             //echo '<pre>' . print_r(WebPExpressHelpers::calculateUrlsAndPaths(), true) . '</pre>';
-echo 'plugin error: ' . get_option( 'plugin_error' );
             $localConverters = ['cwebp', 'imagick', 'gd'];
 
 /*
