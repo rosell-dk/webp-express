@@ -5,7 +5,7 @@ include_once( plugin_dir_path( __FILE__ ) . 'helpers.php');
 class WebPExpressActivate {
 
 
-  public function activate() {
+  public static function activate() {
 
     update_option( 'webp-express-message-pending', true, false );
 
