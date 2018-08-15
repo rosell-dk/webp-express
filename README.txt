@@ -4,7 +4,7 @@ Donate link: https://www.bitwise-it.dk/contact
 Tags: webp, images, performance
 Requires at least: 4.7.5
 Tested up to: 4.9.7
-Stable tag: 0.3.0
+Stable tag: 0.3.1
 Requires PHP: 5.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -95,6 +95,9 @@ Putting this question in the "frequently" asked questions section is of course s
 1. WebP Express settings
 
 == Changelog ==
+
+= 0.3.1 =
+* The "Only jpeg" setting wasn't respected in 0.3.0. It now works again
 
 = 0.3 =
 * Now works on LiteSpeed webservers
