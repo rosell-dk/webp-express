@@ -2,8 +2,8 @@
 Contributors: rosell.dk
 Donate link: https://www.bitwise-it.dk/contact
 Tags: webp, images, performance
-Requires at least: 4.7.5
-Tested up to: 4.9.7
+Requires at least: 4.7
+Tested up to: 4.9
 Stable tag: 0.3.1
 Requires PHP: 5.5
 License: GPLv3
