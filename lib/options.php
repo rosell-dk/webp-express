@@ -404,18 +404,9 @@ http://php.net/manual/en/function.set-include-path.php
 }
 
 add_action('updated_option', function($option_name, $old_value, $value) {
-    switch ($option_name) {
-        case 'webp_express_max_quality':
-        //case 'webp_express_method':
-        case 'webp_express_converters':
-        case 'webp_express_image_types_to_convert':
-        case 'webp_express_failure_response':
-            //update_option('webp-express-htaccess-needs-updating', true, false);
-
-            $rules = WebPExpressHelpers::generateHTAccessRules();
-            WebPExpressHelpers::insertHTAccessRules($rules);
-
-            break;
+    if (strpos($option_name, 'webp_express') === 0) {
+        $rules = WebPExpressHelpers::generateHTAccessRules();
+        WebPExpressHelpers::insertHTAccessRules($rules);
     }
 }, 10, 3);
 
