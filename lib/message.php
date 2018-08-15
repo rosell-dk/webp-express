@@ -39,13 +39,12 @@ add_action( 'admin_notices', function() {
         esc_html( __( 'You are on Microsof IIS server. The plugin does not work on IIS', 'webp-express' ) )
       );
       return;
-    }
-    else if ( get_option( 'webp-express-not-apache' ) ) {
-      delete_option( 'webp-express-not-apache');
+    } else if ( get_option( 'webp-express-not-apache-nor-litespeed' ) ) {
+      delete_option( 'webp-express-not-apache-nor-litespeed');
       printf(
         '<div class="%1$s"><p>%2$s</p></div>',
         esc_attr( 'notice notice-warning is-dismissible' ),
-        esc_html( __( 'You are not on Apache server. WebP Express has only been tested on Apache - continue at own risk (but please tell me if it works!). Your server is: ' . $_SERVER['SERVER_SOFTWARE'], 'webp-express' ) )
+        esc_html( __( 'You are not on Apache server, nor on LiteSpeed. WebP Express has only been tested on Apache and LiteSpeed - continue at own risk (but please tell me if it works!). Your server is: ' . $_SERVER['SERVER_SOFTWARE'], 'webp-express' ) )
       );
     }
     if ( get_option( 'webp-express-not-tested-on-litespeed' ) ) {

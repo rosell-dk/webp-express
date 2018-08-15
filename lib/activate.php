@@ -12,17 +12,23 @@ class WebPExpressActivate {
     update_option( 'webp-express-just-activated', true, false );
 
 
-    if ( strpos( strtolower($_SERVER['SERVER_SOFTWARE']), 'microsoft-iis') !== false ) {
+    $server = strtolower($_SERVER['SERVER_SOFTWARE']);
+
+    $server_is_microsoft_iis = ( strpos( $server, 'microsoft-iis') !== false );
+    if ($server_is_microsoft_iis) {
       update_option( 'webp-express-microsoft-iis', true, false );
       update_option( 'webp-express-deactivate', true, false );
       return;
     }
 
 
-    if ( strpos( strtolower($_SERVER['SERVER_SOFTWARE']), 'litespeed') !== false ) {
-      update_option( 'webp-express-not-tested-on-litespeed', true, false );
-    } else if (!( strpos( strtolower($_SERVER['SERVER_SOFTWARE']), 'apache') !== false )) {
-      update_option( 'webp-express-not-apache', true, false );
+    $server_is_litespeed = ( strpos( $server, 'litespeed') !== false );
+    $server_is_apache = ( strpos( $server, 'apache') !== false );
+
+    if ($server_is_litespeed || $server_is_apache) {
+        // all is well.
+    } else {
+        update_option( 'webp-express-not-apache-nor-litespeed', true, false );
     }
 
 
