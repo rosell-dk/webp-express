@@ -1,0 +1,15 @@
+# This file can only be used on the local machine of Bjørn Rosell.
+# I have put it in the git repository, because it might be useful as a template to others.
+# - also, github is an excellent backup ;)
+
+echo 'synching /work/playground/webp-convert-test-2/webp-convert/src/ into vendor/webp-convert  (with --delete)'
+rsync -avh /work/playground/webp-convert-test-2/webp-convert/src/ /work/playground/webp-express-test/wordpress/wp-content/plugins/webp-express/vendor/webp-convert/ --delete
+
+echo 'synching /work/playground/webp-on-demand-test-2/webp-on-demand/src/ into vendor/webp-on-demand  (with --delete)'
+rsync -avh /work/playground/webp-on-demand-test-2/webp-on-demand/src/ /work/playground/webp-express-test/wordpress/wp-content/plugins/webp-express/vendor/webp-on-demand/ --delete
+
+echo 'synching /work/playground/webp-convert-and-serve-test/webp-convert-and-serve/src/ into vendor/webp-convert-and-serve  (with --delete)'
+rsync -avh /work/playground/webp-convert-and-serve-test/webp-convert-and-serve/src/ /work/playground/webp-express-test/wordpress/wp-content/plugins/webp-express/vendor/webp-convert-and-serve/ --delete
+
+echo 'updating require files'
+php generate_vendor_requires.php
