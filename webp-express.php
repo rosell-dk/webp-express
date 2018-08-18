@@ -60,3 +60,11 @@ if (get_option('webp-express-deactivate')) {
     });
     delete_option('webp-express-deactivate');
 }
+
+// Add settings link on the plugins page
+add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), function ( $links ) {
+    $mylinks = array(
+        '<a href="' . admin_url( 'options-general.php?page=webp_express_settings_page' ) . '">Settings</a>',
+    );
+    return array_merge( $links, $mylinks );
+});
