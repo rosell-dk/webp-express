@@ -2,7 +2,7 @@
 namespace WebPConvertAndServe;
 
 use WebPConvert\WebPConvert;
-use WebPConvertAndServe\PathHelper;
+use WebPConvertAndServe\BufferLogger;
 use WebPConvert\Converters\ConverterHelper;
 //use WebPConvert\Loggers\EchoLogger;
 
@@ -61,45 +61,95 @@ class WebPConvertAndServe
 
     public static function convertAndServeImage($source, $destination, $options, $failAction, $criticalFailAction, $debug = false)
     {
-        header("X-WebP-Convert: yes");
-
-      /*
         if ($debug) {
             error_reporting(E_ALL);
             ini_set('display_errors', 'On');
         } else {
             ini_set('display_errors', 'Off');
-        }*/
+        }
 
         $criticalFail = false;
 
         $success = false;
 
-        $echoLogger = null;
-        if (class_exists('WebPConvert\Loggers\EchoLogger')) {
-          $echoLogger = new \WebPConvert\Loggers\EchoLogger();
-        }
+        $bufferLogger = new BufferLogger();
 
-        ob_start();
         try {
-            $success = WebPConvert::convert($source, $destination, $options, $echoLogger);
+            $success = WebPConvert::convert($source, $destination, $options, $bufferLogger);
 
-            if (!$success) {
+            if ($success) {
+                $status = 'Success';
+                $msg = 'Success';
+            } else {
+                $status = 'Failure (no converters are operational)';
                 $msg = 'No converters are operational';
             }
         } catch (\WebPConvert\Exceptions\InvalidFileExtensionException $e) {
             $criticalFail = true;
+            $status = 'Failure (invalid file extension)';
             $msg = $e->getMessage();
         } catch (\WebPConvert\Exceptions\TargetNotFoundException $e) {
             $criticalFail = true;
+            $status = 'Failure (target file not found)';
+            $msg = $e->getMessage();
+        } catch (\WebPConvert\Converters\Exceptions\ConverterFailedException $e) {
+            // No converters could convert the image. At least one converter failed, even though it appears to be operational
+            $status = 'Failure (no converters could convert the image)';
+            $msg = $e->getMessage();
+        } catch (\WebPConvert\Converters\Exceptions\ConversionDeclinedException $e) {
+            // (no converters could convert the image. At least one converter declined
+            $status = 'Failure (no converters could/wanted to convert the image)';
+            $msg = $e->getMessage();
+        } catch (\WebPConvert\Exceptions\ConverterNotFoundException $e) {
+            $status = 'Failure (a converter was not found!)';
+            $msg = $e->getMessage();
+        } catch (\WebPConvert\Exceptions\CreateDestinationFileException $e) {
+            $status = 'Failure (cannot create destination file)';
+            $msg = $e->getMessage();
+        } catch (\WebPConvert\Exceptions\CreateDestinationFolderException $e) {
+            $status = 'Failure (cannot create destination folder)';
             $msg = $e->getMessage();
         } catch (\Exception $e) {
+            $status = 'Failure (an unanticipated exception was thrown)';
             $msg = $e->getMessage();
         }
-        $conversionInsights = ob_get_contents();
-        ob_end_clean();
 
-        //header("WebP-Convert-Result: " . $conversionInsights);
+        $optionsForPrint = [];
+        foreach (self::getPrintableOptions($options) as $optionName => $optionValue) {
+            if ($optionName == 'converters') {
+                $converterNames = [];
+                $extraConvertOptions = [];
+                foreach ($optionValue as $converter) {
+                    if (is_array($converter)) {
+                        $converterNames[] = $converter['converter'];
+                        if (isset($converter['options'])) {
+                            $extraConvertOptions[$converter['converter']] = $converter['options'];
+                        }
+                    } else {
+                        $converterNames[] = $converter;
+                    }
+                }
+                $optionsForPrint[] = 'converters:' . implode(',', $converterNames);
+                foreach ($extraConvertOptions as $converter => $extraOptions) {
+                    $opt = [];
+                    foreach ($extraOptions as $oName => $oValue) {
+                        $opt[] = $oName . ':"' . $oValue . '"';
+                    }
+                    $optionsForPrint[] = $converter . ' options:(' . implode($opt, ', ') . ')';
+                }
+            } else {
+                $optionsForPrint[] = $optionName . ':' . $optionValue ;
+            }
+
+        }
+
+        header('X-WebP-Convert-And-Serve-Options:' . implode('. ', $optionsForPrint));
+
+        header('X-WebP-Convert-And-Serve-Status: ' . $status);
+
+        // Next line is commented out, because we need to be absolute sure that the details does not violate header syntax
+        // We could either try to filter it, or we could change WebPConvert, such that it only provides safe texts.
+        // header('X-WebP-Convert-And-Serve-Details: ' . $bufferLogger->getText());
 
         if ($success) {
             header('Content-type: image/webp');
@@ -118,32 +168,25 @@ class WebPConvertAndServe
                     self::serve404();
                     break;
                 case WebPConvertAndServe::$REPORT_AS_IMAGE:
-                    self::serveErrorMessageImage($msg);
+                    self::serveErrorMessageImage($status . '. ' . $msg);
                     break;
                 case WebPConvertAndServe::$REPORT:
-                    echo '<h1>' . $msg . '</h1>';
-                    if ($echoLogger) {
-                      echo '<p>This is how conversion process went:</p>' . $conversionInsights;
-                    }
+                    echo '<h1>' . $status . '</h1>';
+                    echo $msg;
+                    echo '<p>This is how conversion process went:</p>' . $bufferLogger->getHtml();
                     break;
             }
             return $action;
         }
     }
 
-    public static function convertAndReport($source, $destination, $options)
+    /* Hides sensitive options */
+    private static function getPrintableOptions($options)
     {
-        header("WebP-Convert: yes");
-        header("Pragma: no-cache");
 
-        echo '<html><style>td {vertical-align: top} table {color: #666}</style>';
-        echo '<body><table>';
-        echo '<tr><td><i>source:</i></td><td>' . $source . '</td></tr>';
-        echo '<tr><td><i>destination:</i></td><td>' . $destination . '<td></tr>';
+        $printable_options = [];
 
-        // Take care of not displaing sensitive converter options.
         // (psst: the is_callable check is needed in order to work with WebPConvert v1.0)
-
         if (is_callable('ConverterHelper', 'getClassNameOfConverter')) {
 
           $printable_options = $options;
@@ -166,23 +209,31 @@ class WebPConvertAndServe
               }
             }
           }
-          echo '<tr><td><i>options:</i></td><td>' . print_r($printable_options, true) . '</td></tr>';
         }
+        return $printable_options;
+    }
+
+    public static function convertAndReport($source, $destination, $options)
+    {
+        error_reporting(E_ALL);
+        ini_set('display_errors', 'On');
+
+        echo '<html><style>td {vertical-align: top} table {color: #666}</style>';
+        echo '<body><table>';
+        echo '<tr><td><i>source:</i></td><td>' . $source . '</td></tr>';
+        echo '<tr><td><i>destination:</i></td><td>' . $destination . '<td></tr>';
+
+        echo '<tr><td><i>options:</i></td><td>' . print_r(self::getPrintableOptions($options), true) . '</td></tr>';
         echo '</table>';
 
         // TODO:
         // We could display warning if unknown options are set
         // but that requires that WebPConvert also describes its general options
 
-
-
         echo '<br>';
 
         try {
-            $echoLogger = null;
-            if (class_exists('WebPConvert\Loggers\EchoLogger')) {
-              $echoLogger = new \WebPConvert\Loggers\EchoLogger();
-            }
+            $echoLogger = new \WebPConvert\Loggers\EchoLogger();
             $success = WebPConvert::convert($source, $destination, $options, $echoLogger);
         } catch (\Exception $e) {
             $success = false;

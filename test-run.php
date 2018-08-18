@@ -6,10 +6,11 @@
 //require 'vendor/webp-convert-and-serve/autoload.php';
 //require 'vendor/webp-convert/autoload.php';
 
-//error_reporting(E_ALL);
-//ini_set("display_errors", 1);
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
 
-require 'vendor/webp-convert/require-all.inc';
+//require 'vendor/webp-convert/require-all.inc';
+require 'vendor/require-webp-convert.php';
 
 //use WebPConvertAndServe\WebPConvertAndServe;
 use WebPConvert\WebPConvert;
