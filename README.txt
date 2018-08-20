@@ -59,7 +59,7 @@ Note that the plugin does not change any HTML. In the HTML the image src is stil
 - Reload the page
 - Find a jpeg or png image in the list. In the "type" column, it should say "webp"
 
-In order to test that the image is not being reconverted every time, look at the Response headers of the image. There should be a "X-WebP-On-Demand" header. It should say Routed to image converter" the first time, but "Routed to existing converted image" on subsequent requests (WebP-Express is based upon WebP On Demand).
+In order to test that the image is not being reconverted every time, look at the Response headers of the image. There should be a "X-WebP-On-Demand" header. It should say Routed to image converter" the first time, but "Routed to existing converted image" on subsequent requests (WebP-Express is based upon WebP On Demand). When routed to image converter, there should also be some headers beginning with "X-WebP-Convert-And-Serve", which reveals information about the conversion.
 
 You can also append ?debug after any image url, in order to run a conversion, and see the conversion report.
 Btw: If you append ?reconvert after an image url, you will force a reconversion of the image.
@@ -95,6 +95,13 @@ Putting this question in the "frequently" asked questions section is of course s
 1. WebP Express settings
 
 == Changelog ==
+
+= 0.4.0 =
+* Now produces X-WebP-Convert-And-Serve headers with info about the conversion - usuful for validating that converter receives the expected arguments and executes correctly.
+* WebPExpress options are now removed when plugin is uninstalled.
+* No longer generates .htaccess rules on install. The user now has to actively go to Web Express setting and save first
+* Fixed bug: .htaccess was not updated every time the settings was saved.
+* Fixed bug: The plugin generated error upon activation.
 
 = 0.3.1 =
 * The "Only jpeg" setting wasn't respected in 0.3.0. It now works again
