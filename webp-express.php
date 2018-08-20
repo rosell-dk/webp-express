@@ -68,6 +68,27 @@ if (get_option('webp-express-deactivate')) {
     delete_option('webp-express-deactivate');
 }
 
+/*
+TODO:
+Delete options when plugin is uninstalled
+
+But should it be registered inside the register_activation_hook, like in the user contributed example here? :
+https://developer.wordpress.org/reference/functions/register_uninstall_hook/
+
+
+function () {
+    delete_option('webp_express_max_quality');
+    delete_option('webp_express_image_types_to_convert');
+    delete_option('webp_express_failure_response');
+    delete_option('webp_express_converters');
+
+    /*
+    webp_express_fail_action
+    webp_express_method
+    webp_express_quality
+}
+*/
+
 
 // Add settings link on the plugins page
 add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), function ( $links ) {
