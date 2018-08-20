@@ -250,10 +250,12 @@ http://php.net/manual/en/function.set-include-path.php
                 <div class="cwebp converter-options">
                   <h3>cwebp</h3>
                   <div class="info">
-                      cwebp works by executing the cwebp binary from Google. This should be your first choice.
-                      Its best in terms of quality, speed and options. The only catch is that it requires the exec function to be enabled,
-                      and that the webserver user is allowed to execute the cwebp binary (either at known system locations, or one of the precompiled binaries,
-                      that comes with this library). If you are on a shared host that doesn't allow that, the second best choice would probably be the wpc cloud converter.
+                      cwebp works by executing the cwebp binary from Google. This should normally be your first choice.
+                      Its best in terms of quality, speed and options.                      
+                      The only catch is that it requires the exec function to be enabled, and that the webserver user is
+                      allowed to execute the cwebp binary (either at known system locations, or one of the precompiled binaries,
+                      that comes with this library).
+                      If you are on a shared host that doesn't allow that, the second best choice would probably be the wpc cloud converter.
                   </div>
                   <h3>cweb options</h3>
                   <div>
