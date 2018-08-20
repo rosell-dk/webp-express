@@ -14,6 +14,13 @@
 Note: Perhaps create a plugin page on my website?, ie https://www.bitwise-it.dk/software/wordpress/webp-express
 */
 
+/*
+function tl_save_error() {
+  update_option( 'plugin_error',  ob_get_contents() . empty(get_option('webp_express_max_quality')) ? 'empty' : 'not empty');
+}
+add_action( 'activated_plugin', 'tl_save_error' );
+*/
+
 define('WEBPEXPRESS_PLUGIN', __FILE__);
 define('WEBPEXPRESS_PLUGIN_DIR', __DIR__);
 
@@ -60,6 +67,7 @@ if (get_option('webp-express-deactivate')) {
     });
     delete_option('webp-express-deactivate');
 }
+
 
 // Add settings link on the plugins page
 add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), function ( $links ) {

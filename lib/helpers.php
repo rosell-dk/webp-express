@@ -72,10 +72,13 @@ class WebPExpressHelpers
 
     public static function generateHTAccessRules()
     {
+        if (empty(get_option('webp_express_converters'))) {
+            return '# Cannot generate the htaccess rules yet. - WebP Express has not been configured yet.';
+        }
         $options = '';
-        $options .= '&max-quality=' . get_option('webp_express_max_quality');
+        $options .= '&max-quality=' . get_option('webp_express_max_quality', '85');
         //$options .= '&method=' . get_option('webp_express_method');
-        $options .= '&fail=' . get_option('webp_express_failure_response');
+        $options .= '&fail=' . get_option('webp_express_failure_response', 'original');
         $options .= '&critical-fail=report';
 
         $converters_and_options = json_decode(get_option('webp_express_converters'), true);
@@ -97,7 +100,7 @@ class WebPExpressHelpers
         $urls = $urlsAndPaths['urls'];
         $filePaths = $urlsAndPaths['filePaths'];
 
-        $imageTypes = get_option('webp_express_image_types_to_convert');
+        $imageTypes = get_option('webp_express_image_types_to_convert', 0);
         $fileExtensions = [];
         if ($imageTypes & 1) {
           $fileExtensions[] = 'jpe?g';
@@ -210,7 +213,9 @@ class WebPExpressHelpers
         return $rules;
     }
 
-    private static function doInsertHTAccessRules($rules) {
+    // Insert .htaccess rules.
+    // @return (bool) True if successful, false if not.
+    public static function doInsertHTAccessRules($rules) {
       if (!function_exists('get_home_path')) {
           require_once ABSPATH . 'wp-admin/includes/file.php';
       }

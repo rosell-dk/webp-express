@@ -65,7 +65,7 @@ function webp_express_option_group_init()
         'webp_express_image_types_to_convert',
         [
             'type' => 'integer',
-            'default' => '3',
+            'default' => '0',
             'sanitize_callback' => 'sanitize_text_field',
         ]
     );
@@ -178,6 +178,7 @@ function webp_express_settings_page_content()
             settings_fields('webp_express_option_group');
             do_settings_sections('webp_express_settings_page');
 
+//print_r(get_option('plugin_error'));
 
             //echo '<pre>' . print_r(WebPExpressHelpers::calculateUrlsAndPaths(), true) . '</pre>';
             $localConverters = ['cwebp', 'imagick', 'gd'];
@@ -251,7 +252,7 @@ http://php.net/manual/en/function.set-include-path.php
                   <h3>cwebp</h3>
                   <div class="info">
                       cwebp works by executing the cwebp binary from Google. This should normally be your first choice.
-                      Its best in terms of quality, speed and options.                      
+                      Its best in terms of quality, speed and options.
                       The only catch is that it requires the exec function to be enabled, and that the webserver user is
                       allowed to execute the cwebp binary (either at known system locations, or one of the precompiled binaries,
                       that comes with this library).

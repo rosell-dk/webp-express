@@ -59,8 +59,25 @@ class WebPExpressActivate {
     }
 
     // Add rules to .htaccess
-    $rules = WebPExpressHelpers::generateHTAccessRules();
-    WebPExpressHelpers::insertHTAccessRules($rules);
+
+    // Test if WebP Express has been configured ('webp_express_converters' will be updated each time settings are saved - the other settings are only saved when changed)
+    if (empty(get_option('webp_express_converters'))) {
+        // WebP Express has not been configured yet.
+
+        // Write to .htaccess, in order to determine if there is a permission problem or not.
+        if (WebPExpressHelpers::doInsertHTAccessRules('#  WebP Express has not been configured yet, so here are no rules yet.')) {
+
+        } else {
+            update_option('webp-express-failed-inserting-rules', true, false);
+        }
+    } else {
+
+        // The plugin has been reactivated.
+        // We must regenerate the .htaccess rules.
+        $rules = WebPExpressHelpers::generateHTAccessRules();
+        WebPExpressHelpers::insertHTAccessRules($rules);
+
+    }
 
 
   }
