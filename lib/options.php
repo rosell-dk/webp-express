@@ -312,10 +312,12 @@ http://php.net/manual/en/function.set-include-path.php
                 <div class="ewww converter-options">
                   <h3>Ewww</h3>
                   <p>
-                    <a href="https://ewww.io/" target="_blank">ewww</a> is a cloud service. It is a decent alternative for those who don't have the technical know-how to install wpc.
+                    <a href="https://ewww.io/" target="_blank">ewww</a> is a cloud service.
+                    It is a decent alternative for those who don't have the technical know-how to install wpc.
                     ewww is using cwebp to do the conversion, so quality is great.
-                    ewww however only provides one conversion option (quality), and it is not free.
-                    But very cheap. Like in almost free.
+                    ewww however only provides one conversion option (quality), and it does not support "auto"
+                    quality (yet - I have requested the feature and the maintainer are considering it).
+                    Also, it is not free. But very cheap. Like in almost free.
                   </p>
                   <h3>Ewww options</h3>
                   <div>
