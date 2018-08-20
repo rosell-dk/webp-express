@@ -96,6 +96,9 @@ function webp_express_register_uninstall_hook() {
     webp_express_quality
     */
 }
+
+// interestingly, I get "Serialization of 'Closure' is not allowed" if I pass anonymous function
+// ... perhaps we should not do that in the other hooks either.
 register_uninstall_hook( __FILE__, 'webp_express_register_uninstall_hook');
 
 
