@@ -408,13 +408,21 @@ http://php.net/manual/en/function.set-include-path.php
 <?php
 }
 
-add_action('updated_option', function($option_name, $old_value, $value) {
+// This hook is invoked when a option is changed away from default value
+add_action('added_option', function($option_name, $value) {
     if (strpos($option_name, 'webp_express') === 0) {
         $rules = WebPExpressHelpers::generateHTAccessRules();
         WebPExpressHelpers::insertHTAccessRules($rules);
     }
 }, 10, 3);
 
+// This hook is invoked when a option is changed (but not when the old value is the same as its default value)
+add_action('updated_option', function($option_name, $old_value, $value) {
+    if (strpos($option_name, 'webp_express') === 0) {
+        $rules = WebPExpressHelpers::generateHTAccessRules();
+        WebPExpressHelpers::insertHTAccessRules($rules);
+    }
+}, 10, 3);
 
 
 //End webp_express_settings_page_content
