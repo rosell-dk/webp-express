@@ -72,7 +72,13 @@ class WebPExpressHelpers
 
     public static function generateHTAccessRules()
     {
+        //global $wpdb;
+        //$hasWebPExpressOptionBeenSaved = ($wpdb->get_row( "SELECT * FROM $wpdb->options WHERE option_name = 'webp_express_converters'" ) !== null);
+        //if (!$hasWebPExpressOptionBeenSaved) {
+
         if (empty(get_option('webp-express-configured')) || empty(get_option('webp_express_converters'))) {
+            // This should not happen, because generateHTAccessRules should not be called at this stage.
+            // But if it did happen anyway, better to exit with a comment than failing totally.
             return '# Cannot generate the htaccess rules yet. - WebP Express has not been configured yet.';
         }
         $options = '';

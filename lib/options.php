@@ -54,11 +54,6 @@ add_action('admin_init', 'webp_express_option_group_init');
 
 function webp_express_option_group_init()
 {
-/*
-    register_setting(
-        'webp_express_option_group', // A settings group name. Must exist prior to the register_setting call. This must match the group name in settings_fields()
-        'webp_express_options' //The name of an option to sanitize and save.
-    );*/
     register_setting(
         'webp_express_option_group', // A settings group name. Must exist prior to the register_setting call. This must match the group name in settings_fields()
         'webp_express_max_quality', //The name of an option to sanitize and save.
@@ -182,6 +177,10 @@ function webp_express_settings_page_content()
         <h2>WebP Express Settings</h2>
 
 <?php
+
+        global $wpdb;
+        //$hasWebPExpressOptionBeenSaved = ($wpdb->get_row( "SELECT * FROM $wpdb->options WHERE option_name = 'webp_express_converters'" ) !== null);
+        //if (!$hasWebPExpressOptionBeenSaved) {
         if (empty(get_option('webp-express-configured'))) {
             echo '<div style="background-color: #cfc; padding: 20px; border: 1px solid #ccc">';
             echo '<h3>Welcome!<h3>';
@@ -189,6 +188,9 @@ function webp_express_settings_page_content()
             echo '<p>Before you do that, I suggest you find out which converters that works. Start from the top. Click "test" next to a converter to test it. Try also clicking the "configure" buttons</p>';
             echo '</div>';
         }
+
+        global $wpdb;
+$results = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}options WHERE option_id = 1", OBJECT );
 ?>
         <form action="options.php" method="post">
             <?php
@@ -431,6 +433,9 @@ add_action('added_option', function($option_name, $value) {
     // Notice that we use underscore in "webp_express" for the configuration, but dash for other options (such as messages and state)
     if (strpos($option_name, 'webp_express') === 0) {
 
+        // Store the fact that webp options has been changed.
+        // When nobody is using 0.3 or below, we can test on the existence of that option, instead of
+        // querying the database directly ($hasWebPExpressOptionBeenSaved)
         add_option('webp-express-configured', true);
 
         $rules = WebPExpressHelpers::generateHTAccessRules();
