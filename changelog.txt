@@ -1,0 +1,6 @@
+= 0.3.1 =
+* The "Only jpeg" setting wasn't respected in 0.3.0. It now works again
+
+= 0.3 =
+* Now works on LiteSpeed webservers
+* Now sends X-WebP-On-Demand headers for easier debugging
