@@ -6,6 +6,14 @@
 
 include_once 'helpers.php';
 
+/*
+These lines should enable us to know whether quality can be detected.
+But needs testing...
+require WEBPEXPRESS_PLUGIN_DIR . '/vendor/require-webp-convert.php';
+$detectedQualityOfTestJpg = \WebPConvert\Converters\ConverterHelper::detectQualityOfJpg(WEBPEXPRESS_PLUGIN_DIR . '/test/focus.jpg');
+$canDetectQualityOfJpegs = ($detectedQualityOfTestJpg == 100);
+*/
+
 add_action('admin_enqueue_scripts', function () {
     // https://github.com/RubaXa/Sortable
 
@@ -181,7 +189,6 @@ function webp_express_settings_page_content()
             echo '<p>Before you do that, I suggest you find out which converters that works. Start from the top. Click "test" next to a converter to test it. Try also clicking the "configure" buttons</p>';
             echo '</div>';
         }
-
 ?>
         <form action="options.php" method="post">
             <?php
