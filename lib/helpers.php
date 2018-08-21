@@ -100,7 +100,7 @@ class WebPExpressHelpers
         $urls = $urlsAndPaths['urls'];
         $filePaths = $urlsAndPaths['filePaths'];
 
-        $imageTypes = get_option('webp_express_image_types_to_convert', 0);
+        $imageTypes = get_option('webp_express_image_types_to_convert', 1);
         $fileExtensions = [];
         if ($imageTypes & 1) {
           $fileExtensions[] = 'jpe?g';

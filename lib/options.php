@@ -65,7 +65,7 @@ function webp_express_option_group_init()
         'webp_express_image_types_to_convert',
         [
             'type' => 'integer',
-            'default' => '0',
+            'default' => '1',
             'sanitize_callback' => 'sanitize_text_field',
         ]
     );
