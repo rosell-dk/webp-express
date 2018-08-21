@@ -10,14 +10,11 @@ The plugin basically routes jpeg/png images to an image converter, or - if the i
 
 The plugin builds on [WebPConvert](https://github.com/rosell-dk/webp-convert) and some of the ecosystem around it:   [WebPConvertAndServe](https://github.com/rosell-dk/webp-convert-and-serve) and [WebPOnDemand](https://github.com/rosell-dk/webp-on-demand)
 
-*Note:*
-The redirect rules created in .htaccess are sensitive to the location of your image folder and the location of Wordpress. If you at some point change one of these, the rules will have to be updated. .htaccess rules are updated whenever you change a setting (all configuration is actually stored in .htaccess, which allows the converter to run faster, than if it had the overhead of bootstrapping Wordpress)
-
-*Note:*
-Do not simply remove the plugin without deactivating it first. Deactivation takes care of removing the rules in the .htaccess file. With the rules there, but converter gone, your Google Chrome visitors will not see any jpeg images.
-
-*Note:*
-The plugin has not been tested in multisite configurations. It's on the roadmap!
+#### Benefits
+- Much faster load time on images in Chrome browsers. The converted images are typically less than half the size (for jpeg), while maintaining the same quality. Bear in mind that images typically are responsible for most of the bandwidth usage.
+- Better user experience (whether performance goes from terrible to bad, or from good to impressive, it is a benefit)
+- Better ranking in Google searches (performance is taken into account by Google)
+- Less bandwidth consumption - makes a difference when abroad and in the parts of the world with slow and expensive internet connections.
 
 
 ## Installation
@@ -53,6 +50,17 @@ Note that the plugin does not change any HTML. In the HTML the image src is stil
 In order to test that the image is not being reconverted every time, look at the Response headers of the image. There should be a "X-WebP-On-Demand" header. It should say Routed to image converter" the first time, but "Routed to existing converted image" on subsequent requests (WebP-Express is based upon WebP On Demand). When routed to image converter, there should also be some headers beginning with "X-WebP-Convert-And-Serve", which reveals information about the conversion.
 
 You can also append `?debug` after any image url, in order to run a conversion, and see the conversion report. Btw: If you append `?reconvert` after an image url, you will force a reconversion of the image.
+
+### Notes
+
+*Note:*
+The redirect rules created in .htaccess are sensitive to the location of your image folder and the location of Wordpress. If you at some point change one of these, the rules will have to be updated. .htaccess rules are updated whenever you change a setting (all configuration is actually stored in .htaccess, which allows the converter to run faster, than if it had the overhead of bootstrapping Wordpress)
+
+*Note:*
+Do not simply remove the plugin without deactivating it first. Deactivation takes care of removing the rules in the .htaccess file. With the rules there, but converter gone, your Google Chrome visitors will not see any jpeg images.
+
+*Note:*
+The plugin has not been tested in multisite configurations. It's on the roadmap!
 
 
 ## Limitations
