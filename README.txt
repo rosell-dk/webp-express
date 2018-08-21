@@ -106,11 +106,12 @@ Putting this question in the "frequently" asked questions section is of course s
 == Changelog ==
 
 = 0.4.0 =
+* Fixed bug: .htaccess was not updated every time the settings was saved.
+* Fixed bug: The plugin generated error upon activation.
 * Now produces X-WebP-Convert-And-Serve headers with info about the conversion - useful for validating that converter receives the expected arguments and executes correctly.
 * WebPExpress options are now removed when plugin is uninstalled.
 * No longer generates .htaccess rules on install. The user now has to actively go to Web Express setting and save first
-* Fixed bug: .htaccess was not updated every time the settings was saved.
-* Fixed bug: The plugin generated error upon activation.
+* Added a "first time" message on options page and a reactivation message
 
 For more info, see the closed issues on the github repository: https://github.com/rosell-dk/webp-express/milestone/1?closed=1
 
