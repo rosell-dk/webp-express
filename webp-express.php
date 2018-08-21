@@ -14,12 +14,19 @@
 Note: Perhaps create a plugin page on my website?, ie https://www.bitwise-it.dk/software/wordpress/webp-express
 */
 
+
 /*
+// uncomment this block to debug an error during activation
 function tl_save_error() {
-  update_option( 'plugin_error',  ob_get_contents() . empty(get_option('webp_express_max_quality')) ? 'empty' : 'not empty');
+  update_option( 'webp-express-activation-error',  ob_get_contents() );
 }
 add_action( 'activated_plugin', 'tl_save_error' );
-*/
+if (!empty(get_option('plugin_error'))) {
+    add_filter( 'admin_footer_text', function() {
+        return 'Activation error:' . get_option('webp-express-activation-error');
+    });
+}*/
+
 
 define('WEBPEXPRESS_PLUGIN', __FILE__);
 define('WEBPEXPRESS_PLUGIN_DIR', __DIR__);
@@ -74,7 +81,8 @@ function webp_express_register_uninstall_hook() {
         'webp_express_image_types_to_convert',
         'webp_express_failure_response',
         'webp_express_converters',
-        'webp-express-inserted-rules-ok'
+        'webp-express-inserted-rules-ok',
+        'webp-express-configured',
     ];
     foreach ($optionsToDelete as $i => $optionName) {
         delete_option($optionName);

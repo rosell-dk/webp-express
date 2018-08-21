@@ -173,6 +173,16 @@ function webp_express_settings_page_content()
     <div class="wrap">
         <h2>WebP Express Settings</h2>
 
+<?php
+        if (empty(get_option('webp-express-configured'))) {
+            echo '<div style="background-color: #cfc; padding: 20px; border: 1px solid #ccc">';
+            echo '<h3>Welcome!<h3>';
+            echo '<p>The rewrite rules are not active yet. They will be activated the first time you click the "Save settings" button.</p>';
+            echo '<p>Before you do that, I suggest you find out which converters that works. Start from the top. Click "test" next to a converter to test it. Try also clicking the "configure" buttons</p>';
+            echo '</div>';
+        }
+
+?>
         <form action="options.php" method="post">
             <?php
             settings_fields('webp_express_option_group');
@@ -410,7 +420,12 @@ http://php.net/manual/en/function.set-include-path.php
 
 // This hook is invoked when a option is changed away from default value
 add_action('added_option', function($option_name, $value) {
+
+    // Notice that we use underscore in "webp_express" for the configuration, but dash for other options (such as messages and state)
     if (strpos($option_name, 'webp_express') === 0) {
+
+        add_option('webp-express-configured', true);
+
         $rules = WebPExpressHelpers::generateHTAccessRules();
         WebPExpressHelpers::insertHTAccessRules($rules);
     }
@@ -418,6 +433,8 @@ add_action('added_option', function($option_name, $value) {
 
 // This hook is invoked when a option is changed (but not when the old value is the same as its default value)
 add_action('updated_option', function($option_name, $old_value, $value) {
+
+    // Notice that we use underscore in "webp_express" for the configuration, but dash for other options (such as messages and state)
     if (strpos($option_name, 'webp_express') === 0) {
         $rules = WebPExpressHelpers::generateHTAccessRules();
         WebPExpressHelpers::insertHTAccessRules($rules);

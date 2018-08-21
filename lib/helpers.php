@@ -72,7 +72,7 @@ class WebPExpressHelpers
 
     public static function generateHTAccessRules()
     {
-        if (empty(get_option('webp_express_converters'))) {
+        if (empty(get_option('webp-express-configured')) || empty(get_option('webp_express_converters'))) {
             return '# Cannot generate the htaccess rules yet. - WebP Express has not been configured yet.';
         }
         $options = '';

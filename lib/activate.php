@@ -60,16 +60,18 @@ class WebPExpressActivate {
 
     // Add rules to .htaccess
 
-    // Test if WebP Express has been configured ('webp_express_converters' will be updated each time settings are saved - the other settings are only saved when changed)
-    if (empty(get_option('webp_express_converters'))) {
+    // Test if WebP Express has been configured
+    if (empty(get_option('webp-express-configured'))) {
         // WebP Express has not been configured yet.
 
-        // Write to .htaccess, in order to determine if there is a permission problem or not.
+        // Should we perhaps write to .htaccess, in order to determine if there is a permission problem or not ?
+        // like this:
+        /*
         if (WebPExpressHelpers::doInsertHTAccessRules('#  WebP Express has not been configured yet, so here are no rules yet.')) {
 
         } else {
             update_option('webp-express-failed-inserting-rules', true, false);
-        }
+        }*/
     } else {
 
         // The plugin has been reactivated.

@@ -30,7 +30,6 @@ add_action( 'admin_notices', function() {
   if ( get_option( 'webp-express-just-activated' ) ) {
     delete_option( 'webp-express-just-activated');
 
-
     if ( get_option( 'webp-express-microsoft-iis' ) ) {
       delete_option( 'webp-express-microsoft-iis');
       printf(
@@ -47,16 +46,6 @@ add_action( 'admin_notices', function() {
         esc_html( __( 'You are not on Apache server, nor on LiteSpeed. WebP Express has only been tested on Apache and LiteSpeed - continue at own risk (but please tell me if it works!). Your server is: ' . $_SERVER['SERVER_SOFTWARE'], 'webp-express' ) )
       );
     }
-    if ( get_option( 'webp-express-not-tested-on-litespeed' ) ) {
-      delete_option( 'webp-express-not-tested-on-litespeed');
-      printf(
-        '<div class="%1$s"><p>%2$s</p></div>',
-        esc_attr( 'notice notice-warning is-dismissible' ),
-        esc_html( __( 'You are on LiteSpeed server. WebP Express has only been tested sporadic on LiteSpeed... Continue at own risk', 'webp-express' ) )
-      );
-      return;
-    }
-
 
     if ( get_option( 'webp-express-no-multisite' ) ) {
       delete_option( 'webp-express-no-multisite');
@@ -121,17 +110,19 @@ add_action( 'admin_notices', function() {
       return;
     }
 
-    printf(
-      '<div class="%1$s"><p>%2$s</p></div>',
-      esc_attr( 'notice notice-info is-dismissible' ),
-      'WebP Express was installed successfully. <a href="options-general.php?page=webp_express_settings_page">Configure it here</a>.'
-    );
-
-    printf(
-      '<div class="%1$s"><p>%2$s</p></div>',
-      esc_attr( 'notice notice-info is-dismissible' ),
-      esc_html( __( 'If you at some point change the upload directory or move Wordpress, you will have to disable and reenable WebPExpress', 'webp-express' ) )
-    );
+    if (empty(get_option('webp-express-configured'))) {
+        printf(
+          '<div class="%1$s"><p>%2$s</p></div>',
+          esc_attr( 'notice notice-info is-dismissible' ),
+          'WebP Express was installed successfully. To start using it, you must <a href="options-general.php?page=webp_express_settings_page">configure it here</a>.'
+        );
+    } else {
+        printf(
+          '<div class="%1$s"><p>%2$s</p></div>',
+          esc_attr( 'notice notice-info is-dismissible' ),
+          'WebP Express reactivated successfully.<br>The image redirections should be in effect again (you should see a "WebP Express updated .htaccess" message above this...)<br><br>Just a quick reminder: If you at some point change the upload directory or move Wordpress, you will have to regenerate the .htaccess.<br>You do that by changing the configuration <a href="options-general.php?page=webp_express_settings_page">(here)</a>'
+        );
+    }
   }
 });
 
