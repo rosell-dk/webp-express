@@ -68,17 +68,6 @@ if (get_option('webp-express-deactivate')) {
     delete_option('webp-express-deactivate');
 }
 
-$optionsToDelete = [
-    'webp_express_max_quality',
-    'webp_express_image_types_to_convert',
-    'webp_express_failure_response',
-    'webp_express_converters',
-    'webp-express-inserted-rules-ok'
-];
-foreach ($optionsToDelete as $i => $optionName) {
-    delete_option($optionName);
-}
-
 function webp_express_register_uninstall_hook() {
     $optionsToDelete = [
         'webp_express_max_quality',
