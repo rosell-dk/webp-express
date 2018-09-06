@@ -31,7 +31,8 @@ add_action('admin_post_webpexpress_settings_submit', function() {
         'fail' => sanitize_text_field($_POST['fail']),
         'max-quality' => sanitize_text_field($_POST['max-quality']),
         'image-types' => sanitize_text_field($_POST['image-types']),
-        'converters' => json_decode(wp_unslash($_POST['converters']), true) // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
+        'converters' => json_decode(wp_unslash($_POST['converters']), true), // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
+        'forward-query-string' => true
     ];
 
     //wp_redirect( $_SERVER['HTTP_REFERER'] );
@@ -137,10 +138,7 @@ function webp_express_settings_page_content()
 
     require "options-messages.inc";
 
-    //echo home_url() . '<br>';
-    //echo Paths::getHomeUrlPathRelDomain() . '<br>';
-    //echo Paths::getWodUrlPath() . '<br>';
-    echo '<pre>' . print_r(Paths::getUrlsAndPathsForTheJavascript(), true) . '</pre>';
+    //echo '<pre>' . print_r(Paths::getUrlsAndPathsForTheJavascript(), true) . '</pre>';
 
     //echo trailingslashit(parse_url(home_url())['path']) . '<br>';
     //print_r(parse_url(home_url()));
@@ -159,7 +157,8 @@ function webp_express_settings_page_content()
             'image-types' => 1,
             'fail' => 'original',
             'max-quality' => 80,
-            'converters' => []
+            'converters' => [],
+            'forward-query-string' => true
         ];
 
         $config = Config::loadConfig();
@@ -248,9 +247,6 @@ function webp_express_settings_page_content()
 
 
             <?php
-            //settings_fields('webp_express_option_group');
-            //do_settings_sections('webp_express_settings_page');
-
 //print_r(get_option('plugin_error'));
 
             //echo '<pre>' . print_r(WebPExpressHelpers::calculateUrlsAndPaths(), true) . '</pre>';
@@ -272,32 +268,7 @@ function webp_express_settings_page_content()
                 //
             }
 */
-            $extraConverters = [
-                [
-                    'converter' => 'ewww',
-                    'options' => array(
-                        'key' => 'your api key here',
-                    ),
-                ]
-            ];
 
-            $converters = [
-                [
-                    'converter' => 'cwebp',
-                ],
-                [
-                    'converter' => 'imagick',
-                ],
-                [
-                    'converter' => 'gd',
-                ],
-                [
-                    'converter' => 'ewww',
-                    'options' => [
-                        'key' => 'your api key here',
-                    ],
-                ]
-            ];
 
 /*
 http://php.net/manual/en/function.set-include-path.php

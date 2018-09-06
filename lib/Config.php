@@ -105,10 +105,20 @@ class Config
             $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $pathToExisting . "/$1.$2.webp [NC,T=image/webp,QSD,L]\n\n";
         }*/
 
-        $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n" .
-        "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
-        "  RewriteRule ^(.*)\.(" . $fileExt . ")$ /" . Paths::getWodUrlPath() . "?source=%{SCRIPT_FILENAME}&config-path=" . Paths::getConfigDirRel() . " [NC,L]\n" .
-        "</IfModule>\n" .
+
+        $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
+        $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
+        if ($config['forward-query-string']) {
+            $rules .= "  RewriteCond %{QUERY_STRING} (.*)\n";
+        }
+        $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " .
+            "/" . Paths::getWodUrlPath() .
+            "?source=%{SCRIPT_FILENAME}" .
+            "&config-path=" . Paths::getConfigDirRel() .
+            ($config['forward-query-string'] ? '&%1' : '') .
+            " [NC,L]\n";
+
+        $rules .="</IfModule>\n" .
         "AddType image/webp .webp\n";
 
         return $rules;

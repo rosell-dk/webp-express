@@ -18,6 +18,14 @@ $options = json_decode($json, true);
 
 $options['require-for-conversion'] = 'webp-convert-and-serve.inc';
 
+if ($options['forward-query-string']) {
+    if (isset($_GET['debug'])) {
+        $options['show-report'] = true;
+    }
+    if (isset($_GET['reconvert'])) {
+        $options['reconvert'] = true;
+    }
+}    
 $source = $_GET['source'];
 
 // Calculate destination
