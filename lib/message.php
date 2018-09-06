@@ -17,10 +17,14 @@ add_action( 'admin_notices', function() {
     $pendingMessagesJSON = get_option('webp-express-pending-messages', '[]');
     $pendingMessages = json_decode($pendingMessagesJSON, true);
     foreach ($pendingMessages as $message) {
+        $msg = __( $message['message'], 'webp-express');
+        if ($message['escHtml']) {
+            $msg = esc_html($msg);
+        }
         printf(
           '<div class="%1$s"><p>%2$s</p></div>',
           esc_attr('notice notice-' . $message['level'] . ' is-dismissible'),
-          esc_html(__( $message['message'], 'webp-express'))
+          $msg
         );
     }
     update_option('webp-express-pending-messages', json_encode([], JSON_UNESCAPED_SLASHES), false);

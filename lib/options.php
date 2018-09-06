@@ -48,6 +48,17 @@ add_action('admin_post_webpexpress_settings_submit', function() {
     //exit;
     if (Config::saveConfiguration($config)) {
         webpexpress_add_message('success', 'Configuration saved');
+
+        if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
+            $webpExpressRoot = Paths::getPluginUrlPath();
+
+            $msg = 'Your browser supports webp... So you can test if everything works (including the redirect magic) - using these links:<br>' .
+                '<a href="/' . $webpExpressRoot . '/test/test.jpg" target="_blank">Convert test image</a><br>' .
+                '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug" target="_blank">Convert test image (show debug)</a><br>';
+
+            webpexpress_add_message('info', $msg, false);
+        }
+
     } else {
         webpexpress_add_message('error', 'Failed saving configuration file, or htaccess or something...');
     }
@@ -419,14 +430,6 @@ http://php.net/manual/en/function.set-include-path.php
             <?php
             //print_r($urls);
             //echo $urls['urls']['webpExpressRoot'];
-            if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
-                echo 'Your browser supports webp... So you can test if everything works (including the redirect magic) - using these links:<br>';
-                //$webpExpressRoot = WebPExpressHelpers::calculateUrlsAndPaths()['urls']['webpExpressRoot'];
-                //$webpExpressRoot = Paths::calculateUrlsAndPaths()['urls']['webpExpressRoot'];
-                $webpExpressRoot = Paths::getPluginUrlPath();
-                echo '<a href="/' . $webpExpressRoot . '/test/test.jpg" target="_blank">Convert test image</a><br>';
-                echo '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug" target="_blank">Convert test image (show debug)</a><br>';
-            }
              ?>
 
             <!--
