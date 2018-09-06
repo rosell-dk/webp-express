@@ -37,6 +37,7 @@ if (substr($source, 0, strlen($applicationRoot)) === $applicationRoot) {
 //$destination = $imageRoot . $source . '.webp';
 
 
-//echo $destination;
+//echo $source . '<br>';
+//echo $destination . '<br>';
 //echo $sourceRel;
 WebPOnDemand::serve($source, $destination, $options);

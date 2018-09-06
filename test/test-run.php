@@ -12,7 +12,7 @@ ini_set("display_errors", 1);
 
 
 
-require "webp-convert-and-serve.inc";
+require "../wod/webp-convert-and-serve.inc";
 
 use WebPConvert\WebPConvert;
 use WebPConvert\Loggers\EchoLogger;

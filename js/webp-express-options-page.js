@@ -1,34 +1,4 @@
 
-/*window.converters = [
-    {
-        'converter': 'imagick',
-    },
-    {
-        'converter': 'cwebp',
-    },
-    {
-        'converter': 'gd',
-    },
-    {
-        'converter': 'ewww',
-        'options': {
-            'key': 'your api key here',
-        },
-    },
-    {
-        'converter': 'ewww',
-        'options': {
-            'key': 'your api key here 2',
-        },
-    },
-    {
-        'converter': 'wpc',
-        'options': {
-            'url': 'http://',
-            'secret': 'banana',
-        },
-    }
-];*/
 
 // Map of converters (are updated with updateConvertersMap)
 window.convertersMap = {};
@@ -98,17 +68,6 @@ html += '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox=
         html += '<a class="deactivate-converter btn" onclick=deactivateConverter(\'' + converter['id'] + '\')>deactivate</a>';
     }
 
-/*
-    switch (converter['converter']) {
-        case 'ewww':
-        case 'wpc':
-            html += '<a class="remove-converter btn" onclick=removeConverter(\'' + converter['id'] + '\')>remove</a>';
-            break;
-        case 'cwebp':
-        case 'imagick':
-        case 'gd':
-            break;
-    }*/
     html += '</li>';
     return html;
 }
@@ -276,7 +235,7 @@ function testConverter(id) {
     var urls = window.webpExpressPaths['urls'];
     var paths = window.webpExpressPaths['filePaths'];
 
-    var url = '/' + urls['webpExpressRoot'] + '/test-run.php';
+    var url = '/' + urls['webpExpressRoot'] + '/test/test-run.php';
     //alert(url);
 
 

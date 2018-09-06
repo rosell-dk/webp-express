@@ -173,7 +173,7 @@ APACHE
 
     public static function getWodUrlPath()
     {
-        return self::getPluginUrlPath() . '/webp-on-demand.php';
+        return self::getPluginUrlPath() . '/wod/webp-on-demand.php';
     }
 
     /**
