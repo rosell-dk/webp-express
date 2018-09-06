@@ -46,7 +46,7 @@ add_action( 'admin_menu', function() {
     //Add Settings Page
     add_options_page(
         'WebP Express Settings', //Page Title
-        __( 'WebP Express', 'yasr' ), //Menu Title
+        'WebP Express', //Menu Title
         'manage_options', //capability
         'webp_express_settings_page', //menu slug
         'webp_express_settings_page_content' //The function to be called to output the content for this page.
@@ -97,6 +97,11 @@ function webp_express_register_uninstall_hook() {
     foreach ($optionsToDelete as $i => $optionName) {
         delete_option($optionName);
     }
+    /*
+    TODO: delete config
+    @unlink(rtrim(WFWAF_LOG_PATH . '/') . '/.htaccess');
+    @rmdir(WFWAF_LOG_PATH);
+*/
     /*
     webp_express_fail_action
     webp_express_method

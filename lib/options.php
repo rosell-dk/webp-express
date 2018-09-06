@@ -5,6 +5,13 @@
 
 
 include_once 'helpers.php';
+include_once 'Paths.php';
+include_once 'Config.php';
+
+require_once "messenger.inc";
+
+use \WebPExpress\Paths;
+use \WebPExpress\Config;
 
 /*
 These lines should enable us to know whether quality can be detected.
@@ -13,6 +20,75 @@ require WEBPEXPRESS_PLUGIN_DIR . '/vendor/require-webp-convert.php';
 $detectedQualityOfTestJpg = \WebPConvert\Converters\ConverterHelper::detectQualityOfJpg(WEBPEXPRESS_PLUGIN_DIR . '/test/focus.jpg');
 $canDetectQualityOfJpegs = ($detectedQualityOfTestJpg == 100);
 */
+
+//webpexpress_settings_submit
+
+add_action('admin_post_webpexpress_settings_submit', function() {
+    // https://premium.wpmudev.org/blog/handling-form-submissions/
+    // checkout https://codex.wordpress.org/Function_Reference/sanitize_meta
+
+    $config = [
+        'fail' => sanitize_text_field($_POST['fail']),
+        'max-quality' => sanitize_text_field($_POST['max-quality']),
+        'image-types' => sanitize_text_field($_POST['image-types']),
+        'converters' => json_decode(wp_unslash($_POST['converters']), true) // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
+    ];
+
+    //wp_redirect( $_SERVER['HTTP_REFERER'] );
+    //echo gettype($_POST['converters']);
+    //print_r($_POST);
+    // [{"converter":"cwebp","options":{"use-nice":false},"id":"cwebp"},{"converter":"wpc","id":"wpc"},{"converter":"gd","options":{"skip-pngs":true},"id":"gd"},{"converter":"ewww","id":"ewww"},{"converter":"imagick","id":"imagick"}]
+//echo get_magic_quotes_gpc() ? 'yes' : 'no';
+
+    //echo wp_unslash($_POST['converters']);
+    //echo '<br><br>';
+    //print_r(json_decode($_POST['converters'], true));
+    //print_r($config);
+    //exit;
+    if (Config::saveConfiguration($config)) {
+        webpexpress_add_message('success', 'Configuration saved');
+    } else {
+        webpexpress_add_message('error', 'Failed saving configuration file, or htaccess or something...');
+    }
+    wp_redirect( $_SERVER['HTTP_REFERER']);
+
+/*
+    // Save configuration file
+    if (Config::saveConfigurationFile($config)) {
+        printf(
+          '<div class="%1$s"><p>%2$s</p></div>',
+          esc_attr( 'notice notice-success is-dismissible' ),
+          esc_html( __( 'WebP Express saved the configuration successfully', 'webp-express' ) )
+        );
+    } else {
+        printf(
+          '<div class="%1$s"><p>%2$s</p></div>',
+          esc_attr( 'notice notice-error is-dismissible' ),
+          //esc_html( __( 'WebP Express could not create a subfolder in your upload folder. Check your file permissions', 'webp-express' ) )
+          'WebP Express needs to write the configuration to a file "webp-express/config/config.json" under your wp-content folder, but does not have permission to do so.</b><br>' .
+          'Please change the permissions on the "wpcontent/webp-express/config" folder to allow the file to be created.'
+        );
+    }
+
+    // update .htaccess
+    $rules = WebPExpressHelpers::generateHTAccessRules();
+    if (WebPExpressHelpers::insertHTAccessRules($rules)) {
+        printf(
+          '<div class="%1$s"><p>%2$s</p></div>',
+          esc_attr( 'notice notice-success is-dismissible' ),
+          esc_html( __( 'WebP Express updated the .htaccess successfully', 'webp-express' ) )
+        );
+    } else {
+        printf(
+          '<div class="%1$s"><p>%2$s</p></div>',
+          esc_attr( 'notice notice-error is-dismissible' ),
+          '<b>.htaccess is not writable</b>. To fix this, make .htaccess writable and try activating the plugin again. <a target="_blank" href="https://github.com/rosell-dk/webp-express/wiki/Error-messages-and-warnings#htaccess-is-not-writable">Click here</a> for more information.'
+        );
+    }
+*/
+
+    exit();
+});
 
 add_action('admin_enqueue_scripts', function () {
     // https://github.com/RubaXa/Sortable
@@ -28,13 +104,10 @@ add_action('admin_enqueue_scripts', function () {
     );
     wp_enqueue_script('webp-express-options-page');
 
-    wp_add_inline_script('webp-express-options-page', 'window.webpExpressPaths = ' . json_encode(WebPExpressHelpers::calculateUrlsAndPaths()) . ';');
+    wp_add_inline_script('webp-express-options-page', 'window.webpExpressPaths = ' . json_encode(Paths::getUrlsAndPathsForTheJavascript()) . ';');
+
+    //wp_add_inline_script('webp-express-options-page', 'window.webpExpressPaths = ' . json_encode(WebPExpressHelpers::calculateUrlsAndPaths()) . ';');
     //wp_add_inline_script('webp-express-options-page', 'window.converters = [{"converter":"imagick","id":"imagick"},{"converter":"cwebp","id":"cwebp"},{"converter":"gd","id":"gd"}];');
-
-    //wp_add_inline_script('webp-express-options-page', 'window.converters = [{"converter":"imagick","id":"imagick"},{"converter":"cwebp","id":"cwebp"},{"converter":"gd","id":"gd"}];');
-    // ,{"converter":"wpc","options":{"url":"http://","secret":"banana"},"id":"wpc"}
-
-
 
     wp_register_style(
         'webp-express-options-page-css',
@@ -49,128 +122,12 @@ add_action('admin_enqueue_scripts', function () {
 
 
 
-add_action('admin_init', 'webp_express_option_group_init');
-
-
-function webp_express_option_group_init()
-{
-    register_setting(
-        'webp_express_option_group', // A settings group name. Must exist prior to the register_setting call. This must match the group name in settings_fields()
-        'webp_express_max_quality', //The name of an option to sanitize and save.
-        [
-            'type' => 'integer',
-            'default' => '85',
-            'sanitize_callback' => 'sanitize_text_field',
-        ]
-    );
-    register_setting(
-        'webp_express_option_group',
-        'webp_express_image_types_to_convert',
-        [
-            'type' => 'integer',
-            'default' => '1',
-            'sanitize_callback' => 'sanitize_text_field',
-        ]
-    );
-    /*
-    register_setting(
-        'webp_express_option_group',
-        'webp_express_method',
-        [
-            'type' => 'integer',
-            'default' => '6',
-            'sanitize_callback' => 'sanitize_text_field',
-        ]
-    );*/
-    register_setting(
-        'webp_express_option_group',
-        'webp_express_failure_response',
-        [
-            'type' => 'string',
-            'default' => 'original',
-            'sanitize_callback' => 'sanitize_text_field',
-        ]
-    );
-    register_setting(
-        'webp_express_option_group',
-        'webp_express_converters',
-        [
-            'type' => 'string',
-            // TODO: test on new installation
-            'default' => '[{"converter":"cwebp","id":"cwebp"},{"converter":"wpc","id":"wpc"},{"converter":"gd","id":"gd"},{"converter":"imagick","id":"imagick"}]',
-            //'sanitize_callback' => 'sanitize_text_field',
-        ]
-    );
-
-
-    add_settings_section('webp_express_conversion_options_section', 'Conversion options', function () {
-        //echo 'here you set conversion options';
-    }, 'webp_express_settings_page');
-
-    add_settings_field('webp_express_image_types_to_convert_id', 'Image types to convert', function () {
-        // bitmask
-        // 1: JPEGs
-        // 2: PNG's
-        // Converting only jpegs is thus "1"
-        // Converting both jpegs and pngs is (1+2) = 3
-        $imageTypes = get_option('webp_express_image_types_to_convert');
-
-        echo '<select name="webp_express_image_types_to_convert">';
-        echo '<option value="0"' . ($imageTypes == 0 ? ' selected' : '') . '>Do not convert any images!</option>';
-        echo '<option value="1"' . ($imageTypes == 1 ? ' selected' : '') . '>Only convert jpegs</option>';
-        echo '<option value="3"' . ($imageTypes == 3 ? ' selected' : '') . '>Convert both jpegs and pngs</option>';
-        echo '</select>';
-
-        //echo '<input type="checkbox" ' . ($types == 1 ? ' checked=checked' : '') . '>';
-
-    }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
-
-/*
-    add_settings_field('webp_express_method_id', 'Method (0-6)', function () {
-        $method = get_option('webp_express_method');
-        echo "<input type='text' name='webp_express_method' value='" . $method . "' />";
-        echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
-    }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
-    */
-
-    add_settings_field('webp_express_failure_response', 'Response on failure', function () {
-        $failureResponse = get_option('webp_express_failure_response');
-        echo '<select name="webp_express_failure_response">';
-        echo '<option value="original"' . ($failureResponse == 'original' ? ' selected' : '') . '>Original image</option>';
-        echo '<option value="404"' . ($failureResponse == '404' ? ' selected' : '') . '>404</option>';
-        echo '<option value="report"' . ($failureResponse == 'report' ? ' selected' : '') . '>Error report (in plain text)</option>';
-        echo '<option value="report-as-image"' . ($failureResponse == 'report-as-image' ? ' selected' : '') . '>Error report as image</option>';
-        echo '</select>';
-        echo '<p>Determines what the converter should serve, in case the image conversion should fail. For production servers, recommended value is "Original image". For development servers, choose anything you like, but that</p>';
-    }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
-
-    add_settings_field('webp_express_max_quality_id', 'Max quality (0-100)', function () {
-        echo "<input type='text' name='webp_express_max_quality' value='" . get_option('webp_express_max_quality') . "' />";
-        echo '<p>Converted jpeg images will get same quality as original, but not more than this setting. 85 is recommended for most websites.</p>';
-    }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
-
-
-/*
-    public static $CONVERTED_IMAGE = 1;
-    public static $ORIGINAL = -1;
-    public static $HTTP_404 = -2;
-    public static $REPORT_AS_IMAGE = -3;
-    public static $REPORT = -4;*/
-
-    add_settings_field('webp_express_converters', '', function () {
-        $converters = get_option('webp_express_converters');
-        echo '<script>window.converters = ' . get_option('webp_express_converters') . '</script>';
-
-        echo "<input type='text' name='webp_express_converters' value='' />";
-    }, 'webp_express_settings_page', 'webp_express_conversion_options_section');
-}
-
 
 /* Settings Page Content */
 function webp_express_settings_page_content()
 {
     if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.', 'yasr'));
+        wp_die('You do not have sufficient permissions to access this page.');
     }
     ?>
     <div class="wrap">
@@ -178,24 +135,121 @@ function webp_express_settings_page_content()
 
 <?php
 
-        global $wpdb;
-        //$hasWebPExpressOptionBeenSaved = ($wpdb->get_row( "SELECT * FROM $wpdb->options WHERE option_name = 'webp_express_converters'" ) !== null);
-        //if (!$hasWebPExpressOptionBeenSaved) {
-        if (empty(get_option('webp-express-configured'))) {
-            echo '<div style="background-color: #cfc; padding: 20px; border: 1px solid #ccc">';
-            echo '<h3>Welcome!<h3>';
-            echo '<p>The rewrite rules are not active yet. They will be activated the first time you click the "Save settings" button.</p>';
-            echo '<p>Before you do that, I suggest you find out which converters that works. Start from the top. Click "test" next to a converter to test it. Try also clicking the "configure" buttons</p>';
-            echo '</div>';
+    require "options-messages.inc";
+
+    //echo home_url() . '<br>';
+    //echo Paths::getHomeUrlPathRelDomain() . '<br>';
+    //echo Paths::getWodUrlPath() . '<br>';
+    echo '<pre>' . print_r(Paths::getUrlsAndPathsForTheJavascript(), true) . '</pre>';
+
+    //echo trailingslashit(parse_url(home_url())['path']) . '<br>';
+    //print_r(parse_url(home_url()));
+
+        //echo 'WP_CONTENT_DIR:' . WP_CONTENT_DIR;
+        //Config::saveConfigurationFile();
+        //$rules = WebPExpressHelpers::generateHTAccessRules();
+        //echo '<pre>' . print_r($rules, true) . '</pre>';
+        //WebPExpressHelpers::insertHTAccessRules($rules);
+        //echo getCacheDirRel
+
+        //echo '<pre>' . print_r(Config::loadConfig(), true) . '</pre>';
+
+
+        $defaultConfig = [
+            'image-types' => 1,
+            'fail' => 'original',
+            'max-quality' => 80,
+            'converters' => []
+        ];
+
+        $config = Config::loadConfig();
+        if (!$config) {
+            $config = [];
         }
 
-        global $wpdb;
-$results = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}options WHERE option_id = 1", OBJECT );
+        $config = array_merge($defaultConfig, $config);
+
+        // Generate a custom nonce value.
+        $webpexpress_settings_nonce = wp_create_nonce('webpexpress_settings_nonce');
+
+        echo '<form action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="post" id="webpexpress_settings" >';
 ?>
-        <form action="options.php" method="post">
+        <input type="hidden" name="action" value="webpexpress_settings_submit">
+        <input type="hidden" name="webpexpress_settings_nonce" value="<?php echo $webpexpress_settings_nonce ?>" />
+
+<?php
+
+        echo '<table class="form-table"><tbody>';
+
+        // Image types
+        // ------------
+        echo '<tr><th scope="row">Image types to convert</th><td>';
+
+        // bitmask
+        // 1: JPEGs
+        // 2: PNG's
+        // Converting only jpegs is thus "1"
+        // Converting both jpegs and pngs is (1+2) = 3
+        //$imageTypes = get_option('webp_express_image_types_to_convert');
+        $imageTypes = $config['image-types'];
+
+        echo '<select name="image-types">';
+        echo '<option value="0"' . ($imageTypes == 0 ? ' selected' : '') . '>Do not convert any images!</option>';
+        echo '<option value="1"' . ($imageTypes == 1 ? ' selected' : '') . '>Only convert jpegs</option>';
+        echo '<option value="3"' . ($imageTypes == 3 ? ' selected' : '') . '>Convert both jpegs and pngs</option>';
+        echo '</select>';
+
+        echo '</td></tr>';
+
+        // Response on failure
+        // --------------------
+        echo '<tr><th scope="row">Response on failure</th><td>';
+
+        //$fail = get_option('webp_express_failure_response');
+        $fail = $config['fail'];
+        echo '<select name="fail">';
+        echo '<option value="original"' . ($fail == 'original' ? ' selected' : '') . '>Original image</option>';
+        echo '<option value="404"' . ($fail == '404' ? ' selected' : '') . '>404</option>';
+        echo '<option value="report"' . ($fail == 'report' ? ' selected' : '') . '>Error report (in plain text)</option>';
+        echo '<option value="report-as-image"' . ($fail == 'report-as-image' ? ' selected' : '') . '>Error report as image</option>';
+        echo '</select>';
+        echo '</td></tr>';
+//        echo '<tr><td colspan=2>Determines what the converter should serve, in case the image conversion should fail. For production servers, recommended value is "Original image". For development servers, choose anything you like, but that</td></tr>';
+
+        // Max quality
+        // --------------------
+        //$maxQuality = get_option('webp_express_max_quality');
+        $maxQuality = $config['max-quality'];
+
+        echo '<tr><th scope="row">Max quality (0-100)</th><td>';
+        echo '<input type="text" name="max-quality" value="' . $maxQuality . '">';
+        echo '</td></tr>';
+//        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
+
+        // method
+        //echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
+
+        echo '<tr></tr>';
+        echo '</tbody></table>';
+
+        // Converters
+        // --------------------
+        //$converters = get_option('webp_express_converters');
+        $converters = $config['converters'];
+        echo '<script>window.converters = ' . json_encode($converters) . '</script>';
+        echo "<input type='text' name='converters' value='' style='visibility:hidden' />";
+
+        // https://premium.wpmudev.org/blog/handling-form-submissions/
+
+
+?>
+        <!--<form action="options.php" method="post">-->
+
+
+
             <?php
-            settings_fields('webp_express_option_group');
-            do_settings_sections('webp_express_settings_page');
+            //settings_fields('webp_express_option_group');
+            //do_settings_sections('webp_express_settings_page');
 
 //print_r(get_option('plugin_error'));
 
@@ -252,10 +306,6 @@ http://php.net/manual/en/function.set-include-path.php
 //exec('/usr/sbin/getsebool -a', $output6, $returnCode5); // ok
 //echo 'All se bools: ' . print_r($output6, true) . '. Return code:' . $returnCode5;
 */
-
-
-
-
 
             echo '<h2>Converters</h2>';
             $dragIcon = '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="17px" height="17px" viewBox="0 0 100.000000 100.000000" preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,100.000000) scale(0.100000,-0.100000)" fill="#444444" stroke="none"><path d="M415 920 l-80 -80 165 0 165 0 -80 80 c-44 44 -82 80 -85 80 -3 0 -41 -36 -85 -80z"/><path d="M0 695 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M0 500 l0 -40 500 0 500 0 0 40 0 40 -500 0 -500 0 0 -40z"/><path d="M0 305 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M418 78 l82 -83 82 83 83 82 -165 0 -165 0 83 -82z"/></g></svg>';
@@ -400,9 +450,11 @@ http://php.net/manual/en/function.set-include-path.php
             //echo $urls['urls']['webpExpressRoot'];
             if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
                 echo 'Your browser supports webp... So you can test if everything works (including the redirect magic) - using these links:<br>';
-                $webpExpressRoot = WebPExpressHelpers::calculateUrlsAndPaths()['urls']['webpExpressRoot'];
-                echo '<a href="' . $webpExpressRoot . '/test/test.jpg" target="_blank">Convert test image</a><br>';
-                echo '<a href="' . $webpExpressRoot . '/test/test.jpg?debug" target="_blank">Convert test image (show debug)</a><br>';
+                //$webpExpressRoot = WebPExpressHelpers::calculateUrlsAndPaths()['urls']['webpExpressRoot'];
+                //$webpExpressRoot = Paths::calculateUrlsAndPaths()['urls']['webpExpressRoot'];
+                $webpExpressRoot = Paths::getPluginUrlPath();
+                echo '<a href="/' . $webpExpressRoot . '/test/test.jpg" target="_blank">Convert test image</a><br>';
+                echo '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug" target="_blank">Convert test image (show debug)</a><br>';
             }
              ?>
 
@@ -427,72 +479,4 @@ http://php.net/manual/en/function.set-include-path.php
 <?php
 }
 
-// This hook is invoked when a option is changed away from default value
-add_action('added_option', function($option_name, $value) {
-
-    // Notice that we use underscore in "webp_express" for the configuration, but dash for other options (such as messages and state)
-    if (strpos($option_name, 'webp_express') === 0) {
-
-        // Store the fact that webp options has been changed.
-        // When nobody is using 0.3 or below, we can test on the existence of that option, instead of
-        // querying the database directly ($hasWebPExpressOptionBeenSaved)
-        add_option('webp-express-configured', true);
-
-        $rules = WebPExpressHelpers::generateHTAccessRules();
-        WebPExpressHelpers::insertHTAccessRules($rules);
-    }
-}, 10, 3);
-
-// This hook is invoked when a option is changed (but not when the old value is the same as its default value)
-add_action('updated_option', function($option_name, $old_value, $value) {
-
-    // Notice that we use underscore in "webp_express" for the configuration, but dash for other options (such as messages and state)
-    if (strpos($option_name, 'webp_express') === 0) {
-        $rules = WebPExpressHelpers::generateHTAccessRules();
-        WebPExpressHelpers::insertHTAccessRules($rules);
-    }
-}, 10, 3);
-
-
 //End webp_express_settings_page_content
-
-//include( plugin_dir_path( __FILE__ ) . 'lib/helpers.php');
-
-//echo '<pre>rules:' . WebPExpressHelpers::generateHTAccessRules() . '</pre>';
-
-/*
-add_action('admin_menu', function () {
-    add_options_page('WebP Express', 'WebP Express', 'manage_options', 'webp-express', function () {
-        include(plugin_dir_path(__FILE__) . 'lib/options.php');
-    });
-});
-
-function d1() {
-    echo '<p>Main description of this section here.</p>';
-}
-function d2() {
-    $options = get_option('options');
-    echo "<input id='plugin_text_string' name='plugin_options[text_string]' size='40' type='text' value='{$options['text_string']}' />";
-}
-function plugin_options_validate($input) {
-    $newinput['text_string'] = trim($input['text_string']);
-    if (!preg_match('/^[a-z0-9]{32}$/i', $newinput['text_string'])) {
-        $newinput['text_string'] = '';
-    }
-    return $newinput;
-}
-
-add_action('admin_init', function () {
-    register_setting('general', 'quality', [
-        'type' => 'string',
-        'default' => '85'
-    ]);
-    add_settings_field('plugin_text_string', 'Plugin Text Input', function () {
-        echo 'hello...';
-    }, 'webp-express');
-
-    //register_setting('webp_express_options', 'options', 'plugin_options_validate');
-    //add_settings_section('webp_express_main', 'Main Settings', d1, 'webp_express');
-    //add_settings_field('plugin_text_string', 'Plugin Text Input', d2, 'webp_express', 'webp_express_main');
-});
-*/

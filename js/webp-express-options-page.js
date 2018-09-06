@@ -154,7 +154,7 @@ function reorderConverters(order) {
 
 /* Update the hidden input containing all the data */
 function updateInputValue() {
-    document.getElementsByName('webp_express_converters')[0].value = JSON.stringify(window.converters);
+    document.getElementsByName('converters')[0].value = JSON.stringify(window.converters);
 }
 
 function setConvertersHTML() {
@@ -276,7 +276,8 @@ function testConverter(id) {
     var urls = window.webpExpressPaths['urls'];
     var paths = window.webpExpressPaths['filePaths'];
 
-    var url = urls['webpExpressRoot'] + '/test-run.php';
+    var url = '/' + urls['webpExpressRoot'] + '/test-run.php';
+    //alert(url);
 
 
     // test images here: http://nottinghamtec.co.uk/~aer/TestPatterns/1080/
@@ -287,10 +288,9 @@ function testConverter(id) {
     filename = 'focus.jpg';
 
     url += '?source=' + paths['webpExpressRoot'] + '/test/' + filename;
-    url += '&destination=' + paths['destinationRoot'] + '/' + filename + '.webp';
-    url += '&destinationUrl=' + urls['destinationRoot'] + '/' + filename + '.webp';
+    url += '&destination=' + paths['destinationRoot'] + '/test-conversions/' + filename + '.webp';
     url += '&converter=' + converter['converter'];
-    url += '&max-quality=' + document.getElementsByName('webp_express_max_quality')[0].value;
+    url += '&max-quality=' + document.getElementsByName('max-quality')[0].value;
     //url += '&method=' + document.getElementsByName('webp_express_method')[0].value;
 
     if (converter.options) {

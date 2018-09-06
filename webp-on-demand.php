@@ -1,17 +1,42 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+require 'webp-on-demand.inc';
 
-//require 'webp-on-demand/vendor/autoload.php';
-//require 'vendor/webp-on-demand/autoload.php';
-require 'vendor/require-webp-on-demand.php';
+use \WebPOnDemand\WebPOnDemand;
 
-use WebPOnDemand\WebPOnDemand;
+$options = [];
 
+$configPath = $_GET['config-path'];
+$configPathAbs = $_SERVER['DOCUMENT_ROOT'] . '/' . $_GET['config-path'];
+$configFilename = $configPathAbs . '/config.json';
+$handle = @fopen($configFilename, "r");
+$json = fread($handle, filesize($configFilename));
+fclose($handle);
 
-$status = WebPOnDemand::serve(__DIR__);
-if ($status < 0) {
-    // Conversion failed.
-    // you could message your application about the problem here...
+$options = json_decode($json, true);
+//print_r($options);
+
+$options['require-for-conversion'] = 'webp-convert-and-serve.inc';
+
+$source = $_GET['source'];
+
+// Calculate destination
+$applicationRoot = $_SERVER["DOCUMENT_ROOT"];
+$imageRoot = $configPathAbs . '/webp-images';
+
+if (substr($source, 0, strlen($applicationRoot)) === $applicationRoot) {
+    // Source file is residing inside document root.
+    // We can store relative to that.
+    $sourceRel = substr($source, strlen($applicationRoot));
+    $destination = $imageRoot . '/doc-root' . $sourceRel . '.webp';
+} else {
+    // Source file is residing outside document root.
+    // we must add complete path to structure
+    $destination = $imageRoot . '/abs' . $source . '.webp';
 }
+//$destination = $imageRoot . $source . '.webp';
+
+
+//echo $destination;
+//echo $sourceRel;
+WebPOnDemand::serve($source, $destination, $options);

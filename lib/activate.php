@@ -44,24 +44,11 @@ class WebPExpressActivate {
       return;
     }
 
-
-    // Create upload dir
-    $urlsAndPaths = WebPExpressHelpers::calculateUrlsAndPaths();
-    $ourUploadDir = $urlsAndPaths['filePaths']['destinationRoot'];
-
-    if ( ! file_exists( $ourUploadDir ) ) {
-      wp_mkdir_p( $ourUploadDir );
-    }
-    if ( ! file_exists( $ourUploadDir ) ) {
-      update_option( 'webp-express-failed-creating-upload-dir', true, false );
-      update_option( 'webp-express-deactivate', true, false );
-      return;
-    }
-
     if (!empty(get_option('webp-express-configured'))) {
 
         // The plugin has been reactivated.
         // We must regenerate the .htaccess rules.
+        // (config dir and options and of course still there, no need to do anything about that)
         $rules = WebPExpressHelpers::generateHTAccessRules();
         WebPExpressHelpers::insertHTAccessRules($rules);
 

@@ -13,18 +13,22 @@ if ( get_option( 'webp-express-deactivate' ) ) {
 }
 
 add_action( 'admin_notices', function() {
+
+    $pendingMessagesJSON = get_option('webp-express-pending-messages', '[]');
+    $pendingMessages = json_decode($pendingMessagesJSON, true);
+    foreach ($pendingMessages as $message) {
+        printf(
+          '<div class="%1$s"><p>%2$s</p></div>',
+          esc_attr('notice notice-' . $message['level'] . ' is-dismissible'),
+          esc_html(__( $message['message'], 'webp-express'))
+        );
+    }
+    update_option('webp-express-pending-messages', json_encode([], JSON_UNESCAPED_SLASHES), false);
+
+
   // Possible classes:
   // notice-warning, notice-error, notice-warning, notice-success, or notice-info
   // - add is-dismissible
-
-  if ( get_option( 'webp-express-inserted-rules-ok' ) ) {
-      delete_option( 'webp-express-inserted-rules-ok');
-      printf(
-        '<div class="%1$s"><p>%2$s</p></div>',
-        esc_attr( 'notice notice-success is-dismissible' ),
-        esc_html( __( 'WebP Express updated .htaccess', 'webp-express' ) )
-      );
-  }
 
 
   if ( get_option( 'webp-express-just-activated' ) ) {
@@ -67,6 +71,7 @@ add_action( 'admin_notices', function() {
       return;
     }
 
+/*
     if ( get_option( 'webp-express-failed-creating-upload-dir' ) ) {
       delete_option( 'webp-express-failed-creating-upload-dir');
       printf(
@@ -77,7 +82,7 @@ add_action( 'admin_notices', function() {
       );
       return;
     }
-
+*/
 /*
     if ( get_option( 'webp-express-htaccess-not-writable' ) ) {
       delete_option( 'webp-express-htaccess-not-writable');
