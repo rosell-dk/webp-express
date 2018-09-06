@@ -8,7 +8,7 @@ $options = [];
 
 $configPath = $_GET['config-path'];
 $configPathAbs = $_SERVER['DOCUMENT_ROOT'] . '/' . $_GET['config-path'];
-$configFilename = $configPathAbs . '/config.json';
+$configFilename = $configPathAbs . '/wod-options.json';
 $handle = @fopen($configFilename, "r");
 $json = fread($handle, filesize($configFilename));
 fclose($handle);
@@ -25,7 +25,7 @@ if ($options['forward-query-string']) {
     if (isset($_GET['reconvert'])) {
         $options['reconvert'] = true;
     }
-}    
+}
 $source = $_GET['source'];
 
 // Calculate destination

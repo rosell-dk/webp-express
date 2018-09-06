@@ -54,6 +54,12 @@ class Config
         foreach ($config['converters'] as $converter) {
             if (isset($converter['deactivated'])) continue;
             $options['converters'][] = $converter;
+            foreach ($options['converters'] as &$c) {
+                unset ($c['id']);
+                if (!isset($c['options'])) {
+                    $c = $c['converter'];
+                }
+            }
         }
 
         unset($options['image-types']);
