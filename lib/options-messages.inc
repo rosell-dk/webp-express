@@ -2,6 +2,7 @@
 
 
 use \WebPExpress\Paths;
+use \WebPExpress\Config;
 
 if (empty(get_option('webp-express-configured'))) {
     echo '<div style="background-color: #cfc; padding: 20px; border: 1px solid #ccc">';
@@ -11,11 +12,8 @@ if (empty(get_option('webp-express-configured'))) {
     echo '</div>';
 }
 
-function webpexpress_display_notice($level, $message, $escHtml = true) {
+function webpexpress_display_notice($level, $message) {
     $msg = __( $message, 'webp-express');
-    if ($escHtml) {
-        $msg = esc_html($msg);
-    }
     printf(
         '<div class="%1$s"><p>%2$s</p></div>',
         esc_attr('notice notice-' . $level . ' is-dismissible'),
@@ -27,16 +25,14 @@ if (!Paths::createContentDirIfMissing()) {
     webpexpress_display_notice(
         'error',
         'WebP Express needs to create a directory "webp-express" under your wp-content folder, but does not have permission to do so.<br>' .
-            'Please create the folder manually, or change the file permissions of your wp-content folder.',
-        false
+            'Please create the folder manually, or change the file permissions of your wp-content folder.'
     );
 } else {
     if (!Paths::createConfigDirIfMissing()) {
         webpexpress_display_notice(
             'error',
             'WebP Express needs to create a directory "webp-express/config" under your wp-content folder, but does not have permission to do so.<br>' .
-                'Please create the folder manually, or change the file permissions.',
-            false
+                'Please create the folder manually, or change the file permissions.'
         );
     }
 
@@ -44,8 +40,24 @@ if (!Paths::createContentDirIfMissing()) {
         webpexpress_display_notice(
             'error',
             'WebP Express needs to create a directory "webp-express/webp-images" under your wp-content folder, but does not have permission to do so.<br>' .
-                'Please create the folder manually, or change the file permissions.',
-            false
+                'Please create the folder manually, or change the file permissions.'
         );
+    }
+}
+
+if (Config::isConfigFileThere()) {
+    if (!Config::isConfigFileThereAndOk()) {
+        webpexpress_display_notice(
+            'warning',
+            'Warning: The configuration file is not ok! (cant be read, or not valid json).<br>' .
+                'file: "' . Paths::getConfigFileName() . '"'
+        );
+    } else {
+        if (Config::arePathsUsedInHTAccessOutdated()) {
+            webpexpress_display_notice(
+                'warning',
+                'Warning: Wordpress paths have changed since the last time the Rewrite Rules was generated. The rules needs updating! (click <i>Save settings</i> to do so)<br>'
+            );
+        }
     }
 }

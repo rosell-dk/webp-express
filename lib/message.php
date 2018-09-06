@@ -18,9 +18,7 @@ add_action( 'admin_notices', function() {
     $pendingMessages = json_decode($pendingMessagesJSON, true);
     foreach ($pendingMessages as $message) {
         $msg = __( $message['message'], 'webp-express');
-        if ($message['escHtml']) {
-            $msg = esc_html($msg);
-        }
+        //$msg = esc_html($msg);
         printf(
           '<div class="%1$s"><p>%2$s</p></div>',
           esc_attr('notice notice-' . $message['level'] . ' is-dismissible'),

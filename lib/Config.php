@@ -9,17 +9,36 @@ use \WebPExpress\Paths;
 class Config
 {
 
-    private static function loadJSONOptions($filename)
+    public static function fileExists($filename) {
+        return @file_exists($filename);
+    }
+
+    /**
+     *  Return object or false, if config file does not exist, or read error
+     */
+    public static function loadJSONOptions($filename)
     {
+        if (!self::fileExists($filename)) {
+            return false;
+        }
         $handle = @fopen($filename, "r");
-        $json = fread($handle, filesize($filename));
+        if ($handle === false) {
+            return false;
+        }
+        $json = @fread($handle, filesize($filename));
+        if ($json === false) {
+            return false;
+        }
         fclose($handle);
 
         $options = json_decode($json, true);
+        if ($options === null) {
+            return false;
+        }
         return $options;
     }
 
-    private static function saveJSONOptions($filename, $obj)
+    public static function saveJSONOptions($filename, $obj)
     {
         $result = @file_put_contents($filename, json_encode($obj, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK));
         /*if ($result === false) {
@@ -28,9 +47,20 @@ class Config
         return ($result !== false);
     }
 
+
     public static function loadConfig()
     {
         return self::loadJSONOptions(Paths::getConfigFileName());
+    }
+
+    public static function isConfigFileThere()
+    {
+        return (self::fileexists(Paths::getConfigFileName()));
+    }
+
+    public static function isConfigFileThereAndOk()
+    {
+        return (self::loadConfig() !== false);
     }
 
     public static function loadWodOptions()
@@ -40,6 +70,12 @@ class Config
 
     public static function saveConfigurationFile($config)
     {
+        $config['paths-used-in-htaccess'] = [
+            'existing' => Paths::getPathToExisting(),
+            'wod-url-path' => Paths::getWodUrlPath(),
+            'config-dir-rel' => Paths::getConfigDirRel()
+        ];
+
         if (Paths::createConfigDirIfMissing()) {
             return self::saveJSONOptions(Paths::getConfigFileName(), $config);
         }
@@ -94,6 +130,9 @@ class Config
         }
         $fileExt = implode('|', $fileExtensions);
 
+        if ($imageTypes == 0) {
+            return '# WebP Express disabled (no image types have been choosen to be converted)';
+        }
         /* Build rules */
         $rules = '';
         $rules .= "<IfModule mod_rewrite.c>\n" .
@@ -128,6 +167,69 @@ class Config
         "AddType image/webp .webp\n";
 
         return $rules;
+    }
+
+    public static function doesHTAccessExists() {
+        //fileExists
+        //$oldConfig = self::loadConfig();
+        return self::fileExists(Paths::getHTAccessFilename());
+    }
+
+
+    public static function doesHTAccessNeedUpdate($newConfig) {
+        //fileExists
+        //$oldConfig = self::loadConfig();
+    }
+
+    public static function arePathsUsedInHTAccessOutdated() {
+        if (!self::isConfigFileThere()) {
+            // this properly means that rewrite rules have never been generated
+            return false;
+        }
+
+        $pathsGoingToBeUsedInHtaccess = [
+            'existing' => Paths::getPathToExisting(),
+            'wod-url-path' => Paths::getWodUrlPath(),
+            'config-dir-rel' => Paths::getConfigDirRel()
+        ];
+
+        $config = self::loadConfig();
+        if ($config === false) {
+            // corrupt or not readable
+            return true;
+        }
+
+        foreach ($config['paths-used-in-htaccess'] as $prop => $value) {
+            if ($value != $pathsGoingToBeUsedInHtaccess[$prop]) {
+                return true;
+            }
+        }
+    }
+
+    public static function doesRewriteRulesNeedUpdate($newConfig) {
+        if (!self::isConfigFileThere()) {
+            // this properly means that rewrite rules have never been generated
+            return true;
+        }
+        $oldConfig = self::loadConfig();
+        if ($oldConfig === false) {
+            // corrupt or not readable
+            return true;
+        }
+
+        $propsToCompare = ['forward-query-string', 'image-types'];
+
+        foreach ($propsToCompare as $prop) {
+            if ($newConfig[$prop] != $oldConfig[$prop]) {
+                return true;
+            }
+        }
+
+        if (!isset($oldConfig['paths-used-in-htaccess'])) {
+            return true;
+        }
+
+        return self::arePathsUsedInHTAccessOutdated();
     }
 
     public static function saveHTAccessRules($rules) {

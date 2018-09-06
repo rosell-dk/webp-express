@@ -3,6 +3,11 @@
     width: 100%;
 }*/
 
+/* break long lines in pre (when we are showing .htaccess inside notice) */
+.notice pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
 /* remove the padding on the row with the hidden "webp_express_converters" setting.
   it is the last row, we happen to know... */
 .form-table tr:last-of-type > * {

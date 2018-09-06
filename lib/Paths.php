@@ -33,6 +33,11 @@ class Paths
         return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getHomeDirAbs());
     }
 
+    public static function getHTAccessFilename()
+    {
+        return self::getHomeDirAbs() . '/.htaccess';
+    }
+
     // ------------ Content Dir -------------
     // (the "webp-express" directory inside wp-content)
 
@@ -192,29 +197,16 @@ APACHE
         return [
             'urls' => [
                 'webpExpressRoot' => self::getPluginUrlPath(),
-                /*
-                'webpExpressRoot' => untrailingslashit($converterUrlPath),
-                'convert' => untrailingslashit($converterUrlPath) . 'convert.php',
-                'destinationRoot' => untrailingslashit($destinationRootUrlPath),
-                'wpRoot' => untrailingslashit($wpUrlPath),  // ie "/blog" or ""
-                'converterUrlPathRelativeToSiteUrl' => $converterUrlPathRelativeToSiteUrl,
-                'siteUrlPathRelativeToConverterPath' => $siteUrlPathRelativeToConverterPath
-                */
             ],
             'filePaths' => [
                 'webpExpressRoot' => self::getPluginDirAbs(),
                 'destinationRoot' => self::getCacheDirAbs()
-                /*
-                'wordpressRoot' => $wordpressRoot,
-                'destinationRoot' => $destinationRoot,
-                'destinationRootRelativeToWebExpressRoot' => $destinationRootRelativeToWebExpressRoot,
-                'destinationRootRelativeToWordpressRoot' => $destinationRootRelativeToWordpressRoot
-                */
             ]
         ];
     }
 
     // Old
+    /*
     public static function calculateUrlsAndPathsOld()
     {
       // Calculate URL's
@@ -282,5 +274,5 @@ APACHE
               //'bp' => str_replace($_SERVER['DOCUMENT_ROOT'] . '/', '', untrailingslashit(ABSPATH)),
           ]
       ];
-    }
+  }*/
 }

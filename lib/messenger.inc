@@ -4,12 +4,12 @@
  *  $level:  info | success | warning | error
  *  $msg:    the message
  */
-function webpexpress_add_message($level, $msg, $escHtml = true) {
+function webpexpress_add_message($level, $msg) {
     update_option('webp-express-message-pending', true, false);
 
     $pendingMessagesJSON = get_option('webp-express-pending-messages', '[]');
     $pendingMessages = json_decode($pendingMessagesJSON, true);
-    $pendingMessages[] = ['level' => $level, 'message' => $msg, 'escHtml' => $escHtml];
+    $pendingMessages[] = ['level' => $level, 'message' => $msg];
 
     update_option('webp-express-pending-messages', json_encode($pendingMessages, JSON_UNESCAPED_SLASHES), false);
 }

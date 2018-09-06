@@ -35,33 +35,92 @@ add_action('admin_post_webpexpress_settings_submit', function() {
         'forward-query-string' => true
     ];
 
-    //wp_redirect( $_SERVER['HTTP_REFERER'] );
-    //echo gettype($_POST['converters']);
-    //print_r($_POST);
-    // [{"converter":"cwebp","options":{"use-nice":false},"id":"cwebp"},{"converter":"wpc","id":"wpc"},{"converter":"gd","options":{"skip-pngs":true},"id":"gd"},{"converter":"ewww","id":"ewww"},{"converter":"imagick","id":"imagick"}]
-//echo get_magic_quotes_gpc() ? 'yes' : 'no';
+    //$htaccessNeedsUpdate = Config::doesHTAccessNeedUpdate($config);
+    $rewriteRulesNeedsUpdate = Config::doesRewriteRulesNeedUpdate($config);
+    $htaccessExists = Config::doesHTAccessExists();
+    $rules = Config::generateHTAccessRulesFromConfigObj($config);
+    $isConfigFileThere = Config::isConfigFileThere();
 
-    //echo wp_unslash($_POST['converters']);
-    //echo '<br><br>';
-    //print_r(json_decode($_POST['converters'], true));
-    //print_r($config);
-    //exit;
-    if (Config::saveConfiguration($config)) {
+    if (!$htaccessExists) {
+        if ($isConfigFileThere) {
+            if ($rewriteRulesNeedsUpdate) {
+                webpexpress_add_message('info',
+                    'The rewrite rules needs to be updated. However, as you do not have an <i>.htaccess</i> file, you pressumably need to insert the rules in your VirtualHost manually. ' .
+                    'You must insert/update the rules to the following:' .
+                    '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
+                );
+            } else {
+                webpexpress_add_message('info', 'The rewrite rules does not need to be updated.');
+            }
+        } else {
+            webpexpress_add_message('info',
+                'You must insert the following rules in your VirtualHost manually (you do not have an <i>.htaccess</i> file in your root)<br>' .
+                'Insert the following:<br>' .
+                '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
+            );
+        }
+    }
+
+    $showSuccess = false;
+    if (Config::saveConfigurationFile($config)) {
+        $options = Config::generateWodOptionsFromConfigObj($config);
+        if (Config::saveWodOptionsFile($options)) {
+            if ($rewriteRulesNeedsUpdate) {
+                if ($htaccessExists) {
+                    if (Config::saveHTAccessRules($rules)) {
+                        $showSuccess = true;
+
+                        if ($isConfigFileThere) {
+                            webpexpress_add_message(
+                                'success',
+                                '<i>.htaccess</i> rules updated ok. The rules are now:<br>' .
+                                '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
+                            );
+                        } else {
+                            webpexpress_add_message(
+                                'success',
+                                'Inserted the following magic in your <i>.htaccess</i>:<br>' .
+                                '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
+                            );
+                        }
+                    } else {
+                        webpexpress_add_message('error',
+                            'Failed saving rewrite rules to your <i>.htaccess</i>.<br>' .
+                            'Either change file permissions or paste the following into your <i>.htaccess</i>:' .
+                            '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
+                        );
+                    }
+                }
+            } else {
+                $showSuccess = true;
+            }
+        } else {
+            webpexpress_add_message('error', 'Failed saving options file. Check file permissions<br>Tried to save to: "' . Paths::getWodOptionsFileName() . '"');
+        }
+    } else {
+        webpexpress_add_message(
+            'error',
+            'Failed saving configuration file.<br>Current file permissions are preventing WebP Express to save configuration to: "' . Paths::getConfigFileName() . '"'
+        );
+    }
+
+    if ($showSuccess) {
         webpexpress_add_message('success', 'Configuration saved');
 
         if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
             $webpExpressRoot = Paths::getPluginUrlPath();
 
-            $msg = 'Your browser supports webp... So you can test if everything works (including the redirect magic) - using these links:<br>' .
-                '<a href="/' . $webpExpressRoot . '/test/test.jpg" target="_blank">Convert test image</a><br>' .
-                '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug" target="_blank">Convert test image (show debug)</a><br>';
-
-            webpexpress_add_message('info', $msg, false);
+            if ($config['image-types'] != 0) {
+                webpexpress_add_message(
+                    'info',
+                    'Your browser supports webp... So you can test if everything works (including the redirect magic) - using these links:<br>' .
+                        '<a href="/' . $webpExpressRoot . '/test/test.jpg" target="_blank">Convert test image</a><br>' .
+                        '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug" target="_blank">Convert test image (show debug)</a><br>'
+                );
+            }
         }
-
-    } else {
-        webpexpress_add_message('error', 'Failed saving configuration file, or htaccess or something...');
     }
+
     wp_redirect( $_SERVER['HTTP_REFERER']);
 
 /*
