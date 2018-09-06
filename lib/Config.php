@@ -85,16 +85,17 @@ class Config
     public static function generateWodOptionsFromConfigObj($config)
     {
         $options = $config;
-
+//echo '<pre>' . print_r($options, true) . '</pre>';
         $options['converters'] = [];
         foreach ($config['converters'] as $converter) {
             if (isset($converter['deactivated'])) continue;
+
             $options['converters'][] = $converter;
-            foreach ($options['converters'] as &$c) {
-                unset ($c['id']);
-                if (!isset($c['options'])) {
-                    $c = $c['converter'];
-                }
+        }
+        foreach ($options['converters'] as &$c) {
+            unset ($c['id']);
+            if (!isset($c['options'])) {
+                $c = $c['converter'];
             }
         }
 
