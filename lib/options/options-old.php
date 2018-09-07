@@ -1,17 +1,16 @@
 <?php
 
-// Maybe go away from using Settings API ?
-// https://wpshout.com/wordpress-options-page/
-
-
-include_once 'helpers.php';
-include_once 'Paths.php';
-include_once 'Config.php';
-
-require_once "messenger.inc";
-
-use \WebPExpress\Paths;
+include_once __DIR__ . '/../Config.php';
 use \WebPExpress\Config;
+
+include_once __DIR__ . '/../Messenger.php';
+use \WebPExpress\Messenger;
+
+include_once __DIR__ . '/../Paths.php';
+use \WebPExpress\Paths;
+
+include_once __DIR__ . '/../State.php';
+use \WebPExpress\State;
 
 /*
 These lines should enable us to know whether quality can be detected.
@@ -20,8 +19,6 @@ require WEBPEXPRESS_PLUGIN_DIR . '/vendor/require-webp-convert.php';
 $detectedQualityOfTestJpg = \WebPConvert\Converters\ConverterHelper::detectQualityOfJpg(WEBPEXPRESS_PLUGIN_DIR . '/test/focus.jpg');
 $canDetectQualityOfJpegs = ($detectedQualityOfTestJpg == 100);
 */
-
-//webpexpress_settings_submit
 
 add_action('admin_post_webpexpress_settings_submit', function() {
     // https://premium.wpmudev.org/blog/handling-form-submissions/
@@ -35,6 +32,8 @@ add_action('admin_post_webpexpress_settings_submit', function() {
         'forward-query-string' => true
     ];
 
+    //Messenger::addMessage('info', 'just testing');
+
     //$htaccessNeedsUpdate = Config::doesHTAccessNeedUpdate($config);
     $rewriteRulesNeedsUpdate = Config::doesRewriteRulesNeedUpdate($config);
     $htaccessExists = Config::doesHTAccessExists();
@@ -44,16 +43,16 @@ add_action('admin_post_webpexpress_settings_submit', function() {
     if (!$htaccessExists) {
         if ($isConfigFileThere) {
             if ($rewriteRulesNeedsUpdate) {
-                webpexpress_add_message('info',
+                Messenger::addMessage('info',
                     'The rewrite rules needs to be updated. However, as you do not have an <i>.htaccess</i> file, you pressumably need to insert the rules in your VirtualHost manually. ' .
                     'You must insert/update the rules to the following:' .
                     '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
                 );
             } else {
-                webpexpress_add_message('info', 'The rewrite rules does not need to be updated.');
+                Messenger::addMessage('info', 'The rewrite rules does not need to be updated.');
             }
         } else {
-            webpexpress_add_message('info',
+            Messenger::addMessage('info',
                 'You must insert the following rules in your VirtualHost manually (you do not have an <i>.htaccess</i> file in your root)<br>' .
                 'Insert the following:<br>' .
                 '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
@@ -71,20 +70,20 @@ add_action('admin_post_webpexpress_settings_submit', function() {
                         $showSuccess = true;
 
                         if ($isConfigFileThere) {
-                            webpexpress_add_message(
+                            Messenger::addMessage(
                                 'success',
                                 '<i>.htaccess</i> rules updated ok. The rules are now:<br>' .
                                 '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
                             );
                         } else {
-                            webpexpress_add_message(
+                            Messenger::addMessage(
                                 'success',
                                 'Inserted the following magic in your <i>.htaccess</i>:<br>' .
                                 '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
                             );
                         }
                     } else {
-                        webpexpress_add_message('error',
+                        Messenger::addMessage('error',
                             'Failed saving rewrite rules to your <i>.htaccess</i>.<br>' .
                             'Either change file permissions or paste the following into your <i>.htaccess</i>:' .
                             '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
@@ -95,23 +94,23 @@ add_action('admin_post_webpexpress_settings_submit', function() {
                 $showSuccess = true;
             }
         } else {
-            webpexpress_add_message('error', 'Failed saving options file. Check file permissions<br>Tried to save to: "' . Paths::getWodOptionsFileName() . '"');
+            Messenger::addMessage('error', 'Failed saving options file. Check file permissions<br>Tried to save to: "' . Paths::getWodOptionsFileName() . '"');
         }
     } else {
-        webpexpress_add_message(
+        Messenger::addMessage(
             'error',
             'Failed saving configuration file.<br>Current file permissions are preventing WebP Express to save configuration to: "' . Paths::getConfigFileName() . '"'
         );
     }
 
     if ($showSuccess) {
-        webpexpress_add_message('success', 'Configuration saved');
+        Messenger::addMessage('success', 'Configuration saved');
 
         if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
             $webpExpressRoot = Paths::getPluginUrlPath();
 
             if ($config['image-types'] != 0) {
-                webpexpress_add_message(
+                Messenger::addMessage(
                     'info',
                     'Your browser supports webp... So you can test if everything works (including the redirect magic) - using these links:<br>' .
                         '<a href="/' . $webpExpressRoot . '/test/test.jpg" target="_blank">Convert test image</a><br>' .
@@ -122,41 +121,6 @@ add_action('admin_post_webpexpress_settings_submit', function() {
     }
 
     wp_redirect( $_SERVER['HTTP_REFERER']);
-
-/*
-    // Save configuration file
-    if (Config::saveConfigurationFile($config)) {
-        printf(
-          '<div class="%1$s"><p>%2$s</p></div>',
-          esc_attr( 'notice notice-success is-dismissible' ),
-          esc_html( __( 'WebP Express saved the configuration successfully', 'webp-express' ) )
-        );
-    } else {
-        printf(
-          '<div class="%1$s"><p>%2$s</p></div>',
-          esc_attr( 'notice notice-error is-dismissible' ),
-          //esc_html( __( 'WebP Express could not create a subfolder in your upload folder. Check your file permissions', 'webp-express' ) )
-          'WebP Express needs to write the configuration to a file "webp-express/config/config.json" under your wp-content folder, but does not have permission to do so.</b><br>' .
-          'Please change the permissions on the "wpcontent/webp-express/config" folder to allow the file to be created.'
-        );
-    }
-
-    // update .htaccess
-    $rules = WebPExpressHelpers::generateHTAccessRules();
-    if (WebPExpressHelpers::insertHTAccessRules($rules)) {
-        printf(
-          '<div class="%1$s"><p>%2$s</p></div>',
-          esc_attr( 'notice notice-success is-dismissible' ),
-          esc_html( __( 'WebP Express updated the .htaccess successfully', 'webp-express' ) )
-        );
-    } else {
-        printf(
-          '<div class="%1$s"><p>%2$s</p></div>',
-          esc_attr( 'notice notice-error is-dismissible' ),
-          '<b>.htaccess is not writable</b>. To fix this, make .htaccess writable and try activating the plugin again. <a target="_blank" href="https://github.com/rosell-dk/webp-express/wiki/Error-messages-and-warnings#htaccess-is-not-writable">Click here</a> for more information.'
-        );
-    }
-*/
 
     exit();
 });
@@ -176,9 +140,6 @@ add_action('admin_enqueue_scripts', function () {
     wp_enqueue_script('webp-express-options-page');
 
     wp_add_inline_script('webp-express-options-page', 'window.webpExpressPaths = ' . json_encode(Paths::getUrlsAndPathsForTheJavascript()) . ';');
-
-    //wp_add_inline_script('webp-express-options-page', 'window.webpExpressPaths = ' . json_encode(WebPExpressHelpers::calculateUrlsAndPaths()) . ';');
-    //wp_add_inline_script('webp-express-options-page', 'window.converters = [{"converter":"imagick","id":"imagick"},{"converter":"cwebp","id":"cwebp"},{"converter":"gd","id":"gd"}];');
 
     wp_register_style(
         'webp-express-options-page-css',
@@ -206,19 +167,7 @@ function webp_express_settings_page_content()
 
 <?php
 
-    require "options-messages.inc";
-
-    //echo '<pre>' . print_r(Paths::getUrlsAndPathsForTheJavascript(), true) . '</pre>';
-
-    //echo trailingslashit(parse_url(home_url())['path']) . '<br>';
-    //print_r(parse_url(home_url()));
-
-        //echo 'WP_CONTENT_DIR:' . WP_CONTENT_DIR;
-        //Config::saveConfigurationFile();
-        //$rules = WebPExpressHelpers::generateHTAccessRules();
-        //echo '<pre>' . print_r($rules, true) . '</pre>';
-        //WebPExpressHelpers::insertHTAccessRules($rules);
-        //echo getCacheDirRel
+    include __DIR__ . "/options-messages.inc";
 
         //echo '<pre>' . print_r(Config::loadConfig(), true) . '</pre>';
 
@@ -319,10 +268,9 @@ function webp_express_settings_page_content()
             <?php
 //print_r(get_option('plugin_error'));
 
-            //echo '<pre>' . print_r(WebPExpressHelpers::calculateUrlsAndPaths(), true) . '</pre>';
-            $localConverters = ['cwebp', 'imagick', 'gd'];
 
 /*
+$localConverters = ['cwebp', 'imagick', 'gd'];
             $testResult = WebPExpressHelpers::testConverters($localConverters);
             //print_r($testResult);
 
@@ -486,21 +434,7 @@ http://php.net/manual/en/function.set-include-path.php
                   <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
                 </div>
             </div>
-            <?php
-            //print_r($urls);
-            //echo $urls['urls']['webpExpressRoot'];
-             ?>
 
-            <!--
-            <div id="add-cloud-converter-id" style="display:none;">
-                <p>
-                  Select cloud converter to add:
-
-                  <button onclick="addConverter('ewww')" class="button button-primary" type="button">Add ewww converter</button>
-                </p>
-            </div>
-            <button class="button button-secondary" onclick="addConverterClick()" type="button">Add cloud converter</button>
-            -->
             <?php
 
 

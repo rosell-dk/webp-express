@@ -2,6 +2,27 @@
 
 namespace WebPExpress;
 
+//echo 'migrate 05';
+/*
+$optionsToDelete = [
+    'webp_express_max_quality',
+    'webp_express_image_types_to_convert',
+    'webp_express_failure_response',
+    'webp_express_converters',
+    'webp-express-inserted-rules-ok',
+    'webp-express-configured',
+    'webp-express-pending-messages',
+    'webp-express-just-activated',
+    'webp-express-message-pending',
+    'webp-express-failed-inserting-rules',
+    'webp-express-deactivate'
+];
+foreach ($optionsToDelete as $i => $optionName) {
+    delete_option($optionName);
+}
+update_option('webp-express-version', '0.5', true);
+*/
+/*
 class Migrate05
 {
 
@@ -24,7 +45,7 @@ class Migrate05
             };
 
             if ($shouldDuplicate) {
-                /* Duplicate converter */
+                // Duplicate converter
                 $converter2 = $converter;
                 foreach ($converter['options'] as $converterOption => $converterValue) {
                     if (substr($converterOption, -2) == '-2') {
@@ -49,3 +70,4 @@ class Migrate05
         return $options;
     }
 }
+*/

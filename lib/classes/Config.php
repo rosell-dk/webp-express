@@ -267,9 +267,16 @@ class Config
         if (!empty($file_existing_permission)) {
             chmod($root_path . '.htaccess', $file_existing_permission);
         }
+
+        update_option('webp-express-configured', true, false);
+
         return true;
       }
 
+    }
+
+    public static function deactivateHTAccessRules() {
+        return self::saveHTAccessRules('# Plugin is deactivated');
     }
 
     /**
