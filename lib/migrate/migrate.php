@@ -13,9 +13,9 @@ if (!get_option('webp-express-configured', false)) {
 
 
 
-// If options never has been saved, no migration is needed.
-// - and we can then set migrate-version to current
 if (!(get_option('webp-express-configured', false))) {
+    // Options has never has been saved, so no migration is needed.
+    // We can set migrate-version to current
     update_option('webp-express-migration-version', WEBPEXPRESS_MIGRATION_VERSION);
 } else {
 
