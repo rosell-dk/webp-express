@@ -3,9 +3,18 @@
 // uncomment next line to debug an error during activation
 //include __DIR__ . "/debug.php";
 
-if (get_option('webp-express-version', false) && (WEBPEXPRESS_VERSION != get_option('webp-express-version'))) {
+// Check if current version of data is up-to-date ("data" means options, config files syntax, etc)
+/*
+if (get_option('webp-express-data-version', false) && (WEBPEXPRESS_VERSION != get_option('webp-express-data-version'))) {
+    // migrate!
+    include __DIR__ . '/migrate/migrate.php';
+}*/
+
+if (WEBPEXPRESS_MIGRATION_VERSION != get_option('webp-express-migration-version', 0)) {
+    // migrate!
     include __DIR__ . '/migrate/migrate.php';
 }
+
 
 include __DIR__ . '/options/options-hooks.php';
 
@@ -38,7 +47,7 @@ register_uninstall_hook(WEBPEXPRESS_PLUGIN, 'webp_express_uninstall');
 
 
 // Add settings link on the plugins page
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ( $links ) {
+add_filter('plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), function ( $links ) {
     $mylinks = array(
         '<a href="' . admin_url( 'options-general.php?page=webp_express_settings_page' ) . '">Settings</a>',
     );

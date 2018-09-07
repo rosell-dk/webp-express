@@ -1,16 +1,25 @@
 <?php
 
-$version = get_option('webp-express-version', '0.4.0');
+$currentMigration = intval(get_option('webp-express-migration-version', 0));
 
-// Make a number out of it.
-// "0.4.1" => 41
-// "1.0.0" => 100
-$version = intval(str_replace('.', '', $version));
-
-
-if ($version <= 40) {
-    include 'migrate_50.php';
+if ($currentMigration == 0) {
+    // run migration 1
+    // It must take care of updating migration-version, - if successful.
+    include __DIR__ . '/migrate1.php';
 }
+
+// When a new version needs a new migration, uncomment this:
+/*
+if ($currentMigration == 1) {
+    // run migration 2
+    include __DIR__ . '/migrate2.php';
+}
+*/
+
+
+
+
+//include __DIR__ . '/migrate_50.php';
 
 /*
 if (empty(get_option('webp-express-configured'))) {

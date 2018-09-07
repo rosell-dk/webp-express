@@ -3,16 +3,7 @@
 namespace WebPExpress;
 
 include_once "State.php";
-
 use \WebPExpress\State;
-
-
-/**
- *
- *
- *
- *
- */
 
 class Messenger
 {

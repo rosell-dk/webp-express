@@ -2,8 +2,7 @@
 
 namespace WebPExpress;
 
-require_once "PathHelper.php";
-
+include_once "PathHelper.php";
 use \WebPExpress\PathHelper;
 
 class Paths

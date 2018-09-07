@@ -2,7 +2,7 @@
 
 namespace WebPExpress;
 
-require_once "Paths.php";
+include_once "Paths.php";
 
 use \WebPExpress\Paths;
 

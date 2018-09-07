@@ -12,24 +12,16 @@ if (empty(get_option('webp-express-configured'))) {
     echo '</div>';
 }
 
-function webpexpress_display_notice($level, $message) {
-    $msg = __( $message, 'webp-express');
-    printf(
-        '<div class="%1$s"><p>%2$s</p></div>',
-        esc_attr('notice notice-' . $level . ' is-dismissible'),
-        $msg
-    );
-}
 
 if (!Paths::createContentDirIfMissing()) {
-    webpexpress_display_notice(
+    Messenger::printMessage(
         'error',
         'WebP Express needs to create a directory "webp-express" under your wp-content folder, but does not have permission to do so.<br>' .
             'Please create the folder manually, or change the file permissions of your wp-content folder.'
     );
 } else {
     if (!Paths::createConfigDirIfMissing()) {
-        webpexpress_display_notice(
+        Messenger::printMessage(
             'error',
             'WebP Express needs to create a directory "webp-express/config" under your wp-content folder, but does not have permission to do so.<br>' .
                 'Please create the folder manually, or change the file permissions.'
@@ -37,7 +29,7 @@ if (!Paths::createContentDirIfMissing()) {
     }
 
     if (!Paths::createCacheDirIfMissing()) {
-        webpexpress_display_notice(
+        Messenger::printMessage(
             'error',
             'WebP Express needs to create a directory "webp-express/webp-images" under your wp-content folder, but does not have permission to do so.<br>' .
                 'Please create the folder manually, or change the file permissions.'
@@ -47,14 +39,14 @@ if (!Paths::createContentDirIfMissing()) {
 
 if (Config::isConfigFileThere()) {
     if (!Config::isConfigFileThereAndOk()) {
-        webpexpress_display_notice(
+        Messenger::printMessage(
             'warning',
             'Warning: The configuration file is not ok! (cant be read, or not valid json).<br>' .
                 'file: "' . Paths::getConfigFileName() . '"'
         );
     } else {
         if (Config::arePathsUsedInHTAccessOutdated()) {
-            webpexpress_display_notice(
+            Messenger::printMessage(
                 'warning',
                 'Warning: Wordpress paths have changed since the last time the Rewrite Rules was generated. The rules needs updating! (click <i>Save settings</i> to do so)<br>'
             );
