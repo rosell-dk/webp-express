@@ -59,10 +59,6 @@ function webp_express_activate() {
         );
     }
 
-    // Set version
-    // -------------------------------
-    update_option('webp-express-version', WEBPEXPRESS_VERSION, true);
-
     // Welcome!
     // -------------------------------
     Messenger::addMessage(
@@ -77,8 +73,8 @@ function webp_express_reactivate() {
     // We must regenerate the .htaccess rules.
     // (config dir and options and of course still there, no need to do anything about that)
 
-    Messenger::addMessage('error', 'You are on Microsof IIS server. The plugin does not work on IIS (yet)');
-    Actions::procastinate('deactivate');
+//    Messenger::addMessage('error', 'You are on Microsof IIS server. The plugin does not work on IIS (yet)');
+    //Actions::procastinate('deactivate');
 
     Messenger::addMessage(
         'info',
@@ -103,7 +99,7 @@ function webp_express_reactivate() {
 }
 
 // Test if plugin is activated for the first time, or simply reactivated
-if (get_option('webp-express-version', false)) {
+if (State::getState('configured', false)) {
     webp_express_reactivate();
 } else {
     webp_express_activate();
