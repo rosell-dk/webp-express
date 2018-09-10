@@ -26,9 +26,6 @@ foreach ($config['converters'] as &$converter) {
     unset ($converter['id']);
 }
 
-//Messenger::addMessage('info', 'just testing');
-
-//$htaccessNeedsUpdate = Config::doesHTAccessNeedUpdate($config);
 $rewriteRulesNeedsUpdate = Config::doesRewriteRulesNeedUpdate($config);
 $htaccessExists = Config::doesHTAccessExists();
 $rules = Config::generateHTAccessRulesFromConfigObj($config);

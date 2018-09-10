@@ -175,12 +175,6 @@ class Config
         return self::fileExists(Paths::getHTAccessFilename());
     }
 
-
-    public static function doesHTAccessNeedUpdate($newConfig) {
-        //fileExists
-        //$oldConfig = self::loadConfig();
-    }
-
     public static function arePathsUsedInHTAccessOutdated() {
         if (!self::isConfigFileThere()) {
             // this properly means that rewrite rules have never been generated
