@@ -32,10 +32,21 @@ class Paths
         return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getHomeDirAbs());
     }
 
+
+    // ------------ .htaccess dir -------------
+    // (directory containing the relevant .htaccess)
+    // (see https://github.com/rosell-dk/webp-express/issues/36)
+
+    public static function getHTAccessDir()
+    {
+        return rtrim(ABSPATH, '/');
+    }
+
     public static function getHTAccessFilename()
     {
-        return self::getHomeDirAbs() . '/.htaccess';
+        return self::getHTAccessDir() . '/.htaccess';
     }
+
 
     // ------------ WP Content Dir -------------
     public static function getWPContentDirAbs()

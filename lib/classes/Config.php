@@ -170,8 +170,6 @@ class Config
     }
 
     public static function doesHTAccessExists() {
-        //fileExists
-        //$oldConfig = self::loadConfig();
         return self::fileExists(Paths::getHTAccessFilename());
     }
 
@@ -232,24 +230,22 @@ class Config
     }
 
     public static function saveHTAccessRules($rules) {
-      $root_path = Paths::getHomeDirAbs();
+      $filename = Paths::getHTAccessFilename();
 
-      $root_path .= '/';
-
-      if (!file_exists($root_path . '.htaccess')) {
+      if (!@file_exists($filename)) {
         return false;
       }
 
-      $file_existing_permission = '';
+      $existingPermission = '';
 
       // Try to make .htaccess writable if its not
-      if (file_exists($root_path . '.htaccess') && !is_writable($root_path . '.htaccess')) {
+      if (@file_exists($filename) && !@is_writable($filename)) {
           // Store existing permissions, so we can revert later
-          $file_existing_permission = octdec(substr(decoct(fileperms($root_path . '.htaccess')), -4));
+          $existingPermission = octdec(substr(decoct(fileperms($filename)), -4));
 
           // Try to chmod.
           // It may fail, but we can ignore that. If it fails, insert_with_markers will also fail
-          chmod($root_path . '.htaccess', 0550);
+          chmod($filename, 0550);
       }
 
 
@@ -258,7 +254,7 @@ class Config
           require_once ABSPATH . 'wp-admin/includes/misc.php';
       }
 
-      $success = insert_with_markers($root_path . '.htaccess', 'WebP Express', $rules);
+      $success = insert_with_markers($filename, 'WebP Express', $rules);
 
       State::setState('last-attempt-to-save-htaccess-failed', !$success);
 
@@ -266,8 +262,8 @@ class Config
           State::setState('htaccess-rules-saved-at-some-point', true);
 
           /* Revert File Permission  */
-          if (!empty($file_existing_permission)) {
-              chmod($root_path . '.htaccess', $file_existing_permission);
+          if (!empty($existingPermission)) {
+              @chmod($filename, $existingPermission);
           }
       }
 
