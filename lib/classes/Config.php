@@ -81,7 +81,6 @@ class Config
         if (Paths::createConfigDirIfMissing()) {
             $success = self::saveJSONOptions(Paths::getConfigFileName(), $config);
             if ($success) {
-                //update_option('webp-express-configured', true, false);
                 State::setState('configured', true);
             }
             return $success;
@@ -92,7 +91,6 @@ class Config
     public static function generateWodOptionsFromConfigObj($config)
     {
         $options = $config;
-//echo '<pre>' . print_r($options, true) . '</pre>';
         $options['converters'] = [];
         foreach ($config['converters'] as $converter) {
             if (isset($converter['deactivated'])) continue;
@@ -120,12 +118,6 @@ class Config
 
     public static function generateHTAccessRulesFromConfigObj($config)
     {
-        /*
-        if (empty(get_option('webp-express-configured')) || empty(get_option('webp_express_converters'))) {
-            // This should not happen, because generateHTAccessRules should not be called at this stage.
-            // But if it did happen anyway, better to exit with a comment than failing totally.
-            return '# We shall wait with generating the .htaccess until WebP Express has been configured...';
-        }*/
 
         /* Calculate $fileExt */
         $imageTypes = $config['image-types'];
