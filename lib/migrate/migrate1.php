@@ -144,7 +144,11 @@ function webpexpress_migrate1_deleteOldOptions() {
         'webp-express-just-activated',
         'webp-express-message-pending',
         'webp-express-failed-inserting-rules',
-        'webp-express-deactivate'
+        'webp-express-deactivate',
+        'webp_express_fail_action',
+        'webp_express_method',
+        'webp_express_quality'
+
     ];
     foreach ($optionsToDelete as $i => $optionName) {
         delete_option($optionName);
