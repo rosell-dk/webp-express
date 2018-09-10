@@ -3,8 +3,9 @@
 
 use \WebPExpress\Paths;
 use \WebPExpress\Config;
+use \WebPExpress\State;
 
-if (empty(get_option('webp-express-configured'))) {
+if (!(State::getState('configured', false))) {
     echo '<div style="background-color: #cfc; padding: 20px; border: 1px solid #ccc">';
     echo '<h3>Welcome!<h3>';
     echo '<p>The rewrite rules are not active yet. They will be activated the first time you click the "Save settings" button.</p>';
