@@ -16,9 +16,12 @@ add_action('admin_post_webpexpress_settings_submit', function() {
     include __DIR__ . '/submit.php';
 });
 
-add_action('admin_enqueue_scripts', function () {
-    include __DIR__ . '/enqueue_scripts.php';
-});
+global $pagenow;
+if (($pagenow == 'options-general.php') && ($_GET['page'] == 'webp_express_settings_page')) {
+    add_action('admin_enqueue_scripts', function () {
+        include __DIR__ . '/enqueue_scripts.php';
+    });
+}
 
 function webp_express_settings_page_content()
 {
