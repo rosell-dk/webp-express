@@ -277,6 +277,8 @@ class Config
       State::setState('last-attempt-to-save-htaccess-failed', !$success);
 
       if ($success) {
+          State::setState('htaccess-rules-saved-at-some-point', true);
+
           /* Revert File Permission  */
           if (!empty($file_existing_permission)) {
               chmod($root_path . '.htaccess', $file_existing_permission);
