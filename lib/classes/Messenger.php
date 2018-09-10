@@ -7,6 +7,8 @@ use \WebPExpress\State;
 
 class Messenger
 {
+    private static $printedStyles = false;
+
     /**
      *  $level:  info | success | warning | error
      *  $msg:    the message (not translated)
@@ -24,6 +26,16 @@ class Messenger
     }
 
     public static function printMessage($level, $msg) {
+        if (!(self::$printedStyles)) {
+            global $wp_version;
+            if (floatval(substr($wp_version, 0, 3)) < 5.4) {
+                // Actually, I don't know precisely what version the styles were introduced.
+                // They are there in 4.4. They are not there in 4.0
+                self::printMessageStylesForOldWordpress();
+            }
+            self::$printedStyles = true;
+        }
+
         //$msg = __( $msg, 'webp-express');     // uncommented. We should add some sprintf-like functionality before making the plugin translatable
         printf(
           '<div class="%1$s"><p>%2$s</p></div>',
@@ -32,7 +44,37 @@ class Messenger
         );
     }
 
+    private static function printMessageStylesForOldWordpress() {
+        ?>
+        <style>
+        /* In Older Wordpress (ie 4.0), .notice is not declared */
+        .notice {
+            background: #fff;
+            border-left: 4px solid #fff;
+            -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+            box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+            margin: 10px 15px 2px 2px;
+            padding: 1px 12px;
+        }
+        .notice-error {
+            border-left-color: #dc3232;
+        }
+        .notice-success {
+            border-left-color: #46b450;
+        }
+        .notice-info {
+            border-left-color: #00a0d2;
+        }
+        .notice-warning {
+            border-left-color: #ffb900;
+        }
+        </style>
+        <?php
+    }
+
     public static function printPendingMessages() {
+
+
         $messages = State::getState('pendingMessages', []);
 
         foreach ($messages as $message) {
