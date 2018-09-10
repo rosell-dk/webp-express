@@ -1,5 +1,27 @@
 <?php
 
+//include_once __DIR__ . '/classes/Config.php';
+//use \WebPExpress\Config;
+
+include_once __DIR__ . '/classes/Paths.php';
+use \WebPExpress\Paths;
+
+
+/* helper. Remove dir recursively. No warnings - fails silently */
+function webpexpress_rrmdir($dir) {
+   if (@is_dir($dir)) {
+     $objects = @scandir($dir);
+     foreach ($objects as $object) {
+       if ($object != "." && $object != "..") {
+         if (@is_dir($dir."/".$object))
+           webpexpress_rrmdir($dir."/".$object);
+         else
+           @unlink($dir."/".$object);
+       }
+     }
+     @rmdir($dir);
+   }
+}
 
 $optionsToDelete = [
     'webp-express-messages-pending',
@@ -11,14 +33,6 @@ $optionsToDelete = [
 foreach ($optionsToDelete as $i => $optionName) {
     delete_option($optionName);
 }
-/*
-TODO: delete config
-@unlink(rtrim(WFWAF_LOG_PATH . '/') . '/.htaccess');
-@rmdir(WFWAF_LOG_PATH);
-*/
-/*
-webp_express_fail_action
-webp_express_method
-webp_express_quality
-*/
-// Should we also call unregister_setting ?
+
+// remove content dir (config plus images)
+webpexpress_rrmdir(Paths::getContentDirAbs());
