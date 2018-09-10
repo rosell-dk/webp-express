@@ -28,7 +28,6 @@ class Actions
                 add_action('admin_init', function () {
                     deactivate_plugins(plugin_basename(WEBPEXPRESS_PLUGIN));
                 });
-
                 break;
         }
     }
