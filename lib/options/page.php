@@ -20,7 +20,6 @@ if (!current_user_can('manage_options')) {
     <h2>WebP Express Settings</h2>
 
 <?php
-
     include __DIR__ . "/page-messages.php";
 
     //echo '<pre>' . print_r(Config::loadConfig(), true) . '</pre>';
