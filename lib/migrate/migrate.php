@@ -44,25 +44,4 @@ if (!(State::getState('configured', false))) {
         include __DIR__ . '/migrate2.php';
     }
     */
-
 }
-
-
-
-
-
-
-//include __DIR__ . '/migrate_50.php';
-
-/*
-if (empty(get_option('webp-express-configured'))) {
-    global $wpdb;
-    $hasWebPExpressOptionBeenSaved = ($wpdb->get_row( "SELECT * FROM $wpdb->options WHERE option_name = 'webp_express_converters'" ) !== null);
-    if ($hasWebPExpressOptionBeenSaved) {
-        // Store the fact that webp options has been changed.
-        // When nobody is using 0.3 or below, we can test on the existence of that option, instead of
-        // querying the database directly ($hasWebPExpressOptionBeenSaved)
-        add_option('webp-express-configured', true);
-    }
-}
-*/
