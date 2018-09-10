@@ -14,7 +14,12 @@ wp_register_script(
 );
 wp_enqueue_script('webp-express-options-page');
 
-wp_add_inline_script('webp-express-options-page', 'window.webpExpressPaths = ' . json_encode(Paths::getUrlsAndPathsForTheJavascript()) . ';');
+if (function_exists('wp_add_inline_script')) {
+    // wp_add_inline_script is available from Wordpress 4.5
+    wp_add_inline_script('webp-express-options-page', 'window.webpExpressPaths = ' . json_encode(Paths::getUrlsAndPathsForTheJavascript()) . ';');
+} else {
+    echo '<script>window.webpExpressPaths = ' . json_encode(Paths::getUrlsAndPathsForTheJavascript()) . ';</script>';
+}
 
 wp_register_style(
     'webp-express-options-page-css',
