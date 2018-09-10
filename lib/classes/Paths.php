@@ -39,6 +39,9 @@ class Paths
 
     public static function getHTAccessDir()
     {
+        // Hm. If no .htaccess here, and we absdir is subfolder (different from getHomeDirAbs)
+        // - we should perhaps take that instead?
+        // Wordpress seems to use homepath: https://developer.wordpress.org/reference/functions/save_mod_rewrite_rules/
         return rtrim(ABSPATH, '/');
     }
 
