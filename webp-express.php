@@ -9,9 +9,6 @@
  * License: GPL2
  */
 
-// When an update requires a migration, the number should be increased
-define('WEBPEXPRESS_MIGRATION_VERSION', '1');
-
 /*
 Note: Perhaps create a plugin page on my website?, ie https://www.bitwise-it.dk/software/wordpress/webp-express
 */

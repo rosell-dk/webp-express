@@ -79,7 +79,7 @@ if (Config::saveConfigurationFile($config)) {
                 } else {
                     Messenger::addMessage('error',
                         'Failed saving rewrite rules to your <i>.htaccess</i>.<br>' .
-                        'Either change file permissions or paste the following into your <i>.htaccess</i>:' .
+                        'Change the file permissions and save settings again. Or, alternatively, paste the following into your <i>.htaccess</i>:' .
                         '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
                     );
                 }

@@ -6,9 +6,8 @@ use \WebPOnDemand\WebPOnDemand;
 
 $options = [];
 
-$configPath = $_GET['config-path'];
-$configPathAbs = $_SERVER['DOCUMENT_ROOT'] . '/' . $_GET['config-path'];
-$configFilename = $configPathAbs . '/wod-options.json';
+$contentDirAbs = $_SERVER['DOCUMENT_ROOT'] . '/' . $_GET['wp-content'] . '/webp-express';
+$configFilename = $contentDirAbs . '/config/wod-options.json';
 $handle = @fopen($configFilename, "r");
 $json = fread($handle, filesize($configFilename));
 fclose($handle);
@@ -30,7 +29,7 @@ $source = $_GET['source'];
 
 // Calculate destination
 $applicationRoot = $_SERVER["DOCUMENT_ROOT"];
-$imageRoot = $configPathAbs . '/webp-images';
+$imageRoot = $contentDirAbs . '/webp-images';
 
 if (substr($source, 0, strlen($applicationRoot)) === $applicationRoot) {
     // Source file is residing inside document root.

@@ -1,5 +1,14 @@
 <?php
 
+// When an update requires a migration, the number should be increased
+define('WEBPEXPRESS_MIGRATION_VERSION', '1');
+
+if (WEBPEXPRESS_MIGRATION_VERSION != get_option('webp-express-migration-version', 0)) {
+    // run migration logic
+    include __DIR__ . '/migrate/migrate.php';
+}
+
+
 // uncomment next line to debug an error during activation
 //include __DIR__ . "/debug.php";
 
@@ -10,10 +19,6 @@ if (get_option('webp-express-data-version', false) && (WEBPEXPRESS_VERSION != ge
     include __DIR__ . '/migrate/migrate.php';
 }*/
 
-if (WEBPEXPRESS_MIGRATION_VERSION != get_option('webp-express-migration-version', 0)) {
-    // migrate!
-    include __DIR__ . '/migrate/migrate.php';
-}
 
 
 include __DIR__ . '/options/options-hooks.php';

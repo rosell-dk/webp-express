@@ -3,8 +3,10 @@
 namespace WebPExpress;
 
 include_once "Paths.php";
-
 use \WebPExpress\Paths;
+
+include_once "State.php";
+use \WebPExpress\State;
 
 class Config
 {
@@ -77,7 +79,12 @@ class Config
         ];
 
         if (Paths::createConfigDirIfMissing()) {
-            return self::saveJSONOptions(Paths::getConfigFileName(), $config);
+            $success = self::saveJSONOptions(Paths::getConfigFileName(), $config);
+            if ($success) {
+                //update_option('webp-express-configured', true, false);
+                State::setState('configured', true);
+            }
+            return $success;
         }
         return false;
     }
@@ -160,7 +167,7 @@ class Config
         $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " .
             "/" . Paths::getWodUrlPath() .
             "?source=%{SCRIPT_FILENAME}" .
-            "&config-path=" . Paths::getConfigDirRel() .
+            "&wp-content=" . Paths::getWPContentDirRel() .
             ($config['forward-query-string'] ? '&%1' : '') .
             " [NC,L]\n";
 
@@ -212,6 +219,11 @@ class Config
             // this properly means that rewrite rules have never been generated
             return true;
         }
+
+        if (State::getState('last-attempt-to-save-htaccess-failed', false)) {
+            return true;
+        }
+
         $oldConfig = self::loadConfig();
         if ($oldConfig === false) {
             // corrupt or not readable
@@ -259,20 +271,19 @@ class Config
       if (!function_exists('insert_with_markers')) {
           require_once ABSPATH . 'wp-admin/includes/misc.php';
       }
-      if (!insert_with_markers($root_path . '.htaccess', 'WebP Express', $rules)) {
-        return false;
-      }
-      else {
-        /* Revert File Permission  */
-        if (!empty($file_existing_permission)) {
-            chmod($root_path . '.htaccess', $file_existing_permission);
-        }
 
-        update_option('webp-express-configured', true, false);
+      $success = insert_with_markers($root_path . '.htaccess', 'WebP Express', $rules);
 
-        return true;
+      State::setState('last-attempt-to-save-htaccess-failed', !$success);
+
+      if ($success) {
+          /* Revert File Permission  */
+          if (!empty($file_existing_permission)) {
+              chmod($root_path . '.htaccess', $file_existing_permission);
+          }
       }
 
+      return $success;
     }
 
     public static function deactivateHTAccessRules() {

@@ -37,6 +37,16 @@ class Paths
         return self::getHomeDirAbs() . '/.htaccess';
     }
 
+    // ------------ WP Content Dir -------------
+    public static function getWPContentDirAbs()
+    {
+        return rtrim(WP_CONTENT_DIR, '/');
+    }
+    public static function getWPContentDirRel()
+    {
+        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getWPContentDirAbs());
+    }
+
     // ------------ Content Dir -------------
     // (the "webp-express" directory inside wp-content)
 

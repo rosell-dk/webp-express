@@ -40,6 +40,9 @@ include __DIR__ . "/page-messages.php";
     }
 
     $config = array_merge($defaultConfig, $config);
+    if ($config['converters'] == null) {
+        $config['converters'] = [];
+    }
 
     // Generate a custom nonce value.
     $webpexpress_settings_nonce = wp_create_nonce('webpexpress_settings_nonce');
