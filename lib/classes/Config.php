@@ -254,6 +254,8 @@ class Config
           require_once ABSPATH . 'wp-admin/includes/misc.php';
       }
 
+      // Convert to array, because string version has bugs in Wordpress 4.3
+      $rules = explode("\n", $rules);
       $success = insert_with_markers($filename, 'WebP Express', $rules);
 
       State::setState('last-attempt-to-save-htaccess-failed', !$success);
