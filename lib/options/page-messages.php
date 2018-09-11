@@ -4,6 +4,7 @@
 use \WebPExpress\Paths;
 use \WebPExpress\Config;
 use \WebPExpress\State;
+use \WebPExpress\Messenger;
 
 if (!(State::getState('configured', false))) {
     echo '<div style="background-color: #cfc; padding: 20px; border: 1px solid #ccc">';
