@@ -21,9 +21,7 @@ if (!current_user_can('manage_options')) {
 
 <?php
     include __DIR__ . "/page-messages.php";
-
     //echo '<pre>' . print_r(Config::loadConfig(), true) . '</pre>';
-
 
     $defaultConfig = [
         'image-types' => 1,

@@ -104,8 +104,8 @@ if ($showSuccess) {
             Messenger::addMessage(
                 'info',
                 'Your browser supports webp... So you can test if everything works (including the redirect magic) - using these links:<br>' .
-                    '<a href="/' . $webpExpressRoot . '/test/test.jpg" target="_blank">Convert test image</a><br>' .
-                    '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug" target="_blank">Convert test image (show debug)</a><br>'
+                    '<a href="/' . $webpExpressRoot . '/test/test.jpg?' . time() . '" target="_blank">Convert test image</a><br>' .
+                    '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug&time=' . time() . '" target="_blank">Convert test image (show debug)</a><br>'
             );
         }
     }
