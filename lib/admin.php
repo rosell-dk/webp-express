@@ -24,7 +24,7 @@ if (get_option('webp-express-data-version', false) && (WEBPEXPRESS_VERSION != ge
 include __DIR__ . '/options/options-hooks.php';
 
 register_activation_hook(WEBPEXPRESS_PLUGIN, function () {
-    include __DIR__ . '/activate.php';
+    include __DIR__ . '/activate-hook.php';
 });
 
 register_deactivation_hook(WEBPEXPRESS_PLUGIN, function () {

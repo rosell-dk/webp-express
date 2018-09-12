@@ -6,6 +6,9 @@ use \WebPExpress\Config;
 include_once __DIR__ . '/../classes/FileHelper.php';
 use \WebPExpress\FileHelper;
 
+include_once __DIR__ . '/../classes/HTAccess.php';
+use \WebPExpress\HTAccess;
+
 include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
 

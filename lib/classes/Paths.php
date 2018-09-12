@@ -74,7 +74,7 @@ class Paths
 
     /**
      *  Get paths of .htaccess files where we should add rules
-     */
+     *//*
     public static function getHTAccessDirs()
     {
         $dirs = [];
@@ -114,21 +114,7 @@ class Paths
         }
 
         return $dirs;
-    }
-
-    public static function getHTAccessDir()
-    {
-        // Hm. If no .htaccess here, and we absdir is subfolder (different from getHomeDirAbs)
-        // - we should perhaps take that instead?
-        // Wordpress seems to use homepath: https://developer.wordpress.org/reference/functions/save_mod_rewrite_rules/
-        return rtrim(ABSPATH, '/');
-    }
-
-    public static function getHTAccessFilename()
-    {
-        return self::getHTAccessDir() . '/.htaccess';
-    }
-
+    }*/
 
     // ------------ WP Content Dir -------------
     public static function getWPContentDirAbs()

@@ -86,12 +86,15 @@ function webpexpress_migrate1_migrateOptions()
 
     $config = $options;
 
-    $htaccessExists = Config::doesHTAccessExists();
+    //$htaccessExists = Config::doesHTAccessExists();
     $rules = Config::generateHTAccessRulesFromConfigObj($config);
 
     if (Config::saveConfigurationFile($config)) {
         $options = Config::generateWodOptionsFromConfigObj($config);
         if (Config::saveWodOptionsFile($options)) {
+
+            /*
+            TODO: something like this:
             if ($htaccessExists) {
                 if (Config::saveHTAccessRules($rules)) {
                     Messenger::addMessage(
@@ -114,7 +117,7 @@ function webpexpress_migrate1_migrateOptions()
                     '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
                 );
                 return true;
-            }
+            }*/
         } else {
             Messenger::addMessage('error', 'For migration to 0.5.0, WebP Express failed saving options file. Check file permissiPathsons<br>Tried to save to: "' . Paths::getWodOptionsFileName() . '"');
             return false;

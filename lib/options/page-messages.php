@@ -1,6 +1,7 @@
 <?php
 
 use \WebPExpress\Paths;
+use \WebPExpress\HTAccess;
 use \WebPExpress\Config;
 use \WebPExpress\State;
 use \WebPExpress\Messenger;
@@ -76,7 +77,7 @@ if (Config::isConfigFileThere()) {
                 'file: "' . Paths::getConfigFileName() . '"'
         );
     } else {
-        if (Config::arePathsUsedInHTAccessOutdated()) {
+        if (HTAccess::arePathsUsedInHTAccessOutdated()) {
             Messenger::printMessage(
                 'warning',
                 'Warning: Wordpress paths have changed since the last time the Rewrite Rules was generated. The rules needs updating! (click <i>Save settings</i> to do so)<br>'

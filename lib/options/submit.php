@@ -3,6 +3,9 @@
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
+include_once __DIR__ . '/../classes/HTAccess.php';
+use \WebPExpress\HTAccess;
+
 include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
 
@@ -26,9 +29,8 @@ foreach ($config['converters'] as &$converter) {
     unset ($converter['id']);
 }
 
-$rewriteRulesNeedsUpdate = Config::doesRewriteRulesNeedUpdate($config);
-//$htaccessExists = Config::doesHTAccessExists();
-$rules = Config::generateHTAccessRulesFromConfigObj($config);
+$rewriteRulesNeedsUpdate = HTAccess::doesRewriteRulesNeedUpdate($config);
+$rules = HTAccess::generateHTAccessRulesFromConfigObj($config);
 $isConfigFileThere = Config::isConfigFileThere();
 
 /*
@@ -53,11 +55,6 @@ if (!$htaccessExists) {
 }
 */
 
-function webpexpress_submit_saveRulesToDir($dir, $rules) {
-    $createIfMissing = true;
-    Config::saveHTAccessRulesToFile($dir . '/.htaccess', $rules, $createIfMissing);
-}
-
 function webpexpress_submit_saveRules($rules, $testLinks) {
 
     $indexDir = Paths::getIndexDirAbs();
@@ -68,7 +65,7 @@ function webpexpress_submit_saveRules($rules, $testLinks) {
     $writeToPluginsDirToo = false;
     $showSuccess = true;
 
-    $result = Config::saveHTAccessRulesToFirstWritableHTAccessDir([$wpContentDir, $indexDir, $homeDir], $rules);
+    $result = HTAccess::saveHTAccessRulesToFirstWritableHTAccessDir([$wpContentDir, $indexDir, $homeDir], $rules);
 
     if ($result == false) {
         $showSuccess = false;
@@ -101,7 +98,7 @@ function webpexpress_submit_saveRules($rules, $testLinks) {
         }
     }
     if ($writeToPluginsDirToo) {
-        if (!Config::saveHTAccessRulesToFile($pluginDir . '/.htaccess', $rules, true)) {
+        if (!HTAccess::saveHTAccessRulesToFile($pluginDir . '/.htaccess', $rules, true)) {
             $showSuccess = false;
             Messenger::addMessage('success', 'Configuration saved.');
             Messenger::addMessage(
