@@ -32,6 +32,6 @@ if ($result !== true) {
     $msg = "<b>Sorry, can't let you disable WebP Express!</b><br>" .
         'There are rewrite rules in the <i>.htaccess</i> that could not be removed. If these are not removed, it would break all images.<br>' .
         'Please make your <i>.htaccess</i> writable and then try to disable WebPExpress again.<br>Alternatively, remove the rules manually in your <i>.htaccess</i> file and try disabling again.' .
-        '<br>It conserns the following files:' . implode('<br>', $result);
+        '<br>It concerns the following files:<br>' . implode('<br>', $result);
     webpexpress_deny_deactivate($msg);
 }
