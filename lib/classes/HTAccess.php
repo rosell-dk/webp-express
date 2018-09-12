@@ -299,7 +299,7 @@ Paths::getHomeDirAbs();
 
         foreach ($dirsToClean as $dir) {
             $filename = $dir . '/.htaccess';
-            if (FileHelper::fileExists($filename)) {
+            if (!FileHelper::fileExists($filename)) {
                 continue;
             } else {
                 //if (State::getState('htaccess-rules-saved-at-some-point', false)) {
@@ -307,7 +307,7 @@ Paths::getHomeDirAbs();
                 // Have we rules in this file? (note: may return null if it cannot be determined)
                 $result = self::haveWeRulesInThisHTAccess($filename);
                 if ($result === true) {
-                    if (!saveHTAccessRulesToFile($filename, '# Plugin is deactivated', false)) {
+                    if (!self::saveHTAccessRulesToFile($filename, '# Plugin is deactivated', false)) {
                         $failures[] = $filename;
                     }
                 }
