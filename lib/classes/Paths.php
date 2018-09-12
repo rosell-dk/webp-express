@@ -5,6 +5,9 @@ namespace WebPExpress;
 include_once "PathHelper.php";
 use \WebPExpress\PathHelper;
 
+include_once "FileHelper.php";
+use \WebPExpress\FileHelper;
+
 class Paths
 {
 
@@ -16,8 +19,16 @@ class Paths
         return file_exists($dir);
     }
 
+    /**
+     *  Find out if $dir1 is inside - or equal to - $dir2
+     */
+    public static function isDirInsideDir($dir1, $dir2)
+    {
+        $rel = PathHelper::getRelDir($dir2, $dir1);
+        return (substr($rel, 0, 3) != '../');
+    }
+
     // ------------ Home Dir -------------
-    // (directory containing the .htaccess)
 
     public static function getHomeDirAbs()
     {
@@ -32,10 +43,78 @@ class Paths
         return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getHomeDirAbs());
     }
 
+    // ------------ Index Dir  -------------
+    // (The Wordpress installation dir)
+
+    public static function getIndexDirAbs()
+    {
+        return rtrim(ABSPATH, '/');
+    }
+
 
     // ------------ .htaccess dir -------------
     // (directory containing the relevant .htaccess)
     // (see https://github.com/rosell-dk/webp-express/issues/36)
+
+
+
+    public static function canWriteHTAccessRulesHere($dirName) {
+        return FileHelper::canEditOrCreateFileHere($dirName . '/.htaccess');
+    }
+
+    public static function returnFirstWritableHTAccessDir($dirs)
+    {
+        foreach ($dirs as $dir) {
+            if (self::canWriteHTAccessRulesHere($dir)) {
+                return $dir;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *  Get paths of .htaccess files where we should add rules
+     */
+    public static function getHTAccessDirs()
+    {
+        $dirs = [];
+
+        // With mod_rewrite, deeper .htaccess files takes precedence over rules in parent folders.
+        // So to give our rules the best chance of success, we prefer storing them as deep as possible
+        // (however, we do not traverse into child folders of wp-content, that would be to go too far)
+        // We prefer indexDir to homeDir (index dir might be in a subfolder to home dir - but not the other way, right?)
+
+        $indexDir = self::getIndexDirAbs();
+        $homeDir = self::getHomeDirAbs();
+        $wpContentDir = self::getWPContentDirAbs();
+        $pluginDir = self::getPluginDirAbs();
+
+        $result = self::returnFirstWritableHTAccessDir([
+            $wpContentDir, $indexDir, $homeDir
+        ]);
+
+        // None of the paths works, things are not looking good.
+        // However, somebody else must deal with this. All we are setting out to do here is specifying paths needed
+        if ($result === false) {
+            $result = $wpContentDir;
+        }
+
+        if (self::isWPContentDirMovedOutOfAbsPath()) {
+            // If wp-content is moved out, we must insist to create the .htaccess in the wp-content folder
+            $result = $wpContentDir;
+        }
+
+        $dirs[] = $result;
+
+        if (($result == $wpContentDir) && (self::isPluginDirMovedOutOfWpContent())) {
+            $dirs[] = $pluginDir;
+        }
+        if (($result != $wpContentDir) && (self::isWPContentDirMovedOutOfAbsPath())) {
+            $dirs[] = $pluginDir;
+        }
+
+        return $dirs;
+    }
 
     public static function getHTAccessDir()
     {
@@ -60,6 +139,17 @@ class Paths
     {
         return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getWPContentDirAbs());
     }
+
+    public static function isWPContentDirMoved()
+    {
+        return (self::getWPContentDirAbs() != (ABSPATH . 'wp-content'));
+    }
+
+    public static function isWPContentDirMovedOutOfAbsPath()
+    {
+        return !(self::isDirInsideDir(self::getWPContentDirAbs(), ABSPATH));
+    }
+
 
     // ------------ Content Dir -------------
     // (the "webp-express" directory inside wp-content)
@@ -142,9 +232,26 @@ APACHE
         return self::createDirIfMissing(self::getCacheDirAbs());
     }
 
-    // ------------ Plugin Dir -------------
+    // ------------ Plugin Dir (all plugins) -------------
 
     public static function getPluginDirAbs()
+    {
+        return untrailingslashit(WP_PLUGIN_DIR);
+    }
+
+    public static function isPluginDirMovedOutOfAbsPath()
+    {
+        return !(self::isDirInsideDir(self::getPluginDirAbs(), ABSPATH));
+    }
+
+    public static function isPluginDirMovedOutOfWpContent()
+    {
+        return !(self::isDirInsideDir(self::getPluginDirAbs(), self::getWPContentDirAbs()));
+    }
+
+    // ------------ WebP Express Plugin Dir -------------
+
+    public static function getWebPExpressPluginDirAbs()
     {
         return untrailingslashit(WEBPEXPRESS_PLUGIN_DIR);
     }
@@ -222,7 +329,7 @@ APACHE
                 'webpExpressRoot' => self::getPluginUrlPath(),
             ],
             'filePaths' => [
-                'webpExpressRoot' => self::getPluginDirAbs(),
+                'webpExpressRoot' => self::getWebPExpressPluginDirAbs(),
                 'destinationRoot' => self::getCacheDirAbs()
             ]
         ];

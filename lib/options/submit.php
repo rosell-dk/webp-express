@@ -27,10 +27,11 @@ foreach ($config['converters'] as &$converter) {
 }
 
 $rewriteRulesNeedsUpdate = Config::doesRewriteRulesNeedUpdate($config);
-$htaccessExists = Config::doesHTAccessExists();
+//$htaccessExists = Config::doesHTAccessExists();
 $rules = Config::generateHTAccessRulesFromConfigObj($config);
 $isConfigFileThere = Config::isConfigFileThere();
 
+/*
 if (!$htaccessExists) {
     if ($isConfigFileThere) {
         if ($rewriteRulesNeedsUpdate) {
@@ -50,40 +51,104 @@ if (!$htaccessExists) {
         );
     }
 }
+*/
+
+function webpexpress_submit_saveRulesToDir($dir, $rules) {
+    $createIfMissing = true;
+    Config::saveHTAccessRulesToFile($dir . '/.htaccess', $rules, $createIfMissing);
+}
+
+function webpexpress_submit_saveRules($rules, $testLinks) {
+
+    $indexDir = Paths::getIndexDirAbs();
+    $homeDir = Paths::getHomeDirAbs();
+    $wpContentDir = Paths::getWPContentDirAbs();
+    $pluginDir = Paths::getPluginDirAbs();
+
+    $writeToPluginsDirToo = false;
+    $showSuccess = true;
+
+    $result = Config::saveHTAccessRulesToFirstWritableHTAccessDir([$wpContentDir, $indexDir, $homeDir], $rules);
+
+    if ($result == false) {
+        $showSuccess = false;
+        Messenger::addMessage(
+            'warning',
+            'Configuration saved, but the <i>.htaccess</i> rules could not be saved. Please grant access to either your <i>wp-content</i> dir, ' .
+                'or your main <i>.htaccess</i> file. ' .
+                '- or, alternatively insert the following rules directly in your Apache configuration:' .
+                '<pre>' . htmlentities(print_r($rules, true)) . '</pre>' .
+                $testLinks
+        );
+    } else {
+        if ($result == $wpContentDir) {
+            $writeToPluginsDirToo = Paths::isPluginDirMovedOutOfWpContent();
+        } else {
+            /*
+            TODO: It is serious, if there are rules in wp-content that can no longer be removed
+            We should try to read that file to see if there is a problem.
+            */
+            $showSuccess = false;
+            Messenger::addMessage('success', 'Configuration saved.');
+            Messenger::addMessage(
+                'warning',
+                '<i>.htaccess</i> rules were written to your main <i>.htaccess</i>. ' .
+                    'However, consider to let us write into you wp-content dir instead.' .
+                    $testLinks
+            );
+
+            $writeToPluginsDirToo = Paths::isPluginDirMovedOutOfAbsPath();
+        }
+    }
+    if ($writeToPluginsDirToo) {
+        if (!Config::saveHTAccessRulesToFile($pluginDir . '/.htaccess', $rules, true)) {
+            $showSuccess = false;
+            Messenger::addMessage('success', 'Configuration saved.');
+            Messenger::addMessage(
+                'warning',
+                '<i>.htaccess</i> rules could not be written into your plugins folder. ' .
+                    'Images stored in your plugins will not be converted to webp (or, if <i>WebP Express</i> has rewrite rules there already, they did not get updated)'
+            );
+        }
+    }
+    if ($showSuccess) {
+        Messenger::addMessage(
+            'success',
+            'Configuration saved and rewrite rules were updated (they are placed in your <i>wp-content</i> dir)' .
+                ($writeToPluginsDirToo ? '. Also updated rewrite rules in your plugins dir.' : '.') .
+                $testLinks
+        );
+    }
+    Messenger::addMessage(
+        'info',
+        'Rules:<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
+    );
+}
+
+$testLinks = '';
+if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
+    if ($config['image-types'] != 0) {
+        $webpExpressRoot = Paths::getPluginUrlPath();
+
+        $testLinks = '<br>' .
+            '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug&time=' . time() . '" target="_blank">Convert test image (show debug)</a><br>' .
+            '<a href="/' . $webpExpressRoot . '/test/test.jpg?' . time() . '" target="_blank">Convert test image</a><br>';
+    }
+}
 
 $showSuccess = false;
 if (Config::saveConfigurationFile($config)) {
     $options = Config::generateWodOptionsFromConfigObj($config);
     if (Config::saveWodOptionsFile($options)) {
-        if ($rewriteRulesNeedsUpdate) {
-            if ($htaccessExists) {
-                if (Config::saveHTAccessRules($rules)) {
-                    $showSuccess = true;
 
-                    if ($isConfigFileThere) {
-                        Messenger::addMessage(
-                            'success',
-                            '<i>.htaccess</i> rules updated ok. The rules are now:<br>' .
-                            '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
-                        );
-                    } else {
-                        Messenger::addMessage(
-                            'success',
-                            'Inserted the following magic in your <i>.htaccess</i>:<br>' .
-                            '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
-                        );
-                    }
-                } else {
-                    Messenger::addMessage('error',
-                        'Failed saving rewrite rules to your <i>.htaccess</i>.<br>' .
-                        'Change the file permissions and save settings again. Or, alternatively, paste the following into your <i>.htaccess</i>:' .
-                        '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
-                    );
-                }
-            }
+        if ($rewriteRulesNeedsUpdate) {
+            webpexpress_submit_saveRules($rules, $testLinks);
+            //Messenger::addMessage('success', 'Configuration saved.');
         } else {
-            $showSuccess = true;
+            Messenger::addMessage('success', 'Configuration saved. Rewrite rules did not need to be updated. ' . $testLinks);
         }
+
+
     } else {
         Messenger::addMessage('error', 'Failed saving options file. Check file permissiPathsons<br>Tried to save to: "' . Paths::getWodOptionsFileName() . '"');
     }
@@ -92,23 +157,6 @@ if (Config::saveConfigurationFile($config)) {
         'error',
         'Failed saving configuration file.<br>Current file permissions are preventing WebP Express to save configuration to: "' . Paths::getConfigFileName() . '"'
     );
-}
-
-if ($showSuccess) {
-    Messenger::addMessage('success', 'Configuration saved');
-
-    if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
-        $webpExpressRoot = Paths::getPluginUrlPath();
-
-        if ($config['image-types'] != 0) {
-            Messenger::addMessage(
-                'info',
-                'Your browser supports webp... So you can test if everything works (including the redirect magic) - using these links:<br>' .
-                    '<a href="/' . $webpExpressRoot . '/test/test.jpg?' . time() . '" target="_blank">Convert test image</a><br>' .
-                    '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug&time=' . time() . '" target="_blank">Convert test image (show debug)</a><br>'
-            );
-        }
-    }
 }
 
 wp_redirect( $_SERVER['HTTP_REFERER']);

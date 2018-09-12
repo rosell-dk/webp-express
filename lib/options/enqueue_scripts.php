@@ -10,7 +10,7 @@ wp_register_script(
     'webp-express-options-page',
     plugins_url('js/webp-express-options-page.js', __FILE__),
     ['sortable'],
-    '0.5.0'
+    '0.5.1'
 );
 wp_enqueue_script('webp-express-options-page');
 
@@ -25,7 +25,7 @@ wp_register_style(
     'webp-express-options-page-css',
     plugins_url('css/webp-express-options-page.css', __FILE__),
     null,
-    '0.5.0'
+    '0.5.1'
 );
 wp_enqueue_style('webp-express-options-page-css');
 

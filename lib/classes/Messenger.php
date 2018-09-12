@@ -28,9 +28,9 @@ class Messenger
     public static function printMessage($level, $msg) {
         if (!(self::$printedStyles)) {
             global $wp_version;
-            if (floatval(substr($wp_version, 0, 3)) < 5.4) {
+            if (floatval(substr($wp_version, 0, 3)) < 4.1) {
                 // Actually, I don't know precisely what version the styles were introduced.
-                // They are there in 4.4. They are not there in 4.0
+                // They are there in 4.1. They are not there in 4.0
                 self::printMessageStylesForOldWordpress();
             }
             self::$printedStyles = true;

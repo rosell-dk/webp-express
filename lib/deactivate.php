@@ -13,29 +13,11 @@ include_once __DIR__ . '/classes/Paths.php';
 use \WebPExpress\Paths;
 
 
-/**
- *  Get .htaccess content (if possible)
- */
-function webpexpress_get_htaccess_content() {
-    $htaccessFilename = Paths::getHTAccessFilename();
-    $handle = @fopen($htaccessFilename, "r");
-    if ($handle === false) {
-        return false;
-    }
-    $content = @fread($handle, filesize($htaccessFilename));
-    if ($json === false) {
-        return false;
-    }
-    fclose($handle);
-    return $content;
-}
 
-function webpexpress_deny_deactivate() {
+function webpexpress_deny_deactivate($msg) {
     Messenger::addMessage(
         'error',
-        "<b>Sorry, can't let you disable WebP Express!</b><br>" .
-            'There are rewrite rules in the <i>.htaccess</i> that could not be removed. If these are not removed, it would break all images.<br>' .
-            'Please make your <i>.htaccess</i> writable and then try to disable WebPExpress again.<br>Alternatively, remove the rules manually in your <i>.htaccess</i> file and try disabling again.'
+        $msg
     );
     wp_redirect( $_SERVER['HTTP_REFERER']);
     exit;
@@ -50,6 +32,17 @@ if (Config::doesHTAccessExists()) {
 
         // Sneak-peak into the .htaccess, to determine if we have rules there.
         // (We may not be allowed)
+//deactivateHTAccessRules
+
+        $result = Config::deactivateHTAccessRules();
+        if ($result !== true) {
+            $msg = "<b>Sorry, can't let you disable WebP Express!</b><br>" .
+                'There are rewrite rules in the <i>.htaccess</i> that could not be removed. If these are not removed, it would break all images.<br>' .
+                'Please make your <i>.htaccess</i> writable and then try to disable WebPExpress again.<br>Alternatively, remove the rules manually in your <i>.htaccess</i> file and try disabling again.' .
+                '<br>It conserns the following files:' . implode('<br>', $result);
+            webpexpress_deny_deactivate($msg);
+        }
+
         $content = webpexpress_get_htaccess_content();
         if ($content !== false) {
             if (strpos($content, '# Redirect images to webp-on-demand.php') !== false) {

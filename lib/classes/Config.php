@@ -2,6 +2,9 @@
 
 namespace WebPExpress;
 
+include_once "FileHelper.php";
+use \WebPExpress\FileHelper;
+
 include_once "Paths.php";
 use \WebPExpress\Paths;
 
@@ -11,27 +14,15 @@ use \WebPExpress\State;
 class Config
 {
 
-    public static function fileExists($filename) {
-        return @file_exists($filename);
-    }
-
     /**
      *  Return object or false, if config file does not exist, or read error
      */
     public static function loadJSONOptions($filename)
     {
-        if (!self::fileExists($filename)) {
-            return false;
-        }
-        $handle = @fopen($filename, "r");
-        if ($handle === false) {
-            return false;
-        }
-        $json = @fread($handle, filesize($filename));
+        $json = FileHelper::loadFile($filename);
         if ($json === false) {
             return false;
         }
-        fclose($handle);
 
         $options = json_decode($json, true);
         if ($options === null) {
@@ -57,7 +48,7 @@ class Config
 
     public static function isConfigFileThere()
     {
-        return (self::fileexists(Paths::getConfigFileName()));
+        return (FileHelper::fileExists(Paths::getConfigFileName()));
     }
 
     public static function isConfigFileThereAndOk()
@@ -135,6 +126,12 @@ class Config
         }
         /* Build rules */
         $rules = '';
+
+        // The next line sets an environment variable.
+        // On the options page, we verify if this is set to diagnose if "AllowOverride None" is presented in 'httpd.conf'
+        //$rules .= "# The following SetEnv allows to diagnose if .htaccess files are turned off\n";
+        //$rules .= "SetEnv HTACCESS on\n\n";
+
         $rules .= "<IfModule mod_rewrite.c>\n" .
         "  RewriteEngine On\n\n";
 
@@ -169,8 +166,17 @@ class Config
         return $rules;
     }
 
+    public static function generateHTAccessRulesFromConfigFile() {
+        if (self::isConfigFileThereAndOk()) {
+            return self::generateHTAccessRulesFromConfigObj(self::loadConfig());
+        } else {
+            return false;
+        }
+    }
+
+
     public static function doesHTAccessExists() {
-        return self::fileExists(Paths::getHTAccessFilename());
+        return FileHelper::fileExists(Paths::getHTAccessFilename());
     }
 
     public static function arePathsUsedInHTAccessOutdated() {
@@ -229,51 +235,209 @@ class Config
         return self::arePathsUsedInHTAccessOutdated();
     }
 
-    public static function saveHTAccessRules($rules) {
-      $filename = Paths::getHTAccessFilename();
+    public static function saveHTAccessRulesToFile($filename, $rules, $createIfMissing = false) {
+        if (!@file_exists($filename)) {
+            if (!$createIfMissing) {
+                return false;
+            }
+            // insert_with_markers will create file if it doesn't exist, so we can continue...
+        }
 
-      if (!@file_exists($filename)) {
-        return false;
-      }
+        $existingFilePermission = null;
+        $existingDirPermission = null;
 
-      $existingPermission = '';
+        // Try to make .htaccess writable if its not
+        if (@file_exists($filename)) {
+            if (!@is_writable($filename)) {
+                $existingFilePermission = FileHelper::filePerm($filename);
+                @chmod($filename, 0664);        // chmod may fail, we know...
+            }
+        } else {
+            $dir = FileHelper::dirName($filename);
+            if (!@is_writable($dir)) {
+                $existingDirPermission = FileHelper::filePerm($dir);
+                @chmod($dir, 0775);
+            }
+        }
 
-      // Try to make .htaccess writable if its not
-      if (@file_exists($filename) && !@is_writable($filename)) {
-          // Store existing permissions, so we can revert later
-          $existingPermission = octdec(substr(decoct(fileperms($filename)), -4));
+        /* Add rules to .htaccess  */
+        if (!function_exists('insert_with_markers')) {
+            require_once ABSPATH . 'wp-admin/includes/misc.php';
+        }
 
-          // Try to chmod.
-          // It may fail, but we can ignore that. If it fails, insert_with_markers will also fail
-          chmod($filename, 0550);
-      }
+        // Convert to array, because string version has bugs in Wordpress 4.3
+        $rules = explode("\n", $rules);
+        $success = insert_with_markers($filename, 'WebP Express', $rules);
 
+        // Revert file or dir permissions
+        if (!is_null($existingFilePermission)) {
+            @chmod($filename, $existingFilePermission);
+        }
+        if (!is_null($existingDirPermission)) {
+            @chmod($dir, $existingDirPermission);
+        }
 
-      /* Add rules to .htaccess  */
-      if (!function_exists('insert_with_markers')) {
-          require_once ABSPATH . 'wp-admin/includes/misc.php';
-      }
+        State::setState('last-attempt-to-save-htaccess-failed', !$success);
 
-      // Convert to array, because string version has bugs in Wordpress 4.3
-      $rules = explode("\n", $rules);
-      $success = insert_with_markers($filename, 'WebP Express', $rules);
+        if ($success) {
+            State::setState('htaccess-rules-saved-at-some-point', true);
 
-      State::setState('last-attempt-to-save-htaccess-failed', !$success);
+            $containsRules = (strpos(implode('',$rules), '# Redirect images to webp-on-demand.php') != false);
 
-      if ($success) {
-          State::setState('htaccess-rules-saved-at-some-point', true);
+            $dir = FileHelper::dirName($filename);
+            $whichDir = self::whichHTAccessDirIsThis($dir);
+            if ($whichDir != '') {
+                State::setState('htaccess-rules-saved-to-' . $whichDir, $containsRules);
+            }
+        }
 
-          /* Revert File Permission  */
-          if (!empty($existingPermission)) {
-              @chmod($filename, $existingPermission);
-          }
-      }
-
-      return $success;
+        return $success;
     }
 
+    public static function saveHTAccessRulesToFirstWritableHTAccessDir($dirs, $rules)
+    {
+        foreach ($dirs as $dir) {
+            if (self::saveHTAccessRulesToFile($dir . '/.htaccess', $rules, true)) {
+                return $dir;
+            }
+        }
+        return false;
+    }
+
+
+    public static function saveHTAccessRules($rules) {
+        //$filename = Paths::getHTAccessFilename();
+        //$success = self::saveHTAccessRulesToFile(Paths::getHTAccessFilename(), $rules);
+
+        $createIfMissing = true;
+
+        // First try to save to index dir.
+        // (index dir might be in a subfolder to home dir - but not the other way, right?)
+        $success = self::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', $rules, $createIfMissing);
+
+        if (!$success) {
+            // If index dir failed, try to save to homedir.
+            // It is a more risky place in terms of other mod_rewrite stuff interfering
+            $success = self::saveHTAccessRulesToFile(Paths::getHomeDirAbs() . '/.htaccess', $rules, $createIfMissing);
+        }
+
+        // Regardles of how the above went, we now try to save the rules in the wp-content folder
+        // This is the least risky place in terms of other mod_rewrite stuff interfering
+        if (self::saveHTAccessRulesToFile(Paths::getWPContentDirAbs() . '/.htaccess', $rules, $createIfMissing)) {
+            $success = true;
+            if (Paths::isPluginDirMovedOutOfWpContent()) {
+                $success = self::saveHTAccessRulesToFile(Paths::getPluginDirAbs() . '/.htaccess', $rules, $createIfMissing);
+            }
+        } else {
+            if (Paths::isWPContentDirMovedOutOfAbsPath()) {
+                // We absolutely need rules in this dir, when wp-content is moved out of root
+                $success = false;
+            } elseif (Paths::isPluginDirMovedOutOfAbsPath()) {
+                $success = self::saveHTAccessRulesToFile(Paths::getPluginDirAbs() . '/.htaccess', $rules, $createIfMissing);
+            }
+        }
+/*
+        Paths::getIndexDirAbs() . '/.htaccess'
+Paths::getHomeDirAbs();
+
+        $createIfMissing
+        if (Paths::isWPContentDirMovedOutOfAbsPath()) {
+            // If main .htaccess exists, it probably means that .htaccess files are generally working on this site
+            // So we can create them other places.
+            $createIfMissing = self::doesHTAccessExists();
+            $success = $success && self::saveHTAccessRulesToFile(Paths::getWPContentDirAbs() . '/.htaccess', $rules, $createIfMissing);
+            if (Paths::isPluginDirMovedOutOfWpContent()) {
+
+            }
+        } elseif (Paths::isPluginDirMovedOutOfAbsPath()) {
+            $createIfMissing = self::doesHTAccessExists();
+            $success = $success && self::saveHTAccessRulesToFile(Paths::getPluginDirAbs() . '/.htaccess', $rules, $createIfMissing);
+        }*/
+        return $success;
+    }
+
+    public static function whichHTAccessDirIsThis($dir) {
+        switch ($dir) {
+            case Paths::getWPContentDirAbs():
+                return 'wp-content';
+            case Paths::getIndexDirAbs():
+                return 'index';
+            case Paths::getHomeDirAbs():
+                return 'home';
+            case Paths::getPluginDirAbs():
+                return 'plugins';
+        }
+        return '';
+    }
+
+    public static function hasRecordOfSavingHTAccessToDir($dir) {
+        $whichDir = self::whichHTAccessDirIsThis($dir);
+        if ($whichDir != '') {
+            return State::getState('htaccess-rules-saved-to-' . $whichDir, false);
+        }
+        return false;
+    }
+
+    /**
+     *  Try to deactivate all .htaccess rules.
+     *  If success, we return true.
+     *  If we fail, we return an array of filenames that have problems
+     */
     public static function deactivateHTAccessRules() {
-        return self::saveHTAccessRules('# Plugin is deactivated');
+        //return self::saveHTAccessRules('# Plugin is deactivated');
+        $indexDir = Paths::getIndexDirAbs();
+        $homeDir = Paths::getHomeDirAbs();
+        $wpContentDir = Paths::getWPContentDirAbs();
+        $pluginDir = Paths::getPluginDirAbs();
+
+        $dirsToClean = [$indexDir, $homeDir, $wpContentDir, $pluginDir];
+
+        $failures = [];
+
+        foreach ($dirsToClean as $dir) {
+            $filename = $dir . '/.htaccess';
+            if (FileHelper::fileExists($filename)) {
+                continue;
+            } else {
+                //if (State::getState('htaccess-rules-saved-at-some-point', false)) {
+
+                // Have we rules in this file? (note: may return null if it cannot be determined)
+                $result = self::haveWeRulesInThisHTAccess($filename);
+                if ($result === true) {
+                    if (!saveHTAccessRulesToFile($filename, '# Plugin is deactivated', false)) {
+                        $failures[] = $filename;
+                    }
+                }
+                if ($result === null) {
+                    // We were not allowed to sneak-peak.
+                    // What to do?
+                    // We are surely not allowed to change the file either.
+                    // But how to decide if there are rules in that file?
+                    // Well, good thing that we stored successful .htaccess write locations ;)
+                    // If we recorded a successful write, then we assume there are still rules there
+                    if (self::hasRecordOfSavingHTAccessToDir($dir)) {
+                        $failures[] = $filename;
+                    }
+                }
+            }
+        }
+        if (count($failures) == 0) {
+            return true;
+        }
+        return $failures;
+    }
+
+    /**
+     *  Sneak peak into .htaccess to see if we have rules in it
+     *  This may not be possible.
+     *  Return true, false, or null if we just can't tell
+     */
+    public static function haveWeRulesInThisHTAccess($filename) {
+        $content = FileHelper::loadFile($filename);
+        if ($content === false) {
+            return null;
+        }
+        return (strpos($content, '# Redirect images to webp-on-demand.php') != false);
     }
 
     /**
