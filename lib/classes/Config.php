@@ -5,6 +5,12 @@ namespace WebPExpress;
 include_once "FileHelper.php";
 use \WebPExpress\FileHelper;
 
+include_once "HTAccess.php";
+use \WebPExpress\HTAccess;
+
+include_once "Messenger.php";
+use \WebPExpress\Messenger;
+
 include_once "Paths.php";
 use \WebPExpress\Paths;
 
@@ -107,6 +113,44 @@ class Config
         return false;
     }
 
+    public static function saveConfigurationAndHTAccessFilesWithMessages($config, $context)
+    {
+        // Important to do this check before saving config, because the method
+        // compares against existing config.
+        if ($context == 'migrate') {
+            $rewriteRulesNeedsUpdate = true;
+        } else {
+            $rewriteRulesNeedsUpdate = HTAccess::doesRewriteRulesNeedUpdate($config);
+
+        }
+
+        if (self::saveConfigurationFile($config)) {
+            $options = self::generateWodOptionsFromConfigObj($config);
+            if (self::saveWodOptionsFile($options)) {
+
+                if ($rewriteRulesNeedsUpdate) {
+                    HTAccess::saveRulesAndMessageUs($config, $context);
+                }
+                else {
+                    switch ($context) {
+                        case 'submit':
+                            Messenger::addMessage('success', 'Configuration saved. Rewrite rules did not need to be updated. ' . HTAccess::testLinks($config));
+                            break;
+                        default:
+                            Messenger::addMessage('info', 'Rewrite rules did not need to be updated. ' . HTAccess::testLinks($config));
+                    }
+                    return;
+                }
+            } else {
+                Messenger::addMessage('error', 'Failed saving options file. Check file permissions<br>Tried to save to: "' . Paths::getWodOptionsFileName() . '"');
+            }
+        } else {
+            Messenger::addMessage(
+                'error',
+                'Failed saving configuration file.<br>Current file permissions are preventing WebP Express to save configuration to: "' . Paths::getConfigFileName() . '"'
+            );
+        }
+    }
 
     /**
      *  - Saves configuration file

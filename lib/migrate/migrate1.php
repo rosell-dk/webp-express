@@ -5,10 +5,13 @@ namespace WebPExpress;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-/*
+include_once __DIR__ . '/../classes/HTAccess.php';
+use \WebPExpress\HTAccess;
+
+
 include_once __DIR__ . '/../classes/Paths.php';
 use \WebPExpress\Paths;
-*/
+
 
 include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
@@ -93,6 +96,7 @@ function webpexpress_migrate1_migrateOptions()
         $options = Config::generateWodOptionsFromConfigObj($config);
         if (Config::saveWodOptionsFile($options)) {
 
+            Config::saveConfigurationAndHTAccessFilesWithMessages($config, 'migrate');
             /*
             TODO: something like this:
             if ($htaccessExists) {
@@ -119,13 +123,22 @@ function webpexpress_migrate1_migrateOptions()
                 return true;
             }*/
         } else {
-            Messenger::addMessage('error', 'For migration to 0.5.0, WebP Express failed saving options file. Check file permissiPathsons<br>Tried to save to: "' . Paths::getWodOptionsFileName() . '"');
+            Messenger::addMessage(
+                'error',
+                'For migration to 0.5.0, WebP Express failed saving options file. ' .
+                    'You must grant us write access to your wp-config folder.<br>' .
+                    'Tried to save to: "' . Paths::getWodOptionsFileName() . '"' .
+                    'Fix the file permissions and reload<br>'
+            );
             return false;
         }
     } else {
         Messenger::addMessage(
             'error',
-            'For migration to 0.5.0, WebP Express failed saving configuration file.<br>Current file permissions are preventing WebP Express to save configuration to: "' . Paths::getConfigFileName() . '"'
+            'For migration to 0.5.0, WebP Express failed saving configuration file.<br>' .
+                'You must grant us write access to your wp-config folder.<br>' .
+                'Tried to save to: "' . Paths::getConfigFileName() . '"' .
+                'Fix the file permissions and reload<br>'
         );
         return false;
     }
@@ -133,6 +146,13 @@ function webpexpress_migrate1_migrateOptions()
     //saveConfigurationFile
     //return $options;
     return true;
+}
+
+function webpexpress_migrate1_htaccess() {
+
+    if (HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getHomeDirAbs())) {
+        HTAccess::addToActiveHTAccessDirsArray('home');
+    }
 }
 
 function webpexpress_migrate1_deleteOldOptions() {
@@ -185,6 +205,7 @@ if (webp_express_migrate1_createFolders()) {
         if (webpexpress_migrate1_migrateOptions()) {
             webpexpress_migrate1_deleteOldOptions();
             webpexpress_migrate1_deleteOldWebPImages();
+            webpexpress_migrate1_htaccess();
             update_option('webp-express-migration-version', '1');
         }
     }

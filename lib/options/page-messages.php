@@ -19,6 +19,12 @@ $pluginDir = Paths::getPluginDirAbs();
 
 //echo (Config::haveWeRulesInThisHTAccess(Paths::getWPContentDirAbs().'/.htaccess') ? 'yes' : 'no');
 
+/*
+echo 'dirs:<br>';
+foreach (State::getState('active-htaccess-dirs', []) as $dir) {
+    echo $dir . '<br>';
+}*/
+
 if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }

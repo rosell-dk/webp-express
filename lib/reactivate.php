@@ -33,12 +33,13 @@ if ($config === false) {
         'The config file seems to have gone missing. You will need to reconfigure WebP Express <a href="options-general.php?page=webp_express_settings_page">(here)</a>.'
     );
 } else {
+    //HTAccess::saveRulesAndMessageUs($config, 'reactivate');
     /*
     //$htaccessExists = Config::doesHTAccessExists();
     $rules = HTAccess::generateHTAccessRulesFromConfigObj($config);
 
     if ($htaccessExists) {
-        if (Config::saveHTAccessRules($rules)) {
+        //if (Config::saveHTAccessRules($rules)) {
             Messenger::addMessage(
                 'success',
                 'WebP Express re-activated successfully.<br>' .
@@ -68,7 +69,7 @@ if ($config === false) {
     TODO!
         $rules = WebPExpressHelpers::generateHTAccessRulesFromConfigObj($config);
 
-        if (!Config::saveHTAccessRules($rules)) {
+        //if (!Config::saveHTAccessRules($rules)) {
             Messenger::addMessage('info',
                 'You must insert the following rules in your VirtualHost manually (you do not have an <i>.htaccess</i> file in your root)<br>' .
                 'Insert the following:<br>' .
