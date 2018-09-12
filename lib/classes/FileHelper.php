@@ -87,19 +87,28 @@ class FileHelper
     }
 
     /**
-     *  Try to read from a file.
+     *  Try to read from a file. Tries hard.
      *  Returns content, or false if read error.
      */
     public static function loadFile($filename) {
+        $changedPermission = false;
+        if (!@is_readable($filename)) {
+            $existingPermission = self::filePerm($filename);
+            $changedPermission = self::chmod($filename, 0660);
+        }
+
+        $return = false;
         $handle = @fopen($filename, "r");
-        if ($handle === false) {
-            return false;
+        if ($handle !== false) {
+            // Return value is either file content or false
+            $return = @fread($handle, filesize($filename));
+            fclose($handle);
         }
-        $content = @fread($handle, filesize($filename));
-        if ($content === false) {
-            return false;
+
+        if ($changedPermission) {
+            // change back
+            self::chmod($filename, $existingPermission);
         }
-        fclose($handle);
-        return $content;
+        return $return;
     }
 }
