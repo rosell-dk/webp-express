@@ -117,28 +117,20 @@ echo '</td></tr>';
 // method
 //echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
 
-echo '<tr></tr>';
 echo '</tbody></table>';
 
 // Converters
 // --------------------
-//$converters = get_option('webp_express_converters');
+
 $converters = $config['converters'];
 echo '<script>window.converters = ' . json_encode($converters) . '</script>';
 echo "<input type='text' name='converters' value='' style='visibility:hidden' />";
 
-    // https://premium.wpmudev.org/blog/handling-form-submissions/
+// https://premium.wpmudev.org/blog/handling-form-submissions/
 
 
 ?>
-    <!--<form action="options.php" method="post">-->
-
-
-
         <?php
-//print_r(get_option('plugin_error'));
-
-
 /*
 $localConverters = ['cwebp', 'imagick', 'gd'];
         $testResult = WebPExpressHelpers::testConverters($localConverters);
@@ -160,7 +152,6 @@ $localConverters = ['cwebp', 'imagick', 'gd'];
 
 /*
 http://php.net/manual/en/function.set-include-path.php
-
 
 //exec('/usr/sbin/getsebool -a', $output6, $returnCode5); // ok
 //echo 'All se bools: ' . print_r($output6, true) . '. Return code:' . $returnCode5;
@@ -305,9 +296,9 @@ echo '<ul id="converters"></ul>';
     </div>
 </div>
 
-<table style="width:100%">
+<table>
     <tr>
-        <td><?php submit_button('Save settings'); ?></td>
+        <td style="padding-right:20px"><?php submit_button('Save settings'); ?></td>
         <td><?php submit_button('Save settings and force new .htaccess rules', 'secondary', 'force'); ?></td>
     </tr>
 </table>
