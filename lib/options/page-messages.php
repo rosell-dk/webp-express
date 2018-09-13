@@ -8,28 +8,9 @@ use \WebPExpress\Messenger;
 use \WebPExpress\PlatformInfo;
 use \WebPExpress\FileHelper;
 
-/*
-$indexDir = Paths::getIndexDirAbs();
-$homeDir = Paths::getHomeDirAbs();
-$wpContentDir = Paths::getWPContentDirAbs();
-$pluginDir = Paths::getPluginDirAbs();
-*/
-//State::setState('htaccess-rules-saved-to-wp-content', false);
-//echo (State::getState('htaccess-rules-saved-to-wp-content', false) ? 'yes' : 'no');
-
-//echo (Config::haveWeRulesInThisHTAccess(Paths::getWPContentDirAbs().'/.htaccess') ? 'yes' : 'no');
-
-/*
-echo 'dirs:<br>';
-foreach (State::getState('active-htaccess-dirs', []) as $dir) {
-    echo $dir . '<br>';
-}*/
-
 if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }
-
-//echo (isset($_SERVER['HTACCESS']) ? 'set' : 'not set');
 
 if (PlatformInfo::definitelyNotGotModRewrite()) {
     Messenger::printMessage(
