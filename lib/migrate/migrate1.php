@@ -88,7 +88,7 @@ function webpexpress_migrate1_migrateOptions()
     $config = $options;
 
     //$htaccessExists = Config::doesHTAccessExists();
-    $rules = Config::generateHTAccessRulesFromConfigObj($config);
+    $rules = HTAccess::generateHTAccessRulesFromConfigObj($config);
 
     if (Config::saveConfigurationFile($config)) {
         $options = Config::generateWodOptionsFromConfigObj($config);
