@@ -193,11 +193,16 @@ class HTAccess
      *  Return true, false, or null if we just can't tell
      */
     public static function haveWeRulesInThisHTAccess($filename) {
-        $content = FileHelper::loadFile($filename);
-        if ($content === false) {
-            return null;
+        if (FileHelper::fileExists($filename)) {
+            $content = FileHelper::loadFile($filename);
+            if ($content === false) {
+                return null;
+            }
+            return (strpos($content, '# Redirect images to webp-on-demand.php') != false);
+        } else {
+            // the .htaccess isn't even there. So there are no rules.
+            return false;
         }
-        return (strpos($content, '# Redirect images to webp-on-demand.php') != false);
     }
 
     public static function haveWeRulesInThisHTAccessBestGuess($filename)
