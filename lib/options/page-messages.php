@@ -28,6 +28,7 @@ foreach (State::getState('active-htaccess-dirs', []) as $dir) {
 if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }
+include __DIR__ . "/page-welcome.php";
 
 //echo (isset($_SERVER['HTACCESS']) ? 'set' : 'not set');
 
@@ -89,5 +90,18 @@ if (Config::isConfigFileThere()) {
                 'Warning: Wordpress paths have changed since the last time the Rewrite Rules was generated. The rules needs updating! (click <i>Save settings</i> to do so)<br>'
             );
         }
+    }
+}
+
+if (
+    HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getIndexDirAbs() . '/.htaccess') &&
+    HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getWPContentDirAbs() . '/.htaccess')
+) {
+    if (!HTAccess::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false)) {
+        Messenger::printMessage(
+            'warning',
+            'Warning: WebP Express have rules in both your wp-content folder and in your Wordpress folder.<br>' .
+                'Please remove those in the <i>.htaccess</i> in your Wordress folder manually, or let us handle it, by granting us write access'
+        );
     }
 }

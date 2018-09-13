@@ -115,10 +115,6 @@ class HTAccess
             return true;
         }
 
-        if (State::getState('last-attempt-to-save-htaccess-failed', false)) {
-            return true;
-        }
-
         $oldConfig = Config::loadConfig();
         if ($oldConfig === false) {
             // corrupt or not readable
@@ -204,7 +200,7 @@ class HTAccess
         return (strpos($content, '# Redirect images to webp-on-demand.php') != false);
     }
 
-    function haveWeRulesInThisHTAccessBestGuess($filename)
+    public static function haveWeRulesInThisHTAccessBestGuess($filename)
     {
         // First try to sneak peak. May return null if it cannot be determined.
         $result = self::haveWeRulesInThisHTAccess($filename);
@@ -261,8 +257,6 @@ class HTAccess
         if (!is_null($existingDirPermission)) {
             @chmod($dir, $existingDirPermission);
         }
-
-        State::setState('last-attempt-to-save-htaccess-failed', !$success);
 
         if ($success) {
             State::setState('htaccess-rules-saved-at-some-point', true);
@@ -340,171 +334,93 @@ class HTAccess
         return '';
     }
 
+
+    public static function getHTAccessDirRequirements() {
+        $minRequired = 'index';
+        if (Paths::isWPContentDirMovedOutOfAbsPath()) {
+            $minRequired = 'wp-content';
+            $pluginToo = Paths::isPluginDirMovedOutOfWpContent() ? 'yes' : 'no';
+        } else {
+            // Hm.
+            // plugin requirement depends...
+            // - if user grants access to 'index', the requirement is Paths::isPluginDirMovedOutOfAbsPath()
+            // - if user grants access to 'wp-content', the requirement is Paths::isPluginDirMovedOutOfWpContent()
+            $pluginToo = 'depends';
+        }
+
+        return [
+            $minRequired,
+            $pluginToo      // 'yes', 'no' or 'depends'
+        ];
+    }
+
     /**
      *  Try to save the rules.
-     *  - First tries to save to wp-content, index or home.
-     *  - If none of this succeeds, ['dir' => 'failed'] is returned
-     *  - Otherwise we look to see if we also need to save in plugin dir.
-     *
-     *  Returns an array [
-     *     'dir' => 'failed' or the dir (ie 'wp-content')
-     *     'pluginToo' => boolean indicating if there need to be an .htaccess in plugin too
-     *     'pluginSuccess' => boolean indicating if .htaccess was saved in plugins
-     *  ]
+     *  Returns many details
      */
     public static function saveRules($config) {
 
         $rules = HTAccess::generateHTAccessRulesFromConfigObj($config);
 
+        list($minRequired, $pluginToo) = self::getHTAccessDirRequirements();
+
         $indexDir = Paths::getIndexDirAbs();
-        $homeDir = Paths::getHomeDirAbs();
         $wpContentDir = Paths::getWPContentDirAbs();
 
-        $writeToPluginsDirToo = false;
-
-        $result = HTAccess::saveHTAccessRulesToFirstWritableHTAccessDir([$wpContentDir, $indexDir, $homeDir], $rules);
-
-        $dir = '';
-        if ($result == false) {
-            return ['dir' => 'failed', 'pluginToo' => false];
-        } else {
-            if ($result == $wpContentDir) {
-                $writeToPluginsDirToo = Paths::isPluginDirMovedOutOfWpContent();
-                $dir = 'wp-content';
-            } else {
-                if ($result == $homeDir) {
-                    $dir = 'home';
-                } else {
-                    $dir = 'index';
-                }
-                /*
-                TODO: It is serious, if there are rules in wp-content that can no longer be removed
-                We should try to read that file to see if there is a problem.
-                */
-                $writeToPluginsDirToo = Paths::isPluginDirMovedOutOfAbsPath();
-            }
-        }
-        if ($writeToPluginsDirToo) {
-            $pluginDir = Paths::getPluginDirAbs();
-            $writtenToPlugins = HTAccess::saveHTAccessRulesToFile($pluginDir . '/.htaccess', $rules, true);
-        }
-        return [
-            'dir' => $dir,
-            'pluginToo' => $writeToPluginsDirToo,
-            'pluginSuccess' => $writtenToPlugins
+        $acceptableDirs = [
+            $wpContentDir
         ];
-    }
-
-    public static function saveRulesAndMessageUs($config, $context) {
-
-        $rules = HTAccess::generateHTAccessRulesFromConfigObj($config);
-
-        $indexDir = Paths::getIndexDirAbs();
-        $homeDir = Paths::getHomeDirAbs();
-        $wpContentDir = Paths::getWPContentDirAbs();
-        $pluginDir = Paths::getPluginDirAbs();
-
-        $writeToPluginsDirToo = false;
-        $showSuccess = true;
-
-        $result = HTAccess::saveHTAccessRulesToFirstWritableHTAccessDir([$wpContentDir, $indexDir, $homeDir], $rules);
-
-        if ($context == 'migrate') {
-            $testLink = '';
-        } else {
-            $testLink = self::testLinks($config);
+        if ($minRequired == 'index') {
+            $acceptableDirs[] = $indexDir;
         }
 
-        if ($result == false) {
+        $overidingRulesInWpContentWarning = false;
+        $result = HTAccess::saveHTAccessRulesToFirstWritableHTAccessDir($acceptableDirs, $rules);
+        if ($result == $wpContentDir) {
+            $mainResult = 'wp-content';
+            //if (self::haveWeRulesInThisHTAccessBestGuess($indexDir . '/.htaccess')) {
+            HTAccess::saveHTAccessRulesToFile($indexDir . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false);
+            //}
+        } elseif ($result == $indexDir) {
+            $mainResult = 'index';
+            $overidingRulesInWpContentWarning = self::haveWeRulesInThisHTAccessBestGuess($wpContentDir . '/.htaccess');
+        } elseif ($result === false) {
+            $mainResult = 'failed';
+        }
 
-            $showSuccess = false;
-            if ($context == 'migrate') {
-                Messenger::addMessage(
-                    'warning',
-                    'The <i>.htaccess</i> rules could not be migrated. But configuration was otherwise successfully migrated. Please grant access to either your <i>wp-content</i> dir, ' .
-                        'or your main <i>.htaccess</i> file. And then regenerate the <i>.htaccess</i> by going to settings and pressing "save settings". - Or paste the following manually into your <i>.htaccess</i>:' .
-                        '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
-                );
+        if ($pluginToo == 'depends') {
+            if ($mainResult == 'wp-content') {
+                $pluginToo = (Paths::isPluginDirMovedOutOfWpContent() ? 'yes' : 'no');
+            } elseif ($mainResult == 'index') {
+                $pluginToo = (Paths::isPluginDirMovedOutOfAbsPath() ? 'yes' : 'no');
             } else {
-                switch ($context) {
-                    case 'submit':
-                        $beginText = 'Configuration saved, but the ';
-                    default:
-                        $beginText = 'The ';
-                }
-                Messenger::addMessage(
-                    'warning',
-                    $beginText . '<i>.htaccess</i> rules could not be saved. Please grant access to either your <i>wp-content</i> dir, ' .
-                        'or your main <i>.htaccess</i> file. ' .
-                        '- or, alternatively insert the following rules directly in your Apache configuration:' .
-                        '<pre>' . htmlentities(print_r($rules, true)) . '</pre>' .
-                        $testLink
-                );
-            }
-
-        } else {
-            if ($result == $wpContentDir) {
-                $writeToPluginsDirToo = Paths::isPluginDirMovedOutOfWpContent();
-            } else {
-                /*
-                TODO: It is serious, if there are rules in wp-content that can no longer be removed
-                We should try to read that file to see if there is a problem.
-                */
-                $showSuccess = false;
-                if ($context == 'submit') {
-                    Messenger::addMessage('success', 'Configuration saved.');
-                }
-
-                Messenger::addMessage(
-                    'warning',
-                    '<i>.htaccess</i> rules were written to your main <i>.htaccess</i>. ' .
-                        'However, consider to let us write into you wp-content dir instead.' .
-                        $testLink
-                );
-
-                $writeToPluginsDirToo = Paths::isPluginDirMovedOutOfAbsPath();
+                // $result must be false. So $pluginToo should still be 'depends'
             }
         }
-        if ($writeToPluginsDirToo) {
-            if (!HTAccess::saveHTAccessRulesToFile($pluginDir . '/.htaccess', $rules, true)) {
-                $showSuccess = false;
-                if ($context == 'submit') {
-                    Messenger::addMessage('success', 'Configuration saved.');
-                }
-                Messenger::addMessage(
-                    'warning',
-                    '<i>.htaccess</i> rules could not be written into your plugins folder. ' .
-                        'Images stored in your plugins will not be converted to webp (or, if <i>WebP Express</i> has rewrite rules there already, they did not get updated)'
-                );
-            }
-        }
-        if ($showSuccess) {
-            if ($context = 'migrate') {
-                Messenger::addMessage(
-                    'success',
-                    'WebP Express has successfully migrated its configuration and updated the .htaccess file'
-                );
-            } else {
-                if ($context == 'submit') {
-                    $beginText = 'Configuration saved and rewrite ';
-                } else {
-                    $beginText = 'Rewrite ';
-                }
 
-                Messenger::addMessage(
-                    'success',
-                    $beginText . 'rules were updated (they are placed in your <i>wp-content</i> dir)' .
-                        ($writeToPluginsDirToo ? '. Also updated rewrite rules in your plugins dir.' : '.') .
-                        $testLink
-                );
+
+        $pluginFailed = false;
+        $pluginFailedBadly = true;
+        if ($pluginToo == 'yes') {
+            $pluginDir = Paths::getPluginDirAbs();
+            $pluginFailed = !(HTAccess::saveHTAccessRulesToFile($pluginDir . '/.htaccess', $rules, true));
+
+            if ($pluginFailed) {
+                // TODO:
+                // pluginFailedBadly
+                $pluginFailedBadly = self::haveWeRulesInThisHTAccessBestGuess($pluginDir . '/.htaccess');
             }
 
         }
-        if ($context == 'submit') {
-            Messenger::addMessage(
-                'info',
-                'Rules:<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
-            );
-        }
+
+        return [
+            'mainResult' => $mainResult,        // 'index', 'wp-content' or 'failed'
+            'minRequired' => $minRequired,      // 'index' or 'wp-content'
+            'pluginToo' => $pluginToo,          // 'yes', 'no' or 'depends'
+            'pluginFailed' => $pluginFailed,    // true if failed to write to plugin folder (it only tries that, if pluginToo == 'yes')
+            'pluginFailedBadly' => $pluginFailedBadly,       // true if plugin failed AND it seems we have rewrite rules there
+            'overidingRulesInWpContentWarning' => $overidingRulesInWpContentWarning,  // true if main result is 'index' but we cannot remove those in wp-content
+            'rules' => $rules                   // The rules we generated
+        ];
     }
 }

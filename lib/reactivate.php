@@ -33,49 +33,36 @@ if ($config === false) {
         'The config file seems to have gone missing. You will need to reconfigure WebP Express <a href="options-general.php?page=webp_express_settings_page">(here)</a>.'
     );
 } else {
-    //HTAccess::saveRulesAndMessageUs($config, 'reactivate');
+    $rulesResult = HTAccess::saveRules($config);
     /*
-    //$htaccessExists = Config::doesHTAccessExists();
-    $rules = HTAccess::generateHTAccessRulesFromConfigObj($config);
+    'mainResult'        // 'index', 'wp-content' or 'failed'
+    'minRequired'       // 'index' or 'wp-content'
+    'pluginToo'         // 'yes', 'no' or 'depends'
+    'pluginFailed'      // true if failed to write to plugin folder (it only tries that, if pluginToo == 'yes')
+    'pluginFailedBadly' // true if plugin failed AND it seems we have rewrite rules there
+    'overidingRulesInWpContentWarning'  // true if main result is 'index' but we cannot remove those in wp-content
+    'rules'             // the rules that were generated
+    */
+    $mainResult = $rulesResult['mainResult'];
+    $rules = $rulesResult['rules'];
 
-    if ($htaccessExists) {
-        //if (Config::saveHTAccessRules($rules)) {
-            Messenger::addMessage(
-                'success',
-                'WebP Express re-activated successfully.<br>' .
-                    'The image redirections are in effect again (the <i>.htaccess</i> file was updated)<br><br>' .
-                    'Just a quick reminder: If you at some point change the upload directory or move Wordpress, the <i>.htaccess</i> will need to be regenerated.<br>' .
-                    'You do that by re-saving the settings <a href="options-general.php?page=webp_express_settings_page">(here)</a>'
-            );
-            //return true;
-        } else {
-            Messenger::addMessage('error',
-                'WebP Express failed saving rewrite rules to your <i>.htaccess</i>.<br>' .
-                'Please deactivate the plugin, change file permissions, and try to activate again. Or paste the following into your <i>.htaccess</i>:' .
-                '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
-            );
-            //return true;
-        }
-    } else {
-        Messenger::addMessage('info',
-            'The rewrite rules needs to be updated. However, as you do not have an <i>.htaccess</i> file, you pressumably need to insert the rules in your VirtualHost manually. ' .
-            'You must insert/update the rules to the following:' .
-            '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
+    if ($mainResult != 'failed') {
+        Messenger::addMessage(
+            'success',
+            'WebP Express re-activated successfully.<br>' .
+                'The image redirections are in effect again.<br><br>' .
+                'Just a quick reminder: If you at some point change the upload directory or move Wordpress, the <i>.htaccess</i> will need to be regenerated.<br>' .
+                'You do that by re-saving the settings <a href="options-general.php?page=webp_express_settings_page">(here)</a>'
         );
-        //return true;
-    }*/
+    } else {
+        Messenger::addMessage(
+            'warning',
+            'WebP Express could not regenerate the rewrite rules<br>' .
+                'You need to change some permissions. Head to the ' .
+                '<a href="options-general.php?page=webp_express_settings_page">settings page</a> ' .
+                'and try to save the settings there (it will provide more information about the problem)'
+        );
 
-    /*
-    TODO!
-        $rules = WebPExpressHelpers::generateHTAccessRulesFromConfigObj($config);
-
-        //if (!Config::saveHTAccessRules($rules)) {
-            Messenger::addMessage('info',
-                'You must insert the following rules in your VirtualHost manually (you do not have an <i>.htaccess</i> file in your root)<br>' .
-                'Insert the following:<br>' .
-                '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
-            );
-        }
-        */
+    }
 
 }

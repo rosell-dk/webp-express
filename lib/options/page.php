@@ -305,8 +305,11 @@ echo '<ul id="converters"></ul>';
     </div>
 </div>
 
-<?php
-submit_button('Save settings');
-?>
+<table style="width:100%">
+    <tr>
+        <td><?php submit_button('Save settings'); ?></td>
+        <td><?php submit_button('Save settings and force new .htaccess rules', 'secondary', 'force'); ?></td>
+    </tr>
+</table>
 </form>
 </div>

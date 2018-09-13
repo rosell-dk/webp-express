@@ -24,14 +24,22 @@ if (Paths::isWPContentDirMovedOutOfAbsPath()) {
         echo '<i>WebP Express</i> would be needing to store the rewrite rules in a <i>.htaccess</i> file in your <i>wp-content</i> directory ';
         echo '(we need to store them there rather than in your root, because you have moved your wp-content folder out of the Wordpress root). ';
         echo 'Please adjust the file permissions of your <i>wp-content</i> dir. ';
+
         if (Paths::isPluginDirMovedOutOfWpContent()) {
-            echo '<br>But that is not all. Besides moving your wp-content dir, you have <i>also</i> moved your plugin dir... Wow... ';
+            echo '<br>But that is not all. Besides moving your wp-content dir, you have <i>also</i> moved your plugin dir... ';
             echo 'If you want WebP-Express to work on the images delivered by your plugins, you must also grant write access to your plugin dir (you can revoke the access after we have written the rules).<br>';
         }
         echo 'You can reload this page aftewards, and this message should be gone</p>';
+    } else {
+        if (Paths::isPluginDirMovedOutOfWpContent()) {
+            echo '<p><b>Oh, one more thing</b>. I can see that your plugin dir has been moved out of your wp-content folder. ';
+            echo 'If you want WebP-Express to work on the images delivered by your plugins, you must grant write access to your ';
+            echo 'plugin dir (you can revoke the access after we have written the rules, but beware that the plugin may need ';
+            echo 'access rights again. Some of the options affects the .htaccess rules. And WebP Express also have to remove the rules if the plugin is disabled)';
+        }
     }
 } else {
-    $firstWritable = Paths::returnFirstWritableHTAccessDir([$wpContentDir, $indexDir, $homeDir]);
+    $firstWritable = Paths::returnFirstWritableHTAccessDir([$wpContentDir, $indexDir]);
     if ($firstWritable === false) {
         echo '<p><b>Oh, one more thing</b>. Unless you are going to put the rewrite rules into your configuration manually, ';
         echo '<i>WebP Express</i> would be needing to store the rewrite rules in a <i>.htaccess</i> file. ';

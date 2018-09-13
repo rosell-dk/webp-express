@@ -113,63 +113,53 @@ class Config
         return false;
     }
 
-    public static function saveConfigurationAndHTAccessFilesWithMessages($config, $context)
+    /**
+     *
+     *  $rewriteRulesNeedsUpdate:
+     */
+    public static function saveConfigurationAndHTAccess($config, $forceRuleUpdating = false)
     {
         // Important to do this check before saving config, because the method
         // compares against existing config.
-        if ($context == 'migrate') {
+
+        if ($forceRuleUpdating) {
             $rewriteRulesNeedsUpdate = true;
         } else {
             $rewriteRulesNeedsUpdate = HTAccess::doesRewriteRulesNeedUpdate($config);
-
         }
 
         if (self::saveConfigurationFile($config)) {
             $options = self::generateWodOptionsFromConfigObj($config);
             if (self::saveWodOptionsFile($options)) {
-
                 if ($rewriteRulesNeedsUpdate) {
-                    HTAccess::saveRulesAndMessageUs($config, $context);
+                    $rulesResult = HTAccess::saveRules($config);
+                    return [
+                        'saved-both-config' => true,
+                        'saved-main-config' => true,
+                        'rules-needed-update' => true,
+                        'htaccess-result' => $rulesResult
+                    ];
                 }
                 else {
-                    switch ($context) {
-                        case 'submit':
-                            Messenger::addMessage('success', 'Configuration saved. Rewrite rules did not need to be updated. ' . HTAccess::testLinks($config));
-                            break;
-                        default:
-                            Messenger::addMessage('info', 'Rewrite rules did not need to be updated. ' . HTAccess::testLinks($config));
-                    }
-                    return;
+                    $rulesResult = HTAccess::saveRules($config);
+                    return [
+                        'saved-both-config' => true,
+                        'saved-main-config' => true,
+                        'rules-needed-update' => false,
+                        'htaccess-result' => $rulesResult
+                    ];
                 }
             } else {
-                Messenger::addMessage('error', 'Failed saving options file. Check file permissions<br>Tried to save to: "' . Paths::getWodOptionsFileName() . '"');
+                return [
+                    'saved-both-config' => false,
+                    'saved-main-config' => true,
+                ];
             }
         } else {
-            Messenger::addMessage(
-                'error',
-                'Failed saving configuration file.<br>Current file permissions are preventing WebP Express to save configuration to: "' . Paths::getConfigFileName() . '"'
-            );
+            return [
+                'saved-both-config' => false,
+                'saved-main-config' => false,
+            ];
         }
     }
-
-    /**
-     *  - Saves configuration file
-     *   AND generates WOD options, and saves them too
-     *   AND saves .htaccess
-     */
-     /*
-    public static function saveConfiguration($config)
-    {
-        if (self::saveConfigurationFile($config)) {
-            $options = self::generateWodOptionsFromConfigObj($config);
-            if (self::saveWodOptionsFile($options)) {
-                $rules = self::generateHTAccessRulesFromConfigObj($config);
-                return self::saveHTAccessRules($rules);
-
-            }
-        } else {
-            return false;
-        }
-    }*/
-
 }

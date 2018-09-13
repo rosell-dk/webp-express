@@ -8,10 +8,8 @@ use \WebPExpress\Config;
 include_once __DIR__ . '/../classes/HTAccess.php';
 use \WebPExpress\HTAccess;
 
-
 include_once __DIR__ . '/../classes/Paths.php';
 use \WebPExpress\Paths;
-
 
 include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
@@ -96,32 +94,35 @@ function webpexpress_migrate1_migrateOptions()
         $options = Config::generateWodOptionsFromConfigObj($config);
         if (Config::saveWodOptionsFile($options)) {
 
-            Config::saveConfigurationAndHTAccessFilesWithMessages($config, 'migrate');
+            //Config::saveConfigurationAndHTAccessFilesWithMessages($config, 'migrate');
+            $rulesResult = HTAccess::saveRules($config);
             /*
-            TODO: something like this:
-            if ($htaccessExists) {
-                if (Config::saveHTAccessRules($rules)) {
-                    Messenger::addMessage(
-                        'success',
-                        '<i>WebP Express has successfully migrated its configuration and the .htaccess file'
-                    );
-                    return true;
-                } else {
-                    Messenger::addMessage('error',
-                        'For migration to 0.5.0, WebP Express failed saving rewrite rules to your <i>.htaccess</i>.<br>' .
-                        'But configuration was successfully migrated. So, change file permissions and try to regenerate the .htaccess by changing ie the "image types to convert" option. Or paste the following into your <i>.htaccess</i>:' .
-                        '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
-                    );
-                    return true;
-                }
-            } else {
-                Messenger::addMessage('info',
-                    'For migration to 0.5.0, the rewrite rules needs to be updated. However, as you do not have an <i>.htaccess</i> file, you pressumably need to insert the rules in your VirtualHost manually. ' .
-                    'You must insert/update the rules to the following:' .
-                    '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
+            'mainResult'        // 'index', 'wp-content' or 'failed'
+            'minRequired'       // 'index' or 'wp-content'
+            'pluginToo'         // 'yes', 'no' or 'depends'
+            'pluginFailed'      // true if failed to write to plugin folder (it only tries that, if pluginToo == 'yes')
+            'pluginFailedBadly' // true if plugin failed AND it seems we have rewrite rules there
+            'overidingRulesInWpContentWarning'  // true if main result is 'index' but we cannot remove those in wp-content
+            'rules'             // the rules that were generated
+            */
+            $mainResult = $rulesResult['mainResult'];
+            $rules = $rulesResult['rules'];
+
+            if ($mainResult != 'failed') {
+                Messenger::addMessage(
+                    'success',
+                    'WebP Express has successfully migrated its configuration and updated the rewrite rules'
                 );
-                return true;
-            }*/
+            } else {
+                Messenger::addMessage(
+                    'warning',
+                    'WebP Express has successfully migrated its configuration.' .
+                    'However, WebP Express could not update the rewrite rules<br>' .
+                        'You need to change some permissions. Head to the ' .
+                        '<a href="options-general.php?page=webp_express_settings_page">settings page</a> ' .
+                        'and try to save the settings there (it will provide more information about the problem)'
+                );
+            }
         } else {
             Messenger::addMessage(
                 'error',
