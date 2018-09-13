@@ -149,13 +149,6 @@ function webpexpress_migrate1_migrateOptions()
     return true;
 }
 
-function webpexpress_migrate1_htaccess() {
-
-    if (HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getHomeDirAbs())) {
-        HTAccess::addToActiveHTAccessDirsArray('home');
-    }
-}
-
 function webpexpress_migrate1_deleteOldOptions() {
     $optionsToDelete = [
         'webp_express_max_quality',
@@ -206,7 +199,6 @@ if (webp_express_migrate1_createFolders()) {
         if (webpexpress_migrate1_migrateOptions()) {
             webpexpress_migrate1_deleteOldOptions();
             webpexpress_migrate1_deleteOldWebPImages();
-            webpexpress_migrate1_htaccess();
             update_option('webp-express-migration-version', '1');
         }
     }

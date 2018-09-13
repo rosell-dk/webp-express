@@ -28,7 +28,6 @@ foreach (State::getState('active-htaccess-dirs', []) as $dir) {
 if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }
-include __DIR__ . "/page-welcome.php";
 
 //echo (isset($_SERVER['HTACCESS']) ? 'set' : 'not set');
 
