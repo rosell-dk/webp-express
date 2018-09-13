@@ -11,9 +11,20 @@ class FileHelper
 
     /**
      *  Get file permission of a file (integer). Only get the last part, ie 0644
+     *  If failure, it returns false
      */
     public static function filePerm($filename) {
-        return octdec(substr(decoct(fileperms($filename)), -4));
+        if (!self::fileExists($filename)) {
+            return false;
+        }
+
+        // fileperms can still fail. In that case, it returns false
+        $perm = @fileperms($filename);
+        if ($perm === false) {
+            return false;
+        }
+
+        return octdec(substr(decoct($perm), -4));
     }
 
     public static function humanReadableFilePerm($mode) {
@@ -29,13 +40,18 @@ class FileHelper
      *  we have our own chmod.
      */
     public static function chmod($filename, $mode) {
+        // In case someone carelessly passed the result of a filePerm call, which was false:
+        if ($mode === false) {
+            return false;
+        }
         $existingPermission = self::filePerm($filename);
-        if ($mode == $existingPermission) {
+        if ($mode === $existingPermission) {
             return true;
         }
         if (@chmod($filename, $mode)) {
             // in some cases chmod returns true, even though it did not succeed!
-            if (self::filePerm($filename) != $mode) {
+            // - so we test if our operation had the desired effect.
+            if (self::filePerm($filename) !== $mode) {
                 return false;
             }
             return true;
@@ -52,31 +68,50 @@ class FileHelper
         return preg_replace('/[\/\\\\][^\/\\\\]*$/', '', $filename);
     }
 
-    public static function canEditOrCreateFileHere($filename) {
-        if (@file_exists($filename)) {
+    /**
+     *  Determines if a file can be created.
+     *  BEWARE: It requires that the containing folder already exists
+     */
+    public static function canCreateFile($filename) {
+        $dirName = self::dirName($filename);
+        if (!@file_exists($dirName)) {
+            return false;
+        }
+        if (@is_writable($dirName) && @is_executable($dirName)) {
+            return true;
+        }
 
-            if (@is_writable($filename) && @is_readable($filename)) {
-                return true;
-            }
+        $existingPermission = self::filePerm($dirName);
 
-            // As a last desperate try, lets see if we can give ourself write permissions.
-            // If possible, then it will also be possible when actually writing
-            $existingPermission = self::filePerm($filename);
-            if (self::chmod($filename, 0660)) {
+        // we need to make sure we got the existing permission, so we can revert correctly later
+        if ($existingPermission !== false) {
+            if (self::chmod($dirName, 0775)) {
                 // change back
                 self::chmod($filename, $existingPermission);
                 return true;
             }
+        }
+        return false;
+    }
 
-            // Idea: Perhaps we should also try to actually open the file for writing?
+    /**
+     *  Note: Do not use for directories
+     */
+    public static function canEditFile($filename) {
+        if (!@file_exists($filename)) {
+            return false;
+        }
+        if (@is_writable($filename) && @is_readable($filename)) {
+            return true;
+        }
 
-        } else {
-            $dirName = self::dirName($filename);
-            if (@is_writable($dirName) && @is_executable($dirName)) {
-                return true;
-            }
-            $existingPermission = self::filePerm($dirName);
-            if (self::chmod($dirName, 0770)) {
+        // As a last desperate try, lets see if we can give ourself write permissions.
+        // If possible, then it will also be possible when actually writing
+        $existingPermission = self::filePerm($filename);
+
+        // we need to make sure we got the existing permission, so we can revert correctly later
+        if ($existingPermission !== false) {
+            if (self::chmod($filename, 0664)) {
                 // change back
                 self::chmod($filename, $existingPermission);
                 return true;
@@ -84,6 +119,16 @@ class FileHelper
         }
         return false;
 
+        // Idea: Perhaps we should also try to actually open the file for writing?
+
+    }
+
+    public static function canEditOrCreateFileHere($filename) {
+        if (@file_exists($filename)) {
+            return self::canEditFile($filename);
+        } else {
+            return self::canCreateFile($filename);
+        }
     }
 
     /**
@@ -94,7 +139,11 @@ class FileHelper
         $changedPermission = false;
         if (!@is_readable($filename)) {
             $existingPermission = self::filePerm($filename);
-            $changedPermission = self::chmod($filename, 0660);
+
+            // we need to make sure we got the existing permission, so we can revert correctly later
+            if ($existingPermission !== false) {
+                $changedPermission = self::chmod($filename, 0664);
+            }
         }
 
         $return = false;
