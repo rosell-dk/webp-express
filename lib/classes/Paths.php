@@ -258,7 +258,14 @@ APACHE
      */
     public static function getUrlPathFromUrl($url)
     {
-        $path = untrailingslashit(parse_url($url)['path']);
+        $parsed = parse_url($url);
+        if (!isset($parsed['path'])) {
+            return '';
+        }
+        if (is_null($parsed['path'])) {
+            return '';
+        }
+        $path = untrailingslashit($parsed['path']);
         return ltrim($path, '/\\');
     }
 
