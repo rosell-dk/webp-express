@@ -29,6 +29,7 @@ $optionsToDelete = [
     'webp-express-state',
     'webp-express-version',
     'webp-express-activation-error',
+    'webp-express-migration-version'
 ];
 foreach ($optionsToDelete as $i => $optionName) {
     delete_option($optionName);
