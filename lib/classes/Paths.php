@@ -113,10 +113,16 @@ class Paths
 
     // ------------ Upload Dir -------------
     // (can be moved out of wp-content dir. But not (rarely? - I suppose someone could enter dots) out of abspath)
-    
+
     public static function getUploadDirAbs()
     {
-        return ABSPATH . rtrim(UPLOADS, '/');
+        // Pst: When supporting multisite, we could use wp_upload_dir instead
+        // https://developer.wordpress.org/reference/functions/wp_upload_dir/
+        if ( defined( 'UPLOADS' ) ) {
+            return ABSPATH . rtrim(UPLOADS, '/');
+        } else {
+            return self::getWPContentDirAbs() . '/uploads';
+        }
     }
 
     public static function isUploadDirMovedOutOfWPContentDir()
