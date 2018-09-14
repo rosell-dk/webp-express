@@ -98,7 +98,7 @@ function testRun($converter, $source, $destination, $options) {
     $beginTime = microtime(true);
 
     try {
-        WebPConvert::convert($source, $destination, $options, new EchoLogger());
+        $success = WebPConvert::convert($source, $destination, $options, new EchoLogger());
     } catch (\Exception $e) {
         $msg = $e->getMessage();
     }
@@ -106,12 +106,15 @@ function testRun($converter, $source, $destination, $options) {
     $endTime = microtime(true);
     $duration = $endTime - $beginTime;
 
-    if (isset($msg)) {
+    if (!$success) {
         echo '<h3 class="error">Test conversion failed (in ' . round($duration * 1000) . ' ms)</h3>';
-        echo '<label>Problem:</label>';
-        //echo '<p class="failure">' . $failure . '</p>';
-        //echo '<label>Details:</label>';
-        echo '<p class="error-msg">' . $msg . '</p>';
+
+        if (isset($msg)) {
+            echo '<label>Problem:</label>';
+            //echo '<p class="failure">' . $failure . '</p>';
+            //echo '<label>Details:</label>';
+            echo '<p class="error-msg">' . $msg . '</p>';
+        }
     } else {
         echo '<p>Successfully converted test image in ' . round($duration * 1000) . ' ms</p>';
 
