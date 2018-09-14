@@ -8,18 +8,8 @@ if (WEBPEXPRESS_MIGRATION_VERSION != get_option('webp-express-migration-version'
     include __DIR__ . '/migrate/migrate.php';
 }
 
-
 // uncomment next line to debug an error during activation
 //include __DIR__ . "/debug.php";
-
-// Check if current version of data is up-to-date ("data" means options, config files syntax, etc)
-/*
-if (get_option('webp-express-data-version', false) && (WEBPEXPRESS_VERSION != get_option('webp-express-data-version'))) {
-    // migrate!
-    include __DIR__ . '/migrate/migrate.php';
-}*/
-
-
 
 include __DIR__ . '/options/options-hooks.php';
 
@@ -49,7 +39,6 @@ function webp_express_uninstall() {
 // interestingly, I get "Serialization of 'Closure' is not allowed" if I pass anonymous function
 // ... perhaps we should not do that in the other hooks either.
 register_uninstall_hook(WEBPEXPRESS_PLUGIN, 'webp_express_uninstall');
-
 
 // Add settings link on the plugins page
 add_filter('plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), function ( $links ) {
