@@ -145,7 +145,7 @@ class HTAccess
         $activeHtaccessDirs = State::getState('active-htaccess-dirs', []);
         if (!in_array($whichDir, $activeHtaccessDirs)) {
             $activeHtaccessDirs[] = $whichDir;
-            State::setState('active-htaccess-dirs', $activeHtaccessDirs);
+            State::setState('active-htaccess-dirs', array_values($activeHtaccessDirs));
         }
     }
 
@@ -154,7 +154,7 @@ class HTAccess
         $activeHtaccessDirs = State::getState('active-htaccess-dirs', []);
         if (in_array($whichDir, $activeHtaccessDirs)) {
             $activeHtaccessDirs = array_diff($activeHtaccessDirs, [$whichDir]);
-            State::setState('active-htaccess-dirs', $activeHtaccessDirs);
+            State::setState('active-htaccess-dirs', array_values($activeHtaccessDirs));
         }
     }
 
@@ -174,6 +174,8 @@ class HTAccess
                 return 'home';
             case Paths::getPluginDirAbs():
                 return 'plugins';
+            case Paths::getUploadDirAbs():
+                return 'uploads';
         }
         return '';
     }
@@ -304,8 +306,9 @@ class HTAccess
         $homeDir = Paths::getHomeDirAbs();
         $wpContentDir = Paths::getWPContentDirAbs();
         $pluginDir = Paths::getPluginDirAbs();
+        $uploadDir = Paths::getUploadDirAbs();
 
-        $dirsToClean = [$indexDir, $homeDir, $wpContentDir, $pluginDir];
+        $dirsToClean = [$indexDir, $homeDir, $wpContentDir, $pluginDir, $uploadDir];
 
         $failures = [];
 
@@ -345,17 +348,23 @@ class HTAccess
         if (Paths::isWPContentDirMovedOutOfAbsPath()) {
             $minRequired = 'wp-content';
             $pluginToo = Paths::isPluginDirMovedOutOfWpContent() ? 'yes' : 'no';
+            $uploadToo = Paths::isUploadDirMovedOutOfWPContentDir() ? 'yes' : 'no';
         } else {
-            // Hm.
             // plugin requirement depends...
             // - if user grants access to 'index', the requirement is Paths::isPluginDirMovedOutOfAbsPath()
             // - if user grants access to 'wp-content', the requirement is Paths::isPluginDirMovedOutOfWpContent()
             $pluginToo = 'depends';
+
+            // plugin requirement depends...
+            // - if user grants access to 'index', we should be fine, as UPLOADS is always in ABSPATH.
+            // - if user grants access to 'wp-content', the requirement is Paths::isUploadDirMovedOutOfWPContentDir()
+            $uploadToo = 'depends';
         }
 
         return [
             $minRequired,
-            $pluginToo      // 'yes', 'no' or 'depends'
+            $pluginToo,      // 'yes', 'no' or 'depends'
+            $uploadToo
         ];
     }
 
@@ -367,7 +376,7 @@ class HTAccess
 
         $rules = HTAccess::generateHTAccessRulesFromConfigObj($config);
 
-        list($minRequired, $pluginToo) = self::getHTAccessDirRequirements();
+        list($minRequired, $pluginToo, $uploadToo) = self::getHTAccessDirRequirements();
 
         $indexDir = Paths::getIndexDirAbs();
         $wpContentDir = Paths::getWPContentDirAbs();
@@ -393,6 +402,7 @@ class HTAccess
             $mainResult = 'failed';
         }
 
+        /* plugin */
         if ($pluginToo == 'depends') {
             if ($mainResult == 'wp-content') {
                 $pluginToo = (Paths::isPluginDirMovedOutOfWpContent() ? 'yes' : 'no');
@@ -402,30 +412,47 @@ class HTAccess
                 // $result must be false. So $pluginToo should still be 'depends'
             }
         }
-
-
         $pluginFailed = false;
         $pluginFailedBadly = true;
         if ($pluginToo == 'yes') {
             $pluginDir = Paths::getPluginDirAbs();
             $pluginFailed = !(HTAccess::saveHTAccessRulesToFile($pluginDir . '/.htaccess', $rules, true));
-
             if ($pluginFailed) {
-                // TODO:
-                // pluginFailedBadly
                 $pluginFailedBadly = self::haveWeRulesInThisHTAccessBestGuess($pluginDir . '/.htaccess');
             }
+        }
 
+        /* upload */
+        if ($uploadToo == 'depends') {
+            if ($mainResult == 'wp-content') {
+                $uploadToo = (Paths::isUploadDirMovedOutOfWPContentDir() ? 'yes' : 'no');
+            } elseif ($mainResult == 'index') {
+                $uploadToo = (Paths::isUploadDirMovedOutOfAbsPath() ? 'yes' : 'no');
+            } else {
+                // $result must be false. So $uploadToo should still be 'depends'
+            }
+        }
+        $uploadFailed = false;
+        $uploadFailedBadly = true;
+        if ($uploadToo == 'yes') {
+            $uploadDir = Paths::getUploadDirAbs();
+            $uploadFailed = !(HTAccess::saveHTAccessRulesToFile($uploadDir . '/.htaccess', $rules, true));
+            if ($uploadFailed) {
+                $uploadFailedBadly = self::haveWeRulesInThisHTAccessBestGuess($uploadDir . '/.htaccess');
+            }
         }
 
         return [
-            'mainResult' => $mainResult,        // 'index', 'wp-content' or 'failed'
-            'minRequired' => $minRequired,      // 'index' or 'wp-content'
-            'pluginToo' => $pluginToo,          // 'yes', 'no' or 'depends'
-            'pluginFailed' => $pluginFailed,    // true if failed to write to plugin folder (it only tries that, if pluginToo == 'yes')
-            'pluginFailedBadly' => $pluginFailedBadly,       // true if plugin failed AND it seems we have rewrite rules there
+            'mainResult' => $mainResult,                // 'index', 'wp-content' or 'failed'
+            'minRequired' => $minRequired,              // 'index' or 'wp-content'
             'overidingRulesInWpContentWarning' => $overidingRulesInWpContentWarning,  // true if main result is 'index' but we cannot remove those in wp-content
-            'rules' => $rules                   // The rules we generated
+            'rules' => $rules,                          // The rules we generated
+            'pluginToo' => $pluginToo,                  // 'yes', 'no' or 'depends'
+            'pluginFailed' => $pluginFailed,            // true if failed to write to plugin folder (it only tries that, if pluginToo == 'yes')
+            'pluginFailedBadly' => $pluginFailedBadly,  // true if plugin failed AND it seems we have rewrite rules there
+            'uploadToo' => $uploadToo,                  // 'yes', 'no' or 'depends'
+            'uploadFailed' => $uploadFailed,
+            'uploadFailedBadly' => $uploadFailedBadly,
         ];
     }
 }

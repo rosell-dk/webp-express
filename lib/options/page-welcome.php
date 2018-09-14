@@ -11,6 +11,7 @@ $indexDir = Paths::getIndexDirAbs();
 $homeDir = Paths::getHomeDirAbs();
 $wpContentDir = Paths::getWPContentDirAbs();
 $pluginDir = Paths::getPluginDirAbs();
+$uploadDir = Paths::getUploadDirAbs();
 
 echo '<div style="background-color: #cfc; padding: 20px; border: 1px solid #ccc; color: black">';
 echo '<h3>Welcome!</h3>';
@@ -38,6 +39,19 @@ if (Paths::isWPContentDirMovedOutOfAbsPath()) {
             echo 'access rights again. Some of the options affects the .htaccess rules. And WebP Express also have to remove the rules if the plugin is disabled)';
         }
     }
+    if (Paths::isUploadDirMovedOutOfWPContentDir()) {
+        if (!Paths::canWriteHTAccessRulesHere($uploadDir)) {
+            echo '<p><b>Oh, one more thing</b>. We also need to write rules to your uploads dir (because you have moved it). ';
+            echo 'Please grant us write access to your ';
+            if (FileHelper::fileExists($uploadDir . '/.htaccess')) {
+                echo '<i>.htaccess</i> file in your upload dir';
+            } else {
+                echo 'upload dir, so we can plant an <i>.htaccess</i> there';
+            }
+            echo '. Your upload dir is: <i>' . $uploadDir . '</i>. ';
+            echo '- Or alternatively, you can leave it be and update the rules manually, whenever they need to be changed. ';
+        }
+    }
 } else {
     $firstWritable = Paths::returnFirstWritableHTAccessDir([$wpContentDir, $indexDir]);
     if ($firstWritable === false) {
@@ -62,17 +76,32 @@ if (Paths::isWPContentDirMovedOutOfAbsPath()) {
             echo 'You can reload this page aftewards, and this message should be gone</p>';
         }
     }
-    if (Paths::isPluginDirMovedOutOfAbsPath()) {
-        echo '<p>Oh, yet another thing. I see you have moved your plugins dir out of your root. ';
-        echo 'If you want WebP-Express to work on the images delivered by your plugins, you must also grant write access ';
-        echo 'to your ';
-        if (FileHelper::fileExists($pluginDir . '/.htaccess')) {
-            echo '<i>.htaccess</i> file in your plugin dir';
-        } else {
-            echo 'plugin dir, so we can plant an <i>.htaccess</i> there';
+    if (Paths::isUploadDirMovedOutOfWPContentDir()) {
+        if (!Paths::canWriteHTAccessRulesHere($uploadDir)) {
+            echo '<p><b>Oh, one more thing</b>. We also need to write rules to your uploads dir (because you have moved it). ';
+            echo 'Please grant us write access to your ';
+            if (FileHelper::fileExists($uploadDir . '/.htaccess')) {
+                echo '<i>.htaccess</i> file in your upload dir';
+            } else {
+                echo 'upload dir, so we can plant an <i>.htaccess</i> there';
+            }
+            echo '. Your upload dir is: <i>' . $uploadDir . '</i>. ';
+            echo '- Or alternatively, you can leave it and update the rules manually, whenever they need to be changed. ';
         }
-        echo ' (you can revoke the access after we have written the rules).';
-        echo '</p>';
+    }
+    if (Paths::isPluginDirMovedOutOfAbsPath()) {
+        if (!Paths::canWriteHTAccessRulesHere($pluginDir)) {
+            echo '<p>Oh, one more thing. I see you have moved your plugins dir out of your root. ';
+            echo 'If you want WebP-Express to work on the images delivered by your plugins, you must also grant write access ';
+            echo 'to your ';
+            if (FileHelper::fileExists($pluginDir . '/.htaccess')) {
+                echo '<i>.htaccess</i> file in your plugin dir';
+            } else {
+                echo 'plugin dir, so we can plant an <i>.htaccess</i> there';
+            }
+            echo ' (you can revoke the access after we have written the rules).';
+            echo '</p>';
+        }
     }
 }
 

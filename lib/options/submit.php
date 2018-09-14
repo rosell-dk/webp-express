@@ -72,10 +72,13 @@ if (!$result['saved-both-config']) {
         'mainResult'        // 'index', 'wp-content' or 'failed'
         'minRequired'       // 'index' or 'wp-content'
         'pluginToo'         // 'yes', 'no' or 'depends'
-        'pluginFailed'      // true if failed to write to plugin folder (it only tries that, if pluginToo == 'yes')
-        'pluginFailedBadly' // true if plugin failed AND it seems we have rewrite rules there
+        'uploadToo'         // 'yes', 'no' or 'depends'
         'overidingRulesInWpContentWarning'  // true if main result is 'index' but we cannot remove those in wp-content
         'rules'             // the rules that were generated
+        'pluginFailed'      // true if failed to write to plugin folder (it only tries that, if pluginToo == 'yes')
+        'pluginFailedBadly' // true if plugin failed AND it seems we have rewrite rules there
+        'uploadFailed'      // true if failed to write to plugin folder (it only tries that, if pluginToo == 'yes')
+        'uploadFailedBadly' // true if plugin failed AND it seems we have rewrite rules there
         */
         $mainResult = $rulesResult['mainResult'];
         $rules = $rulesResult['rules'];
@@ -102,6 +105,7 @@ if (!$result['saved-both-config']) {
             }
         } else {
             $savedToPluginsToo = (($rulesResult['pluginToo'] == 'yes') && !($rulesResult['pluginFailed']));
+            $savedToUploadsToo = (($rulesResult['uploadToo'] == 'yes') && !($rulesResult['uploadFailed']));
 
             Messenger::addMessage(
                 'success',
@@ -109,6 +113,8 @@ if (!$result['saved-both-config']) {
                     (Paths::isWPContentDirMoved() ? ' (which you moved, btw)' : '') .
                     ($savedToPluginsToo ? ' as well as in your <i>plugins</i> folder' : '') .
                     ((Paths::isWPContentDirMoved() && $savedToPluginsToo) ? ' (you moved that as well!)' : '.') .
+                    ($savedToUploadsToo ? ' as well as in your <i>uploads</i> folder' : '') .
+                    ((Paths::isWPContentDirMoved() && $savedToUploadsToo) ? ' (you moved that as well!)' : '.') .
                     HTAccess::testLinks($config)
             );
         }
@@ -143,6 +149,23 @@ if (!$result['saved-both-config']) {
                     'info',
                     '<i>.htaccess</i> rules could not be written into your plugins folder. ' .
                         'Images stored in your plugins will not be converted to webp'
+                );
+            }
+        }
+        if ($rulesResult['uploadFailed']) {
+            if ($rulesResult['uploadFailedBadly']) {
+                Messenger::addMessage(
+                    'error',
+                    'The <i>.htaccess</i> rules in your uploads folder could not be updated (no write access). ' .
+                        'This is not so good, because we have rules there already...' .
+                        'You should update them. Here they are: ' .
+                        '<pre>' . htmlentities(print_r($rules, true)) . '</pre>'
+                );
+            } else {
+                Messenger::addMessage(
+                    'warning',
+                    '<i>.htaccess</i> rules could not be written into your uploads folder (this is needed, because you have moved it outside your <i>wp-content</i> folder)' .
+                        'Please grant write permmissions to you uploads folder. Otherwise upleaded mages will not be converted to webp'
                 );
             }
         }

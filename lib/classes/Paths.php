@@ -72,50 +72,6 @@ class Paths
         return false;
     }
 
-    /**
-     *  Get paths of .htaccess files where we should add rules
-     *//*
-    public static function getHTAccessDirs()
-    {
-        $dirs = [];
-
-        // With mod_rewrite, deeper .htaccess files takes precedence over rules in parent folders.
-        // So to give our rules the best chance of success, we prefer storing them as deep as possible
-        // (however, we do not traverse into child folders of wp-content, that would be to go too far)
-        // We prefer indexDir to homeDir (index dir might be in a subfolder to home dir - but not the other way, right?)
-
-        $indexDir = self::getIndexDirAbs();
-        $homeDir = self::getHomeDirAbs();
-        $wpContentDir = self::getWPContentDirAbs();
-        $pluginDir = self::getPluginDirAbs();
-
-        $result = self::returnFirstWritableHTAccessDir([
-            $wpContentDir, $indexDir, $homeDir
-        ]);
-
-        // None of the paths works, things are not looking good.
-        // However, somebody else must deal with this. All we are setting out to do here is specifying paths needed
-        if ($result === false) {
-            $result = $wpContentDir;
-        }
-
-        if (self::isWPContentDirMovedOutOfAbsPath()) {
-            // If wp-content is moved out, we must insist to create the .htaccess in the wp-content folder
-            $result = $wpContentDir;
-        }
-
-        $dirs[] = $result;
-
-        if (($result == $wpContentDir) && (self::isPluginDirMovedOutOfWpContent())) {
-            $dirs[] = $pluginDir;
-        }
-        if (($result != $wpContentDir) && (self::isWPContentDirMovedOutOfAbsPath())) {
-            $dirs[] = $pluginDir;
-        }
-
-        return $dirs;
-    }*/
-
     // ------------ WP Content Dir -------------
     public static function getWPContentDirAbs()
     {
@@ -153,6 +109,24 @@ class Paths
     public static function createContentDirIfMissing()
     {
         return self::createDirIfMissing(self::getContentDirAbs());
+    }
+
+    // ------------ Upload Dir -------------
+    // (can be moved out of wp-content dir. But not (rarely? - I suppose someone could enter dots) out of abspath)
+    
+    public static function getUploadDirAbs()
+    {
+        return ABSPATH . rtrim(UPLOADS, '/');
+    }
+
+    public static function isUploadDirMovedOutOfWPContentDir()
+    {
+        return !(self::isDirInsideDir(self::getUploadDirAbs(), self::getWPContentDirAbs()));
+    }
+
+    public static function isUploadDirMovedOutOfAbsPath()
+    {
+        return !(self::isDirInsideDir(self::getUploadDirAbs(), ABSPATH));
     }
 
     // ------------ Config Dir -------------
