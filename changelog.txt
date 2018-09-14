@@ -1,3 +1,14 @@
+= 0.4.0 =
+This version fixes some misbehaviours and provides new http headers with info about the conversion process.
+
+* Fixed bug: .htaccess was not updated every time the settings was saved.
+* Fixed bug: The plugin generated error upon activation.
+* Now produces X-WebP-Convert-And-Serve headers with info about the conversion - useful for validating that converter receives the expected arguments and executes correctly.
+* WebPExpress options are now removed when plugin is uninstalled.
+* No longer generates .htaccess rules on install. The user now has to actively go to Web Express setting and save first
+* Added a "first time" message on options page and a reactivation message
+For more info, see the closed issues on the github repository: https://github.com/rosell-dk/webp-express/milestone/1?closed=1
+
 = 0.3.1 =
 * The "Only jpeg" setting wasn't respected in 0.3.0. It now works again
 
