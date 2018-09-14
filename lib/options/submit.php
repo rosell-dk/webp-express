@@ -164,8 +164,8 @@ if (!$result['saved-both-config']) {
             } else {
                 Messenger::addMessage(
                     'warning',
-                    '<i>.htaccess</i> rules could not be written into your uploads folder (this is needed, because you have moved it outside your <i>wp-content</i> folder)' .
-                        'Please grant write permmissions to you uploads folder. Otherwise upleaded mages will not be converted to webp'
+                    '<i>.htaccess</i> rules could not be written into your uploads folder (this is needed, because you have moved it outside your <i>wp-content</i> folder). ' .
+                        'Please grant write permmissions to you uploads folder. Otherwise uploaded mages will not be converted to webp'
                 );
             }
         }
