@@ -1,8 +1,8 @@
 <?php
 
-require 'webp-on-demand.inc';
+require 'webp-on-demand-1.inc';
 
-use \WebPOnDemand\WebPOnDemand;
+use \WebPConvert\WebPConvert;
 
 $options = [];
 
@@ -15,7 +15,7 @@ fclose($handle);
 $options = json_decode($json, true);
 //print_r($options);
 
-$options['require-for-conversion'] = 'webp-convert-and-serve.inc';
+$options['require-for-conversion'] = 'webp-on-demand-2.inc';
 
 if ($options['forward-query-string']) {
     if (isset($_GET['debug'])) {
@@ -47,4 +47,4 @@ if (substr($source, 0, strlen($applicationRoot)) === $applicationRoot) {
 //echo $source . '<br>';
 //echo $destination . '<br>';
 //echo $sourceRel;
-WebPOnDemand::serve($source, $destination, $options);
+WebPConvert::convertAndServe($source, $destination, $options);

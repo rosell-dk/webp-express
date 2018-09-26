@@ -10,9 +10,7 @@ if (isset($_GET['stream-webp-image'])) {
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
-
-
-require "../wod/webp-convert-and-serve.inc";
+require "../wod/webp-convert.inc";
 
 use WebPConvert\WebPConvert;
 use WebPConvert\Loggers\EchoLogger;
@@ -95,7 +93,6 @@ $options['converters'] = [[
 //echo '<pre>' . print_r($options, true) . '</pre>';
 
 function testRun($converter, $source, $destination, $options) {
-    $beginTime = microtime(true);
 
     try {
         $success = WebPConvert::convert($source, $destination, $options, new EchoLogger());
@@ -103,11 +100,8 @@ function testRun($converter, $source, $destination, $options) {
         $msg = $e->getMessage();
     }
 
-    $endTime = microtime(true);
-    $duration = $endTime - $beginTime;
-
     if (!$success) {
-        echo '<h3 class="error">Test conversion failed (in ' . round($duration * 1000) . ' ms)</h3>';
+        echo '<h3 class="error">Test conversion failed</h3>';
 
         if (isset($msg)) {
             echo '<label>Problem:</label>';
@@ -116,20 +110,12 @@ function testRun($converter, $source, $destination, $options) {
             echo '<p class="error-msg">' . $msg . '</p>';
         }
     } else {
-        echo '<p>Successfully converted test image in ' . round($duration * 1000) . ' ms</p>';
+        //echo '<p>Successfully converted test image</p>';
 
         if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
             //echo '<img src="' . $_GET['destinationUrl'] . '" width=48%><br><br>';
             echo '<img src="?stream-webp-image=' . $destination . '" width=48%><br><br>';
 
-        }
-        if (filesize($source) < 10000) {
-            echo 'file size (original): ' . round(filesize($source)) . ' bytes<br>';
-            echo 'file size (converted): ' . round(filesize($destination)) . ' bytes<br>';
-        }
-        else {
-            echo 'file size (original): ' . round(filesize($source)/1000) . ' kb<br>';
-            echo 'file size (converted): ' . round(filesize($destination)/1000) . ' kb<br>';
         }
     }
 }
