@@ -170,19 +170,38 @@ echo '<ul id="converters"></ul>';
     <div class="cwebp converter-options">
       <h3>cwebp</h3>
       <div class="info">
-          cwebp works by executing the cwebp binary from Google. This should normally be your first choice.
-          Its best in terms of quality, speed and options.
-          The only catch is that it requires the exec function to be enabled, and that the webserver user is
-          allowed to execute the cwebp binary (either at known system locations, or one of the precompiled binaries,
-          that comes with this library).
-          If you are on a shared host that doesn't allow that, the second best choice would probably be the wpc cloud converter.
+          cwebp works by executing the <i>cwebp</i> binary from Google, which is build upon the *libwebp* (also from Google).
+          That library is actually the only library in town for generating webp images, which means that the other conversion
+          methods ultimately uses that very same library.
+          This again means that the results using the different methods are very similar.
+          However, with cwebp, we have more parameters to tweak than with the rest.
+          We for example have the <i>method</i> option, which controls the trade off between encoding speed and the
+          compressed file size and quality.
+          Setting this to max, we can squeeze the images a few percent extra - without loosing quality
+          (the converter is still pretty fast, so in most cases it is probably worth it).
       </div>
       <h3>cweb options</h3>
       <div>
           <label for="cwebp_use_nice">Use nice</label>
           <input type="checkbox" id="cwebp_use_nice">
           <br>Enabling "use nice" saves system resources at the cost of slightly slower conversion
+      </div>
+      <div>
+          <label for="cwebp_try_common_system_paths">Try to execute cweb binary at common locations</label>
+          <input type="checkbox" id="cwebp_try_common_system_paths">
+          <br>If checked, we will look for binaries in common locations, such as <i>/usr/bin/cwebp</i>
+      </div>
+      <div>
+          <label for="cwebp_try_common_system_paths">Try precompiled cwebp</label>
+          <input type="checkbox" id="cwebp_try_supplied_binary">
+          <br>This plugin ships with precompiled cweb binaries for different platforms. If checked, and we have a precompiled binary for your OS, we will try to exectute it
+      </div>
 
+      <div>
+          <label for="cwebp_method">Method (0-6)</label>
+          <input type="text" size="2" id="cwebp_method">
+          <br>This parameter controls the trade off between encoding speed and the compressed file size and quality.
+          Possible values range from 0 to 6. 0 is fastest. 6 results in best quality.
       </div>
       <br>
       <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
@@ -190,7 +209,7 @@ echo '<ul id="converters"></ul>';
     </div>
 </div>
 <div id="gd" style="display:none;">
-    <div class="ewww converter-options">
+    <div class="gd converter-options">
       <h3>Gd</h3>
       <p>
         The gd converter uses the Gd extension to do the conversion. It is per default placed below the cloud converters for two reasons.
