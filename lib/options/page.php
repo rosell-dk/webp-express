@@ -40,12 +40,14 @@ foreach (Paths::getHTAccessDirs() as $dir) {
 
 
 $defaultConfig = [
-    'image-types' => 1,
+    'cache-control' => 'one-year',
+    'cache-control-custom' => 'public, max-age:3600',
+    'converters' => [],
     'fail' => 'original',
+    'forward-query-string' => true,
+    'image-types' => 1,
     'max-quality' => 80,
     'metadata' => 'none',
-    'converters' => [],
-    'forward-query-string' => true
 ];
 
 $config = Config::loadConfig();
@@ -105,13 +107,34 @@ echo '</select>';
 echo '</td></tr>';
 //        echo '<tr><td colspan=2>Determines what the converter should serve, in case the image conversion should fail. For production servers, recommended value is "Original image". For development servers, choose anything you like, but that</td></tr>';
 
+// Cache-Control
+// --------------------
+//$maxQuality = get_option('webp_express_max_quality');
+$cacheControl = $config['cache-control'];
+$cacheControlCustom = $config['cache-control-custom'];
+
+echo '<tr><th scope="row">Caching</th><td>';
+echo '<select id="cache_control_select" name="cache-control">';
+echo '<option value="one-second"' . ($cacheControl == 'one-second' ? ' selected' : '') . '>One second</option>';
+echo '<option value="one-minute"' . ($cacheControl == 'one-minute' ? ' selected' : '') . '>One minute</option>';
+echo '<option value="one-hour"' . ($cacheControl == 'one-hour' ? ' selected' : '') . '>One hour</option>';
+echo '<option value="one-day"' . ($cacheControl == 'one-day' ? ' selected' : '') . '>One day</option>';
+echo '<option value="one-week"' . ($cacheControl == 'one-week' ? ' selected' : '') . '>One week</option>';
+echo '<option value="one-month"' . ($cacheControl == 'one-month' ? ' selected' : '') . '>One month</option>';
+echo '<option value="one-year"' . ($cacheControl == 'one-year' ? ' selected' : '') . '>One year</option>';
+echo '<option value="custom"' . ($cacheControl == 'custom' ? ' selected' : '') . '>Custom Cache-Control header</option>';
+echo '</select><br>';
+echo '<input type="text" id="cache_control_custom" name="cache-control-custom" value="' . $cacheControlCustom . '">';
+echo '</td></tr>';
+
+
 // Max quality
 // --------------------
 //$maxQuality = get_option('webp_express_max_quality');
 $maxQuality = $config['max-quality'];
 
 echo '<tr><th scope="row">Max quality (0-100)</th><td>';
-echo '<input type="text" name="max-quality" value="' . $maxQuality . '">';
+echo '<input type="text" size=3 name="max-quality" value="' . $maxQuality . '">';
 echo '</td></tr>';
 //        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
 
@@ -134,6 +157,7 @@ echo '</td></tr>';
 
 // method
 //echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
+
 
 
 echo '</tbody></table>';

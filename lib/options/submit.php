@@ -18,12 +18,14 @@ use \WebPExpress\Paths;
 // checkout https://codex.wordpress.org/Function_Reference/sanitize_meta
 
 $config = [
-    'fail' => sanitize_text_field($_POST['fail']),
-    'max-quality' => sanitize_text_field($_POST['max-quality']),
-    'image-types' => sanitize_text_field($_POST['image-types']),
-    'metadata' => sanitize_text_field($_POST['metadata']),
+    'cache-control' => sanitize_text_field($_POST['cache-control']),
+    'cache-control-custom' => sanitize_text_field($_POST['cache-control-custom']),
     'converters' => json_decode(wp_unslash($_POST['converters']), true), // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
-    'forward-query-string' => true
+    'fail' => sanitize_text_field($_POST['fail']),
+    'forward-query-string' => true,
+    'image-types' => sanitize_text_field($_POST['image-types']),
+    'max-quality' => sanitize_text_field($_POST['max-quality']),
+    'metadata' => sanitize_text_field($_POST['metadata']),
 ];
 
 // remove id's
