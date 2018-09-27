@@ -43,6 +43,7 @@ $defaultConfig = [
     'image-types' => 1,
     'fail' => 'original',
     'max-quality' => 80,
+    'metadata' => 'none',
     'converters' => [],
     'forward-query-string' => true
 ];
@@ -116,6 +117,24 @@ echo '</td></tr>';
 
 // method
 //echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
+
+
+// Metadata
+// --------------------
+//$maxQuality = get_option('webp_express_max_quality');
+$metadata = $config['metadata'];
+
+echo '<tr><th scope="row">Metadata</th><td>';
+echo '<select name="metadata">';
+echo '<option value="none"' . ($metadata == 'none' ? ' selected' : '') . '>No metadata in webp</option>';
+echo '<option value="all"' . ($metadata == 'all' ? ' selected' : '') . '>Copy all metadata to webp</option>';
+echo '</select>';
+echo '</td></tr>';
+//        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
+
+// method
+//echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
+
 
 echo '</tbody></table>';
 

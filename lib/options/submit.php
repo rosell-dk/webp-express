@@ -21,6 +21,7 @@ $config = [
     'fail' => sanitize_text_field($_POST['fail']),
     'max-quality' => sanitize_text_field($_POST['max-quality']),
     'image-types' => sanitize_text_field($_POST['image-types']),
+    'metadata' => sanitize_text_field($_POST['metadata']),
     'converters' => json_decode(wp_unslash($_POST['converters']), true), // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
     'forward-query-string' => true
 ];
