@@ -40,7 +40,7 @@ foreach (Paths::getHTAccessDirs() as $dir) {
 
 
 $defaultConfig = [
-    'cache-control' => 'one-year',
+    'cache-control' => 'no-header',
     'cache-control-custom' => 'public, max-age:3600',
     'converters' => [],
     'fail' => 'original',
@@ -115,6 +115,7 @@ $cacheControlCustom = $config['cache-control-custom'];
 
 echo '<tr><th scope="row">Caching</th><td>';
 echo '<select id="cache_control_select" name="cache-control">';
+echo '<option value="no-header"' . ($cacheControl == 'no-header' ? ' selected' : '') . '>Do not set Cache-Control header</option>';
 echo '<option value="one-second"' . ($cacheControl == 'one-second' ? ' selected' : '') . '>One second</option>';
 echo '<option value="one-minute"' . ($cacheControl == 'one-minute' ? ' selected' : '') . '>One minute</option>';
 echo '<option value="one-hour"' . ($cacheControl == 'one-hour' ? ' selected' : '') . '>One hour</option>';

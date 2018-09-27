@@ -103,6 +103,7 @@ class Config
 
         $cacheControl = $options['cache-control'];
         $cacheControlOptions = [
+            'no-header' => '',
             'one-second' => 'public, max-age=1',
             'one-minute' => 'public, max-age=60',
             'one-hour' => 'public, max-age=3600',
