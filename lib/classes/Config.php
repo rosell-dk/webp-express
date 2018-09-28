@@ -96,6 +96,8 @@ class Config
         }
         foreach ($options['converters'] as &$c) {
             unset ($c['id']);
+            unset($c['working']);
+            unset($c['error']);
             if (!isset($c['options'])) {
                 $c = $c['converter'];
             }
@@ -118,6 +120,7 @@ class Config
         } else {
             $options['cache-control-header'] = $options['cache-control-custom'];
         }
+
 
         unset($options['image-types']);
         unset($options['cache-control']);
