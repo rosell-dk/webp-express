@@ -1,0 +1,12 @@
+{
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/rosell-dk/webp-convert"
+        }
+    ],
+    "require": {
+        "rosell-dk/webp-convert": "dev-master"
+    }
+}
