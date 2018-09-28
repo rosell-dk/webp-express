@@ -5,7 +5,7 @@ use \WebPExpress\Config;
 use \WebPExpress\State;
 use \WebPExpress\Messenger;
 use \WebPExpress\PlatformInfo;
-use \WebPExpress\FileHelper;
+
 
 $indexDir = Paths::getIndexDirAbs();
 $homeDir = Paths::getHomeDirAbs();
@@ -13,12 +13,38 @@ $wpContentDir = Paths::getWPContentDirAbs();
 $pluginDir = Paths::getPluginDirAbs();
 $uploadDir = Paths::getUploadDirAbs();
 
-echo '<div style="background-color: #cfc; padding: 20px; border: 1px solid #ccc; color: black">';
+$weKnowThereAreNoWorkingConverters = false;
+if ($testResult !== false) {
+    $workingConverters = $testResult['workingConverters'];
+    $weKnowThereAreNoWorkingConverters = (count($workingConverters) == 0);
+}
+$bgColor = ($weKnowThereAreNoWorkingConverters ? '#fff' : '#cfc');
+echo '<div style="background-color: ' . $bgColor . '; padding: 10px 20px; border: 1px solid #ccc; color: black; margin-top:15px">';
 echo '<h3>Welcome!</h3>';
-echo '<p>The rewrite rules are not active yet. They will be activated the first time you click the "Save settings" button.</p>';
-echo '<p>Before you do that, I suggest you find out which converters that works. Start from the top. Click "test" next to a converter to test it. Try also clicking the "configure" buttons</p>';
 
+//if ($localQualityDetectionWorking) {
+    //echo 'Local quality detection working :)';
+//}
 
+if ($weKnowThereAreNoWorkingConverters) {
+    echo '<p>Unfortunately none of the local conversion methods are available on your server. ' .
+        'but do not despear! - You have options!' .
+        '<ol style="list-style-position:outside">' .
+        '<li>You can purchase a key for the <a target="_blank" href="https://ewww.io/plans/">ewww cloud converter</a>. They do not charge credits for webp conversions, so all you ever have to pay is the one dollar start-up fee :)</li>' .
+        '<li>You can set up a <a target="_blank" href="https://github.com/rosell-dk/webp-convert-cloud-service">webp-convert-cloud-service</a> on another server and connect to that. Its open source.</li>' .
+        '<li>You can try to meet the server requirements of cwebp, gd, imagick or gmagick. Check out <a target="_blank" href="https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters">this wiki page</a> on how to do that</li>' .
+        '</ol></p>' .
+        "<p>Btw, don't worry, your images still works. The rewrite rules will not be saved until you click the " .
+        '"Save settings" button (and you also have "Response on failure" set to "Original image", so they will work even if you click save)</p>';
+} else {
+    echo '<p>The rewrite rules are not active yet. They will be activated the first time you click the "Save settings" button.</p>';
+}
+//echo 'working converters:';
+//print_r($workingConverters);
+
+//echo '<p>Before you do that, I suggest you find out which converters that works. Start from the top. Click "test" next to a converter to test it. Try also clicking the "configure" buttons</p>';
+
+/*
 if (Paths::isWPContentDirMovedOutOfAbsPath()) {
     if (!Paths::canWriteHTAccessRulesHere($wpContentDir)) {
         echo '<p><b>Oh, one more thing</b>. Unless you are going to put the rewrite rules into your configuration manually, ';
@@ -104,7 +130,7 @@ if (Paths::isWPContentDirMovedOutOfAbsPath()) {
         }
     }
 }
-
+*/
 /*
 if(Paths::canWriteHTAccessRulesHere($wpContentDir)) {
 
