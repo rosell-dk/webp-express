@@ -22,42 +22,47 @@
 
 #converters li {
     cursor: move;
-    border: 1px solid #e5e5e5;
+    border: 1px solid grey;
     box-shadow: 0 1px 1px rgba(0,0,0,.04);
     line-height: 1.4em;
     background-color: #fafafa;
-    padding: 10px;
-    max-width: 400px;
+    padding: 10px 10px 0;
+    max-width: 465px;
+    min-height: 30px;
+    position: relative;
 }
 #converters li:hover {
-    border-color: #999;
+    border-color: #666;
     box-shadow: 0 1px 2px rgba(0,0,0,.1);
 }
-#converters li.deactivated,
+#converters li.deactivated {
+    color: #999;
+    border-color: #ccc;
+}
 #converters li.deactivated a.configure-converter,
-#converters li.deactivated a.test-converter {
-    color: #aaa;
+#converters li.deactivated a.test-converter,
+#converters li.deactivated a.activate-converter {
+    color: #666;
+}
+#converters li.not-operational {
+    border-style: dotted;
 }
 #converters li a {
     cursor: pointer;
 }
 
-
-
-
-
 #converters li > * {
     vertical-align: middle;
 
 }
-#converters li > span {
+#converters li > div {
     display: inline-block;
     line-height: 1;
 }
-#converters li > span.text {
+#converters li > .text {
     font-size: 15px;
     padding-left: 10px;
-    width: 165px;
+    width: 205px;
 }
 
 #converters li > a.btn {
@@ -75,10 +80,34 @@
     background-color: #eee;*/
 }
 #converters li > a.configure-converter {
-
-
 }
-
+#converters li .status {
+    font-size: 10px;
+    padding-top: 6px;
+    position: absolute;
+    right: 14px;
+    bottom: 6px;
+}
+#converters li .popup {
+    display: none;
+    position: absolute;
+    border: 1px solid #333;
+    z-index:2;
+    background-color: #ffff99;
+    padding: 8px 5px 8px 15px;
+    left: 14px;
+    top: 18px;
+    font-size: 12px;
+    /*white-space: nowrap;*/
+    color: #000;
+    min-width: 150px;
+}
+#converters li.operational .popup {
+    background-color: #80ff80;
+}
+#converters li .status:hover .popup {
+    display: block;
+}
 /*
 #converters li > a.remove-converter {
     color: red;

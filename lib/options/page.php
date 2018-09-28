@@ -21,6 +21,8 @@ use \WebPExpress\PlatformInfo;
 include_once __DIR__ . '/../classes/State.php';
 use \WebPExpress\State;
 
+include_once __DIR__ . '/../classes/TestRun.php';
+use \WebPExpress\TestRun;
 
 if (!current_user_can('manage_options')) {
     wp_die('You do not have sufficient permissions to access this page.');
@@ -30,7 +32,16 @@ if (!current_user_can('manage_options')) {
     <h2>WebP Express Settings</h2>
 
 <?php
+
+// Test converters
+$testResult = TestRun::getConverterStatus();
+$workingConverters = [];
+if ($testResult) {
+    $workingConverters = $testResult['workingConverters'];
+}
 include __DIR__ . "/page-messages.php";
+
+
 
 /*
 foreach (Paths::getHTAccessDirs() as $dir) {
@@ -50,16 +61,62 @@ $defaultConfig = [
     'metadata' => 'none',
 ];
 
+$defaultConverters = [
+    ['converter' => 'gd', 'options' => ['skip-pngs' => true]],
+    ['converter' => 'cwebp', 'options' => [
+        'use-nice' => false,
+        'try-common-system-paths' => true,
+        'try-supplied-binary-for-os' => true,
+        'method' => 6,
+    ]],
+    ['converter' => 'imagick'],
+    ['converter' => 'gmagick', 'deactivated' => false],
+    ['converter' => 'wpc'],
+    ['converter' => 'ewww'],
+];
+
 $config = Config::loadConfig();
+//echo '<pre>' . print_r($config, true) . '</pre>';
 if (!$config) {
     $config = [];
 }
+//$config = [];
 
 $config = array_merge($defaultConfig, $config);
 if ($config['converters'] == null) {
     $config['converters'] = [];
 }
 
+if (count($config['converters']) == 0) {
+
+    // Send converters not working to the bottom
+    // and also deactivate them.. ?
+    $resultPart1 = [];
+    $resultPart2 = [];
+    foreach ($defaultConverters as $converter) {
+        $converterId = $converter['converter'];
+        if (in_array($converterId, $workingConverters)) {
+            $resultPart1[] = $converter;
+        } else {
+            //$converter['deactivated'] = true;
+            $resultPart2[] = $converter;
+        }
+    }
+    $config['converters'] = array_merge($resultPart1, $resultPart2);
+    // $workingConverters
+    //echo '<pre>' . print_r($converters, true) . '</pre>';
+}
+
+// Set "working" and "error" properties
+foreach ($config['converters'] as &$converter) {
+    $converterId = $converter['converter'];
+    $hasError = isset($testResult['errors'][$converterId]);
+    $converter['working'] = !$hasError;
+    if ($hasError) {
+        $converter['error'] = $testResult['errors'][$converterId];
+    }
+}
+//echo 'Working converters:' . print_r($workingConverters, true) . '<br>';
 // Generate a custom nonce value.
 $webpexpress_settings_nonce = wp_create_nonce('webpexpress_settings_nonce');
 
@@ -201,10 +258,10 @@ http://php.net/manual/en/function.set-include-path.php
 //echo 'All se bools: ' . print_r($output6, true) . '. Return code:' . $returnCode5;
 */
 
-echo '<h2>Converters</h2>';
+echo '<h2>Conversion methods to try</h2>';
 $dragIcon = '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="17px" height="17px" viewBox="0 0 100.000000 100.000000" preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,100.000000) scale(0.100000,-0.100000)" fill="#444444" stroke="none"><path d="M415 920 l-80 -80 165 0 165 0 -80 80 c-44 44 -82 80 -85 80 -3 0 -41 -36 -85 -80z"/><path d="M0 695 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M0 500 l0 -40 500 0 500 0 0 40 0 40 -500 0 -500 0 0 -40z"/><path d="M0 305 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M418 78 l82 -83 82 83 83 82 -165 0 -165 0 83 -82z"/></g></svg>';
 
-echo '<p><i>Drag to reorder. The converter on top will be used. Should it fail, the next will be used, etc</i></p>';
+echo '<p><i>Drag to reorder. The converter on top will first be tried. Should it fail, the next will be used, etc</i></p>';
 // https://github.com/RubaXa/Sortable
 
 // Empty list of converters. The list will be populated by the javascript
