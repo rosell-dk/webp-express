@@ -114,6 +114,8 @@ foreach ($config['converters'] as &$converter) {
     $converter['working'] = !$hasError;
     if ($hasError) {
         $converter['error'] = $testResult['errors'][$converterId];
+    } else {
+        unset($converter['error']);
     }
 }
 //echo 'Working converters:' . print_r($workingConverters, true) . '<br>';
