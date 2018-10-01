@@ -42,24 +42,30 @@ class TestRun
         // so for now, we simply load the config
         //$options = Config::loadWodOptions();
         $options = Config::loadConfig();
+        //print_r($options);
         if (!$options) {
             $options = [
                 'converters' => ConverterHelper::$localConverters
             ];
         }
+        //echo '<pre>' . print_r($options, true) . '</pre>';
         foreach ($options['converters'] as $converter) {
-            if (isset($converter['converter'])) {
-                $converterId = $converter['converter'];
-            } else {
-                $converterId = $converter;
+            $converterId = $converter['converter'];
+            if (!isset($converter['options'])) {
+                $converter['options'] = [];
             }
             try {
-                ConverterHelper::runConverter($converterId, $source, $destination, $options);
-                //$workingConverters[] = $converterId;
+                $converterOptions = array_merge($options, $converter['options']);
+                unset($converterOptions['converters']);
+
+                ConverterHelper::runConverter($converterId, $source, $destination, $converterOptions);
+                $workingConverters[] = $converterId;
             } catch (\Exception $e) {
+                //echo $e->getMessage() . '<br>';
                 $errors[$converterId] = $e->getMessage();
             }
         }
+        //print_r($errors);
         return [
             'workingConverters' => $workingConverters,
             'errors' => $errors
