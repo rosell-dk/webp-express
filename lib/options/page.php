@@ -279,7 +279,10 @@ http://php.net/manual/en/function.set-include-path.php
 echo '<h2>Conversion methods to try</h2>';
 $dragIcon = '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="17px" height="17px" viewBox="0 0 100.000000 100.000000" preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,100.000000) scale(0.100000,-0.100000)" fill="#444444" stroke="none"><path d="M415 920 l-80 -80 165 0 165 0 -80 80 c-44 44 -82 80 -85 80 -3 0 -41 -36 -85 -80z"/><path d="M0 695 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M0 500 l0 -40 500 0 500 0 0 40 0 40 -500 0 -500 0 0 -40z"/><path d="M0 305 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M418 78 l82 -83 82 83 83 82 -165 0 -165 0 83 -82z"/></g></svg>';
 
-echo '<p><i>Drag to reorder. The converter on top will first be tried. Should it fail, the next will be used, etc</i></p>';
+echo '<p><i>Drag to reorder. The converter on top will first be tried. ';
+echo 'Should it fail, the next will be used, etc. </i>';
+echo 'To learn more about the conversion methods, ';
+echo '<a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/converters.md">Go here</a></p>';
 // https://github.com/RubaXa/Sortable
 
 // Empty list of converters. The list will be populated by the javascript
@@ -287,18 +290,6 @@ echo '<ul id="converters"></ul>';
 ?>
 <div id="cwebp" style="display:none;">
     <div class="cwebp converter-options">
-      <h3>cwebp</h3>
-      <div class="info">
-          cwebp works by executing the <i>cwebp</i> binary from Google, which is build upon the *libwebp* (also from Google).
-          That library is actually the only library in town for generating webp images, which means that the other conversion
-          methods ultimately uses that very same library.
-          This again means that the results using the different methods are very similar.
-          However, with cwebp, we have more parameters to tweak than with the rest.
-          We for example have the <i>method</i> option, which controls the trade off between encoding speed and the
-          compressed file size and quality.
-          Setting this to max, we can squeeze the images a few percent extra - without loosing quality
-          (the converter is still pretty fast, so in most cases it is probably worth it).
-      </div>
       <h3>cweb options</h3>
       <div>
           <label for="cwebp_use_nice">Use nice</label>
@@ -323,43 +314,30 @@ echo '<ul id="converters"></ul>';
           Possible values range from 0 to 6. 0 is fastest. 6 results in best quality.
       </div>
       <br>
-      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
+      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
       <!-- <a href="javascript: tb_remove();">close</a> -->
     </div>
 </div>
 <div id="gd" style="display:none;">
     <div class="gd converter-options">
-      <h3>Gd</h3>
-      <p>
-        The gd converter uses the Gd extension to do the conversion. It is per default placed below the cloud converters for two reasons.
-        Firstly, it does not seem to produce quite as good quality as cwebp.
-        Secondly, it provides no conversion options, besides quality.
-        The Gd extension is pretty common, so the main feature of this converter is that it <i>may</i> work out of the box.
-        This is in contrast to the cloud converters, which requires that the user does some setup.
-      </p>
       <h3>Gd options</h3>
-      <div class="info">
-          Gd neither supports copying metadata nor exposes any WebP options. Lacking the option to set lossless encoding results in poor encoding of PNGs - the filesize is generally much larger than the original. For this reason, the converter defaults to skip PNG's.
-      </div>
       <div>
           <label for="gd_skip_pngs">Skip PNGs</label>
           <input type="checkbox" id="gd_skip_pngs">
+          <br>Gd is not suited for converting PNGs into webp. &ndash;
+          The filesize is generally much larger than the original.
+          For this reason, the converter defaults to skip PNG's.
       </div>
       <br>
-      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
+      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
       <!-- <a href="javascript: tb_remove();">close</a> -->
     </div>
 </div>
 <div id="imagick" style="display:none;">
     <div class="imagick converter-options">
-      <h3>Imagick</h3>
-      <p>
-        imagick would be your last choice. For some reason it produces conversions that are only marginally better than the originals.
-        See <a href="https://github.com/rosell-dk/webp-convert/issues/43" target="_blank">this issue</a>. But it is fast.
-      </p>
       <h3>Imagick options</h3>
       <div class="info">
-          imagick has no extra options.
+          imagick has no special options.
       </div>
       <br>
       <!--
@@ -372,14 +350,11 @@ echo '<ul id="converters"></ul>';
     <div class="ewww converter-options">
       <h3>Ewww</h3>
       <p>
-        <a href="https://ewww.io/" target="_blank">ewww</a> is a cloud service.
-        It is a decent alternative for those who don't have the technical know-how to install wpc.
-        ewww is using cwebp to do the conversion, so quality is great.
-        ewww however only provides one conversion option (quality), and it does not support "auto"
-        quality (yet - I have requested the feature and the maintainer are considering it).
-        Also, it is not free. But very cheap. Like in almost free.
+        ewww is a cloud service for converting images.
+        To use it, you need to purchase a key <a target="_blank" href="https://ewww.io/plans/">here</a>.
+        They do not charge credits for webp conversions, so all you ever have to pay is the one dollar start-up fee :)
       </p>
-      <h3>Ewww options</h3>
+      <h3>Options</h3>
       <div>
           <label for="ewww_key">Key</label>
           <input type="text" id="ewww_key" placeholder="Your API key here">
@@ -391,24 +366,18 @@ echo '<ul id="converters"></ul>';
           <input type="text" id="ewww_key_2" placeholder="In case the first one expires...">
       </div>
       <br>
-      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
+      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
       <!-- <a href="javascript: tb_remove();">close</a> -->
     </div>
 </div>
 <div id="wpc" style="display:none;">
     <div class="wpc converter-options">
-      <h3>WebPConvert Cloud Service</h3>
-      wpc is an open source cloud converter based on <a href="https://github.com/rosell-dk/webp-convert" target="_blank">WebPConvert</a>
-      (this plugin also happens to be based on WebPConvert).
-      Conversions will of course be slower than cwebp, as images need to go back and forth to the cloud converter.
-      As images usually just needs to be converted once, the slower conversion
-      speed is probably acceptable. The conversion quality and options of wpc matches cwebp.
-      The only catch is that you will need to install the WPC library on a server (or have someone do it for you).
+      <h3>WebPConvert Cloud Service (WPC)</h3>
+      wpc is an open source cloud converter based on <a href="https://github.com/rosell-dk/webp-convert" target="_blank">WebPConvert</a>.
+      You will need to install the WPC library on a server (or have someone do it for you).
       <a href="https://github.com/rosell-dk/webp-convert-cloud-service" target="blank">Visit WPC on github</a>.
-      If this is a problem, we suggest you turn to ewww.
-      (PS: A Wordpress plugin is planned, making it easier to set up a WPC instance. Or perhaps the functionality will even be part of this plugin)
-
-      <h3>Options for WebPConvert Cloud Service</h3>
+      (PS: It is planned to integrate wpc into <i>WebP Express</i>, making it very easy to share the capability to convert with your other sites)
+      <h3>Options</h3>
       <div>
           <label for="wpc_url">URL</label>
           <input type="text" id="wpc_url" placeholder="Url to your WPC instance">
@@ -430,7 +399,7 @@ echo '<ul id="converters"></ul>';
           <input type="text" id="wpc_secret_2" placeholder="Secret (must match secret on server side)">
       </div>
       <br>
-      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
+      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
     </div>
 </div>
 
