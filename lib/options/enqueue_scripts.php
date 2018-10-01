@@ -25,7 +25,7 @@ wp_register_style(
     'webp-express-options-page-css',
     plugins_url('css/webp-express-options-page.css', __FILE__),
     null,
-    '0.6.0dev2'
+    '0.6.0dev3'
 );
 wp_enqueue_style('webp-express-options-page-css');
 
