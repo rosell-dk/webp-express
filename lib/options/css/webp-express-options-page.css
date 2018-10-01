@@ -113,24 +113,29 @@
 }
 
 
-#converters li .popup {
+#converters li .popup,
+.help .popup {
     display: none;
     position: absolute;
-    border: 1px solid #333;
+    border: 1px solid #666;
     z-index:2;
-    background-color: #ffff99;
-    padding: 8px 5px 8px 13px;
-    left: 22px;
-    top: 20px;
+    background-color: #ffffaa;
+    padding: 8px 10px;
+    /*left: 22px;
+    top: 20px;*/
+    margin-top: -5px;
     font-size: 12px;
     /*white-space: nowrap;*/
     color: #000;
     min-width: 150px;
+    font-weight: normal;
+    text-align: left;
 }
 #converters li.operational .popup {
     background-color: #80ff80;
 }
-#converters li .status:hover .popup {
+#converters li .status:hover .popup,
+.help:hover .popup {
     display: block;
 }
 /*
@@ -152,4 +157,23 @@
 }
 .converter-options div {
     margin-bottom: 15px;
+}
+
+.help {
+    text-align: center;
+    vertical-align: center;
+    display: inline-block;
+    border-radius: 50%;
+    background-color: #00a0ee;
+    width: 16px;
+    height: 16px;
+    border: 0px solid #00a0ee;
+    color: white;
+    font-weight: bolder;
+    margin-left: 7px;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 16px;
+    vertical-align: top;
+    font-family: sans-serif;
 }

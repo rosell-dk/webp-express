@@ -130,11 +130,16 @@ echo '<form id="webpexpress_settings" action="' . esc_url( admin_url( 'admin-pos
 
 <?php
 
+function helpIcon($text) {
+    return '<div class="help">?<div class="popup">' . $text . '</div></div>';
+}
 echo '<table class="form-table"><tbody>';
 
 // Image types
 // ------------
-echo '<tr><th scope="row">Image types to convert</th><td>';
+echo '<tr><th scope="row">Image types to convert';
+echo helpIcon('This has effect on the rewriting rules only.');
+echo '</th><td>';
 
 // bitmask
 // 1: JPEGs
@@ -154,7 +159,9 @@ echo '</td></tr>';
 
 // Response on failure
 // --------------------
-echo '<tr><th scope="row">Response on failure</th><td>';
+echo '<tr><th scope="row">Response on failure';
+echo helpIcon('Determines what to serve in case the image conversion should fail.');
+echo '</th><td>';
 
 //$fail = get_option('webp_express_failure_response');
 $fail = $config['fail'];
@@ -173,7 +180,9 @@ echo '</td></tr>';
 $cacheControl = $config['cache-control'];
 $cacheControlCustom = $config['cache-control-custom'];
 
-echo '<tr><th scope="row">Caching</th><td>';
+echo '<tr><th scope="row">Caching';
+echo helpIcon('Controls the cache-control header for the converted image');
+echo '</th><td>';
 echo '<select id="cache_control_select" name="cache-control">';
 echo '<option value="no-header"' . ($cacheControl == 'no-header' ? ' selected' : '') . '>Do not set Cache-Control header</option>';
 echo '<option value="one-second"' . ($cacheControl == 'one-second' ? ' selected' : '') . '>One second</option>';
@@ -194,7 +203,10 @@ echo '</td></tr>';
 //$maxQuality = get_option('webp_express_max_quality');
 $maxQuality = $config['max-quality'];
 
-echo '<tr><th scope="row">Max quality (0-100)</th><td>';
+echo '<tr><th scope="row">Max quality (0-100)';
+echo helpIcon('Converted images will be encoded with same quality as the source image, but not more than this setting  (ps: your server might not be able to detect image quality - in that case quality is set the default quality, which is 75)');
+echo '</th><td>';
+
 echo '<input type="text" size=3 name="max-quality" value="' . $maxQuality . '">';
 echo '</td></tr>';
 //        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
@@ -208,7 +220,10 @@ echo '</td></tr>';
 //$maxQuality = get_option('webp_express_max_quality');
 $metadata = $config['metadata'];
 
-echo '<tr><th scope="row">Metadata</th><td>';
+echo '<tr><th scope="row">Metadata';
+echo helpIcon('Decide what to do with image metadata, such as Exif. Note that this setting is not supported by the "Gd" conversion method, as it is not possible to copy the metadata with the Gd extension');
+echo '</th><td>';
+
 echo '<select name="metadata">';
 echo '<option value="none"' . ($metadata == 'none' ? ' selected' : '') . '>No metadata in webp</option>';
 echo '<option value="all"' . ($metadata == 'all' ? ' selected' : '') . '>Copy all metadata to webp</option>';
