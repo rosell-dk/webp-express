@@ -38,6 +38,7 @@ $testResult = TestRun::getConverterStatus();
 $workingConverters = [];
 if ($testResult) {
     $workingConverters = $testResult['workingConverters'];
+    //print_r($testResult);
 }
 include __DIR__ . "/page-messages.php";
 
@@ -88,7 +89,7 @@ if ($config['converters'] == null) {
 }
 
 if (count($config['converters']) == 0) {
-
+    // On first time visit:
     // Send converters not working to the bottom
     // and also deactivate them.. ?
     $resultPart1 = [];
@@ -98,7 +99,7 @@ if (count($config['converters']) == 0) {
         if (in_array($converterId, $workingConverters)) {
             $resultPart1[] = $converter;
         } else {
-            //$converter['deactivated'] = true;
+            $converter['deactivated'] = true;
             $resultPart2[] = $converter;
         }
     }
@@ -122,7 +123,7 @@ foreach ($config['converters'] as &$converter) {
 // Generate a custom nonce value.
 $webpexpress_settings_nonce = wp_create_nonce('webpexpress_settings_nonce');
 
-echo '<form action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="post" id="webpexpress_settings" >';
+echo '<form id="webpexpress_settings" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="post" >';
 ?>
     <input type="hidden" name="action" value="webpexpress_settings_submit">
     <input type="hidden" name="webpexpress_settings_nonce" value="<?php echo $webpexpress_settings_nonce ?>" />
@@ -420,7 +421,7 @@ echo '<ul id="converters"></ul>';
 
 <table>
     <tr>
-        <td style="padding-right:20px"><?php submit_button('Save settings'); ?></td>
+        <td style="padding-right:20px"><?php submit_button('Save settings', 'primary', 'mysubmit'); ?></td>
         <td><?php submit_button('Save settings and force new .htaccess rules', 'secondary', 'force'); ?></td>
     </tr>
 </table>
