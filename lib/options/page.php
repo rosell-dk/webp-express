@@ -121,7 +121,21 @@ if (count($config['converters']) == 0) {
 foreach ($config['converters'] as &$converter) {
     $converterId = $converter['converter'];
     $hasError = isset($testResult['errors'][$converterId]);
-    $converter['working'] = !$hasError;
+    $working = !$hasError;
+    if (isset($converter['working']) && ($converter['working'] != $working)) {
+        if ($working) {
+            Messenger::printMessage(
+                'info',
+                'Hurray! - The <i>' . $converterId . '</i> conversion method is working now!'
+            );
+        } else {
+            Messenger::printMessage(
+                'warning',
+                'Sad news. The <i>' . $converterId . '</i> conversion method is not working anymore. What happened?'
+            );
+        }
+    }
+    $converter['working'] = $working;
     if ($hasError) {
         $converter['error'] = $testResult['errors'][$converterId];
     } else {
