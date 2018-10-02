@@ -10,7 +10,8 @@ if (isset($_GET['stream-webp-image'])) {
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
-require "../wod/webp-convert.inc";
+//require "../wod/webp-convert.inc";
+require "../vendor/autoload.php";
 
 use WebPConvert\WebPConvert;
 use WebPConvert\Loggers\EchoLogger;
@@ -70,10 +71,16 @@ function getConverterOptionsFromQueryString($converter)
     // Set options
     $options = [];
     foreach ($availOptions as $optionName => $optionType) {
+        //echo $optionName . '<br>';
         switch ($optionType) {
             case 'string':
                 if (isset($_GET[$optionName])) {
                     $options[$optionName] = $_GET[$optionName];
+                }
+                break;
+            case 'number':
+                if (isset($_GET[$optionName])) {
+                    $options[$optionName] = floatval($_GET[$optionName]);
                 }
                 break;
             case 'boolean':
@@ -90,6 +97,7 @@ $options['converters'] = [[
     'options' => getConverterOptionsFromQueryString($converter)
 ]];
 
+//echo '<pre>' . print_r($_GET, true) . '</pre>';
 //echo '<pre>' . print_r($options, true) . '</pre>';
 
 function testRun($converter, $source, $destination, $options) {
