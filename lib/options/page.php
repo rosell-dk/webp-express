@@ -74,7 +74,9 @@ $defaultConverters = [
         'try-common-system-paths' => true,
         'try-supplied-binary-for-os' => true,
         'method' => 6,
-        'size-in-percentage' => 45
+        'size-in-percentage' => 45,
+        'low-memory' => false,
+        'command-line-options' => '-low_memory',
     ]],
     ['converter' => 'imagick'],
     ['converter' => 'gmagick', 'deactivated' => false],
@@ -382,6 +384,15 @@ echo '<ul id="converters"></ul>';
           <input type="text" size="2" id="cwebp_size_in_percentage">
           <br>Set the cwebp should aim for, in percentage of the original.
           Usually cwebp can reduce to ~45% of original without loosing quality.
+      </div>
+      <div>
+          <label for="cwebp_command_line_options">Extra command line options</label><br>
+          <input type="text" size="40" id="cwebp_command_line_options" style="width:100%">
+          <br>This allows you to set any parameter available for cwebp in the same way as
+          you would do when executing <i>cwebp</i>. As a syntax example, you could ie. set it to
+          "-low_memory -af -f 50 -sharpness 0 -mt -crop 10 10 40 40" (do not include the quotes).
+          Read more about all the available parameters in
+          <a target="_blank" href="https://developers.google.com/speed/webp/docs/cwebp">the docs</a>
       </div>
       <br>
       <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
