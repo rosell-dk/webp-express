@@ -8,6 +8,8 @@ use \WebPExpress\Messenger;
 use \WebPExpress\PlatformInfo;
 use \WebPExpress\FileHelper;
 
+//include __DIR__ . "/page-welcome.php";
+
 if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }
