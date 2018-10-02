@@ -17,6 +17,13 @@ use \WebPExpress\Paths;
 // https://premium.wpmudev.org/blog/handling-form-submissions/
 // checkout https://codex.wordpress.org/Function_Reference/sanitize_meta
 
+/* We want an integer value between 0-100. We round "77.5" to 78. */
+function webp_express_sanitize_quality_field($text) {
+    $text = str_replace(',', '.', $text);
+    $q = floatval(sanitize_text_field($text));
+    $q = round($q);
+    return max(0, min($q, 100));
+}
 $config = [
     'cache-control' => sanitize_text_field($_POST['cache-control']),
     'cache-control-custom' => sanitize_text_field($_POST['cache-control-custom']),
@@ -24,9 +31,19 @@ $config = [
     'fail' => sanitize_text_field($_POST['fail']),
     'forward-query-string' => true,
     'image-types' => sanitize_text_field($_POST['image-types']),
-    'max-quality' => sanitize_text_field($_POST['max-quality']),
     'metadata' => sanitize_text_field($_POST['metadata']),
 ];
+
+$auto = (isset($_POST['quality-auto']) && $_POST['quality-auto'] == 'auto_on');
+$config['quality-auto'] = $auto;
+
+if ($auto) {
+    $config['max-quality'] = webp_express_sanitize_quality_field($_POST['max-quality']);
+    $config['quality-specific'] = 70;
+} else {
+    $config['max-quality'] = 80;
+    $config['quality-specific'] = webp_express_sanitize_quality_field($_POST['quality-specific']);
+}
 
 // remove id's
 foreach ($config['converters'] as &$converter) {
@@ -43,6 +60,11 @@ Messenger::addMessage(
 );*/
 
 /*
+Messenger::addMessage(
+    'info',
+    '<pre>' . htmlentities(print_r($config, true)) . '</pre>'
+);
+
 Messenger::addMessage(
     'info',
     '<pre>' . htmlentities(print_r($result, true)) . '</pre>'

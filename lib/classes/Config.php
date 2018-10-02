@@ -95,6 +95,14 @@ class Config
             $options['converters'][] = $converter;
         }
         foreach ($options['converters'] as &$c) {
+            if ($c['converter'] == 'cwebp') {
+                if (isset($c['options']['set-size']) && $c['options']['set-size']) {
+                    unset($c['options']['set-size']);
+                } else {
+                    unset($c['options']['set-size']);
+                    unset($c['options']['size-in-percentage']);
+                }
+            }
             unset ($c['id']);
             unset($c['working']);
             unset($c['error']);
@@ -121,6 +129,16 @@ class Config
             $options['cache-control-header'] = $options['cache-control-custom'];
         }
 
+        $auto = (isset($options['quality-auto']) && $options['quality-auto']);
+        $qualitySpecific = (isset($options['quality-specific']) ? $options['quality-specific'] : 70);
+        if ($auto) {
+            $options['quality'] = 'auto';
+        } else {
+            $options['quality'] = $qualitySpecific;
+            unset ($options['max-quality']);
+        }
+        unset($options['quality-auto']);
+        unset($options['quality-specific']);
 
         unset($options['image-types']);
         unset($options['cache-control']);

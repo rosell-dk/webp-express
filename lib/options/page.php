@@ -40,6 +40,9 @@ if ($testResult) {
     $workingConverters = $testResult['workingConverters'];
     //print_r($testResult);
 }
+
+$canDetectQuality = TestRun::isLocalQualityDetectionWorking();
+
 include __DIR__ . "/page-messages.php";
 
 
@@ -58,7 +61,9 @@ $defaultConfig = [
     'fail' => 'original',
     'forward-query-string' => true,
     'image-types' => 1,
+    'quality-auto' => $canDetectQuality,
     'max-quality' => 80,
+    'quality-specific' => 70,
     'metadata' => 'none',
 ];
 
@@ -69,6 +74,7 @@ $defaultConverters = [
         'try-common-system-paths' => true,
         'try-supplied-binary-for-os' => true,
         'method' => 6,
+        'size-in-percentage' => 45
     ]],
     ['converter' => 'imagick'],
     ['converter' => 'gmagick', 'deactivated' => false],
@@ -104,6 +110,7 @@ if (count($config['converters']) == 0) {
         }
     }
     $config['converters'] = array_merge($resultPart1, $resultPart2);
+
     // $workingConverters
     //echo '<pre>' . print_r($converters, true) . '</pre>';
 }
@@ -157,22 +164,61 @@ echo '</select>';
 
 echo '</td></tr>';
 
-// Response on failure
+// Quality
 // --------------------
-echo '<tr><th scope="row">Response on failure';
-echo helpIcon('Determines what to serve in case the image conversion should fail.');
+
+if ($canDetectQuality) {
+    echo '<tr><th scope="row">Quality';
+    echo helpIcon('If "Auto" is selected, the converted image will get same quality as source. Auto is recommended!');
+    echo '</th><td>';
+    $qualityAuto = $config['quality-auto'];;
+    echo '<select id="quality_auto_select" name="quality-auto">';
+    echo '<option value="auto_on"' . ($qualityAuto ? ' selected' : '') . '>Auto</option>';
+    echo '<option value="auto_off"' . (!$qualityAuto ? ' selected' : '') . '>Specific value</option>';
+    echo '</select>';
+
+    echo '</td></tr>';
+
+
+    // Max quality
+    // --------------------
+    $maxQuality = $config['max-quality'];
+
+    echo '<tr id="max_quality_row"><th scope="row">Max quality (0-100)';
+    echo helpIcon('Converted images will be encoded with same quality as the source image, but not more than this setting');
+    echo '</th><td>';
+
+    echo '<input type="text" size=3 name="max-quality" value="' . $maxQuality . '">';
+    echo '</td></tr>';
+} else {
+
+}
+
+// Quality - specific
+// --------------------
+$qualitySpecific = $config['quality-specific'];
+
+echo '<tr id="quality_specific_row"><th scope="row">Quality (0-100)';
+if ($canDetectQuality) {
+    echo helpIcon('All converted images will be encoded with this quality');
+} else {
+    echo helpIcon('All converted images will be encoded with this quality. ' .
+        'For the wpc converter, you will however have the option to use override this, and use ' .
+        '"auto". If you install imagick or gmagick, quality can have "auto" for all convertion methods. '
+    );
+}
 echo '</th><td>';
 
-//$fail = get_option('webp_express_failure_response');
-$fail = $config['fail'];
-echo '<select name="fail">';
-echo '<option value="original"' . ($fail == 'original' ? ' selected' : '') . '>Original image</option>';
-echo '<option value="404"' . ($fail == '404' ? ' selected' : '') . '>404</option>';
-echo '<option value="report"' . ($fail == 'report' ? ' selected' : '') . '>Error report (in plain text)</option>';
-echo '<option value="report-as-image"' . ($fail == 'report-as-image' ? ' selected' : '') . '>Error report as image</option>';
-echo '</select>';
+echo '<input type="text" size=3 name="quality-specific" value="' . $qualitySpecific . '">';
 echo '</td></tr>';
-//        echo '<tr><td colspan=2>Determines what the converter should serve, in case the image conversion should fail. For production servers, recommended value is "Original image". For development servers, choose anything you like, but that</td></tr>';
+
+
+
+
+//        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
+
+// method
+//echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
 
 // Cache-Control
 // --------------------
@@ -198,23 +244,6 @@ echo '<input type="text" id="cache_control_custom" name="cache-control-custom" v
 echo '</td></tr>';
 
 
-// Max quality
-// --------------------
-//$maxQuality = get_option('webp_express_max_quality');
-$maxQuality = $config['max-quality'];
-
-echo '<tr><th scope="row">Max quality (0-100)';
-echo helpIcon('Converted images will be encoded with same quality as the source image, but not more than this setting  (ps: your server might not be able to detect image quality - in that case quality is set the default quality, which is 75)');
-echo '</th><td>';
-
-echo '<input type="text" size=3 name="max-quality" value="' . $maxQuality . '">';
-echo '</td></tr>';
-//        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
-
-// method
-//echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
-
-
 // Metadata
 // --------------------
 //$maxQuality = get_option('webp_express_max_quality');
@@ -234,6 +263,22 @@ echo '</td></tr>';
 // method
 //echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
 
+// Response on failure
+// --------------------
+echo '<tr><th scope="row">Response on failure';
+echo helpIcon('Determines what to serve in case the image conversion should fail.');
+echo '</th><td>';
+
+//$fail = get_option('webp_express_failure_response');
+$fail = $config['fail'];
+echo '<select name="fail">';
+echo '<option value="original"' . ($fail == 'original' ? ' selected' : '') . '>Original image</option>';
+echo '<option value="404"' . ($fail == '404' ? ' selected' : '') . '>404</option>';
+echo '<option value="report"' . ($fail == 'report' ? ' selected' : '') . '>Error report (in plain text)</option>';
+echo '<option value="report-as-image"' . ($fail == 'report-as-image' ? ' selected' : '') . '>Error report as image</option>';
+echo '</select>';
+echo '</td></tr>';
+//        echo '<tr><td colspan=2>Determines what the converter should serve, in case the image conversion should fail. For production servers, recommended value is "Original image". For development servers, choose anything you like, but that</td></tr>';
 
 
 echo '</tbody></table>';
@@ -243,6 +288,8 @@ echo '</tbody></table>';
 
 $converters = $config['converters'];
 echo '<script>window.converters = ' . json_encode($converters) . '</script>';
+echo '<script>window.defaultConverters = ' . json_encode($defaultConverters) . '</script>';
+
 echo "<input type='text' name='converters' value='' style='visibility:hidden' />";
 
 // https://premium.wpmudev.org/blog/handling-form-submissions/
@@ -279,7 +326,7 @@ http://php.net/manual/en/function.set-include-path.php
 echo '<h2>Conversion methods to try</h2>';
 $dragIcon = '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="17px" height="17px" viewBox="0 0 100.000000 100.000000" preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,100.000000) scale(0.100000,-0.100000)" fill="#444444" stroke="none"><path d="M415 920 l-80 -80 165 0 165 0 -80 80 c-44 44 -82 80 -85 80 -3 0 -41 -36 -85 -80z"/><path d="M0 695 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M0 500 l0 -40 500 0 500 0 0 40 0 40 -500 0 -500 0 0 -40z"/><path d="M0 305 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M418 78 l82 -83 82 83 83 82 -165 0 -165 0 83 -82z"/></g></svg>';
 
-echo '<p><i>Drag to reorder. The converter on top will first be tried. ';
+echo '<p><i>Drag to reorder. The conversion method on top will first be tried. ';
 echo 'Should it fail, the next will be used, etc. </i>';
 echo 'To learn more about the conversion methods, ';
 echo '<a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/converters.md">Go here</a></p>';
@@ -294,7 +341,7 @@ echo '<ul id="converters"></ul>';
       <div>
           <label for="cwebp_use_nice">Use nice</label>
           <input type="checkbox" id="cwebp_use_nice">
-          <br>Enabling "use nice" saves system resources at the cost of slightly slower conversion
+          <br>Enabling this option saves system resources at the cost of slightly slower conversion
       </div>
       <div>
           <label for="cwebp_try_common_system_paths">Try to execute cweb binary at common locations</label>
@@ -306,12 +353,35 @@ echo '<ul id="converters"></ul>';
           <input type="checkbox" id="cwebp_try_supplied_binary">
           <br>This plugin ships with precompiled cweb binaries for different platforms. If checked, and we have a precompiled binary for your OS, we will try to exectute it
       </div>
-
       <div>
           <label for="cwebp_method">Method (0-6)</label>
           <input type="text" size="2" id="cwebp_method">
           <br>This parameter controls the trade off between encoding speed and the compressed file size and quality.
           Possible values range from 0 to 6. 0 is fastest. 6 results in best quality.
+      </div>
+      <div>
+          <label for="cwebp_set_size">Set size option (and ignore quality option)</label>
+          <input type="checkbox" id="cwebp_set_size">
+          <br>This option activates the size option below.
+          <?php
+          if ($canDetectQuality) {
+              echo 'As you have quality detection working on your server, it is probably best to use that, rather ';
+              echo 'than the "size" option. Using the size option takes more ressources (it takes about 2.5 times ';
+              echo 'longer for cwebp to do a a conversion with the size option than the quality option). Long ';
+              echo 'story short, you should probably <i>not</i> activate the size option.';
+          } else {
+              echo 'As you do not have quality detection working on your server, it is probably a good ';
+              echo 'idea to use the size option to avoid making conversions with a higher quality setting ';
+              echo 'than the source image. ';
+              echo 'Beware, though, that cwebp takes about 2.5 times longer to do a a conversion with the size option set.';
+          }
+          ?>
+      </div>
+      <div>
+          <label for="cwebp_size_in_percentage">Size (in percentage of source)</label>
+          <input type="text" size="2" id="cwebp_size_in_percentage">
+          <br>Set the cwebp should aim for, in percentage of the original.
+          Usually cwebp can reduce to ~45% of original without loosing quality.
       </div>
       <br>
       <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
