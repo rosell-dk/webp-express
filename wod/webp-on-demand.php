@@ -1,6 +1,8 @@
 <?php
 
-require 'webp-on-demand-1.inc';
+//require 'webp-on-demand-1.inc';
+require '../vendor/rosell-dk/webp-convert/build/webp-on-demand-1.inc';
+//require '../vendor/autoload.php';
 
 use \WebPConvert\WebPConvert;
 
@@ -16,6 +18,13 @@ $options = json_decode($json, true);
 //print_r($options);
 
 $options['require-for-conversion'] = 'webp-on-demand-2.inc';
+
+foreach ($options['converters'] as &$converter) {
+    if (isset($converter['converter']) && ($converter['converter'] == 'cwebp')) {
+        $converter['options']['rel-path-to-precompiled-binaries'] = '../src/Converters/Binaries';
+    }
+}
+
 
 if ($options['forward-query-string']) {
     if (isset($_GET['debug'])) {
