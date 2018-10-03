@@ -1,3 +1,26 @@
+= 0.5.0 =
+This version works on many more setups than the previous. Also uses less resources and handles when images are changed.
+
+* Configuration is now stored in a separate configuration file instead of storing directly in the *.htaccess* file and passing it on via query string. When updating, these settings are migrated automatically.
+* Handles setups where Wordpress has been given its own directory (both methods mentioned [here](https://codex.wordpress.org/Giving_WordPress_Its_Own_Directory))
+* Handles setups where *wp-content* has been moved, even out of Wordpress root.
+* Handles setups where Uploads folder has been moved, even out of *wp-content*.
+* Handles setups where Plugins folder has been moved, even out of *wp-content* or out of Wordpress root
+* Is not as likely to be subject to firewalls blocking requests (in 0.4.0, we passed all options in a querystring, and that could trigger firewalls under some circumstances)
+* Is not as likely to be subject to rewrite rules from other plugins interfering. WebP Express now stores the .htaccess in the wp-content folder (if you allow it). As this is deeper than the root folder, the rules in here takes precedence over rules in the main *.htaccess*
+* The *.htaccess* now passes the complete absulute path to the source file instead of a relative path. This is a less error-prone method.
+* Reconverts the webp, if source image has changed
+* Now runs on version 1.0.0 of [WebP On Demand](https://github.com/rosell-dk/webp-on-demand). Previously ran on 0.3.0
+* Now takes care of only loading the PHP classes when needed in order not to slow down your Wordpress. The frontend will only need to process four lines of code. The backend footprint is also quite small now (80 lines of code of hooks)
+* Now works in Wordpress 4.0 - 4.6.
+* Added cache-breaking tokens to image test links
+* Denies deactivation if rewrite rules could not be removed
+* Refactored thoroughly
+* More helpful texts.
+* Extensive testing. Tested on Wordpress 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8 and 4.9. Tested with PHP 5.6, PHP 7.0 and PHP 7.1. Tested on Apache and LiteSpeed. Tested when missing various write permissions. Tested migration. Tested when installed in root, in subfolder, when Wordpress has its own directory (both methods), when wp-content is moved out of Wordpress directory, when plugins is moved out of Wordpress directory, when both of them are moved and when uploads have been moved.
+
+For more info, see the closed issues on the 0.5.0 milestone on our github repository: https://github.com/rosell-dk/webp-express/milestone/2?closed=1
+
 = 0.4.0 =
 This version fixes some misbehaviours and provides new http headers with info about the conversion process.
 
@@ -7,6 +30,7 @@ This version fixes some misbehaviours and provides new http headers with info ab
 * WebPExpress options are now removed when plugin is uninstalled.
 * No longer generates .htaccess rules on install. The user now has to actively go to Web Express setting and save first
 * Added a "first time" message on options page and a reactivation message
+
 For more info, see the closed issues on the github repository: https://github.com/rosell-dk/webp-express/milestone/1?closed=1
 
 = 0.3.1 =
