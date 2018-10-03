@@ -143,6 +143,11 @@
 .help:hover .popup {
     display: block;
 }
+
+.help .popup {
+    min-width: 250px;
+}
+
 /*
 #converters li > a.remove-converter {
     color: red;
@@ -152,6 +157,10 @@
 .converter-options label {
     min-width: 80px;
     display: inline-block;
+}
+
+.converter-options.wpc label {
+    min-width: 100px;
 }
 
 .converter-options .info {
@@ -166,7 +175,6 @@
 
 .help {
     text-align: center;
-    vertical-align: center;
     display: inline-block;
     border-radius: 50%;
     background-color: #00a0ee;
@@ -181,4 +189,5 @@
     line-height: 16px;
     vertical-align: top;
     font-family: sans-serif;
+    position: relative;
 }

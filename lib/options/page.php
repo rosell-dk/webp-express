@@ -79,8 +79,8 @@ $defaultConverters = [
         'command-line-options' => '-low_memory',
     ]],
     ['converter' => 'imagick'],
-    ['converter' => 'gmagick', 'deactivated' => false],
-    ['converter' => 'wpc'],
+    ['converter' => 'gmagick'],
+    ['converter' => 'wpc', 'options' => ['quality' => 'auto']],
     ['converter' => 'ewww'],
 ];
 
@@ -161,7 +161,7 @@ echo '<table class="form-table"><tbody>';
 // Image types
 // ------------
 echo '<tr><th scope="row">Image types to convert';
-echo helpIcon('This has effect on the rewriting rules only.');
+echo helpIcon('Beware that the Gd conversion method cannot handle transparency for PNGs. PNG conversions havent been tested much yet. Please report any problems with PNG images <a target="_blank" href="https://github.com/rosell-dk/webp-convert/issues/42">here</a>');
 echo '</th><td>';
 
 // bitmask
@@ -201,7 +201,9 @@ if ($canDetectQuality) {
     $maxQuality = $config['max-quality'];
 
     echo '<tr id="max_quality_row"><th scope="row">Max quality (0-100)';
-    echo helpIcon('Converted images will be encoded with same quality as the source image, but not more than this setting');
+    echo helpIcon('Quality is expensive byte-wise. For most websites, more than 80 is a waste of bytes. ' .
+        'This option allows you to limit the quality to whatever is lowest: ' .
+        'the quality of the source or max quality. Recommended value: Somewhere between 50-85');
     echo '</th><td>';
 
     echo '<input type="text" size=3 name="max-quality" value="' . $maxQuality . '">';
@@ -482,7 +484,30 @@ echo '<ul id="converters"></ul>';
           <label for="wpc_secret">Secret</label>
           <input type="text" id="wpc_secret" placeholder="Secret (must match secret on server side)">
       </div>
-      <br>
+      <?php
+      if ($canDetectQuality) { ?>
+          <div>
+              <label for="wpc_quality">
+                  Quality
+                  <?php echo helpIcon('If "Auto" is selected, the converted image will get same quality as source. Auto is recommended!'); ?>
+              </label>
+              <!--
+              Your server cannot detect quality of jpeg files. But you can have the cloud server do it for you
+              (provided that <i>it</i> can) -->
+              <select id="wpc_quality" onchange="wpcQualityChanged()">
+                  <option value="not_set">Use global settings</option>
+                  <option value="auto">Auto</option>
+              </select>
+          </div>
+          <div id="wpc_max_quality_div">
+              <label>
+                  Max quality
+                  <?php echo helpIcon('Enter number (0-100). Converted images will be encoded with same quality as the source image, but not more than this setting'); ?>
+              </label>
+              <input type="text" size=3 id="wpc_max_quality">
+          </div>
+    <?php } ?>
+    <br>
       <h4>Fallback (optional)</h4>
       <p>In case the first is down, the fallback will be used.</p>
       <div>
