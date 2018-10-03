@@ -57,21 +57,21 @@ Note that the plugin does not change any HTML. In the HTML the image src is stil
 - Reload the page
 - Find a jpeg or png image in the list. In the "type" column, it should say "webp"
 
-In order to test that the image is not being reconverted every time, look at the Response headers of the image. There should be a "X-WebP-On-Demand" header. It should say "Converting image (handed over to WebPConvertAndServe)" the first time, but "Serving existing converted image" on subsequent requests (WebP-Express is based upon [WebP On Demand](https://github.com/rosell-dk/webp-on-demand)). When routed to image converter, there should also be some headers beginning with "X-WebP-Convert-And-Serve", which reveals information about the conversion.
+In order to test that the image is not being reconverted every time, look at the Response headers of the image. There should be a "X-WebP-Convert-Status" header. It should say "Serving existing converted image" the first time, but "Serving existing converted image" on subsequent requests (WebP-Express is based upon [WebP Convert](https://github.com/rosell-dk/webp-convert)).
 
 You can also append ?debug after any image url, in order to run a conversion, and see the conversion report.
-Btw: If you append ?reconvert after an image url, you will force a reconversion of the image.
+Also, you append ?reconvert after an image url, you will force a reconversion of the image.
 
 ### Notes
 
 *Note:*
-The redirect rules created in *.htaccess* are pointing to the WebP on demand script. If you happen to change the url path of your plugins, the rules will have to be updated. The *.htaccess* also passes the path to wp-content (relative to document root) to the script, so the script knows where to find its configuration and where to store converted images. So again, if you move the wp-content folder, or perhaps moves Wordpress to a subfolder, the rules will have to be updated. As moving these things around is is a rare situation, WebP Express are not using any resources monitoring this. However, it will do the check when you visit the settings page.
+The redirect rules created in *.htaccess* are pointing to a PHP script. If you happen to change the url path of your plugins, the rules will have to be updated. The *.htaccess* also passes the path to wp-content (relative to document root) to the script, so the script knows where to find its configuration and where to store converted images. So again, if you move the wp-content folder, or perhaps moves Wordpress to a subfolder, the rules will have to be updated. As moving these things around is is a rare situation, WebP Express are not using any resources monitoring this. However, it will do the check when you visit the settings page.
 
 *Note:*
 Do not simply remove the plugin without deactivating it first. Deactivation takes care of removing the rules in the *.htaccess* file. With the rules there, but converter gone, your Google Chrome visitors will not see any jpeg images.
 
 *Note:*
-The plugin has not been tested in multisite configurations. It's on the roadmap!
+The plugin has not been tested in multisite configurations. It's on the roadmap...
 
 == Limitations ==
 
@@ -81,8 +81,8 @@ The plugin has not been tested in multisite configurations. It's on the roadmap!
 
 == Frequently Asked Questions ==
 
-= How do I set the WebP quality? =
-You don't. The plugin will try to detect the quality of the source file, and use same quality as that. You do however have an option to select a maximum quality - usefull, because there is seldom any need for a quality above 85 on ordinary web content. In case quality of the source file cannot be determined (that feature requires that Imagick or GraphicsMagick is installed), it will be set to 80.
+= Why do I not see the option to set WebP quality to auto? =
+The option will only display, if your system is able to detect jpeg qualities. To make your server capable to do that, install *Imagick* or *Gmagick*
 
 = How do I make this work with a CDN? =
 Chances are that the default setting of your CDN is not to forward any headers to your origin server. But the plugin needs the "Accept" header, because this is where the information is whether the browser accepts webp images or not. You will therefore have to make sure to configure your CDN to forward the "Accept" header.

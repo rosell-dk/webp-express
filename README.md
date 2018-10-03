@@ -49,20 +49,20 @@ Note that the plugin does not change any HTML. In the HTML the image src is stil
 - Reload the page
 - Find a jpeg or png image in the list. In the "type" column, it should say "webp"
 
-In order to test that the image is not being reconverted every time, look at the Response headers of the image. There should be a "X-WebP-On-Demand" header. It should say "Converting image (handed over to WebPConvertAndServe)" the first time, but "Serving existing converted image" on subsequent requests (WebP-Express is based upon [WebP On Demand](https://github.com/rosell-dk/webp-on-demand)). When routed to image converter, there should also be some headers beginning with "X-WebP-Convert-And-Serve", which reveals information about the conversion.
+In order to test that the image is not being reconverted every time, look at the Response headers of the image. There should be a "X-WebP-Convert-Status" header. It should say "Serving existing converted image" the first time, but "Serving existing converted image" on subsequent requests (WebP-Express is based upon [WebP Convert](https://github.com/rosell-dk/webp-convert)).
 
-You can also append `?debug` after any image url, in order to run a conversion, and see the conversion report. Btw: If you append `?reconvert` after an image url, you will force a reconversion of the image.
+You can also append `?debug` after any image url, in order to run a conversion, and see the conversion report. Also, if you append `?reconvert` after an image url, you will force a reconversion of the image.
 
 ### Notes
 
 *Note:*
-The redirect rules created in *.htaccess* are pointing to the WebP on demand script. If you happen to change the url path of your plugins, the rules will have to be updated. The *.htaccess* also passes the path to wp-content (relative to document root) to the script, so the script knows where to find its configuration and where to store converted images. So again, if you move the wp-content folder, or perhaps moves Wordpress to a subfolder, the rules will have to be updated. As moving these things around is is a rare situation, WebP Express are not using any resources monitoring this. However, it will do the check when you visit the settings page.
+The redirect rules created in *.htaccess* are pointing to a PHP script. If you happen to change the url path of your plugins, the rules will have to be updated. The *.htaccess* also passes the path to wp-content (relative to document root) to the script, so the script knows where to find its configuration and where to store converted images. So again, if you move the wp-content folder, or perhaps moves Wordpress to a subfolder, the rules will have to be updated. As moving these things around is is a rare situation, WebP Express are not using any resources monitoring this. However, it will do the check when you visit the settings page.
 
 *Note:*
 Do not simply remove the plugin without deactivating it first. Deactivation takes care of removing the rules in the *.htaccess* file. With the rules there, but converter gone, your Google Chrome visitors will not see any jpeg images.
 
 *Note:*
-The plugin has not been tested in multisite configurations. It's on the roadmap!
+The plugin has not been tested in multisite configurations. It's on the roadmap...
 
 
 ## Limitations
@@ -73,8 +73,8 @@ The plugin has not been tested in multisite configurations. It's on the roadmap!
 
 ## Frequently Asked Questions
 
-### How do I set the WebP quality?
-You don't. The plugin will try to detect the quality of the source file, and use same quality as that. You do however have an option to select a maximum quality - usefull, because there is seldom any need for a quality above 85 on ordinary web content. In case quality of the source file cannot be determined (that feature requires that Imagick or GraphicsMagick is installed), it will be set to 80.
+### Why do I not see the option to set WebP quality to auto?
+The option will only display, if your system is able to detect jpeg qualities. To make your server capable to do that, install *Imagick* or *Gmagick*
 
 ### How do I make this work with a CDN?
 Chances are that the default setting of your CDN is not to forward any headers to your origin server. But the plugin needs the "Accept" header, because this is where the information is whether the browser accepts webp images or not. You will therefore have to make sure to configure your CDN to forward the "Accept" header.
@@ -84,26 +84,10 @@ The plugin takes care of setting the "Vary" HTTP header to "Accept" when routing
 ### How do I donate?
 Putting this question in the "frequently" asked questions section is of course some mixture of humour, sarcasm and wishful thinking. In case there really is someone out there wanting to donate, you can simply write to me, and we can arrange. My contact information is available here https://www.bitwise-it.dk/contact. I have paypal and of course an ordinary bank account.
 
-## Changes in 0.5.0
-This version works on many more setups than the previous. Also uses less resources and handles when images are changed.
+## Changes in 0.6.0
+This version added option for setting caching header, fixed a serious issue with *Imagick*, added a new converter, *Gmagick*, added a great deal of options to *Cwebp* and generally improved the interface.
 
-* Configuration is now stored in a separate configuration file instead of storing directly in the *.htaccess* file and passing it on via query string. When updating, these settings are migrated automatically.
-* Handles setups where Wordpress has been given its own directory (both methods mentioned [here](https://codex.wordpress.org/Giving_WordPress_Its_Own_Directory))
-* Handles setups where *wp-content* has been moved, even out of Wordpress root.
-* Handles setups where Uploads folder has been moved, even out of *wp-content*.
-* Handles setups where Plugins folder has been moved, even out of *wp-content* or out of Wordpress root
-* Is not as likely to be subject to firewalls blocking requests (in 0.4.0, we passed all options in a querystring, and that could trigger firewalls under some circumstances)
-* Is not as likely to be subject to rewrite rules from other plugins interfering. WebP Express now stores the .htaccess in the wp-content folder (if you allow it). As this is deeper than the root folder, the rules in here takes precedence over rules in the main *.htaccess*
-* The *.htaccess* now passes the complete absulute path to the source file instead of a relative path. This is a less error-prone method.
-* Reconverts the webp, if source image has changed
-* Now runs on version 1.0.0 of [WebP On Demand](https://github.com/rosell-dk/webp-on-demand). Previously ran on 0.3.0
-* Now takes care of only loading the PHP classes when needed in order not to slow down your Wordpress. The frontend will only need to process four lines of code. The backend footprint is also quite small now (80 lines of code of hooks)
-* Now works in Wordpress 4.0 - 4.6.
-* Added cache-breaking tokens to image test links
-* Denies deactivation if rewrite rules could not be removed
-* Refactored thoroughly
-* More helpful texts.
-* Extensive testing. Tested on Wordpress 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8 and 4.9. Tested with PHP 5.6, PHP 7.0 and PHP 7.1. Tested on Apache and LiteSpeed. Tested when missing various write permissions. Tested migration. Tested when installed in root, in subfolder, when Wordpress has its own directory (both methods), when wp-content is moved out of Wordpress directory, when plugins is moved out of Wordpress directory, when both of them are moved and when uploads have been moved.
+* 
 
 For more info, see the closed issues on the 0.5.0 milestone on our github repository: https://github.com/rosell-dk/webp-express/milestone/2?closed=1
 
