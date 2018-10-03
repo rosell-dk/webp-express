@@ -30,6 +30,9 @@ class TestRun
         $source = Paths::getWebPExpressPluginDirAbs() . '/test/small-q61.jpg';
         $destination = Paths::getUploadDirAbs() . '/webp-express-test-conversion.webp';
         if (!FileHelper::canCreateFile($destination)) {
+            $destination = Paths::getWPContentDirAbs() . '/webp-express-test-conversion.webp';
+        }
+        if (!FileHelper::canCreateFile($destination)) {
             return false;
         }
         $workingConverters = [];
@@ -45,12 +48,16 @@ class TestRun
         //print_r($options);
         if (!$options) {
             $options = [
-                'converters' => ConverterHelper::$localConverters
+                'converters' => ConverterHelper::$availableConverters
             ];
         }
         //echo '<pre>' . print_r($options, true) . '</pre>';
         foreach ($options['converters'] as $converter) {
+            if (!isset($converter['converter'])) {
+                $converter = ['converter' => $converter];
+            }
             $converterId = $converter['converter'];
+
             if (!isset($converter['options'])) {
                 $converter['options'] = [];
             }
