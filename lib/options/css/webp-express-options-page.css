@@ -20,12 +20,16 @@
 }*/
 
 @media (min-width: 782px) {
-    #webpexpress_settings .form-table th,
-    #webpexpress_settings .form-table td {
+    #webpexpress_settings .form-table th {
         padding-top: 5px;
         padding-bottom: 5px;
+        width: 180px;
     }
-    
+    #webpexpress_settings .form-table td {
+        padding-top: 1px;
+        padding-bottom: 5px;
+    }
+
 }
 
 #converters li {
