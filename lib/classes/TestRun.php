@@ -46,7 +46,7 @@ class TestRun
         //$options = Config::loadWodOptions();
         $options = Config::loadConfig();
         //print_r($options);
-        if (!$options) {
+        if ((!$options) || (!isset($options['converters'])) || (count($options['converters']) == 0)) {
             $options = [
                 'converters' => ConverterHelper::$availableConverters
             ];
