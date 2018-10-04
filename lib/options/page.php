@@ -103,21 +103,38 @@ if ($config['converters'] == null) {
 }
 
 if (count($config['converters']) == 0) {
-    // On first time visit:
-    // Send converters not working to the bottom
-    // and also deactivate them.. ?
-    $resultPart1 = [];
-    $resultPart2 = [];
-    foreach ($defaultConverters as $converter) {
-        $converterId = $converter['converter'];
-        if (in_array($converterId, $workingConverters)) {
-            $resultPart1[] = $converter;
-        } else {
-            $converter['deactivated'] = true;
-            $resultPart2[] = $converter;
+    // This is first time visit!
+
+    if (count($workingConverters) == 0) {
+        // No converters are working
+        // Send ewww converter to top
+        $resultPart1 = [];
+        $resultPart2 = [];
+        foreach ($defaultConverters as $converter) {
+            $converterId = $converter['converter'];
+            if ($converterId == 'ewww') {
+                $resultPart1[] = $converter;
+            } else {
+                $resultPart2[] = $converter;
+            }
         }
+        $config['converters'] = array_merge($resultPart1, $resultPart2);
+    } else {
+        // Send converters not working to the bottom
+        // - and also deactivate them..
+        $resultPart1 = [];
+        $resultPart2 = [];
+        foreach ($defaultConverters as $converter) {
+            $converterId = $converter['converter'];
+            if (in_array($converterId, $workingConverters)) {
+                $resultPart1[] = $converter;
+            } else {
+                $converter['deactivated'] = true;
+                $resultPart2[] = $converter;
+            }
+        }
+        $config['converters'] = array_merge($resultPart1, $resultPart2);
     }
-    $config['converters'] = array_merge($resultPart1, $resultPart2);
 
     // $workingConverters
     //echo '<pre>' . print_r($converters, true) . '</pre>';
