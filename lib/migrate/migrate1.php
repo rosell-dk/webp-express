@@ -111,7 +111,7 @@ function webpexpress_migrate1_migrateOptions()
             if ($mainResult != 'failed') {
                 Messenger::addMessage(
                     'success',
-                    'WebP Express has successfully migrated its configuration and updated the rewrite rules'
+                    'WebP Express has successfully migrated its configuration and updated the rewrite rules to 0.5.0'
                 );
             } else {
                 Messenger::addMessage(
