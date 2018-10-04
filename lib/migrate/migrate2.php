@@ -54,4 +54,10 @@ if ($testResult) {
         );
     }
 }
+Messenger::addMessage(
+    'info',
+    'WebP Express can now be configured to cache the webp images. You might want to ' .
+        '<a href="' . Paths::getSettingsUrl() . '">do that</a>.'
+);
+
 update_option('webp-express-migration-version', '2');
