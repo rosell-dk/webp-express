@@ -53,11 +53,19 @@ if ($testResult) {
                'and your server meets the requirements!'
         );
     }
+    if (in_array('cwebp', $workingConverters)) {
+        Messenger::addMessage(
+            'info',
+            'WebP Express added several options for the cwebp conversion method. ' .
+                '<a href="' . Paths::getSettingsUrl() . '">Go to the settings page to check it out</a>.'
+        );
+    }
 }
 Messenger::addMessage(
     'info',
     'WebP Express can now be configured to cache the webp images. You might want to ' .
         '<a href="' . Paths::getSettingsUrl() . '">do that</a>.'
 );
+
 
 update_option('webp-express-migration-version', '2');
