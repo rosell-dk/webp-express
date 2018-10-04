@@ -33,6 +33,8 @@ if (!current_user_can('manage_options')) {
 
 <?php
 
+//update_option('webp-express-migration-version', '1');
+
 // Test converters
 $testResult = TestRun::getConverterStatus();
 $workingConverters = [];
@@ -50,8 +52,6 @@ if ($testResult) {
 $canDetectQuality = TestRun::isLocalQualityDetectionWorking();
 
 include __DIR__ . "/page-messages.php";
-
-
 
 /*
 foreach (Paths::getHTAccessDirs() as $dir) {
@@ -278,7 +278,10 @@ $cacheControl = $config['cache-control'];
 $cacheControlCustom = $config['cache-control-custom'];
 
 echo '<tr><th scope="row">Caching';
-echo helpIcon('Controls the cache-control header for the converted image');
+echo helpIcon(
+    'Controls the cache-control header for the converted image. ' .
+    'This header is only sent when a converted image is successfully delivered (either existing, or new ' .
+    'conversion). In case of failure, headers will be sent to prevent caching.');
 echo '</th><td>';
 echo '<select id="cache_control_select" name="cache-control">';
 echo '<option value="no-header"' . ($cacheControl == 'no-header' ? ' selected' : '') . '>Do not set Cache-Control header</option>';
