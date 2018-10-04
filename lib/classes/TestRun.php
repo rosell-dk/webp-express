@@ -5,6 +5,9 @@ namespace WebPExpress;
 include_once "Config.php";
 use \WebPExpress\Config;
 
+include_once __DIR__ . '/../classes/ConvertersHelper.php';
+use \WebPExpress\ConvertersHelper;
+
 include_once "Paths.php";
 use \WebPExpress\Paths;
 
@@ -21,7 +24,6 @@ use \WebPConvert\Converters\ConverterHelper;
 class TestRun
 {
 
-    public static $localConverters = ['cwebp', 'imagick', 'gmagick', 'gd'];
 
     /**
      *  Get an array of working converters OR false, if tests cannot be made
@@ -37,30 +39,34 @@ class TestRun
         }
         $workingConverters = [];
         $errors = [];
-        // Actually, it would be most correct to load wod options.
-        // - because options might have different names in that file.
-        // But it is currently not the case.
-        // AND if we load wod options, we do not get the inactive converters,
-        // but we want to test those as well.
-        // so for now, we simply load the config
-        //$options = Config::loadWodOptions();
-        $options = Config::loadConfig();
-        //print_r($options);
-        if ((!$options) || (!isset($options['converters'])) || (count($options['converters']) == 0)) {
-            $options = [
-                'converters' => ConverterHelper::$availableConverters
+
+        // We need wod options.
+        // But we cannot simply use loadWodOptions - because that would leave out the deactivated
+        // converters. And we need to test all converters - even the deactivated ones.
+        // So we load config, set "deactivated" to false, and generate Wod options from the config
+        $config = Config::loadConfig();
+        if ((!$config) || (!isset($config['converters'])) || (count($config['converters']) == 0)) {
+            $config = [
+                'converters' => ConvertersHelper::$defaultConverters
             ];
+        } else {
+            // set deactivated to false on all converters
+            foreach($config['converters'] as &$converter) {
+                $converter['deactivated'] = false;
+            }
+
+            // merge missing converters in
+            $config['converters'] = ConvertersHelper::mergeConverters($config['converters'], ConvertersHelper::$defaultConverters);
+//            echo '<pre>' . print_r($config, true) . '</pre>';
+
         }
+
+        $options = Config::generateWodOptionsFromConfigObj($config);
+        $options['converters'] = ConvertersHelper::normalize($options['converters']);
+
         //echo '<pre>' . print_r($options, true) . '</pre>';
         foreach ($options['converters'] as $converter) {
-            if (!isset($converter['converter'])) {
-                $converter = ['converter' => $converter];
-            }
             $converterId = $converter['converter'];
-
-            if (!isset($converter['options'])) {
-                $converter['options'] = [];
-            }
             try {
                 $converterOptions = array_merge($options, $converter['options']);
                 unset($converterOptions['converters']);

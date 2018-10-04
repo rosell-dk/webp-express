@@ -3,6 +3,9 @@
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
+include_once __DIR__ . '/../classes/ConvertersHelper.php';
+use \WebPExpress\ConvertersHelper;
+
 include_once __DIR__ . '/../classes/FileHelper.php';
 use \WebPExpress\FileHelper;
 
@@ -73,22 +76,8 @@ $defaultConfig = [
     'metadata' => 'none',
 ];
 
-$defaultConverters = [
-    ['converter' => 'gd', 'options' => ['skip-pngs' => true]],
-    ['converter' => 'cwebp', 'options' => [
-        'use-nice' => false,
-        'try-common-system-paths' => true,
-        'try-supplied-binary-for-os' => true,
-        'method' => 6,
-        'size-in-percentage' => 45,
-        'low-memory' => false,
-        'command-line-options' => '-low_memory',
-    ]],
-    ['converter' => 'imagick'],
-    ['converter' => 'gmagick'],
-    ['converter' => 'wpc', 'options' => ['quality' => 'auto']],
-    ['converter' => 'ewww'],
-];
+$defaultConverters = ConvertersHelper::$defaultConverters;
+
 
 $config = Config::loadConfig();
 //echo '<pre>' . print_r($config, true) . '</pre>';
@@ -138,7 +127,12 @@ if (count($config['converters']) == 0) {
 
     // $workingConverters
     //echo '<pre>' . print_r($converters, true) . '</pre>';
+} else {
+    // not first time visit...
+    // merge missing converters in
+    $config['converters'] = ConvertersHelper::mergeConverters($config['converters'], ConvertersHelper::$defaultConverters);
 }
+
 
 // Set "working" and "error" properties
 if ($testResult) {
