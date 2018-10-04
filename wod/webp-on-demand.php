@@ -15,9 +15,11 @@ $json = fread($handle, filesize($configFilename));
 fclose($handle);
 
 $options = json_decode($json, true);
-//print_r($options);
+//echo '<pre>' . print_r($options, true) . '</pre>';
+//exit;
 
 $options['require-for-conversion'] = 'webp-on-demand-2.inc';
+//$options['require-for-conversion'] = '../../../autoload.php';
 
 $gmagickHere = false;
 foreach ($options['converters'] as &$converter) {
@@ -34,7 +36,7 @@ foreach ($options['converters'] as &$converter) {
     }
 }
 if (!$gmagickHere) {
-    $options['converters'][] = 'gmagick';
+//    $options['converters'][] = 'gmagick';
 }
 
 if ($options['forward-query-string']) {
@@ -63,6 +65,10 @@ if (substr($source, 0, strlen($applicationRoot)) === $applicationRoot) {
 }
 //$destination = $imageRoot . $source . '.webp';
 
+if ($options['show-report']) {
+//    echo '<pre>' . print_r($options, true) . '</pre>';
+
+}
 
 //echo $source . '<br>';
 //echo $destination . '<br>';
