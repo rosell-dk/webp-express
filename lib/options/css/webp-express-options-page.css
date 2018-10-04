@@ -151,10 +151,14 @@
 #converters li.operational .popup {
     background-color: #80ff80;
 }
-/* #converters li .status:hover .popup */
+/* #converters li .status:hover .popup,*/
 #converters li:hover .status .popup,
 .help:hover .popup {
     display: block;
+}
+#converters.dragging li:hover .status .popup {
+    display: none;
+
 }
 
 .help .popup {
