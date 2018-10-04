@@ -119,7 +119,7 @@ function webpexpress_migrate1_migrateOptions()
                     'WebP Express has successfully migrated its configuration.' .
                     'However, WebP Express could not update the rewrite rules<br>' .
                         'You need to change some permissions. Head to the ' .
-                        '<a href="options-general.php?page=webp_express_settings_page">settings page</a> ' .
+                        '<a href="' . Paths::getSettingsUrl() . '">settings page</a> ' .
                         'and try to save the settings there (it will provide more information about the problem)'
                 );
             }

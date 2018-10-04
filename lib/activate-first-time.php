@@ -9,6 +9,9 @@ use \WebPExpress\Config;
 include_once __DIR__ . '/classes/Messenger.php';
 use \WebPExpress\Messenger;
 
+include_once __DIR__ . '/classes/Paths.php';
+use \WebPExpress\Paths;
+
 include_once __DIR__ . '/classes/PlatformInfo.php';
 use \WebPExpress\PlatformInfo;
 
@@ -61,5 +64,5 @@ if (PlatformInfo::isApache() || PlatformInfo::isLiteSpeed()) {
 Messenger::addMessage(
     'info',
     'WebP Express was installed successfully. To start using it, you must ' .
-        '<a href="options-general.php?page=webp_express_settings_page">configure it here</a>.'
+        '<a href="' . Paths::getSettingsUrl() . '">configure it here</a>.'
 );

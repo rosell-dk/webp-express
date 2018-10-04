@@ -12,6 +12,9 @@ use \WebPExpress\Messenger;
 include_once __DIR__ . '/classes/Actions.php';
 use \WebPExpress\Actions;
 
+include_once __DIR__ . '/classes/Paths.php';
+use \WebPExpress\Paths;
+
 include_once __DIR__ . '/classes/PlatformInfo.php';
 use \WebPExpress\PlatformInfo;
 
@@ -30,7 +33,8 @@ $config = Config::loadConfig();
 if ($config === false) {
     Messenger::addMessage(
         'error',
-        'The config file seems to have gone missing. You will need to reconfigure WebP Express <a href="options-general.php?page=webp_express_settings_page">(here)</a>.'
+        'The config file seems to have gone missing. You will need to reconfigure WebP Express ' .
+            '<a href="' . Paths::getSettingsUrl() . '">(here)</a>.'
     );
 } else {
     $rulesResult = HTAccess::saveRules($config);
@@ -52,14 +56,15 @@ if ($config === false) {
             'WebP Express re-activated successfully.<br>' .
                 'The image redirections are in effect again.<br><br>' .
                 'Just a quick reminder: If you at some point change the upload directory or move Wordpress, the <i>.htaccess</i> will need to be regenerated.<br>' .
-                'You do that by re-saving the settings <a href="options-general.php?page=webp_express_settings_page">(here)</a>'
+                'You do that by re-saving the settings ' .
+                '<a href="' . Paths::getSettingsUrl() . '">(here)</a>'
         );
     } else {
         Messenger::addMessage(
             'warning',
             'WebP Express could not regenerate the rewrite rules<br>' .
                 'You need to change some permissions. Head to the ' .
-                '<a href="options-general.php?page=webp_express_settings_page">settings page</a> ' .
+                '<a href="' . Paths::getSettingsUrl() . '">settings page</a> ' .
                 'and try to save the settings there (it will provide more information about the problem)'
         );
 
