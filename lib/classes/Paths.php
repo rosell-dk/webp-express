@@ -308,4 +308,18 @@ APACHE
         ];
     }
 
+    /* Get complete url to admin (no trailing slash) */
+    public static function getAdminUrl()
+    {
+        if (!function_exists('get_admin_url')) {
+            require_once ABSPATH . 'wp-includes/link-template.php';
+        }
+        return untrailingslashit(get_admin_url());
+    }
+
+    public static function getSettingsUrl()
+    {
+        return self::getAdminUrl() . '/' . 'options-general.php?page=webp_express_settings_page';
+    }
+
 }
