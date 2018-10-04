@@ -90,7 +90,7 @@ class Config
         $options = $config;
         $options['converters'] = [];
         foreach ($config['converters'] as $converter) {
-            if (isset($converter['deactivated'])) continue;
+            if (isset($converter['deactivated']) && ($converter['deactivated'])) continue;
 
             $options['converters'][] = $converter;
         }
@@ -128,7 +128,7 @@ class Config
                 $options['cache-control-header'] = $cacheControlOptions[$cacheControl];
             } else {
                 $options['cache-control-header'] = $options['cache-control-custom'];
-            }            
+            }
         }
 
         $auto = (isset($options['quality-auto']) && $options['quality-auto']);
