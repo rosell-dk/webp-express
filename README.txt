@@ -100,33 +100,27 @@ Putting this question in the "frequently" asked questions section is of course s
 
 == Changelog ==
 
-= 0.5.0 =
-This version works on many more setups than the previous. Also uses less resources and handles when images are changed.
+= 0.6.0 =
+This version added option for setting caching header, fixed a serious issue with *Imagick*, added a new converter, *Gmagick*, added a great deal of options to *Cwebp* and generally improved the interface.
 
-* Configuration is now stored in a separate configuration file instead of storing directly in the *.htaccess* file and passing it on via query string. When updating, these settings are migrated automatically.
-* Handles setups where Wordpress has been given its own directory (both methods mentioned [here](https://codex.wordpress.org/Giving_WordPress_Its_Own_Directory))
-* Handles setups where *wp-content* has been moved, even out of Wordpress root.
-* Handles setups where Uploads folder has been moved, even out of *wp-content*.
-* Handles setups where Plugins folder has been moved, even out of *wp-content* or out of Wordpress root
-* Is not as likely to be subject to firewalls blocking requests (in 0.4.0, we passed all options in a querystring, and that could trigger firewalls under some circumstances)
-* Is not as likely to be subject to rewrite rules from other plugins interfering. WebP Express now stores the .htaccess in the wp-content folder (if you allow it). As this is deeper than the root folder, the rules in here takes precedence over rules in the main *.htaccess*
-* The *.htaccess* now passes the complete absulute path to the source file instead of a relative path. This is a less error-prone method.
-* Reconverts the webp, if source image has changed
-* Now runs on version 1.0.0 of [WebP On Demand](https://github.com/rosell-dk/webp-on-demand). Previously ran on 0.3.0
-* Now takes care of only loading the PHP classes when needed in order not to slow down your Wordpress. The frontend will only need to process four lines of code. The backend footprint is also quite small now (80 lines of code of hooks)
-* Now works in Wordpress 4.0 - 4.6.
-* Added cache-breaking tokens to image test links
-* Denies deactivation if rewrite rules could not be removed
-* Refactored thoroughly
-* More helpful texts.
-* Extensive testing. Tested on Wordpress 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8 and 4.9. Tested with PHP 5.6, PHP 7.0 and PHP 7.1. Tested on Apache and LiteSpeed. Tested when missing various write permissions. Tested migration. Tested when installed in root, in subfolder, when Wordpress has its own directory (both methods), when wp-content is moved out of Wordpress directory, when plugins is moved out of Wordpress directory, when both of them are moved and when uploads have been moved.
+* Added option for caching
+* Fixed long standing and serious issue with Imagick converter. It no longer generates webp images in poor quality
+* Added gmagick as a new conversion method
+* WebPExpress now runs on newly released WebP-Convert 1.2.0
+* Added many new options for *cwebp*
+* You can now quickly see converter status by hovering over a converter
+* You can now choose between having quality auto-detected or not (if the server supports detecting quality).
+* If the server does not support detecting quality, the WPC converter will display a quality "auto" option
+* Added special intro message for those who has no working conversion methods
+* Added help texts for options
+* Settings are now saved, when changing converter options. Too many times, I found myself forgetting to save...
 
-For more info, see the closed issues on the 0.5.0 milestone on our github repository: https://github.com/rosell-dk/webp-express/milestone/2?closed=1
+For more info, see the closed issues on the 0.6.0 milestone on our github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.6.0
 
 == Upgrade Notice ==
 
-= 0.5.0 =
-This version is a leap forward regarding stability. Also uses less resources and handles when images are changed.
+= 0.6.0 =
+Adding caching option, fixed imagick converter, added gmagick converter and more!
 
 == Roadmap ==
 

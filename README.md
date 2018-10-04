@@ -87,9 +87,19 @@ Putting this question in the "frequently" asked questions section is of course s
 ## Changes in 0.6.0
 This version added option for setting caching header, fixed a serious issue with *Imagick*, added a new converter, *Gmagick*, added a great deal of options to *Cwebp* and generally improved the interface.
 
-* 
+* Added option for caching
+* Fixed long standing and serious issue with Imagick converter. It no longer generates webp images in poor quality
+* Added gmagick as a new conversion method
+* WebPExpress now runs on newly released WebP-Convert 1.2.0
+* Added many new options for *cwebp*
+* You can now quickly see converter status by hovering over a converter
+* You can now choose between having quality auto-detected or not (if the server supports detecting quality).
+* If the server does not support detecting quality, the WPC converter will display a quality "auto" option
+* Added special intro message for those who has no working conversion methods
+* Added help texts for options
+* Settings are now saved, when changing converter options. Too many times, I found myself forgetting to save...
 
-For more info, see the closed issues on the 0.5.0 milestone on our github repository: https://github.com/rosell-dk/webp-express/milestone/2?closed=1
+For more info, see the closed issues on the 0.6.0 milestone on our github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.6.0
 
 # Roadmap
 
