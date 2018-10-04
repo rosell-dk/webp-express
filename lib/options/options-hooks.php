@@ -17,7 +17,7 @@ add_action('admin_post_webpexpress_settings_submit', function() {
 });
 
 global $pagenow;
-if (($pagenow == 'options-general.php') && ($_GET['page'] == 'webp_express_settings_page')) {
+if (($pagenow == 'options-general.php') && (isset($_GET['page'])) && ($_GET['page'] == 'webp_express_settings_page')) {
     add_action('admin_enqueue_scripts', function () {
         include __DIR__ . '/enqueue_scripts.php';
     });
