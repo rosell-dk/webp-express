@@ -36,12 +36,9 @@ if (!(State::getState('configured', false))) {
         include __DIR__ . '/migrate1.php';
     }
 
-    // When a new version needs a new migration, uncomment this:
-    // (make sure to grab the option again - it might have been changed in the migration above)
-    /*
+    // We make sure to grab the option again - it might have been changed in the migration above
     if (intval(get_option('webp-express-migration-version', 0)) == 1) {
         // run migration 2
         include __DIR__ . '/migrate2.php';
     }
-    */
 }
