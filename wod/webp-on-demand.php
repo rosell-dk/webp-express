@@ -19,12 +19,23 @@ $options = json_decode($json, true);
 
 $options['require-for-conversion'] = 'webp-on-demand-2.inc';
 
+$gmagickHere = false;
 foreach ($options['converters'] as &$converter) {
-    if (isset($converter['converter']) && ($converter['converter'] == 'cwebp')) {
+    if (isset($converter['converter'])) {
+        $converterId = $converter['converter'];
+    } else {
+        $converterId = $converter;
+    }
+    if ($converterId == 'cwebp') {
         $converter['options']['rel-path-to-precompiled-binaries'] = '../src/Converters/Binaries';
     }
+    if ($converterId == 'gmagick') {
+        $gmagickHere = true;
+    }
 }
-
+if (!$gmagickHere) {
+    $options['converters'][] = 'gmagick';
+}
 
 if ($options['forward-query-string']) {
     if (isset($_GET['debug'])) {
