@@ -233,7 +233,7 @@ if ($canDetectQuality) {
         'the quality of the source or max quality. Recommended value: Somewhere between 50-85');
     echo '</th><td>';
 
-    echo '<input type="text" size=3 name="max-quality" value="' . $maxQuality . '">';
+    echo '<input type="text" size=3 id="max_quality" name="max-quality" value="' . $maxQuality . '">';
     echo '</td></tr>';
 } else {
 
@@ -254,7 +254,7 @@ if ($canDetectQuality) {
 }
 echo '</th><td>';
 
-echo '<input type="text" size=3 name="quality-specific" value="' . $qualitySpecific . '">';
+echo '<input type="text" size=3 id="quality_specific" name="quality-specific" value="' . $qualitySpecific . '">';
 echo '</td></tr>';
 
 

@@ -50,6 +50,9 @@ $converter = $_GET['converter'];
 if (isset($_GET['max-quality'])) {
   $options['max-quality'] = intval($_GET['max-quality']);
 }
+if (isset($_GET['quality'])) {
+  $options['quality'] = intval($_GET['quality']);
+}
 
 /*
 if (isset($_GET['method'])) {
