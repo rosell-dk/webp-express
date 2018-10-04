@@ -111,22 +111,24 @@ class Config
             }
         }
 
-        $cacheControl = $options['cache-control'];
-        $cacheControlOptions = [
-            'no-header' => '',
-            'one-second' => 'public, max-age=1',
-            'one-minute' => 'public, max-age=60',
-            'one-hour' => 'public, max-age=3600',
-            'one-day' => 'public, max-age=86400',
-            'one-week' => 'public, max-age=604800',
-            'one-month' => 'public, max-age=2592000',
-            'one-year' => 'public, max-age=31536000',
-        ];
+        if (isset($options['cache-control'])) {
+            $cacheControl = $options['cache-control'];
+            $cacheControlOptions = [
+                'no-header' => '',
+                'one-second' => 'public, max-age=1',
+                'one-minute' => 'public, max-age=60',
+                'one-hour' => 'public, max-age=3600',
+                'one-day' => 'public, max-age=86400',
+                'one-week' => 'public, max-age=604800',
+                'one-month' => 'public, max-age=2592000',
+                'one-year' => 'public, max-age=31536000',
+            ];
 
-        if (isset($cacheControlOptions[$cacheControl])) {
-            $options['cache-control-header'] = $cacheControlOptions[$cacheControl];
-        } else {
-            $options['cache-control-header'] = $options['cache-control-custom'];
+            if (isset($cacheControlOptions[$cacheControl])) {
+                $options['cache-control-header'] = $cacheControlOptions[$cacheControl];
+            } else {
+                $options['cache-control-header'] = $options['cache-control-custom'];
+            }            
         }
 
         $auto = (isset($options['quality-auto']) && $options['quality-auto']);
