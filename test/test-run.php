@@ -105,6 +105,7 @@ $options['converters'] = [[
 
 function testRun($converter, $source, $destination, $options) {
 
+    $success = false;
     try {
         $success = WebPConvert::convert($source, $destination, $options, new EchoLogger());
     } catch (\Exception $e) {
