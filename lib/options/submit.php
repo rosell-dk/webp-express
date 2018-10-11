@@ -32,6 +32,10 @@ $config = [
     'forward-query-string' => true,
     'image-types' => sanitize_text_field($_POST['image-types']),
     'metadata' => sanitize_text_field($_POST['metadata']),
+    'wpc' => [
+        'enabled' => isset($_POST['wpc-enabled']),
+        'whitelist' => json_decode(wp_unslash($_POST['whitelist']), true)
+    ]
 ];
 
 $auto = (isset($_POST['quality-auto']) && $_POST['quality-auto'] == 'auto_on');
