@@ -11,8 +11,8 @@ use \WebPExpress\Config;
 include_once __DIR__ . '/classes/Paths.php';
 use \WebPExpress\Paths;
 
-//require 'vendor/autoload.php';
-//use WebPConvert\WebPConvert;
+require_once __DIR__ . '/../vendor/autoload.php';
+use WebPConvert\WebPConvert;
 
 const ERROR_SERVER_SETUP = 0;
 const ERROR_NOT_ALLOWED = 1;
@@ -49,7 +49,8 @@ if (!isset($wpcOptions['enabled']) || $wpcOptions['enabled'] == false) {
     exitWithError(ERROR_SERVER_SETUP, 'cloud service is not enabled');
 }
 
-
+// TODO: Add checks
+/*
 if (!isset($wpcOptions['access']['allowed-ips']) && count($wpcOptions['access']['allowed-ips']) > 0) {
     $ipCheckPassed = false;
     foreach ($wpcOptions['access']['allowed-ips'] as $ip) {
@@ -62,7 +63,7 @@ if (!isset($wpcOptions['access']['allowed-ips']) && count($wpcOptions['access'][
         exitWithError(ERROR_NOT_ALLOWED, 'Restricted access. Not on IP whitelist');
     }
 }
-
+*/
 /*
 if (isset($wpcOptions['access']['allowed-ips']) && count($wpcOptions['access']['allowed-ips']) > 0) {
     $ipCheckPassed = false;
@@ -97,6 +98,14 @@ if (isset($wpcOptions['access']['allowed-hosts']) && count($wpcOptions['access']
 */
 
 $uploaddir = Paths::getCacheDirAbs() . '/wpc';
+
+if (!is_dir($uploaddir)) {
+    if (!@mkdir($uploaddir, 0775, true)) {
+        exitWithError(ERROR_RUNTIME, 'Could not create folder for converted files: ' . $uploaddir);
+    }
+    @chmod($uploaddir, 0775);
+}
+
 
 if (!isset($_POST['hash'])) {
     exitWithError(ERROR_NOT_ALLOWED, 'Restricted access. Hash required, but missing');
@@ -153,7 +162,6 @@ if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
 
     $source = $uploadfile;
 
-
     if (isset($wpcOptions['access']['secret'])) {
         $hash = md5(md5_file($source) . $wpcOptions['access']['secret']);
 
@@ -166,7 +174,8 @@ if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
 
     // Merge in options in $_POST, overwriting those in config.yaml
     $convertOptionsInPost = (array) json_decode($_POST['options']);
-    $convertOptions = array_merge($wpcOptions['webp-convert'], $convertOptionsInPost);
+    $options = Config::generateWodOptionsFromConfigObj($config);
+    $convertOptions = array_merge($options, $convertOptionsInPost);
 
     try {
         if (WebPConvert::convert($source, $destination, $convertOptions)) {
@@ -184,5 +193,7 @@ if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
     }
 } else {
     // Possible file upload attack!
-    echo 'Failed to move uploaded file';
+    exitWithError(ERROR_SERVER_SETUP, 'Failed to move uploaded file');
+
+    //echo 'Failed to move uploaded file';
 }
