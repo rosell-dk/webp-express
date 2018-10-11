@@ -284,6 +284,11 @@ APACHE
         return self::getPluginUrlPath() . '/wod/webp-on-demand.php';
     }
 
+    public static function getWpcUrl()
+    {
+        return self::getPluginUrl() . '/wpc.php';
+    }
+
     /**
      *  Calculate path to existing image, excluding
      *  (relative to document root)
