@@ -23,7 +23,7 @@
     #webpexpress_settings .form-table th {
         padding-top: 5px;
         padding-bottom: 5px;
-        width: 180px;
+        width: 200px;
     }
     #webpexpress_settings .form-table td {
         padding-top: 1px;
@@ -38,11 +38,12 @@
     box-shadow: 0 1px 1px rgba(0,0,0,.04);
     line-height: 1.4em;
     background-color: #fff;
-    padding: 10px 10px 0;
-    max-width: 465px;
-    min-height: 30px;
+    padding: 6px 10px 0;
+    max-width: 400px;
+    min-height: 26px;
     position: relative;
     font-size: 12px;
+    margin-bottom: 4px;
 }
 #converters li:hover {
     border-color: #000;
@@ -51,6 +52,9 @@
 #converters li.deactivated {
     border-color: #ccc;
     background-color: #f0f0f0;
+    min-height: auto;
+    height: 22px;
+    padding-top: 3px;
 }
 #converters li.deactivated:hover {
     border-color: #999;
@@ -86,7 +90,7 @@
 }
 #converters li > .text {
     padding-left: 10px;
-    width: 205px;
+    width: 160px;
 }
 
 #converters li > a.btn {
@@ -108,12 +112,12 @@
 #converters li .status {
     font-size: 10px;
     position: absolute;
-    right: 14px;
-    bottom: 2px;
+    right: 7px;
+    bottom: 3px;
 }
 
 #converters li .status svg {
-    padding: 5px;
+    padding: 0px;
 }
 #converters li svg#status_ok {
     color: #008000;
@@ -128,6 +132,13 @@
     color: #999999;
 }
 
+#converters li.deactivated .status {
+    bottom: unset;
+}
+#converters li.deactivated .status svg {
+    width: 15px;
+    padding: 0;
+}
 
 #converters li .popup,
 .help .popup {
@@ -207,4 +218,31 @@
     vertical-align: top;
     font-family: sans-serif;
     position: relative;
+}
+
+#whitelist_table {
+    max-width: 400px;
+    width: 100%;
+}
+.whitelist td {
+    padding: 5px 0;
+}
+.whitelist td.quota input{
+    max-width: 40px;
+}
+.whitelist td.remove {
+    padding-left: 8px;
+}
+.whitelist td.remove a {
+    color: red;
+    font-size: 12px;
+}
+.whitelist td.whitelist-add-site {
+    text-align: left;
+}
+
+#password_helptext,
+#whitelist_site_helptext,
+#whitelist_quota_helptext {
+    display: none;
 }
