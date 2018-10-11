@@ -98,6 +98,9 @@ class Paths
 
     public static function getContentDirAbs()
     {
+        if (!defined(WP_CONTENT_DIR)) {
+
+        }
         return rtrim(WP_CONTENT_DIR, '/') . '/webp-express';
     }
 
@@ -286,7 +289,8 @@ APACHE
 
     public static function getWpcUrl()
     {
-        return self::getPluginUrl() . '/wpc.php';
+        //return self::getPluginUrl() . '/wpc.php';
+        return self::getHomeUrl() . '/webp-express-server';
     }
 
     /**
