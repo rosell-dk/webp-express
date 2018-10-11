@@ -74,6 +74,16 @@ $defaultConfig = [
     'max-quality' => 80,
     'quality-specific' => 70,
     'metadata' => 'none',
+    'wpc' => [
+        'enabled' => true,
+        'whitelist' => [
+            [
+                'site' => '*',
+                'password' => 'my dog is white',
+                'quota' => 60
+            ]
+        ]
+    ]
 ];
 
 $defaultConverters = ConvertersHelper::$defaultConverters;
@@ -257,88 +267,20 @@ echo '</th><td>';
 echo '<input type="text" size=3 id="quality_specific" name="quality-specific" value="' . $qualitySpecific . '">';
 echo '</td></tr>';
 
-
-
-
-//        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
-
-// method
-//echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
-
-// Cache-Control
-// --------------------
-//$maxQuality = get_option('webp_express_max_quality');
-$cacheControl = $config['cache-control'];
-$cacheControlCustom = $config['cache-control-custom'];
-
-echo '<tr><th scope="row">Caching';
-echo helpIcon(
-    'Controls the cache-control header for the converted image. ' .
-    'This header is only sent when a converted image is successfully delivered (either existing, or new ' .
-    'conversion). In case of failure, headers will be sent to prevent caching.');
-echo '</th><td>';
-echo '<select id="cache_control_select" name="cache-control">';
-echo '<option value="no-header"' . ($cacheControl == 'no-header' ? ' selected' : '') . '>Do not set Cache-Control header</option>';
-echo '<option value="one-second"' . ($cacheControl == 'one-second' ? ' selected' : '') . '>One second</option>';
-echo '<option value="one-minute"' . ($cacheControl == 'one-minute' ? ' selected' : '') . '>One minute</option>';
-echo '<option value="one-hour"' . ($cacheControl == 'one-hour' ? ' selected' : '') . '>One hour</option>';
-echo '<option value="one-day"' . ($cacheControl == 'one-day' ? ' selected' : '') . '>One day</option>';
-echo '<option value="one-week"' . ($cacheControl == 'one-week' ? ' selected' : '') . '>One week</option>';
-echo '<option value="one-month"' . ($cacheControl == 'one-month' ? ' selected' : '') . '>One month</option>';
-echo '<option value="one-year"' . ($cacheControl == 'one-year' ? ' selected' : '') . '>One year</option>';
-echo '<option value="custom"' . ($cacheControl == 'custom' ? ' selected' : '') . '>Custom Cache-Control header</option>';
-echo '</select><br>';
-echo '<input type="text" id="cache_control_custom" name="cache-control-custom" value="' . $cacheControlCustom . '">';
-echo '</td></tr>';
-
-
-// Metadata
-// --------------------
-//$maxQuality = get_option('webp_express_max_quality');
-$metadata = $config['metadata'];
-
-echo '<tr><th scope="row">Metadata';
-echo helpIcon('Decide what to do with image metadata, such as Exif. Note that this setting is not supported by the "Gd" conversion method, as it is not possible to copy the metadata with the Gd extension');
-echo '</th><td>';
-
-echo '<select name="metadata">';
-echo '<option value="none"' . ($metadata == 'none' ? ' selected' : '') . '>No metadata in webp</option>';
-echo '<option value="all"' . ($metadata == 'all' ? ' selected' : '') . '>Copy all metadata to webp</option>';
-echo '</select>';
-echo '</td></tr>';
-//        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
-
-// method
-//echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
-
-// Response on failure
-// --------------------
-echo '<tr><th scope="row">Response on failure';
-echo helpIcon('Determines what to serve in case the image conversion should fail.');
-echo '</th><td>';
-
-//$fail = get_option('webp_express_failure_response');
-$fail = $config['fail'];
-echo '<select name="fail">';
-echo '<option value="original"' . ($fail == 'original' ? ' selected' : '') . '>Original image</option>';
-echo '<option value="404"' . ($fail == '404' ? ' selected' : '') . '>404</option>';
-echo '<option value="report"' . ($fail == 'report' ? ' selected' : '') . '>Error report (in plain text)</option>';
-echo '<option value="report-as-image"' . ($fail == 'report-as-image' ? ' selected' : '') . '>Error report as image</option>';
-echo '</select>';
-echo '</td></tr>';
-//        echo '<tr><td colspan=2>Determines what the converter should serve, in case the image conversion should fail. For production servers, recommended value is "Original image". For development servers, choose anything you like, but that</td></tr>';
-
-
-echo '</tbody></table>';
-
 // Converters
 // --------------------
+
+echo '<tr><th scope="row">Conversion method';
+echo helpIcon('Drag to reorder. The conversion method on top will first be tried. ' .
+    'Should it fail, the next will be used, etc. To learn more about the conversion methods, <a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/converters.md">Go here</a>');
+
+echo '</th><td>';
 
 $converters = $config['converters'];
 echo '<script>window.converters = ' . json_encode($converters) . '</script>';
 echo '<script>window.defaultConverters = ' . json_encode($defaultConverters) . '</script>';
 
-echo "<input type='text' name='converters' value='' style='visibility:hidden' />";
+echo "<input type='text' name='converters' value='' style='visibility:hidden; height:0' />";
 
 // https://premium.wpmudev.org/blog/handling-form-submissions/
 
@@ -371,17 +313,18 @@ http://php.net/manual/en/function.set-include-path.php
 //echo 'All se bools: ' . print_r($output6, true) . '. Return code:' . $returnCode5;
 */
 
-echo '<h2>Conversion methods to try</h2>';
+//echo '<h2>Conversion methods to try</h2>';
 $dragIcon = '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="17px" height="17px" viewBox="0 0 100.000000 100.000000" preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,100.000000) scale(0.100000,-0.100000)" fill="#444444" stroke="none"><path d="M415 920 l-80 -80 165 0 165 0 -80 80 c-44 44 -82 80 -85 80 -3 0 -41 -36 -85 -80z"/><path d="M0 695 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M0 500 l0 -40 500 0 500 0 0 40 0 40 -500 0 -500 0 0 -40z"/><path d="M0 305 l0 -45 500 0 500 0 0 45 0 45 -500 0 -500 0 0 -45z"/><path d="M418 78 l82 -83 82 83 83 82 -165 0 -165 0 83 -82z"/></g></svg>';
 
-echo '<p><i>Drag to reorder. The conversion method on top will first be tried. ';
+/*echo '<p><i>Drag to reorder. The conversion method on top will first be tried. ';
 echo 'Should it fail, the next will be used, etc.<br>';
 echo 'To learn more about the conversion methods, ';
 echo '<a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/converters.md">Go here</a></i></p>';
+*/
 // https://github.com/RubaXa/Sortable
 
 // Empty list of converters. The list will be populated by the javascript
-echo '<ul id="converters"></ul>';
+echo '<ul id="converters" style="margin-top: -13px"></ul>';
 ?>
 <div id="cwebp" style="display:none;">
     <div class="cwebp converter-options">
@@ -552,6 +495,137 @@ echo '<ul id="converters"></ul>';
       <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
     </div>
 </div>
+</td></tr>
+<?php
+
+//        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
+
+// method
+//echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
+
+// Cache-Control
+// --------------------
+//$maxQuality = get_option('webp_express_max_quality');
+$cacheControl = $config['cache-control'];
+$cacheControlCustom = $config['cache-control-custom'];
+
+echo '<tr><th scope="row">Caching';
+echo helpIcon(
+    'Controls the cache-control header for the converted image. ' .
+    'This header is only sent when a converted image is successfully delivered (either existing, or new ' .
+    'conversion). In case of failure, headers will be sent to prevent caching.');
+echo '</th><td>';
+echo '<select id="cache_control_select" name="cache-control">';
+echo '<option value="no-header"' . ($cacheControl == 'no-header' ? ' selected' : '') . '>Do not set Cache-Control header</option>';
+echo '<option value="one-second"' . ($cacheControl == 'one-second' ? ' selected' : '') . '>One second</option>';
+echo '<option value="one-minute"' . ($cacheControl == 'one-minute' ? ' selected' : '') . '>One minute</option>';
+echo '<option value="one-hour"' . ($cacheControl == 'one-hour' ? ' selected' : '') . '>One hour</option>';
+echo '<option value="one-day"' . ($cacheControl == 'one-day' ? ' selected' : '') . '>One day</option>';
+echo '<option value="one-week"' . ($cacheControl == 'one-week' ? ' selected' : '') . '>One week</option>';
+echo '<option value="one-month"' . ($cacheControl == 'one-month' ? ' selected' : '') . '>One month</option>';
+echo '<option value="one-year"' . ($cacheControl == 'one-year' ? ' selected' : '') . '>One year</option>';
+echo '<option value="custom"' . ($cacheControl == 'custom' ? ' selected' : '') . '>Custom Cache-Control header</option>';
+echo '</select><br>';
+echo '<input type="text" id="cache_control_custom" name="cache-control-custom" value="' . $cacheControlCustom . '">';
+echo '</td></tr>';
+
+
+// Metadata
+// --------------------
+//$maxQuality = get_option('webp_express_max_quality');
+$metadata = $config['metadata'];
+
+echo '<tr><th scope="row">Metadata';
+echo helpIcon('Decide what to do with image metadata, such as Exif. Note that this setting is not supported by the "Gd" conversion method, as it is not possible to copy the metadata with the Gd extension');
+echo '</th><td>';
+
+echo '<select name="metadata">';
+echo '<option value="none"' . ($metadata == 'none' ? ' selected' : '') . '>No metadata in webp</option>';
+echo '<option value="all"' . ($metadata == 'all' ? ' selected' : '') . '>Copy all metadata to webp</option>';
+echo '</select>';
+echo '</td></tr>';
+//        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
+
+// method
+//echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
+
+// Response on failure
+// --------------------
+echo '<tr><th scope="row">Response on failure';
+echo helpIcon('Determines what to serve in case the image conversion should fail.');
+echo '</th><td>';
+
+//$fail = get_option('webp_express_failure_response');
+$fail = $config['fail'];
+echo '<select name="fail">';
+echo '<option value="original"' . ($fail == 'original' ? ' selected' : '') . '>Original image</option>';
+echo '<option value="404"' . ($fail == '404' ? ' selected' : '') . '>404</option>';
+echo '<option value="report"' . ($fail == 'report' ? ' selected' : '') . '>Error report (in plain text)</option>';
+echo '<option value="report-as-image"' . ($fail == 'report-as-image' ? ' selected' : '') . '>Error report as image</option>';
+echo '</select>';
+echo '</td></tr>';
+//        echo '<tr><td colspan=2>Determines what the converter should serve, in case the image conversion should fail. For production servers, recommended value is "Original image". For development servers, choose anything you like, but that</td></tr>';
+
+//echo '</tbody></table>';
+
+
+// WPC - enabled
+// --------------------
+
+echo '<tr id="share"><th scope="row">Enable conversion service?';
+echo helpIcon('Allow other sites to convert webp-images through this site?');
+echo '</th><td>';
+
+echo '<input type="checkbox" id="wpc_enabled" name="wpc-enabled" value="' . $config['wpc']['enabled'] . '">';
+echo '</td></tr>';
+
+// WPC - url
+// --------------------
+
+echo '<tr><th scope="row">Url';
+echo helpIcon('The sites that wants to use your conversion service needs this URL. You cannot modify it.');
+echo '</th><td>';
+
+echo '<i>' . Paths::getWpcUrl() . '</i>';
+echo '</td></tr>';
+
+// WPC - secret
+// --------------------
+/*
+echo '<tr><th scope="row">Password';
+echo helpIcon('The password is not transmitted directly, but used to create a ' .
+    'unique hash for the image being converted. So if someone intercepts, they will only get the hash, not the password. And that ' .
+    'hash will only work for that specific image.');
+echo '</th><td>';
+
+echo '<input type="text" id="wpc_secret" name="wpc-secret" value="' . $config['wpc']['secret'] . '">';
+echo '</td></tr>';
+*/
+// WPC - whitelist
+// --------------------
+
+echo '<tr><th scope="row">Whitelist';
+
+$whitelist = $config['wpc']['whitelist'];
+echo '<script>window.whitelist = ' . json_encode($whitelist) . '</script>';
+echo helpIcon('Specify which sites that may use the conversion service.');
+echo '</th><td>';
+echo '<div id="whitelist_div"></div>';
+echo "<input type='text' name='whitelist' value='' style='visibility:hidden; height:0' />"; //
+//echo gethostbyaddr('212.97.134.33');
+//echo gethostbyname('www.rosell.dk');
+echo '<div id="password_helptext">' . helpIcon('You may have to leave blank, if the site in question doesnt have the md5() function available.<br><br>' .
+    'md5 is needed because the password is not transmitted directly, but used to create a ' .
+    'unique hash for the image being converted. So if someone intercepts, they will only get the hash, not the password. And that ' .
+    'hash will only work for that specific image.') . '</div>';
+echo '<div id="whitelist_site_helptext">' . helpIcon('Enter IP or domain (ie www.example.com). You may use * as a wildcard.') . '</div>';
+echo '<div id="whitelist_quota_helptext">' . helpIcon('Maximum conversions per hour for this site') . '</div>';
+
+echo '</td></tr>';
+
+
+ ?>
+</tbody></table>
 
 <table>
     <tr>
