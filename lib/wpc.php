@@ -49,59 +49,101 @@ if (!isset($wpcOptions['enabled']) || $wpcOptions['enabled'] == false) {
     exitWithError(ERROR_SERVER_SETUP, 'cloud service is not enabled');
 }
 
-// TODO: Add checks
-/*
-if (!isset($wpcOptions['access']['allowed-ips']) && count($wpcOptions['access']['allowed-ips']) > 0) {
-    $ipCheckPassed = false;
-    foreach ($wpcOptions['access']['allowed-ips'] as $ip) {
-        if ($ip == $_SERVER['REMOTE_ADDR']) {
-            $ipCheckPassed = true;
-            break;
+$whitelisted = false;
+$password = '';
+
+/**
+ *   Note about the whitelist:
+ *   It is not unspoofable. But it does not have to be either.
+ *   The extra layer of "security" is added to avoid massive misuse in case that the password
+ *   is leaked. Massive misuse would be if the password where to spread in internet forums, and
+ *   anyone could easily use it. With the whitelist, the password is not enough, you would also
+ *   be needing to know an entry on the whitelist. This could of course also be leaked. But you
+ *   would also need to do the spoofing. This additional step is probably more than most people
+ *   would bother to go through.
+ */
+function testWhitelistEntry($sitePattern) {
+    if ($sitePattern == '*') {
+        return true;
+    }
+    $regEx = '/^' . str_replace('*', '.*', $sitePattern) . '$/';
+
+    $ip = $_SERVER['REMOTE_ADDR'];
+    if (preg_match($regEx, $ip)) {
+        return true;
+    }
+
+    // If sitePattern looks like a full IP pattern, exit now,
+    // so the other methods cant be misused with spoofing.
+    // ^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$
+    if (preg_match('/^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$/', $sitePattern)) {
+        return false;
+    }
+    // Also test a nearly full IP pattern.
+    // As domain names may now start with numbers, theoretically, we could have a domain
+    // called 123.127.com, and the user might also have 123.127.net, and therefore add
+    // a rule '123.127.*'.
+    if (preg_match('/^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.?\\*$/', $sitePattern)) {
+        return false;
+    }
+
+    // ^(\d{1,3}(\.)?){1,4}\*?$  works in regexr.com, but not here...
+
+    if (isset($_SERVER['REMOTE_HOST'])) {
+        // REMOTE_HOST is only available if Apache has been configured
+        // with HostnameLookups = On (in apache.conf).
+        // It seldom is, as it is not the default, and it is expensive,as at least one
+        // DNS lookup will be made per request.
+        // Anyway, here we are, and we have it.
+        if (preg_match($regEx, $_SERVER['REMOTE_HOST'])) {
+            return true;
         }
     }
-    if (!$ipCheckPassed) {
-        exitWithError(ERROR_NOT_ALLOWED, 'Restricted access. Not on IP whitelist');
+
+    // I know, it can easily be spoofed, simply by changing the source code.
+    // However, encrypting it would not help, as the bandit would already be
+    // knowing the secret.
+    // - And $_SERVER['REMOTE_HOST'] is seldom available, and often misleading
+    // on shared hosts
+    if (isset($_POST['servername'])) {
+        $domain = $_POST['servername'];
+        if (preg_match($regEx, $_POST['servername'])) {
+            return true;
+        }
     }
+
+    return false;
 }
-*/
-/*
-if (isset($wpcOptions['access']['allowed-ips']) && count($wpcOptions['access']['allowed-ips']) > 0) {
-    $ipCheckPassed = false;
-    foreach ($wpcOptions['access']['allowed-ips'] as $ip) {
-        if ($ip == $_SERVER['REMOTE_ADDR']) {
-            $ipCheckPassed = true;
-            break;
-        }
-    }
-    if (!$ipCheckPassed) {
-        exitWithError(ERROR_NOT_ALLOWED, 'Restricted access. Not on IP whitelist');
+
+foreach ($wpcOptions['whitelist'] as $entry) {
+    if (testWhitelistEntry($entry['site'])) {
+        $whitelisted = true;
+        $password = $entry['password'];
+        break;
     }
 }
 
-if (isset($wpcOptions['access']['allowed-hosts']) && count($wpcOptions['access']['allowed-hosts']) > 0) {
-    $h = $_SERVER['REMOTE_HOST'];
-    if ($h == '') {
-        // Alternatively, we could catch the notice...
-        exitWithError(ERROR_SERVER_SETUP, 'WPC is configured with allowed-hosts option. But the server is not set up to resolve host names. For example in Apache you will need HostnameLookups On inside httpd.conf. See also PHP documentation on gethostbyaddr().');
-    }
-    $hostCheckPassed = false;
-    foreach ($wpcOptions['access']['allowed-hosts'] as $hostName) {
-        if ($hostName == $_SERVER['REMOTE_HOST']) {
-            $hostCheckPassed = true;
-            break;
+if (!$whitelisted) {
+    if (isset($_SERVER['REMOTE_HOST']) && (!empty($_SERVER['REMOTE_HOST']))) {
+        if (isset($_POST['servername'])) {
+            exitWithError(ERROR_NOT_ALLOWED, 'Neither your domain (' . $_POST['servername'] . '), the domain of your webhost (' . $_SERVER['REMOTE_HOST'] . ') or your IP (' . $_SERVER['REMOTE_ADDR'] . ') is on the whitelist');
+        } else {
+            exitWithError(ERROR_NOT_ALLOWED, 'Neither the domain of your webhost (' . $_SERVER['REMOTE_HOST'] . ') or your IP (' . $_SERVER['REMOTE_ADDR'] . ') is on the whitelist');
+        }
+    } else {
+        if (isset($_POST['servername'])) {
+            exitWithError(ERROR_NOT_ALLOWED, 'Neither your domain (' . $_POST['servername'] . ') or your IP (' . $_SERVER['REMOTE_ADDR'] . ') is on the whitelist');
+        } else {
+            exitWithError(ERROR_NOT_ALLOWED, 'Your IP (' . $_SERVER['REMOTE_ADDR'] . ') is not on the whitelist');
         }
     }
-    if (!$hostCheckPassed) {
-        exitWithError(ERROR_NOT_ALLOWED, 'Restricted access. Hostname is not on whitelist');
-    }
 }
-*/
 
 $uploaddir = Paths::getCacheDirAbs() . '/wpc';
 
 if (!is_dir($uploaddir)) {
     if (!@mkdir($uploaddir, 0775, true)) {
-        exitWithError(ERROR_RUNTIME, 'Could not create folder for converted files: ' . $uploaddir);
+        exitWithError(ERROR_SERVER_SETUP, 'Could not create folder for converted files: ' . $uploaddir);
     }
     @chmod($uploaddir, 0775);
 }
@@ -162,11 +204,11 @@ if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
 
     $source = $uploadfile;
 
-    if (isset($wpcOptions['access']['secret'])) {
-        $hash = md5(md5_file($source) . $wpcOptions['access']['secret']);
+    if (!empty($password)) {
+        $hash = md5(md5_file($source) . $password);
 
         if ($hash != $_POST['hash']) {
-            exitWithError(ERROR_NOT_ALLOWED, 'Hash is incorrect. Perhaps the secrets does not match?. Hash was:' . $_POST['hash']);
+            exitWithError(ERROR_NOT_ALLOWED, 'Wrong password.');
         }
     }
 
