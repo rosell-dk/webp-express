@@ -6,10 +6,10 @@ use \WebPExpress\Paths;
 wp_register_script('sortable', plugins_url('js/sortable.min.js', __FILE__), [], '1.9.0');
 wp_enqueue_script('sortable');
 
-wp_register_script('converters', plugins_url('js/converters.js', __FILE__), ['sortable'], '0.7.0-dev3');
+wp_register_script('converters', plugins_url('js/converters.js', __FILE__), ['sortable'], '0.7.0-dev4');
 wp_enqueue_script('converters');
 
-wp_register_script( 'whitelist', plugins_url('js/whitelist.js', __FILE__), [], '0.7.0-dev2');
+wp_register_script( 'whitelist', plugins_url('js/whitelist.js', __FILE__), [], '0.7.0-dev3');
 wp_enqueue_script('whitelist');
 
 if (function_exists('wp_add_inline_script')) {
