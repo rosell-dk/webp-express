@@ -590,7 +590,7 @@ echo '</td></tr>';
 // WPC - url
 // --------------------
 
-echo '<tr><th scope="row">Url';
+echo '<tr id="server_url"><th scope="row">Url';
 echo helpIcon('The sites that wants to use your conversion service needs this URL. You cannot modify it.');
 echo '</th><td>';
 
@@ -612,7 +612,7 @@ echo '</td></tr>';
 // WPC - whitelist
 // --------------------
 
-echo '<tr><th scope="row">Whitelist';
+echo '<tr id="whitelist_row"><th scope="row">Whitelist';
 
 $whitelist = $config['wpc']['whitelist'];
 echo '<script>window.whitelist = ' . json_encode($whitelist) . '</script>';
