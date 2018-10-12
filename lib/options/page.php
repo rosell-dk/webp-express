@@ -75,12 +75,12 @@ $defaultConfig = [
     'quality-specific' => 70,
     'metadata' => 'none',
     'wpc' => [
-        'enabled' => true,
+        'enabled' => false,
         'whitelist' => [
             [
                 'site' => '*',
                 'password' => 'my dog is white',
-                'quota' => 60
+                //'quota' => 60
             ]
         ]
     ]
@@ -442,11 +442,11 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
 </div>
 <div id="wpc" style="display:none;">
     <div class="wpc converter-options">
-      <h3>WebPConvert Cloud Service (WPC)</h3>
-      wpc is an open source cloud converter based on <a href="https://github.com/rosell-dk/webp-convert" target="_blank">WebPConvert</a>.
-      You will need to install the WPC library on a server (or have someone do it for you).
-      <a href="https://github.com/rosell-dk/webp-convert-cloud-service" target="blank">Visit WPC on github</a>.
-      (PS: It is planned to integrate wpc into <i>WebP Express</i>, making it very easy to share the capability to convert with your other sites)
+      <h3>Remote WebP Express / WPC</h3>
+      Use a WebP Express installed on another Wordpress site to convert. You will need to click
+      the "Enable conversion service" option on a Wordpress site. Remote WepP Express is based
+      on <a href="https://github.com/rosell-dk/webp-convert-cloud-service" target="blank">WPC</a>,
+      and you can use it to connect to WPC as well.
       <h3>Options</h3>
       <div>
           <label for="wpc_url">URL</label>
@@ -454,8 +454,8 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
       </div>
 
       <div>
-          <label for="wpc_secret">Secret</label>
-          <input type="text" id="wpc_secret" placeholder="Secret (must match secret on server side)">
+          <label for="wpc_secret">Password</label>
+          <input type="text" id="wpc_secret" placeholder="Password (must match password set on server side)">
       </div>
       <?php
       if ($canDetectQuality) { ?>
@@ -576,7 +576,7 @@ echo '<tr id="share"><th scope="row">Enable conversion service?';
 echo helpIcon('Allow other sites to convert webp-images through this site?');
 echo '</th><td>';
 
-echo '<input type="checkbox" id="wpc_enabled" name="wpc-enabled" value="' . $config['wpc']['enabled'] . '">';
+echo '<input type="checkbox" id="wpc_enabled" name="wpc-enabled" value="true" ' . ($config['wpc']['enabled'] ? 'checked="checked"' : '') . '">';
 echo '</td></tr>';
 
 // WPC - url
@@ -619,7 +619,7 @@ echo '<div id="password_helptext">' . helpIcon('You may have to leave blank, if 
     'unique hash for the image being converted. So if someone intercepts, they will only get the hash, not the password. And that ' .
     'hash will only work for that specific image.') . '</div>';
 echo '<div id="whitelist_site_helptext">' . helpIcon('Enter IP or domain (ie www.example.com). You may use * as a wildcard.') . '</div>';
-echo '<div id="whitelist_quota_helptext">' . helpIcon('Maximum conversions per hour for this site') . '</div>';
+//echo '<div id="whitelist_quota_helptext">' . helpIcon('Maximum conversions per hour for this site') . '</div>';
 
 echo '</td></tr>';
 
