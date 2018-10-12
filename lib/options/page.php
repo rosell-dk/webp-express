@@ -165,7 +165,11 @@ if ($testResult) {
         }
         $converter['working'] = $working;
         if ($hasError) {
-            $converter['error'] = $testResult['errors'][$converterId];
+            $error = $testResult['errors'][$converterId];
+            if (($converterId == 'wpc') && (preg_match('/Missing URL/', $error))) {
+                $error = 'Not configured';
+            }
+            $converter['error'] = $error;
         } else {
             unset($converter['error']);
         }
@@ -444,7 +448,7 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
     <div class="wpc converter-options">
       <h3>Remote WebP Express / WPC</h3>
       Use a WebP Express installed on another Wordpress site to convert. You will need to click
-      the "Enable conversion service" option on a Wordpress site. Remote WepP Express is based
+      the "Enable server" option on a Wordpress site. Remote WepP Express is based
       on <a href="https://github.com/rosell-dk/webp-convert-cloud-service" target="blank">WPC</a>,
       and you can use it to connect to WPC as well.
       <h3>Options</h3>
@@ -572,8 +576,8 @@ echo '</td></tr>';
 // WPC - enabled
 // --------------------
 
-echo '<tr id="share"><th scope="row">Enable conversion service?';
-echo helpIcon('Allow other sites to convert webp-images through this site?');
+echo '<tr id="share"><th scope="row">Enable server?';
+echo helpIcon('Enabling the server will allow other sites to convert webp-images through this site');
 echo '</th><td>';
 
 echo '<input type="checkbox" id="wpc_enabled" name="wpc-enabled" value="true" ' . ($config['wpc']['enabled'] ? 'checked="checked"' : '') . '">';
