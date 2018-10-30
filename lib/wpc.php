@@ -11,12 +11,37 @@ use \WebPExpress\Config;
 include_once __DIR__ . '/classes/Paths.php';
 use \WebPExpress\Paths;
 
+include_once __DIR__ . '/classes/State.php';
+use \WebPExpress\State;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 use WebPConvert\WebPConvert;
+
 
 const ERROR_SERVER_SETUP = 0;
 const ERROR_NOT_ALLOWED = 1;
 const ERROR_RUNTIME = 2;
+
+$action = (isset($_POST['action']) ? $_POST['action'] : 'convert');
+
+if ($action == 'request-access') {
+    if (!(State::getState('listening', false))) {
+        exitWithError(ERROR_NOT_ALLOWED, 'Server is not listening for requests');
+    } else {
+        State::setState('request', [
+            'label' => isset($_POST['label']) ? $_POST['label'] : 'unknown',
+            'key' => isset($_POST['key']) ? $_POST['key'] : 'prut2',
+            'ip' => $_SERVER['REMOTE_ADDR'],
+            'timestamp' => time(),
+        ]);
+        $returnObject = [
+            'success' => 1,
+        ];
+        echo json_encode($returnObject);
+        die();
+    }
+}
+
 
 
 function exitWithError($errorCode, $msg)

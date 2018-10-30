@@ -24,10 +24,14 @@ if (is_admin()) {
 
 
 function webp_express_process_post() {
-    if (!preg_match('/webp-express-server$/', $_SERVER['REQUEST_URI'])) {
+    // strip query string
+    $requestUriNoQS = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+
+    if (!preg_match('/webp-express-server$/', $requestUriNoQS)) {
         return;
     }
-    include __DIR__ . '/lib/wpc.php';
+    //include __DIR__ . '/lib/wpc.php';
+    include __DIR__ . '/server/wpc.php';
     die();
 }
 add_action( 'init', 'webp_express_process_post' );

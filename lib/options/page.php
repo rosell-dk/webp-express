@@ -36,6 +36,13 @@ if (!current_user_can('manage_options')) {
 
 <?php
 
+function webpexpress_converterName($converterId) {
+    if ($converterId == 'wpc') {
+        return 'Remote WebP Express';
+    }
+    return $converterId;
+}
+
 //update_option('webp-express-migration-version', '1');
 
 // Test converters
@@ -74,15 +81,20 @@ $defaultConfig = [
     'max-quality' => 80,
     'quality-specific' => 70,
     'metadata' => 'none',
-    'wpc' => [
+    'web-service' => [
         'enabled' => false,
         'whitelist' => [
             [
-                'site' => '*',
-                'password' => 'my dog is white',
+                /*
+                'uid' => '',       // for internal purposes
+                'label' => '',     // ie website name. It is just for display
+                'ip' => '',        // restrict to these ips. * pattern is allowed.
+                'api-key' => '',   // Api key for the entry. Not neccessarily unique for the entry
                 //'quota' => 60
+                */
             ]
         ]
+
     ]
 ];
 
@@ -100,6 +112,15 @@ $config = array_merge($defaultConfig, $config);
 if ($config['converters'] == null) {
     $config['converters'] = [];
 }
+if (!isset($config['web-service']['whitelist'])) {
+    $config['web-service']['whitelist'] = [];
+}
+
+// Remove keys (so they cannot easily be picked up by examining the html)
+foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
+    unset($whitelistEntry['api-key']);
+}
+
 
 if (count($config['converters']) == 0) {
     // This is first time visit!
@@ -154,12 +175,12 @@ if ($testResult) {
             if ($working) {
                 Messenger::printMessage(
                     'info',
-                    'Hurray! - The <i>' . $converterId . '</i> conversion method is working now!'
+                    'Hurray! - The <i>' . webpexpress_converterName($converterId) . '</i> conversion method is working now!'
                 );
             } else {
                 Messenger::printMessage(
                     'warning',
-                    'Sad news. The <i>' . $converterId . '</i> conversion method is not working anymore. What happened?'
+                    'Sad news. The <i>' . webpexpress_converterName($converterId) . '</i> conversion method is not working anymore. What happened?'
                 );
             }
         }
@@ -170,8 +191,12 @@ if ($testResult) {
                 if (preg_match('/Missing URL/', $error)) {
                     $error = 'Not configured';
                 }
+                if ($error == 'No remote host has been set up') {
+                    $error = 'Not configured';
+                }
+
                 if (preg_match('/cloud service is not enabled/', $error)) {
-                    $error = 'The server is not enabled. Click the "Enable server" on WebP Express settings on the site you are trying to connect to.';
+                    $error = 'The server is not enabled. Click the "Enable web service" on WebP Express settings on the site you are trying to connect to.';
                 }
             }
             $converter['error'] = $error;
@@ -192,6 +217,9 @@ $webpexpress_settings_nonce = wp_create_nonce('webpexpress_settings_nonce');
 </p>
 
 <?php
+
+
+
 echo '<form id="webpexpress_settings" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="post" >';
 ?>
     <input type="hidden" name="action" value="webpexpress_settings_submit">
@@ -449,22 +477,111 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
       <!-- <a href="javascript: tb_remove();">close</a> -->
     </div>
 </div>
+<div id="wpc_successfully_connected_popup" class="das-popup">
+    <h3>Your request has been approved</h3>
+    All you need now is to save settings (both places)
+    <button onclick="closeDasPopup()" class="button button-primary" type="button" style="position:absolute; bottom:20px">Close</button>
+</div>
+<div id="wpc_awaiting_approval_popup" class="das-popup">
+    <h3>Avaiting approval<span class="animated-dots">...</span></h3>
+    In the remote WebP Express settings, the screen should now show "Incoming request".
+    Click the "Grant access" button there, and then return here.
+</div>
+<div id="wpc_connect_popup" class="das-popup">
+    <h3>Request access to web service</h3>
+    <div style="font-size:90%">
+        Before requesting access, the website you want to request access to must be <i>listening</i>
+        for requests. If you control that website, open a new tab and do the following. Otherwise,
+        make sure the admin does the following:
+        <ol>
+            <li>Log in to the Wordpress site you want to connect to.</li>
+            <li>In WebP Express settings, make sure that "enable web service?" is checked.</li>
+            <li>Click "+ Authorize new website"</li>
+            <li>An URL will display, which you must copy to the field below:</li>
+        </ol>
+        Paste URL here:<br>
+        <input id="wpc_request_access_url" style="width:100%">
+    </div>
+    <div style="position:absolute; bottom:20px; line-height:28px">
+        <button onclick="wpcRequestAccess()" class="button button-primary" type="button">Request access</button>
+        &nbsp;or&nbsp;
+        <button onclick="wpcAddManually()" class="button button-secondary" type="button">Add manually</button>
+    </div>
+</div>
+<div id="wpc_properties_popup" class="das-popup">
+    <h3 class="hide-in-edit">Add connection to web service</h3>
+    <h3 class="hide-in-add">Edit connection to web service</h3>
+    <input type="hidden" id="wpc_i">
+    <div>
+        <label for="wpc_label">
+            Label
+            <?php echo helpIcon('The label is purely for your own reference'); ?>
+        </label>
+        <input id="wpc_label" type="text">
+    </div>
+    <div>
+        <label for="wpc_url">
+            URL
+            <?php echo helpIcon('The endpoint of the web service.'); ?>
+        </label>
+        <input id="wpc_url" type="text">
+    </div>
+    <div>
+        <label for="wpc_api_key">
+            Api key
+            <?php echo helpIcon('The API key is set up on the remote. This here must match'); ?>
+        </label>
+        <input id="wpc_api_key" type="password" class="hide-in-edit">
+        <a href="javascript:wpcChangeApiKey()" class="hide-in-add" style="display:inline-block;line-height:34px">Change api key</a>
+    </div>
+    <div>
+        <label for="wpc_crypt_api_key_in_transfer">
+            Crypt api key in transfer?
+            <?php echo helpIcon('If checked, the api key will be crypted in requests. Crypting the api-key protects it from being stolen during transfer.'); ?>
+        </label>
+        <input id="wpc_crypt_api_key_in_transfer" type="checkbox">
+    </div>
+    <button id="wpc_properties_add_button" onclick="wpcAddEntry()" class="hide-in-edit button button-primary" type="button" style="position:absolute; bottom:20px">
+        Add
+    </button>
+    <button id="wpc_properties_update_button" onclick="wpcUpdateEntry()" class="hide-in-add button button-primary" type="button" style="position:absolute; bottom:20px">
+        Update
+    </button>
+</div>
 <div id="wpc" style="display:none;">
     <div class="wpc converter-options">
-      <h3>Remote WebP Express / WPC</h3>
+      <h3>Remote WebP Express</h3>
       Use a WebP Express installed on another Wordpress site to convert. Remote WepP Express is based
       on <a href="https://github.com/rosell-dk/webp-convert-cloud-service" target="blank">WPC</a>,
       and you can use it to connect to WPC as well.
+
+      <?php
+      if ((!extension_loaded('curl')) || (!function_exists('curl_init'))) {
+          echo '<p><b style="color:red">Your server does not have curl installed. Curl is required!</b></p>';
+      }
+      ?>
+
       <h3>Options</h3>
+        <div>
+            <label for="wpc_web_services">Web Services</label>
+            <div style="display:inline-block">
+                <div id="wpc_web_services_div"></div>
+                <button type="button" id="wpc_web_services_request" onclick="openWpcConnectPopup()" class="button button-secondary" >Add web service</button>
+            </div>
+        </div>
+
+      <!--
       <div>
           <label for="wpc_url">URL</label>
-          <input type="text" id="wpc_url" placeholder="Url to your WPC instance">
+          <input type="text" id="wpc_url" placeholder="Url to your Remote WebP Express">
       </div>
 
       <div>
           <label for="wpc_secret">Password</label>
           <input type="text" id="wpc_secret" placeholder="Password (must match password set on server side)">
       </div>
+    -->
+
       <?php
       if ($canDetectQuality) { ?>
           <div>
@@ -488,17 +605,11 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
               <input type="text" size=3 id="wpc_max_quality">
           </div>
     <?php } ?>
-    <br>
-      <h4>Fallback (optional)</h4>
-      <p>In case the first is down, the fallback will be used.</p>
-      <div>
-          <label for="wpc_url_2">URL</label>
-          <input type="text" id="wpc_url_2" placeholder="Url to your other WPC instance">
-      </div>
-      <div>
-          <label for="wpc_secret_2">Secret</label>
-          <input type="text" id="wpc_secret_2" placeholder="Secret (must match secret on server side)">
-      </div>
+
+    <!--
+      <p>
+        <b>The IP of your website is <?php echo $_SERVER['SERVER_ADDR']; ?>.</b>
+    </p>-->
       <br>
       <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
     </div>
@@ -577,47 +688,133 @@ echo '</td></tr>';
 //echo '</tbody></table>';
 
 
-// WPC - enabled
+// Web Service
 // --------------------
 
-echo '<tr id="share"><th scope="row">Enable server?';
-echo helpIcon('Enabling the server will allow your other sites to convert webp-images through this site (more options will appear, if you enable)');
+$whitelist = $config['web-service']['whitelist'];
+echo '<script>window.whitelist = ' . json_encode($whitelist) . '</script>';
+
+echo '<tr id="share"><th scope="row">Enable web service?';
+echo helpIcon('Enabling the web service will allow selected sites to convert webp-images through this site (more options will appear, if you enable)');
 echo '</th><td>';
 
-echo '<input type="checkbox" id="wpc_enabled" name="wpc-enabled" value="true" ' . ($config['wpc']['enabled'] ? 'checked="checked"' : '') . '">';
+echo '<input type="checkbox" id="web_service_enabled" name="web-service-enabled" value="true" ' . ($config['web-service']['enabled'] ? 'checked="checked"' : '') . '">';
+echo "<input type='text' name='whitelist' id='whitelist' value='' style='visibility:hidden; height:0' />"; //
+
+?>
+<div id="whitelist_div"></div>
+<div id="whitelist_listen_popup" class="das-popup">
+    <h3>Listening for a request<span class="animated-dots">...</span></h3>
+    <div style="font-size:90%">
+        Send the instructions below to the one that controls the website that you want to grant access.
+        If you control that website, simply open up a new tab and perform the following:
+        <ol>
+            <li>Log in to the website you want to use the web service</li>
+            <li>In WebP Express settings, find the <i>Remote WebP Express</i> conversion method and click <i>configure</i></li>
+            <li>Click "Make request"</li>
+            <li>Enter this url: <b><?php echo Paths::getWpcUrl(); ?></b></li>
+        </ol>
+        This popup will close once the above is completed<br><br>
+    </div>
+    <div style="display: inline-block;vertical-align:middle; line-height:27px;">
+        <button onclick="whitelistCancelListening()" class="button button-secondary" type="button">
+            Give up
+        </button>
+        or
+        <button onclick="whitelistAddManually()" class="button button-secondary" type="button">
+            Add manually
+        </button>
+    </div>
+</div>
+<div id="whitelist_properties_popup" class="das-popup">
+    <h3 class="hide-in-edit">Authorize website</h3>
+    <h3 class="hide-in-add">Edit authorized website</h3>
+    <input type="hidden" id="whitelist_uid">
+    <input type="hidden" id="whitelist_i">
+    <div>
+        <label for="whitelist_label">
+            Label
+            <?php echo helpIcon('The label is purely for your own reference'); ?>
+        </label>
+        <input id="whitelist_label" type="text">
+    </div>
+    <div>
+        <label for="whitelist_ip">
+            IP
+            <?php echo helpIcon('IP to allow access to service. You can use *, ie "212.91.*""'); ?>
+        </label>
+        <input id="whitelist_ip" type="text">
+    </div>
+    <div>
+        <label for="whitelist_api_key">
+            Api key
+            <?php echo helpIcon('Who says api keys must be dull-looking meaningless sequences of random ' .
+            'characters? Here you get to shape your key to your liking. Enter any phrase you want'); ?>
+        </label>
+        <input id="whitelist_api_key" type="password" class="hide-in-edit">
+        <a href="javascript:whitelistChangeApiKey()" class="hide-in-add" style="display:inline-block;line-height:34px">Change api key</a>
+    </div>
+    <div>
+        <label for="whitelist_require_api_key_to_be_crypted_in_transfer">
+            Require api-key to be crypted in transfer?
+            <?php echo helpIcon('If checked, the web service will only accept crypted api keys. Crypting the api-key protects it from being stolen during transfer. On a few older server setups, clients do not have the capability to crypt'); ?>
+        </label>
+        <input id="whitelist_require_api_key_to_be_crypted_in_transfer" type="checkbox">
+    </div>
+    <button id="whitelist_properties_add_button" onclick="whitelistAddWhitelistEntry()" class="hide-in-edit button button-primary" type="button" style="position:absolute; bottom:20px">
+        Add
+    </button>
+    <button id="whitelist_properties_update_button" onclick="whitelistUpdateWhitelistEntry()" class="hide-in-add button button-primary" type="button" style="position:absolute; bottom:20px">
+        Update
+    </button>
+</div>
+<div id="whitelist_accept_request" class="das-popup">
+    <h3>Incoming request!</h3>
+    <div id="request_details"></div>
+    <button onclick="whitelistAcceptRequest()" class="button button-primary" type="button" style="position:absolute; bottom:20px">Grant access</button>
+    <button onclick="whitelistDenyRequest()" class="button button-secondary" type="button" style="position:absolute; bottom:20px;right:20px">Deny</button>
+</div>
+
+<?php
 echo '</td></tr>';
 
-// WPC - url
-// --------------------
 
-echo '<tr id="server_url"><th scope="row">Url';
-echo helpIcon('The sites that wants to use your conversion service needs this URL. You cannot modify it.');
-echo '</th><td>';
-
-echo '<i>' . Paths::getWpcUrl() . '</i>';
-echo '</td></tr>';
-
-// WPC - secret
-// --------------------
-/*
-echo '<tr><th scope="row">Password';
-echo helpIcon('The password is not transmitted directly, but used to create a ' .
-    'unique hash for the image being converted. So if someone intercepts, they will only get the hash, not the password. And that ' .
-    'hash will only work for that specific image.');
-echo '</th><td>';
-
-echo '<input type="text" id="wpc_secret" name="wpc-secret" value="' . $config['wpc']['secret'] . '">';
-echo '</td></tr>';
-*/
 // WPC - whitelist
 // --------------------
-
+/*
 echo '<tr id="whitelist_row"><th scope="row">Whitelist';
 
-$whitelist = $config['wpc']['whitelist'];
+$whitelist = $config['server']['whitelist'];
+
 echo '<script>window.whitelist = ' . json_encode($whitelist) . '</script>';
 echo helpIcon('Specify which sites that may use the conversion service.');
 echo '</th><td>';
+*/
+?>
+<!--
+<div id="whitelist_enter_password_popup" style="display:none">
+    <div class="whitelist-popup-content">
+        <div>
+            <label for="whitelist_password">New password</label>
+            <input type="password" id="whitelist_enter_password">
+        </div>
+        <div>
+            <label for="whitelist_hash_password">Scramble password?</label>
+            <input type="checkbox" id="whitelist_hash_password">
+        </div><br>
+        <i>Note: If you choose "scramble password", the password will be scrambled.
+            This protects others from discovering what you wrote as password.
+            It however still allows people with read access to the file system of your website to get the scrambled
+            password and use that to connect with.
+        </i>
+        <br><br>
+        <button onclick="setPassword()" class="button button-primary" type="button">Set password</button>
+
+    </div>
+</div>
+-->
+<?php
+/*
 echo '<div id="whitelist_div"></div>';
 echo "<input type='text' name='whitelist' value='' style='visibility:hidden; height:0' />"; //
 //echo gethostbyaddr('212.97.134.33');
@@ -625,12 +822,12 @@ echo "<input type='text' name='whitelist' value='' style='visibility:hidden; hei
 echo '<div id="password_helptext">' . helpIcon('You may have to leave blank, if the site in question doesnt have the md5() function available.<br><br>' .
     'md5 is needed because the password is not transmitted directly, but used to create a ' .
     'unique hash for the image being converted. So if someone intercepts, they will only get the hash, not the password. And that ' .
-    'hash will only work for that specific image.') . '</div>';
+    'hash will only work for that specific image.') . '</div>';visibility:
 echo '<div id="whitelist_site_helptext">' . helpIcon('Enter IP or domain (ie www.example.com). You may use * as a wildcard.') . '</div>';
 //echo '<div id="whitelist_quota_helptext">' . helpIcon('Maximum conversions per hour for this site') . '</div>';
 
 echo '</td></tr>';
-
+*/
 
  ?>
 </tbody></table>

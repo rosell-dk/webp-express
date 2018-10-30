@@ -33,7 +33,6 @@
 }
 
 #converters li {
-    cursor: move;
     border: 1px solid grey;
     box-shadow: 0 1px 1px rgba(0,0,0,.04);
     line-height: 1.4em;
@@ -44,6 +43,9 @@
     position: relative;
     font-size: 12px;
     margin-bottom: 4px;
+}
+#converters li {
+    cursor: move;
 }
 #converters li:hover {
     border-color: #000;
@@ -185,12 +187,25 @@
 .converter-options label {
     min-width: 80px;
     display: inline-block;
+    padding-top: 2px;
+    vertical-align: top;
+}
+
+.converter-options p {
+    padding: 0;
 }
 
 .converter-options.wpc label {
     min-width: 100px;
 }
-
+.converter-options.wpc #wpc_web_services_div > p {
+    margin-top: 0;
+    padding-top: 2px;
+    margin-bottom: 3px;
+}
+#wpc_web_services_div {
+    margin-bottom: 0px;
+}
 .converter-options .info {
     margin-bottom: 20px;
 }
@@ -245,4 +260,67 @@
 #whitelist_site_helptext,
 #whitelist_quota_helptext {
     display: none;
+}
+
+.whitelist-popup-content label {
+    min-width: 125px;
+    display: inline-block;
+}
+/*
+.popup-content {
+    padding-top: 20px;
+}
+.popup-content > div {
+    margin: 10px 0;
+}
+*/
+
+#whitelist_div ul {
+    list-style: disc;
+    list-style-position: inside;
+    position: relative;
+    width: 400px;
+    max-width: 400px;
+}
+
+#whitelist_div .whitelist-links,
+#wpc_web_services_div .wpc-links {
+    position: absolute;
+    right: 0;
+    text-align: right;
+    display: inline-block;
+}
+#whitelist_div .whitelist-links a,
+#wpc_web_services_div .wpc-links a {
+    padding-left: 10px;
+}
+
+#whitelist_properties_popup label {
+    width: 110px;
+    display: inline-block;
+}
+
+#whitelist_change_api_key_div {
+    line-height: 35px;
+}
+
+.das-popup.mode-edit .hide-in-edit {
+    display: none;
+}
+
+.das-popup.mode-add .hide-in-add {
+    display: none;
+}
+
+#wpc_web_services_div ul {
+    list-style: disc;
+    list-style-position: inside;
+    position: relative;
+    width: 300px;
+    max-width: 300px;
+}
+
+#wpc_properties_popup label {
+    width: 110px;
+    display: inline-block;
 }
