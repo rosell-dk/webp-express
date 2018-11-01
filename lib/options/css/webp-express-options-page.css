@@ -195,17 +195,6 @@
     padding: 0;
 }
 
-.converter-options.wpc label {
-    min-width: 100px;
-}
-.converter-options.wpc #wpc_web_services_div > p {
-    margin-top: 0;
-    padding-top: 2px;
-    margin-bottom: 3px;
-}
-#wpc_web_services_div {
-    margin-bottom: 0px;
-}
 .converter-options .info {
     margin-bottom: 20px;
 }
@@ -234,6 +223,33 @@
     font-family: sans-serif;
     position: relative;
 }
+
+/*
+.converter-options.wpc #wpc_web_services_div > p {
+    margin-top: 0;
+    padding-top: 2px;
+    margin-bottom: 3px;
+}
+#wpc_web_services_div {
+    margin-bottom: 0px;
+}*/
+
+.converter-options.wpc label {
+    width: 110px;
+    display: inline-block;
+}
+.converter-options.wpc div {
+    margin-bottom: 5px;
+}
+#wpc_url {
+    min-width: 400px;
+}
+#wpc_change_api_key,
+#wpc_set_api_key {
+    display:inline-block;
+    line-height:22px
+}
+
 
 #whitelist_table {
     max-width: 400px;
@@ -311,7 +327,7 @@
 .das-popup.mode-add .hide-in-add {
     display: none;
 }
-
+/*
 #wpc_web_services_div ul {
     list-style: disc;
     list-style-position: inside;
@@ -324,3 +340,4 @@
     width: 110px;
     display: inline-block;
 }
+*/

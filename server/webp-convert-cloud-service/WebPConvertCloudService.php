@@ -85,6 +85,9 @@ class WebPConvertCloudService
             case 'serve':
                 Serve::serve($options);
                 break;
+            case 'api-version':
+                echo '2';
+                exit;
         }
     }
 

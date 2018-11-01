@@ -116,9 +116,28 @@ if (!isset($config['web-service']['whitelist'])) {
     $config['web-service']['whitelist'] = [];
 }
 
-// Remove keys (so they cannot easily be picked up by examining the html)
+// Remove keys in whitelist (so they cannot easily be picked up by examining the html)
 foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
     unset($whitelistEntry['api-key']);
+}
+
+// Remove keys from WPC converters
+foreach ($config['converters'] as &$converter) {
+    // api key in configuration file can be:
+    // - set to be empty ('')
+    // - set to be something.
+    // - never set (null)
+    if (isset($converter['api-key'])) {
+        $converter['api-key'] = '';
+
+        if ($converter['api-key'] == '') {
+            $converter['api-key-state'] = 'set-to-empty';
+        } else {
+            $converter['api-key-state'] = 'set-to-something';
+        }
+    } else {
+        $converter['api-key-state'] = 'never-set';
+    }
 }
 
 
@@ -508,6 +527,7 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
         <button onclick="wpcAddManually()" class="button button-secondary" type="button">Add manually</button>
     </div>
 </div>
+<!--
 <div id="wpc_properties_popup" class="das-popup">
     <h3 class="hide-in-edit">Add connection to web service</h3>
     <h3 class="hide-in-add">Edit connection to web service</h3>
@@ -529,7 +549,7 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
     <div>
         <label for="wpc_api_key">
             Api key
-            <?php echo helpIcon('The API key is set up on the remote. This here must match'); ?>
+            <?php echo helpIcon('The API key is set up on the remote. Copy that.'); ?>
         </label>
         <input id="wpc_api_key" type="password" class="hide-in-edit">
         <a href="javascript:wpcChangeApiKey()" class="hide-in-add" style="display:inline-block;line-height:34px">Change api key</a>
@@ -548,6 +568,7 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
         Update
     </button>
 </div>
+-->
 <div id="wpc" style="display:none;">
     <div class="wpc converter-options">
       <h3>Remote WebP Express</h3>
@@ -562,6 +583,7 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
       ?>
 
       <h3>Options</h3>
+      <!--
         <div>
             <label for="wpc_web_services">Web Services</label>
             <div style="display:inline-block">
@@ -569,18 +591,52 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
                 <button type="button" id="wpc_web_services_request" onclick="openWpcConnectPopup()" class="button button-secondary" >Add web service</button>
             </div>
         </div>
+    -->
 
-      <!--
+    <div>
+        <label for="wpc_api_version">
+            Api version
+            <?php echo helpIcon('Select 2, if connecting to a remote webp-express. Api 1 was never used with this plugin, and should only be used to connect to webp-convert-cloud-service running api version 1'); ?>
+        </label>
+        <select id="wpc_api_version" onchange="wpcApiVersionChanged()">
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+    </div>
+
       <div>
-          <label for="wpc_url">URL</label>
+          <label for="wpc_url">
+              URL
+              <?php echo helpIcon('The endpoint of the web service. Copy it from the remote setup.'); ?>
+          </label>
           <input type="text" id="wpc_url" placeholder="Url to your Remote WebP Express">
       </div>
 
       <div>
-          <label for="wpc_secret">Password</label>
-          <input type="text" id="wpc_secret" placeholder="Password (must match password set on server side)">
+          <label id="wpc_api_key_label_1" for="wpc_api_key">
+              Secret
+              <?php echo helpIcon('The secret set up on the wpc server. Copy that.'); ?>
+          </label>
+          <label id="wpc_api_key_label_2" for="wpc_api_key">
+              Api key
+              <?php echo helpIcon('The API key is set up on the remote. Copy that.'); ?>
+          </label>
+          <input id="wpc_new_api_key" type="password">
+          <a id="wpc_change_api_key" href="javascript:wpcChangeApiKey()">
+              Click to change
+          </a>
+          <a id="wpc_set_api_key" href="javascript:wpcChangeApiKey()">
+              Click to set
+          </a>
       </div>
-    -->
+
+      <div id="wpc_crypt_api_key_in_transfer_div">
+          <label for="wpc_crypt_api_key_in_transfer">
+              Crypt api key in transfer?
+              <?php echo helpIcon('If checked, the api key will be crypted in requests. Crypting the api-key protects it from being stolen during transfer.'); ?>
+          </label>
+          <input id="wpc_crypt_api_key_in_transfer" type="checkbox">
+      </div>
 
       <?php
       if ($canDetectQuality) { ?>
