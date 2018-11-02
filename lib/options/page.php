@@ -123,20 +123,13 @@ foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
 
 // Remove keys from WPC converters
 foreach ($config['converters'] as &$converter) {
-    // api key in configuration file can be:
-    // - set to be empty ('')
-    // - set to be something.
-    // - never set (null)
-    if (isset($converter['api-key'])) {
-        $converter['api-key'] = '';
-
-        if ($converter['api-key'] == '') {
-            $converter['api-key-state'] = 'set-to-empty';
-        } else {
-            $converter['api-key-state'] = 'set-to-something';
+    if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
+        if (isset($converter['options']['api-key'])) {
+            if ($converter['options']['api-key'] != '') {
+                $converter['options']['_api-key-non-empty'] = true;
+            }
+            unset($converter['options']['api-key']);
         }
-    } else {
-        $converter['api-key-state'] = 'never-set';
     }
 }
 
@@ -624,9 +617,6 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
           <input id="wpc_new_api_key" type="password">
           <a id="wpc_change_api_key" href="javascript:wpcChangeApiKey()">
               Click to change
-          </a>
-          <a id="wpc_set_api_key" href="javascript:wpcChangeApiKey()">
-              Click to set
           </a>
       </div>
 

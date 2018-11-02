@@ -130,8 +130,9 @@ foreach ($config['converters'] as &$converter) {
 }
 
 $oldConfig = Config::loadConfig();
+
+// Set existing api keys in web service (we removed them from the json array, for security purposes)
 if ($oldConfig !== false) {
-    // Set existing api keys (we removed them from the json array, for security purposes)
     if (isset($oldConfig['web-service']['whitelist'])) {
         foreach ($oldConfig['web-service']['whitelist'] as $existingWhitelistEntry) {
             foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
@@ -143,11 +144,38 @@ if ($oldConfig !== false) {
     }
 }
 
-// Set new api keys
+// Set new api keys in web service
 foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
     if (!empty($whitelistEntry['new-api-key'])) {
         $whitelistEntry['api-key'] = $whitelistEntry['new-api-key'];
         unset($whitelistEntry['new-api-key']);
+    }
+}
+
+// Get existing wpc api key from old config
+$existingWpcApiKey = '';
+if ($oldConfig !== false) {
+    foreach ($oldConfig['converters'] as &$converter) {
+        if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
+            if (isset($converter['options']['api-key'])) {
+                $existingWpcApiKey = $converter['options']['api-key'];
+            }
+        }
+    }
+}
+
+// Set wpc api key in new config
+// - either to the existing, or to a new
+foreach ($config['converters'] as &$converter) {
+    if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
+        unset($converter['options']['_api-key-non-empty']);
+        if (isset($converter['options']['new-api-key'])) {
+            $converter['options']['api-key'] = $converter['options']['new-api-key'];
+            unset($converter['options']['new-api-key']);
+        } else {
+            $converter['options']['api-key'] = $existingWpcApiKey;
+        }
+
     }
 }
 
