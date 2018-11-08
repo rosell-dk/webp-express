@@ -489,6 +489,7 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
       <!-- <a href="javascript: tb_remove();">close</a> -->
     </div>
 </div>
+<!--
 <div id="wpc_successfully_connected_popup" class="das-popup">
     <h3>Your request has been approved</h3>
     All you need now is to save settings (both places)
@@ -520,7 +521,6 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
         <button onclick="wpcAddManually()" class="button button-secondary" type="button">Add manually</button>
     </div>
 </div>
-<!--
 <div id="wpc_properties_popup" class="das-popup">
     <h3 class="hide-in-edit">Add connection to web service</h3>
     <h3 class="hide-in-add">Edit connection to web service</h3>
@@ -651,12 +651,9 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
               <input type="text" size=3 id="wpc_max_quality">
           </div>
     <?php } ?>
-
-    <!--
       <p>
-        <b>The IP of your website is <?php echo $_SERVER['SERVER_ADDR']; ?>.</b>
-    </p>-->
-      <br>
+        <b>Psst. The IP of your website is: <?php echo $_SERVER['SERVER_ADDR']; ?>.</b>
+    </p>
       <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
     </div>
 </div>
@@ -747,8 +744,6 @@ echo '</th><td>';
 echo '<input type="checkbox" id="web_service_enabled" name="web-service-enabled" value="true" ' . ($config['web-service']['enabled'] ? 'checked="checked"' : '') . '">';
 echo "<input type='text' name='whitelist' id='whitelist' value='' style='visibility:hidden; height:0' />";
 
-echo '<p style="margin-top: 15px"><i>Endpoint: ' . Paths::getWebServiceUrl() . '</i></p>';
-
 ?>
 <div id="whitelist_div"></div>
 <!--
@@ -802,7 +797,7 @@ echo '<p style="margin-top: 15px"><i>Endpoint: ' . Paths::getWebServiceUrl() . '
             'characters? Here you get to shape your key to your liking. Enter any phrase you want'); ?>
         </label>
         <input id="whitelist_api_key" type="password" class="hide-in-edit">
-        <a href="javascript:whitelistChangeApiKey()" class="hide-in-add" style="display:inline-block;line-height:34px">Change api key</a>
+        <a href="javascript:whitelistChangeApiKey()" class="hide-in-add" style="line-height:34px">Change api key</a>
     </div>
     <div>
         <label for="whitelist_require_api_key_to_be_crypted_in_transfer">
@@ -811,6 +806,8 @@ echo '<p style="margin-top: 15px"><i>Endpoint: ' . Paths::getWebServiceUrl() . '
         </label>
         <input id="whitelist_require_api_key_to_be_crypted_in_transfer" type="checkbox">
     </div>
+    <p style="margin-top: 15px">Psst: The endpoint of the web service is: <b><?php echo Paths::getWebServiceUrl() ?></b></p>
+
     <button id="whitelist_properties_add_button" onclick="whitelistAddWhitelistEntry()" class="hide-in-edit button button-primary" type="button" style="position:absolute; bottom:20px">
         Add
     </button>
@@ -818,12 +815,13 @@ echo '<p style="margin-top: 15px"><i>Endpoint: ' . Paths::getWebServiceUrl() . '
         Update
     </button>
 </div>
+<!--
 <div id="whitelist_accept_request" class="das-popup">
     <h3>Incoming request!</h3>
     <div id="request_details"></div>
     <button onclick="whitelistAcceptRequest()" class="button button-primary" type="button" style="position:absolute; bottom:20px">Grant access</button>
     <button onclick="whitelistDenyRequest()" class="button button-secondary" type="button" style="position:absolute; bottom:20px;right:20px">Deny</button>
-</div>
+</div>-->
 
 <?php
 echo '</td></tr>';
