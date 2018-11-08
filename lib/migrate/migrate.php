@@ -42,9 +42,10 @@ if (!(State::getState('configured', false))) {
         include __DIR__ . '/migrate2.php';
     }
 
+/*
     // We make sure to grab the option again - it might have been changed in the migration above
     if (intval(get_option('webp-express-migration-version', 0)) == 2) {
         // run migration 2
         include __DIR__ . '/migrate3.php';
-    }
+    }*/
 }

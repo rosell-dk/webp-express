@@ -1,5 +1,5 @@
 <?php
-
+/*
 namespace WebPExpress;
 
 include_once __DIR__ . '/../classes/Config.php';
@@ -27,7 +27,7 @@ function webpexpress_migrate3() {
                         unset($converter['options']['secret']);
                         $converter['options']['api-version'] = 0;
                     } else {
-                        $converter['options']['api-version'] = 1;                        
+                        $converter['options']['api-version'] = 1;
                     }
 
                     unset($converter['options']['url-2']);
@@ -63,3 +63,4 @@ function webpexpress_migrate3() {
 }
 
 webpexpress_migrate3();
+*/
