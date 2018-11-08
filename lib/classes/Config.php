@@ -157,6 +157,20 @@ class Config
         return false;
     }
 
+
+    /**
+     *  Save both configuration files, but do not update htaccess
+     *  Returns success (boolean)
+     */
+    public static function saveConfigurationFileAndWodOptions($config)
+    {
+        if (!(self::saveConfigurationFile($config))) {
+            return false;
+        }
+        $options = self::generateWodOptionsFromConfigObj($config);
+        return (self::saveWodOptionsFile($options));
+    }
+
     /**
      *
      *  $rewriteRulesNeedsUpdate:
