@@ -605,7 +605,15 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
           <input type="text" id="wpc_url" placeholder="Url to your Remote WebP Express">
       </div>
 
-      <div>
+      <div id="wpc_secret_div">
+          <label for="wpc_secret">
+              Secret
+              <?php echo helpIcon('Must match the one set up in webp-convert-cloud-service v0.1'); ?>
+          </label>
+          <input type="text" id="wpc_secret" placeholder="">
+      </div>
+
+      <div id="wpc_api_key_div">
           <label id="wpc_api_key_label_1" for="wpc_api_key">
               Secret
               <?php echo helpIcon('The secret set up on the wpc server. Copy that.'); ?>
