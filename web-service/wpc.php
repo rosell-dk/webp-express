@@ -25,10 +25,24 @@ if ($config === false) {
     }
 }
 
+if (!isset($config['web-service'])) {
+    WebPConvertCloudService::exitWithError(WebPConvertCloudService::ERROR_ACCESS_DENIED, 'Web Service configured');
+}
+
+$webServiceConfig = $config['web-service'];
+
+if (!$webServiceConfig['enabled']) {
+    WebPConvertCloudService::exitWithError(WebPConvertCloudService::ERROR_ACCESS_DENIED, 'Web Service is not enabled');
+}
+
 $options['destination-dir'] = Paths::getCacheDirAbs() . '/wpc';
 $options['access'] = [
     //'allowed-ips' => ['127.0.0.1'],
-    //'whitelist' => $config['web-service']['api-keys']
+    'whitelist' => $webServiceConfig['whitelist']
+];
+
+/*
+$options['access'] = [
     'whitelist' => [
         [
             'label' => 'testing',
@@ -37,7 +51,8 @@ $options['access'] = [
             'require-api-key-to-be-hashed-in-transfer' => false,
         ]
     ]
-];
+]; */
+
 $options['webp-convert'] = Config::generateWodOptionsFromConfigObj($config);
 
 WebPConvertCloudService::handleRequest($options);

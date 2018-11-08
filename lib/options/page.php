@@ -791,7 +791,7 @@ echo '<p style="margin-top: 15px"><i>Endpoint: ' . Paths::getWebServiceUrl() . '
     <div>
         <label for="whitelist_ip">
             IP
-            <?php echo helpIcon('IP to allow access to service. You can use *, ie "212.91.*""'); ?>
+            <?php echo helpIcon('IP to allow access to service. You can use *, ie "212.91.*", or even "*"'); ?>
         </label>
         <input id="whitelist_ip" type="text">
     </div>
