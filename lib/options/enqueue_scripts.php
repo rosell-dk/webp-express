@@ -9,7 +9,7 @@ wp_enqueue_script('sortable');
 wp_register_script('daspopup', plugins_url('js/das-popup.js', __FILE__), [], '0.7.0-dev5');
 wp_enqueue_script('daspopup');
 
-wp_register_script('converters', plugins_url('js/converters.js', __FILE__), ['sortable','daspopup'], '0.7.0-dev10');
+wp_register_script('converters', plugins_url('js/converters.js', __FILE__), ['sortable','daspopup'], '0.7.0-dev12');
 wp_enqueue_script('converters');
 
 wp_register_script('whitelist', plugins_url('js/whitelist.js', __FILE__), ['daspopup'], '0.7.0-dev11');
