@@ -27,7 +27,7 @@ function webp_express_process_post() {
     // strip query string
     $requestUriNoQS = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
-    if (!preg_match('/webp-express-server$/', $requestUriNoQS)) {
+    if (!preg_match('/webp-express-web-service$/', $requestUriNoQS)) {
         return;
     }
     //include __DIR__ . '/lib/wpc.php';

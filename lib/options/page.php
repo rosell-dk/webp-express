@@ -745,10 +745,13 @@ echo helpIcon('Enabling the web service will allow selected sites to convert web
 echo '</th><td>';
 
 echo '<input type="checkbox" id="web_service_enabled" name="web-service-enabled" value="true" ' . ($config['web-service']['enabled'] ? 'checked="checked"' : '') . '">';
-echo "<input type='text' name='whitelist' id='whitelist' value='' style='visibility:hidden; height:0' />"; //
+echo "<input type='text' name='whitelist' id='whitelist' value='' style='visibility:hidden; height:0' />";
+
+echo '<p style="margin-top: 15px"><i>Endpoint: ' . Paths::getWebServiceUrl() . '</i></p>';
 
 ?>
 <div id="whitelist_div"></div>
+<!--
 <div id="whitelist_listen_popup" class="das-popup">
     <h3>Listening for a request<span class="animated-dots">...</span></h3>
     <div style="font-size:90%">
@@ -758,7 +761,7 @@ echo "<input type='text' name='whitelist' id='whitelist' value='' style='visibil
             <li>Log in to the website you want to use the web service</li>
             <li>In WebP Express settings, find the <i>Remote WebP Express</i> conversion method and click <i>configure</i></li>
             <li>Click "Make request"</li>
-            <li>Enter this url: <b><?php echo Paths::getWpcUrl(); ?></b></li>
+            <li>Enter this url: <b><?php echo Paths::getWebServiceUrl(); ?></b></li>
         </ol>
         This popup will close once the above is completed<br><br>
     </div>
@@ -772,6 +775,7 @@ echo "<input type='text' name='whitelist' id='whitelist' value='' style='visibil
         </button>
     </div>
 </div>
+-->
 <div id="whitelist_properties_popup" class="das-popup">
     <h3 class="hide-in-edit">Authorize website</h3>
     <h3 class="hide-in-add">Edit authorized website</h3>

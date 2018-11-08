@@ -287,10 +287,11 @@ APACHE
         return self::getPluginUrlPath() . '/wod/webp-on-demand.php';
     }
 
-    public static function getWpcUrl()
+    public static function getWebServiceUrl()
     {
         //return self::getPluginUrl() . '/wpc.php';
-        return self::getHomeUrl() . '/webp-express-server';
+        //return self::getHomeUrl() . '/webp-express-server';
+        return self::getHomeUrl() . '/webp-express-web-service';
     }
 
     /**
