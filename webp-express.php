@@ -31,7 +31,7 @@ function webp_express_process_post() {
         return;
     }
     //include __DIR__ . '/lib/wpc.php';
-    include __DIR__ . '/server/wpc.php';
+    include __DIR__ . '/web-service/wpc.php';
     die();
 }
 add_action( 'init', 'webp_express_process_post' );

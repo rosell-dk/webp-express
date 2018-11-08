@@ -4,9 +4,14 @@
         {
             "type": "vcs",
             "url": "https://github.com/rosell-dk/webp-convert"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rosell-dk/webp-convert-cloud-service"
         }
     ],
     "require": {
-        "rosell-dk/webp-convert": "dev-master"
+        "rosell-dk/webp-convert": "dev-master",
+        "rosell-dk/webp-convert-cloud-service": "dev-master"
     }
 }

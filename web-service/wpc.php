@@ -2,12 +2,7 @@
 
 //require '../vendor/rosell-dk/webp-convert/build/webp-on-demand-1.inc';
 require __DIR__ . '/../vendor/autoload.php';
-
-require_once 'webp-convert-cloud-service/WebPConvertCloudService.php';
 use \WebPConvertCloudService\WebPConvertCloudService;
-
-require_once 'webp-convert-cloud-service/Serve.php';
-require_once 'webp-convert-cloud-service/AccessCheck.php';
 
 include_once __DIR__ . '../../lib/classes/Config.php';
 use \WebPExpress\Config;
