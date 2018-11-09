@@ -307,7 +307,7 @@ if ($canDetectQuality) {
     echo helpIcon('All converted images will be encoded with this quality');
 } else {
     echo helpIcon('All converted images will be encoded with this quality. ' .
-        'For the wpc converter, you will however have the option to use override this, and use ' .
+        'For the Remote WebP Express converter, you will however have the option to use override this, and use ' .
         '"auto". If you install imagick or gmagick, quality can have "auto" for all convertion methods. '
     );
 }
@@ -637,7 +637,7 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
       </div>
 
       <?php
-      if ($canDetectQuality) { ?>
+      if (!$canDetectQuality) { ?>
           <div>
               <label for="wpc_quality">
                   Quality
