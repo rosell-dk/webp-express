@@ -591,7 +591,7 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
     <div id="wpc_api_version_div">
         <label for="wpc_api_version">
             Api version
-            <?php echo helpIcon('Select 2, if connecting to a remote webp-express. Api 1 was never used with this plugin, and should only be used to connect to webp-convert-cloud-service running api version 1'); ?>
+            <?php echo helpIcon('Select 1, if connecting to a remote webp-express. Api 0 was never used with this plugin, and should only be used to connect to webp-convert-cloud-service v.0.1 instances'); ?>
         </label>
         <select id="wpc_api_version" onchange="wpcApiVersionChanged()">
             <option value="0">0</option>
