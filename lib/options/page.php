@@ -84,15 +84,14 @@ $defaultConfig = [
     'web-service' => [
         'enabled' => false,
         'whitelist' => [
-            [
-                /*
-                'uid' => '',       // for internal purposes
-                'label' => '',     // ie website name. It is just for display
-                'ip' => '',        // restrict to these ips. * pattern is allowed.
-                'api-key' => '',   // Api key for the entry. Not neccessarily unique for the entry
-                //'quota' => 60
-                */
+            /*[
+            'uid' => '',       // for internal purposes
+            'label' => '',     // ie website name. It is just for display
+            'ip' => '',        // restrict to these ips. * pattern is allowed.
+            'api-key' => '',   // Api key for the entry. Not neccessarily unique for the entry
+            //'quota' => 60
             ]
+            */
         ]
 
     ]
@@ -111,6 +110,9 @@ if (!$config) {
 $config = array_merge($defaultConfig, $config);
 if ($config['converters'] == null) {
     $config['converters'] = [];
+}
+if (!isset($config['web-service'])) {
+    $config['web-service'] = [];
 }
 if (!isset($config['web-service']['whitelist'])) {
     $config['web-service']['whitelist'] = [];
@@ -744,7 +746,6 @@ echo '</td></tr>';
 
 $whitelist = $config['web-service']['whitelist'];
 echo '<script>window.whitelist = ' . json_encode($whitelist) . '</script>';
-
 echo '<tr id="share"><th scope="row">Enable web service?';
 echo helpIcon('Enabling the web service will allow selected sites to convert webp-images through this site (more options will appear, if you enable)');
 echo '</th><td>';
