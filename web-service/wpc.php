@@ -26,7 +26,7 @@ if ($config === false) {
 }
 
 if (!isset($config['web-service'])) {
-    WebPConvertCloudService::exitWithError(WebPConvertCloudService::ERROR_ACCESS_DENIED, 'Web Service configured');
+    WebPConvertCloudService::exitWithError(WebPConvertCloudService::ERROR_ACCESS_DENIED, 'Web Service is not configured');
 }
 
 $webServiceConfig = $config['web-service'];
