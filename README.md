@@ -97,3 +97,9 @@ Putting this question in the "frequently" asked questions section is of course s
 This version added option to provide conversion service to other sites!
 
 For more info, see the closed issues on the 0.7.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.7.0
+
+## Silly dance-ware
+If you enjoy this software, feel free to express yourself now through bodily movements. Don't - be - shy!
+
+
+## Handsome-ware
