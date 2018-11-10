@@ -85,6 +85,9 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation/List_of_de
 = How do I donate? =
 Putting this question in the "frequently" asked questions section is of course some mixture of humour, sarcasm and wishful thinking. In case there really is someone out there wanting to donate, you can simply write to me, and we can arrange. My contact information is available here https://www.bitwise-it.dk/contact. I have paypal, mobilepay and of course an ordinary bank account.
 
+== Relax-ware ==
+If you enjoy this software, feel free to take the rest of the day off.
+
 == Screenshots ==
 
 1. WebP Express settings
