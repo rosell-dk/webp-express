@@ -100,6 +100,3 @@ For more info, see the closed issues on the 0.7.0 milestone on the github reposi
 
 ## Silly dance-ware
 If you enjoy this software, feel free to express yourself now through bodily movements. Don't - be - shy!
-
-
-## Handsome-ware
