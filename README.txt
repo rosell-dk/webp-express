@@ -87,6 +87,10 @@ Putting this question in the "frequently" asked questions section is of course s
 
 == Relax-ware ==
 If you enjoy this software, feel free to take the rest of the day off.
+You deserve it, you know you do, your been working too hard, and things haven't been easy
+for you at home either, with those strange mutations and all. Here is your excuse to take the day off.
+I have put hundreds of hours into this plugin, so - in a way - I have just saved you about
+a hundred hours of work. Now, go spend it!
 
 == Screenshots ==
 
