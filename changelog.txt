@@ -1,3 +1,11 @@
+= 0.7.1 =
+Fixed minor "bug". The Api version combobox in Remote WebP Express converter was showing on new sites, but I only want it to show when old api is being used.
+
+= 0.7.0 =
+This version added option to provide conversion service to other sites!
+
+For more info, see the closed issues on the 0.7.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.7.0
+
 = 0.6.0 =
 This version added option for setting caching header, fixed a serious issue with *Imagick*, added a new converter, *Gmagick*, added a great deal of options to *Cwebp* and generally improved the interface.
 
