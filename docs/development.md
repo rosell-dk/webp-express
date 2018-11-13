@@ -1,0 +1,3 @@
+The plugin published on github now uses composer. I still include the vendor files on the svn (the Wordpress "codex").
+
+For the few, who might be using this thing here on github: To get the dependent libraries, you need to cd into the plugin dir and run `composer update`. This gets you the latest dev releases of "webp-convert" and "webp-convert-cloud-service" on github. You must change the composer.json if you rather want the latest stable release (remove the repositories and change the minimum requirements). On the svn, I simply rsync everything, including the vendor folder, before committing.
