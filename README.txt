@@ -17,7 +17,7 @@ Almost 4 out of 5 mobile users use a browser that is able to display webp images
 
 The plugin basically routes jpeg/png images to an image converter, or - if the image converter has already converted the image - directly to a converted image. The approach has the benefit that is works regardless of how an image found its way into your server - be it Media Library, Galleries, or even theme images referenced with CSS.
 
-The plugin builds on [WebPConvert](https://github.com/rosell-dk/webp-convert) and its "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/webp-on-demand/webp-on-demand.md)
+The plugin is developed on [github](https://github.com/rosell-dk/webp-express/). It builds upon [WebPConvert](https://github.com/rosell-dk/webp-convert) and its "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/webp-on-demand/webp-on-demand.md)
 
 #### Benefits
 - Much faster load time for images in blink based browsers such as Chrome and Opera (accounting for ~73% of all traffic, according to [caniuse.com](https://caniuse.com/webp)). The converted images are typically *less than half the size* (for jpeg), while maintaining the same quality. Bear in mind that for most web sites, images are responsible for the largest part of the waiting time.
@@ -70,6 +70,10 @@ The plugin has not been tested in multisite configurations. It's on the roadmap.
 * The plugin has not been tested with multisite installation (it is on the roadmap!).
 * There might be compatability issues with other plugins. For example .htaccess rules from other plugins might interfere. Please report if you discover any problems!
 
+== Relax-ware ==
+If you enjoy this software, feel free to take the rest of the day off.
+Well, why not? You have probably deserved it.
+
 == Frequently Asked Questions ==
 
 = Why do I not see the option to set WebP quality to auto? =
@@ -85,12 +89,6 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation/List_of_de
 = How do I donate? =
 Putting this question in the "frequently" asked questions section is of course some mixture of humour, sarcasm and wishful thinking. In case there really is someone out there wanting to donate, you can simply write to me, and we can arrange. My contact information is available here https://www.bitwise-it.dk/contact. I have paypal, mobilepay and of course an ordinary bank account.
 
-== Relax-ware ==
-If you enjoy this software, feel free to take the rest of the day off.
-You deserve it, you know you do, your been working too hard, and things haven't been easy
-for you at home either, with those strange mutations and all. Here is your excuse to take the day off.
-I have put hundreds of hours into this plugin, so - in a way - I have just saved you about
-a hundred hours of work. Now, go spend it!
 
 == Screenshots ==
 
