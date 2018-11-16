@@ -17,7 +17,7 @@ Almost 4 out of 5 mobile users use a browser that is able to display webp images
 
 The plugin basically routes jpeg/png images to an image converter, or - if the image converter has already converted the image - directly to a converted image. The approach has the benefit that is works regardless of how an image found its way into your server - be it Media Library, Galleries, or even theme images referenced with CSS.
 
-The plugin is developed on [github](https://github.com/rosell-dk/webp-express/). It builds upon [WebPConvert](https://github.com/rosell-dk/webp-convert) and its "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/webp-on-demand/webp-on-demand.md)
+The plugin is developed on [github](https://github.com/rosell-dk/webp-express/). It builds upon the [WebPConvert](https://github.com/rosell-dk/webp-convert) library and the "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/webp-on-demand/webp-on-demand.md)
 
 #### Benefits
 - Much faster load time for images in blink based browsers such as Chrome and Opera (accounting for ~73% of all traffic, according to [caniuse.com](https://caniuse.com/webp)). The converted images are typically *less than half the size* (for jpeg), while maintaining the same quality. Bear in mind that for most web sites, images are responsible for the largest part of the waiting time.
