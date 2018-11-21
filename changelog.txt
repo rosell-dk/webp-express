@@ -1,3 +1,6 @@
+= 0.7.2 =
+Fixed a critical bug which generated an error message which caused corrupt images. It was not the bug itself, but the error message it generated, that caused the images to be corrupted. It only happened when debugging was enabled in php.ini
+
 = 0.7.1 =
 Fixed minor "bug". The Api version combobox in Remote WebP Express converter was showing on new sites, but I only want it to show when old api is being used.
 

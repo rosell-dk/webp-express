@@ -4,7 +4,7 @@ Donate link: https://www.bitwise-it.dk/contact
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 4.9
-Stable tag: 0.7.1
+Stable tag: 0.7.2
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
