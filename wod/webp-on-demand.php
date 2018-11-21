@@ -1,5 +1,8 @@
 <?php
 
+//echo 'display errors:' . ini_get('display_errors');
+//exit;
+
 //require 'webp-on-demand-1.inc';
 require '../vendor/rosell-dk/webp-convert/build/webp-on-demand-1.inc';
 //require '../vendor/autoload.php';
@@ -21,7 +24,6 @@ $options = json_decode($json, true);
 $options['require-for-conversion'] = 'webp-on-demand-2.inc';
 //$options['require-for-conversion'] = '../../../autoload.php';
 
-$gmagickHere = false;
 foreach ($options['converters'] as &$converter) {
     if (isset($converter['converter'])) {
         $converterId = $converter['converter'];
@@ -31,12 +33,6 @@ foreach ($options['converters'] as &$converter) {
     if ($converterId == 'cwebp') {
         $converter['options']['rel-path-to-precompiled-binaries'] = '../src/Converters/Binaries';
     }
-    if ($converterId == 'gmagick') {
-        $gmagickHere = true;
-    }
-}
-if (!$gmagickHere) {
-//    $options['converters'][] = 'gmagick';
 }
 
 if ($options['forward-query-string']) {
@@ -65,10 +61,7 @@ if (substr($source, 0, strlen($applicationRoot)) === $applicationRoot) {
 }
 //$destination = $imageRoot . $source . '.webp';
 
-if ($options['show-report']) {
-//    echo '<pre>' . print_r($options, true) . '</pre>';
-
-}
+//exit;
 
 //echo $source . '<br>';
 //echo $destination . '<br>';
