@@ -90,9 +90,6 @@ Chances are that the default setting of your CDN is not to forward any headers t
 
 The plugin takes care of setting the "Vary" HTTP header to "Accept" when routing WebP images. When the CDN sees this, it knows that the response varies, depending on the "Accept" header. The CDN is thus instructed not to cache the response on URL only, but also on the "Accept" header. This means that it will store an image for every accept header it meets. Luckily, there are (not that many variants for images)[https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation/List_of_default_Accept_values#Values_for_an_image], so it is not an issue.
 
-### How do I donate?
-Putting this question in the "frequently" asked questions section is of course some mixture of humour, sarcasm and wishful thinking. In case there really is someone out there wanting to donate, you can simply write to me, and we can arrange. My contact information is available here https://www.bitwise-it.dk/contact. I have paypal, mobilepay and of course an ordinary bank account.
-
 ## Changes in 0.7.0
 This version added option to provide conversion service to other sites!
 
@@ -101,4 +98,5 @@ For more info, see the closed issues on the 0.7.0 milestone on the github reposi
 ## Silly dance-ware
 If you enjoy this software, feel free to express yourself now through bodily movements. Don't - be - shy!
 
-*No animals were harmed and no women were sexually harassed either during the production of this plugin*
+## Supporting WebP Express
+Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue putting effort into this plugin: [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell).
