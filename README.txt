@@ -71,9 +71,7 @@ The plugin has not been tested in multisite configurations. It's on the roadmap.
 * There might be compatability issues with other plugins. For example .htaccess rules from other plugins might interfere. Please report if you discover any problems!
 
 == Supporting WebP Express ==
-Bread on the table don't come for free, even though this plugin does, and always will.
-I enjoy developing this, and supporting you guys, but I kind of need the bread too.
-Please make it possible for me to continue wasting time on this plugin:
+Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue wasting time on this plugin:
 
 *[Become a backer or sponsor on Patreon](https://www.patreon.com/rosell)*.
 
