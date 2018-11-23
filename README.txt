@@ -1,6 +1,6 @@
 === WebP Express ===
 Contributors: rosell.dk
-Donate link: https://www.bitwise-it.dk/contact
+Donate link: https://www.patreon.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 4.9
@@ -70,9 +70,12 @@ The plugin has not been tested in multisite configurations. It's on the roadmap.
 * The plugin has not been tested with multisite installation (it is on the roadmap!).
 * There might be compatability issues with other plugins. For example .htaccess rules from other plugins might interfere. Please report if you discover any problems!
 
-== Relax-ware ==
-If you enjoy this software, feel free to take the rest of the day off.
-Well, why not? You have probably deserved it.
+== Supporting WebP Express ==
+Bread on the table don't come for free, even though this plugin does, and always will.
+I enjoy developing this, and supporting you guys, but I kind of need the bread too.
+Please make it possible for me to continue putting effort into this plugin:
+
+*[Become a backer or sponsor on Patreon](https://www.patreon.com/rosell)*.
 
 == Frequently Asked Questions ==
 
