@@ -77,6 +77,48 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 == Frequently Asked Questions ==
 
+= How do I verify that the plugin is working? =
+Once, you have a converter, that works, when you click the "test"-button, you are ready to test the whole stack, and the rewrite rules. To do this, first make sure to select something other than "Do not convert any images!" in *Image types to convert*. Next, click "Save settings". This will save settings, as well as update the *.htaccess*.
+
+If you are working in a browser that supports webp (ie Google Chrome), you will see a link "Convert test image (show debug)" after a successful save. Click that to test if it works. The screen should show a textual report of the conversion process. If it shows an image, it means that the *.htaccess* redirection isn't working. It may be that your server just needs some time. Some servers has set up caching. It could also be that your images are handled by nginx.
+
+Note that the plugin does not change any HTML. In the HTML the image src is still set to ie "example.jpg". To verify that the plugin is working (without clicking the test button), do the following:
+
+- Open the page in Google Chrome
+- Right-click the page and choose "Inspect"
+- Click the "Network" tab
+- Reload the page
+- Find a jpeg or png image in the list. In the "type" column, it should say "webp"
+
+In order to test that the image is not being reconverted every time, look at the Response headers of the image. There should be a "X-WebP-Convert-Status" header. It should say "Serving existing converted image" the first time, but "Serving existing converted image" on subsequent requests (WebP-Express is based upon [WebP Convert](https://github.com/rosell-dk/webp-convert)).
+
+You can also append `?debug` after any image url, in order to run a conversion, and see the conversion report. Also, if you append `?reconvert` after an image url, you will force a reconversion of the image.
+
+= No conversions methods are working out of the box =
+Don't fret - you have options!
+
+- If you a controlling another WordPress site (where the local conversion methods DO work), you can set up WebP Express there, and then connect to it by configuring the “Remote WebP Express” conversion method.
+- You can also setup the ewww conversion method. To use it, you need to purchase an api key. They do not charge credits for webp conversions, so all you ever have to pay is the one dollar start-up fee 🙂 (unless they change their pricing – I have no control over that). You can buy an api key here: https://ewww.io/plans/
+- If you are up to it, you can try to get one of the local converters working. Check out [this page](https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters) on the webp-convert wiki
+- Finally, if you have access to a server and are comfortable with installing projects with composer, you can install [webp-convert-cloud-service](https://github.com/rosell-dk/webp-convert-cloud-service). It's open source.
+
+= I am on NGINX / OpenResty =
+It is possible to make WebP Express work on NGINX, but it requieres manually inserting redirection rules in the NGINX configuration file (nginx.conf). For standard wordpress installations, the following rules should work:
+
+```
+if ($http_accept ~* “webp”){
+rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?source=$document_root$request_uri&wp-content=wp-content&%1 break;
+}
+```
+However, the location of the wp-content folder and the plugins folder can be customized with Wordpress. In that case, the above rule must be changed accordingly.
+
+I'd like to make the plugin print the NGINX rules that needs to be inserted, when running on NGINX / NGINX based setup (ie [OpenResty](https://openresty.org/en/)). Please help make that possible by [contributing](https://www.patreon.com/rosell).
+
+Discussion on this topic here: https://wordpress.org/support/topic/nginx-rewrite-rules-4/
+
+= I am on a WAMP stack =
+It has been reported that WebP Express *almost* works on WAMP stack. I'd love to debug this, but do not own a Windows server or access to one... Can you help?
+
 = Why do I not see the option to set WebP quality to auto? =
 The option will only display, if your system is able to detect jpeg qualities. To make your server capable to do that, install *Imagick* or *Gmagick*
 
