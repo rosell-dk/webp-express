@@ -20,11 +20,11 @@ The plugin basically routes jpeg/png images to an image converter, or - if the i
 The plugin is developed on [github](https://github.com/rosell-dk/webp-express/). It builds upon the [WebPConvert](https://github.com/rosell-dk/webp-convert) library and the "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/webp-on-demand/webp-on-demand.md)
 
 #### Benefits
-- Much faster load time for images in blink based browsers such as Chrome and Opera (accounting for ~73% of all traffic, according to [caniuse.com](https://caniuse.com/webp)). The converted images are typically *less than half the size* (for jpeg), while maintaining the same quality. Bear in mind that for most web sites, images are responsible for the largest part of the waiting time.
+- Much faster load time for images in browsers that supports webp. The converted images are typically *less than half the size* (for jpeg), while maintaining the same quality. Bear in mind that for most web sites, images are responsible for the largest part of the waiting time.
 - Better user experience (whether performance goes from terrible to bad, or from good to impressive, it is a benefit)
 - Better ranking in Google searches (performance is taken into account by Google)
 - Less bandwidth consumption - makes a difference when abroad and in the parts of the world with slow and expensive internet connections.
-
+- Currently ~73% of all traffic, and ~78% of mobile browsing traffic are done with browsers supporting webp. With Mozilla and Microsoft [finally on board](https://medium.com/@richard_90141/webp-image-support-an-8-year-saga-7aa2bedb8d02), these numbers are bound to increase. Check current numbers on  [caniuse.com](https://caniuse.com/webp)).
 
 == Installation ==
 
@@ -66,9 +66,8 @@ The plugin has not been tested in multisite configurations. It's on the roadmap.
 
 == Limitations ==
 
-* The plugin does not work on Microsoft IIS server
+* The plugin does not work on Microsoft IIS server, nor in WAMP
 * The plugin has not been tested with multisite installation (it is on the roadmap!).
-* There might be compatability issues with other plugins. For example .htaccess rules from other plugins might interfere. Please report if you discover any problems!
 
 == Supporting WebP Express ==
 Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue wasting time on this plugin:

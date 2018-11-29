@@ -12,11 +12,11 @@ The plugin basically routes jpeg/png images to an image converter, or - if the i
 The plugin builds on [WebPConvert](https://github.com/rosell-dk/webp-convert) and its "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/webp-on-demand/webp-on-demand.md)
 
 #### Benefits
-- Much faster load time for images in blink based browsers such as Chrome and Opera (overall accounting for ~73% of all traffic, and ~78% of mobile browsing trafic, according to [caniuse.com](https://caniuse.com/webp)).
-- The converted images are typically *less than half the size* (for jpeg), while maintaining the same quality. Bear in mind that for most web sites, images are responsible for the largest part of the waiting time.
+- Much faster load time for images in browsers that supports webp. The converted images are typically *less than half the size* (for jpeg), while maintaining the same quality. Bear in mind that for most web sites, images are responsible for the largest part of the waiting time.
 - Better user experience (whether performance goes from terrible to bad, or from good to impressive, it is a benefit)
 - Better ranking in Google searches (performance is taken into account by Google)
 - Less bandwidth consumption - makes a huge difference in the parts of the world where the internet is slow and costly (you know, ~80% of the world population lives under these circumstances).
+- Currently ~73% of all traffic, and ~78% of mobile browsing traffic are done with browsers supporting webp. With Mozilla and Microsoft [finally on board](https://medium.com/@richard_90141/webp-image-support-an-8-year-saga-7aa2bedb8d02), these numbers are bound to increase. Check current numbers on  [caniuse.com](https://caniuse.com/webp)).
 
 
 ## Installation
@@ -72,12 +72,12 @@ The redirect rules created in *.htaccess* are pointing to a PHP script. If you h
 Do not simply remove the plugin without deactivating it first. Deactivation takes care of removing the rules in the *.htaccess* file. With the rules there, but converter gone, your Google Chrome visitors will not see any jpeg images.
 
 *Note:*
-The plugin has not been tested in multisite configurations. It's on the roadmap...
+The plugin has not been tested in multisite configurations.
 
 
 ## Limitations
 
-* The plugin does not work on Microsoft IIS server
+* The plugin does not work on Microsoft IIS server, nor in WAMP
 * The plugin has not been tested with multisite installation
 
 ## Frequently Asked Questions
@@ -108,7 +108,7 @@ I'd like to make the plugin print the NGINX rules that needs to be inserted, whe
 Discussion on this topic here: https://wordpress.org/support/topic/nginx-rewrite-rules-4/
 
 ### I am on a WAMP stack
-It has been reported that WebP Express *almost* works on WAMP stack. I'd love to debug this, but do not own a Windows server or access to one... Can you help?
+It has been reported that WebP Express *almost* works on WAMP stack (Windows, Apache, MySQL, PHP). I'd love to debug this, but do not own a Windows server or access to one... Can you help?
 
 ### Why do I not see the option to set WebP quality to auto?
 The option will only display, if your system is able to detect jpeg qualities. To make your server capable to do that, install *Imagick* or *Gmagick*
