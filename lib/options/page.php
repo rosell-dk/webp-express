@@ -331,8 +331,10 @@ if ($canDetectQuality) {
     echo helpIcon('All converted images will be encoded with this quality');
 } else {
     echo helpIcon('All converted images will be encoded with this quality. ' .
-        'For the Remote WebP Express converter, you will however have the option to use override this, and use ' .
-        '"auto". If you install imagick or gmagick, quality can have "auto" for all convertion methods. '
+        'For Remote WebP Express and Imagick, you however have the option to use override this, and use ' .
+        '"auto". With some setup, you can get quality detection working and you will then be able to set ' .
+        'quality to "auto" generally. For that you either need to get the imagick extension running ' .
+        '(PECL >= 2.2.2) or exec() rights and either imagick or gmagick installed.'
     );
 }
 echo '</th><td>';
