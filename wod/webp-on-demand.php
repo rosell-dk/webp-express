@@ -59,11 +59,12 @@ if (substr($source, 0, strlen($applicationRoot)) === $applicationRoot) {
     // we must add complete path to structure
     $destination = $imageRoot . '/abs' . $source . '.webp';
 }
-//$destination = $imageRoot . $source . '.webp';
 
-//exit;
+// If we wanted webp images to be located in same folder, with ie ".jpg.webp" extension:
+// $destination = $source . '.webp';
 
-//echo $source . '<br>';
-//echo $destination . '<br>';
-//echo $sourceRel;
+// If we wanted webp images to be located in same folder, with ".webp" extension:
+// $destination = preg_replace('/\.(jpg|jpeg|png)$/', '.webp', $source);
+
+
 WebPConvert::convertAndServe($source, $destination, $options);
