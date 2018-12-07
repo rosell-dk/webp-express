@@ -124,6 +124,9 @@ if ($auto) {
     $config['quality-specific'] = webp_express_sanitize_quality_field($_POST['quality-specific']);
 }
 
+//echo '<pre>' . print_r($config['converters'], true) . '</pre>';
+//die;
+
 // remove id's
 foreach ($config['converters'] as &$converter) {
     unset ($converter['id']);
@@ -175,9 +178,9 @@ foreach ($config['converters'] as &$converter) {
         } else {
             $converter['options']['api-key'] = $existingWpcApiKey;
         }
-
     }
 }
+
 
 // create password hashes for new passwords
 /*
