@@ -42,9 +42,19 @@ use WebPConvert\Loggers\EchoLogger;
 <body style="">
 
 <?php
+
+/**
+ *  Paths passed in query string were encoded, to avoid triggering LFI warning in Wordfence
+ *  (encoding is done in converters.js)
+ *  see https://github.com/rosell-dk/webp-express/issues/87
+ */
+function decodePathInQS($encodedPath) {
+    return preg_replace('/\*\*/', '/', $encodedPath);
+}
+
 //WebPConvertAndServe::convertAndReport($source, $destination, $options);use WebPConvert\Loggers\EchoLogger;
-$source = $_GET['source'];
-$destination = $_GET['destination'];
+$source = decodePathInQS($_GET['source']);
+$destination = decodePathInQS($_GET['destination']);
 $converter = $_GET['converter'];
 
 if (isset($_GET['max-quality'])) {
