@@ -412,6 +412,7 @@ include 'converter-options/gd.php';
 include 'converter-options/imagick.php';
 include 'converter-options/ewww.php';
 include 'converter-options/wpc.php';
+include 'converter-options/imagickbinary.php';
 ?>
 </td></tr>
 <?php

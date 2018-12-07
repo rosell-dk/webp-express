@@ -7,7 +7,7 @@ class ConvertersHelper
     public static $defaultConverters = [
         ['converter' => 'gd', 'options' => ['skip-pngs' => true]],
         ['converter' => 'cwebp', 'options' => [
-            'use-nice' => false,
+            'use-nice' => true,
             'try-common-system-paths' => true,
             'try-supplied-binary-for-os' => true,
             'method' => 6,
@@ -19,7 +19,9 @@ class ConvertersHelper
         ['converter' => 'gmagick'],
         ['converter' => 'wpc'],     // we should not set api-version default - it is handled in the javascript
         ['converter' => 'ewww'],
-        ['converter' => 'imagickbinary'],
+        ['converter' => 'imagickbinary', 'options' => [
+            'use-nice' => true,
+        ]],
     ];
 
     public static function getDefaultConverterNames()
