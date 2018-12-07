@@ -43,6 +43,31 @@ function webpexpress_converterName($converterId) {
     return $converterId;
 }
 
+function printAutoQualityOptionForConverterIf($converterId) {
+    global $canDetectQuality;
+
+    if (!$canDetectQuality) {
+?>
+    <div>
+        <label for="<?php echo $converterId; ?>_quality">
+            Quality
+            <?php echo helpIcon('If "Auto" is selected, the converted image will get same quality as source. Auto is recommended!'); ?>
+        </label>
+        <select id="<?php echo $converterId; ?>_quality" onchange="converterQualityChanged('<?php echo $converterId; ?>')">
+            <option value="inherit">Use global settings</option>
+            <option value="auto">Auto</option>
+        </select>
+    </div>
+    <div id="<?php echo $converterId; ?>_max_quality_div">
+        <label>
+            Max quality
+            <?php echo helpIcon('Enter number (0-100). Converted images will be encoded with same quality as the source image, but not more than this setting'); ?>
+        </label>
+        <input type="text" size=3 id="<?php echo $converterId; ?>_max_quality">
+    </div>
+<?php
+    }
+}
 //update_option('webp-express-migration-version', '1');
 
 // Test converters
@@ -375,6 +400,14 @@ echo '<a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/ma
 // https://github.com/RubaXa/Sortable
 
 // Empty list of converters. The list will be populated by the javascript
+
+function webp_express_printUpdateButtons() {
+?>
+    <button onclick="updateConverterOptionsAndSave()" class="button button-primary" type="button">Update and save settings</button>
+    <button onclick="updateConverterOptions()" class="button button-secondary" type="button">Update, but do not save yet</button>
+    <?php
+    //echo '<a href="javascript: tb_remove();">close</a>';
+}
 echo '<ul id="converters" style="margin-top: -13px"></ul>';
 ?>
 <div id="cwebp" style="display:none;">
@@ -435,8 +468,7 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
           <a target="_blank" href="https://developers.google.com/speed/webp/docs/cwebp">the docs</a>
       </div>
       <br>
-      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
-      <!-- <a href="javascript: tb_remove();">close</a> -->
+      <?php webp_express_printUpdateButtons() ?>
     </div>
 </div>
 <div id="gd" style="display:none;">
@@ -450,17 +482,20 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
           For this reason, the converter defaults to skip PNG's.
       </div>
       <br>
-      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
-      <!-- <a href="javascript: tb_remove();">close</a> -->
+      <?php webp_express_printUpdateButtons() ?>
     </div>
 </div>
 <div id="imagick" style="display:none;">
     <div class="imagick converter-options">
       <h3>Imagick options</h3>
-      <div class="info">
-          imagick has no special options.
-      </div>
-      <br>
+      <?php
+      if ($canDetectQuality) {
+          echo '<div class="info">imagick has no special options.</div>';
+      } else {
+          echo '<br>';
+          printAutoQualityOptionForConverterIf('imagick');
+      }
+      ?>      
       <!--
       <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
   -->
@@ -487,8 +522,7 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
           <input type="text" id="ewww_key_2" placeholder="In case the first one expires...">
       </div>
       <br>
-      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
-      <!-- <a href="javascript: tb_remove();">close</a> -->
+      <?php webp_express_printUpdateButtons() ?>
     </div>
 </div>
 <!--
@@ -638,33 +672,12 @@ echo '<ul id="converters" style="margin-top: -13px"></ul>';
           <input id="wpc_crypt_api_key_in_transfer" type="checkbox">
       </div>
 
-      <?php
-      if (!$canDetectQuality) { ?>
-          <div>
-              <label for="wpc_quality">
-                  Quality
-                  <?php echo helpIcon('If "Auto" is selected, the converted image will get same quality as source. Auto is recommended!'); ?>
-              </label>
-              <!--
-              Your server cannot detect quality of jpeg files. But you can have the cloud server do it for you
-              (provided that <i>it</i> can) -->
-              <select id="wpc_quality" onchange="wpcQualityChanged()">
-                  <option value="not_set">Use global settings</option>
-                  <option value="auto">Auto</option>
-              </select>
-          </div>
-          <div id="wpc_max_quality_div">
-              <label>
-                  Max quality
-                  <?php echo helpIcon('Enter number (0-100). Converted images will be encoded with same quality as the source image, but not more than this setting'); ?>
-              </label>
-              <input type="text" size=3 id="wpc_max_quality">
-          </div>
-    <?php } ?>
+      <?php printAutoQualityOptionForConverterIf('wpc'); ?>
+
       <p>
         <b>Psst. The IP of your website is: <?php echo $_SERVER['SERVER_ADDR']; ?>.</b>
     </p>
-      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update and save settings</button>
+    <?php webp_express_printUpdateButtons() ?>
     </div>
 </div>
 </td></tr>

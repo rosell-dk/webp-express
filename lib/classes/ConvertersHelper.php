@@ -17,7 +17,7 @@ class ConvertersHelper
         ]],
         ['converter' => 'imagick'],
         ['converter' => 'gmagick'],
-        ['converter' => 'wpc', 'options' => ['quality' => 'auto']],     // we should not set api-version default - it is handled in the javascript
+        ['converter' => 'wpc'],     // we should not set api-version default - it is handled in the javascript
         ['converter' => 'ewww'],
     ];
 

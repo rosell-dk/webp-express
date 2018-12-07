@@ -9,7 +9,7 @@ wp_enqueue_script('sortable');
 wp_register_script('daspopup', plugins_url('js/das-popup.js', __FILE__), [], '0.7.0-dev5');
 wp_enqueue_script('daspopup');
 
-wp_register_script('converters', plugins_url('js/converters.js', __FILE__), ['sortable','daspopup'], '0.8.0-dev2');
+wp_register_script('converters', plugins_url('js/converters.js', __FILE__), ['sortable','daspopup'], '0.8.0-dev6');
 wp_enqueue_script('converters');
 
 wp_register_script('whitelist', plugins_url('js/whitelist.js', __FILE__), ['daspopup'], '0.7.0-dev15');
@@ -29,7 +29,7 @@ if (function_exists('wp_add_inline_script')) {
 }
 
 // Register styles
-wp_register_style('webp-express-options-page-css', plugins_url('css/webp-express-options-page.css', __FILE__), null, '0.7.0-dev6');
+wp_register_style('webp-express-options-page-css', plugins_url('css/webp-express-options-page.css', __FILE__), null, '0.8.0-dev1');
 wp_enqueue_style('webp-express-options-page-css');
 
 wp_register_style('das-popup-css', plugins_url('css/das-popup.css', __FILE__), null, '0.7.0-dev5');

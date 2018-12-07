@@ -77,11 +77,12 @@
 #converters li a {
     cursor: pointer;
 }
+/*
 #converters li[data-id='gmagick'] a.configure-converter,
 #converters li[data-id='imagick'] a.configure-converter {
     visibility: hidden;
 }
-
+*/
 #converters li > * {
     vertical-align: middle;
 

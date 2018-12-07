@@ -106,6 +106,9 @@ class Config
             unset ($c['id']);
             unset($c['working']);
             unset($c['error']);
+            if (isset($c['options']['quality']) && ($c['options']['quality'] == 'inherit')) {
+                unset ($c['options']['quality']);
+            }
             if (!isset($c['options'])) {
                 $c = $c['converter'];
             }
