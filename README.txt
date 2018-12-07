@@ -3,7 +3,7 @@ Contributors: rosell.dk
 Donate link: https://www.patreon.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
-Tested up to: 4.9
+Tested up to: 5.0
 Stable tag: 0.7.2
 Requires PHP: 5.6
 License: GPLv3
@@ -100,6 +100,26 @@ Don't fret - you have options!
 - You can also setup the ewww conversion method. To use it, you need to purchase an api key. They do not charge credits for webp conversions, so all you ever have to pay is the one dollar start-up fee 🙂 (unless they change their pricing – I have no control over that). You can buy an api key here: https://ewww.io/plans/
 - If you are up to it, you can try to get one of the local converters working. Check out [this page](https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters) on the webp-convert wiki
 - Finally, if you have access to a server and are comfortable with installing projects with composer, you can install [webp-convert-cloud-service](https://github.com/rosell-dk/webp-convert-cloud-service). It's open source.
+
+= It doesn't work - Although test conversions work, it still serves jpeg images =
+Actually, you might be mistaking, so first, make sure that you didn't make the very common mistake of thinking that something with the URL *example.com/image.jpg* must be a jpeg image. The plugin serves webp images on same URL as the original (unconverted) images, so do not let appearances fool you! Confused? See next FAQ item.
+
+Assuming that you have inspected the *content type* header, and it doesn't show "image/webp", please make sure that:
+1) You tested with a browser that supports webp (such as Chrome)
+2) The image URL you are looking at are not pointing to another server (such as gravatar.com)
+
+Assuming that all above is in place, please look at the response headers to see if there is a *X-WebP-Convert-Status* header. If there isn't, well, then it seems that the problem is that the image request isn't handed over to WebP Express. Reasons for that can be:
+
+- You are on NGINX (or an Apache/Nginx combination). NGINX requires special attention, please look at that FAQ item
+- You are on WAMP. Please look at that FAQ item
+
+I shall write more on this FAQ item... Stay tuned.
+
+
+= How can a webp image be served on an URL ending with "jpg"? =
+Easy enough. Browsers looks at the *content type* header rather than the URL to determine what it is that it gets. So, although it can be confusing that the resource at *example.com/image.jpg* is a webp image, rest asure that the browsers are not confused. To determine if the plugin is working, you must therefore examine the *content type* response header rather than the URL. See the "How do I verify that the plugin is working?" Faq item.
+
+I am btw considering making an option to have the plugin redirect to the webp instead of serving immediately. That would remove the apparent mismatch between file extension and content type header. However, the cost of doing that will be an extra request for each image, which means extra time and worse performance. I believe you'd be ill advised to use that option, so I guess I will not implement it. But perhaps you have good reasons to use it? If you do, please let me know!
 
 = I am on NGINX / OpenResty =
 It is possible to make WebP Express work on NGINX, but it requieres manually inserting redirection rules in the NGINX configuration file (nginx.conf). For standard wordpress installations, the following rules should work:
