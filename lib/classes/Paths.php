@@ -117,9 +117,19 @@ class Paths
     // ------------ Upload Dir -------------
     public static function getUploadDirAbs()
     {
-        $upload_dir = wp_upload_dir();
+        $upload_dir = wp_upload_dir(null, false);
         return $upload_dir['basedir'];
     }
+
+    /*
+    public static function getUploadDirAbs()
+    {
+        if ( defined( 'UPLOADS' ) ) {
+            return ABSPATH . rtrim(UPLOADS, '/');
+        } else {
+            return self::getWPContentDirAbs() . '/uploads';
+        }
+    }*/
 
     public static function isUploadDirMovedOutOfWPContentDir()
     {
