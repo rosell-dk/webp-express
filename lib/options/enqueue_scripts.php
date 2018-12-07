@@ -29,7 +29,7 @@ if (function_exists('wp_add_inline_script')) {
 }
 
 // Register styles
-wp_register_style('webp-express-options-page-css', plugins_url('css/webp-express-options-page.css', __FILE__), null, '0.8.0-dev1');
+wp_register_style('webp-express-options-page-css', plugins_url('css/webp-express-options-page.css', __FILE__), null, '0.8.0-dev4');
 wp_enqueue_style('webp-express-options-page-css');
 
 wp_register_style('das-popup-css', plugins_url('css/das-popup.css', __FILE__), null, '0.7.0-dev5');
