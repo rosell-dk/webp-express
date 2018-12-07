@@ -43,10 +43,9 @@ function webpexpress_converterName($converterId) {
     return $converterId;
 }
 
-function printAutoQualityOptionForConverterIf($converterId) {
-    global $canDetectQuality;
+$canDetectQuality = TestRun::isLocalQualityDetectionWorking();
 
-    if (!$canDetectQuality) {
+function printAutoQualityOptionForConverter($converterId) {
 ?>
     <div>
         <label for="<?php echo $converterId; ?>_quality">
@@ -66,7 +65,6 @@ function printAutoQualityOptionForConverterIf($converterId) {
         <input type="text" size=3 id="<?php echo $converterId; ?>_max_quality">
     </div>
 <?php
-    }
 }
 //update_option('webp-express-migration-version', '1');
 
@@ -84,7 +82,6 @@ if ($testResult) {
     );
 }
 
-$canDetectQuality = TestRun::isLocalQualityDetectionWorking();
 
 include __DIR__ . "/page-messages.php";
 
@@ -409,277 +406,13 @@ function webp_express_printUpdateButtons() {
     //echo '<a href="javascript: tb_remove();">close</a>';
 }
 echo '<ul id="converters" style="margin-top: -13px"></ul>';
+
+include 'converter-options/cwebp.php';
+include 'converter-options/gd.php';
+include 'converter-options/imagick.php';
+include 'converter-options/ewww.php';
+include 'converter-options/wpc.php';
 ?>
-<div id="cwebp" style="display:none;">
-    <div class="cwebp converter-options">
-      <h3>cweb options</h3>
-      <div>
-          <label for="cwebp_use_nice">Use nice</label>
-          <input type="checkbox" id="cwebp_use_nice">
-          <br>Enabling this option saves system resources at the cost of slightly slower conversion
-      </div>
-      <div>
-          <label for="cwebp_try_common_system_paths">Try to execute cweb binary at common locations</label>
-          <input type="checkbox" id="cwebp_try_common_system_paths">
-          <br>If checked, we will look for binaries in common locations, such as <i>/usr/bin/cwebp</i>
-      </div>
-      <div>
-          <label for="cwebp_try_common_system_paths">Try precompiled cwebp</label>
-          <input type="checkbox" id="cwebp_try_supplied_binary">
-          <br>This plugin ships with precompiled cweb binaries for different platforms. If checked, and we have a precompiled binary for your OS, we will try to exectute it
-      </div>
-      <div>
-          <label for="cwebp_method">Method (0-6)</label>
-          <input type="text" size="2" id="cwebp_method">
-          <br>This parameter controls the trade off between encoding speed and the compressed file size and quality.
-          Possible values range from 0 to 6. 0 is fastest. 6 results in best quality.
-      </div>
-      <div>
-          <label for="cwebp_set_size">Set size option (and ignore quality option)</label>
-          <input type="checkbox" id="cwebp_set_size">
-          <br>This option activates the size option below.
-          <?php
-          if ($canDetectQuality) {
-              echo 'As you have quality detection working on your server, it is probably best to use that, rather ';
-              echo 'than the "size" option. Using the size option takes more ressources (it takes about 2.5 times ';
-              echo 'longer for cwebp to do a a conversion with the size option than the quality option). Long ';
-              echo 'story short, you should probably <i>not</i> activate the size option.';
-          } else {
-              echo 'As you do not have quality detection working on your server, it is probably a good ';
-              echo 'idea to use the size option to avoid making conversions with a higher quality setting ';
-              echo 'than the source image. ';
-              echo 'Beware, though, that cwebp takes about 2.5 times longer to do a a conversion with the size option set.';
-          }
-          ?>
-      </div>
-      <div>
-          <label for="cwebp_size_in_percentage">Size (in percentage of source)</label>
-          <input type="text" size="2" id="cwebp_size_in_percentage">
-          <br>Set the cwebp should aim for, in percentage of the original.
-          Usually cwebp can reduce to ~45% of original without loosing quality.
-      </div>
-      <div>
-          <label for="cwebp_command_line_options">Extra command line options</label><br>
-          <input type="text" size="40" id="cwebp_command_line_options" style="width:100%">
-          <br>This allows you to set any parameter available for cwebp in the same way as
-          you would do when executing <i>cwebp</i>. As a syntax example, you could ie. set it to
-          "-low_memory -af -f 50 -sharpness 0 -mt -crop 10 10 40 40" (do not include the quotes).
-          Read more about all the available parameters in
-          <a target="_blank" href="https://developers.google.com/speed/webp/docs/cwebp">the docs</a>
-      </div>
-      <br>
-      <?php webp_express_printUpdateButtons() ?>
-    </div>
-</div>
-<div id="gd" style="display:none;">
-    <div class="gd converter-options">
-      <h3>Gd options</h3>
-      <div>
-          <label for="gd_skip_pngs">Skip PNGs</label>
-          <input type="checkbox" id="gd_skip_pngs">
-          <br>Gd is not suited for converting PNGs into webp. &ndash;
-          The filesize is generally much larger than the original.
-          For this reason, the converter defaults to skip PNG's.
-      </div>
-      <br>
-      <?php webp_express_printUpdateButtons() ?>
-    </div>
-</div>
-<div id="imagick" style="display:none;">
-    <div class="imagick converter-options">
-      <h3>Imagick options</h3>
-      <?php
-      if ($canDetectQuality) {
-          echo '<div class="info">imagick has no special options.</div>';
-      } else {
-          echo '<br>';
-          printAutoQualityOptionForConverterIf('imagick');
-      }
-      ?>      
-      <!--
-      <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
-  -->
-      <!-- <a href="javascript: tb_remove();">close</a> -->
-    </div>
-</div>
-<div id="ewww" style="display:none;">
-    <div class="ewww converter-options">
-      <h3>Ewww</h3>
-      <p>
-        ewww is a cloud service for converting images.
-        To use it, you need to purchase a key <a target="_blank" href="https://ewww.io/plans/">here</a>.
-        They do not charge credits for webp conversions, so all you ever have to pay is the one dollar start-up fee :)
-      </p>
-      <h3>Options</h3>
-      <div>
-          <label for="ewww_key">Key</label>
-          <input type="text" id="ewww_key" placeholder="Your API key here">
-      </div>
-      <br>
-      <h4>Fallback (optional)</h4>
-      <div>
-          <label for="ewww_key_2">key</label>
-          <input type="text" id="ewww_key_2" placeholder="In case the first one expires...">
-      </div>
-      <br>
-      <?php webp_express_printUpdateButtons() ?>
-    </div>
-</div>
-<!--
-<div id="wpc_successfully_connected_popup" class="das-popup">
-    <h3>Your request has been approved</h3>
-    All you need now is to save settings (both places)
-    <button onclick="closeDasPopup()" class="button button-primary" type="button" style="position:absolute; bottom:20px">Close</button>
-</div>
-<div id="wpc_awaiting_approval_popup" class="das-popup">
-    <h3>Avaiting approval<span class="animated-dots">...</span></h3>
-    In the remote WebP Express settings, the screen should now show "Incoming request".
-    Click the "Grant access" button there, and then return here.
-</div>
-<div id="wpc_connect_popup" class="das-popup">
-    <h3>Request access to web service</h3>
-    <div style="font-size:90%">
-        Before requesting access, the website you want to request access to must be <i>listening</i>
-        for requests. If you control that website, open a new tab and do the following. Otherwise,
-        make sure the admin does the following:
-        <ol>
-            <li>Log in to the Wordpress site you want to connect to.</li>
-            <li>In WebP Express settings, make sure that "enable web service?" is checked.</li>
-            <li>Click "+ Authorize new website"</li>
-            <li>An URL will display, which you must copy to the field below:</li>
-        </ol>
-        Paste URL here:<br>
-        <input id="wpc_request_access_url" style="width:100%">
-    </div>
-    <div style="position:absolute; bottom:20px; line-height:28px">
-        <button onclick="wpcRequestAccess()" class="button button-primary" type="button">Request access</button>
-        &nbsp;or&nbsp;
-        <button onclick="wpcAddManually()" class="button button-secondary" type="button">Add manually</button>
-    </div>
-</div>
-<div id="wpc_properties_popup" class="das-popup">
-    <h3 class="hide-in-edit">Add connection to web service</h3>
-    <h3 class="hide-in-add">Edit connection to web service</h3>
-    <input type="hidden" id="wpc_i">
-    <div>
-        <label for="wpc_label">
-            Label
-            <?php echo helpIcon('The label is purely for your own reference'); ?>
-        </label>
-        <input id="wpc_label" type="text">
-    </div>
-    <div>
-        <label for="wpc_url">
-            URL
-            <?php echo helpIcon('The endpoint of the web service.'); ?>
-        </label>
-        <input id="wpc_url" type="text">
-    </div>
-    <div>
-        <label for="wpc_api_key">
-            Api key
-            <?php echo helpIcon('The API key is set up on the remote. Copy that.'); ?>
-        </label>
-        <input id="wpc_api_key" type="password" class="hide-in-edit">
-        <a href="javascript:wpcChangeApiKey()" class="hide-in-add" style="display:inline-block;line-height:34px">Change api key</a>
-    </div>
-    <div>
-        <label for="wpc_crypt_api_key_in_transfer">
-            Crypt api key in transfer?
-            <?php echo helpIcon('If checked, the api key will be crypted in requests. Crypting the api-key protects it from being stolen during transfer.'); ?>
-        </label>
-        <input id="wpc_crypt_api_key_in_transfer" type="checkbox">
-    </div>
-    <button id="wpc_properties_add_button" onclick="wpcAddEntry()" class="hide-in-edit button button-primary" type="button" style="position:absolute; bottom:20px">
-        Add
-    </button>
-    <button id="wpc_properties_update_button" onclick="wpcUpdateEntry()" class="hide-in-add button button-primary" type="button" style="position:absolute; bottom:20px">
-        Update
-    </button>
-</div>
--->
-<div id="wpc" style="display:none;">
-    <div class="wpc converter-options">
-      <h3>Remote WebP Express</h3>
-      Use a WebP Express installed on another Wordpress site to convert. Remote WepP Express is based
-      on <a href="https://github.com/rosell-dk/webp-convert-cloud-service" target="blank">WPC</a>,
-      and you can use it to connect to WPC as well.
-
-      <?php
-      if ((!extension_loaded('curl')) || (!function_exists('curl_init'))) {
-          echo '<p><b style="color:red">Your server does not have curl installed. Curl is required!</b></p>';
-      }
-      ?>
-
-      <h3>Options</h3>
-      <!--
-        <div>
-            <label for="wpc_web_services">Web Services</label>
-            <div style="display:inline-block">
-                <div id="wpc_web_services_div"></div>
-                <button type="button" id="wpc_web_services_request" onclick="openWpcConnectPopup()" class="button button-secondary" >Add web service</button>
-            </div>
-        </div>
-    -->
-
-    <div id="wpc_api_version_div">
-        <label for="wpc_api_version">
-            Api version
-            <?php echo helpIcon('Select 1, if connecting to a remote webp-express. Api 0 was never used with this plugin, and should only be used to connect to webp-convert-cloud-service v.0.1 instances'); ?>
-        </label>
-        <select id="wpc_api_version" onchange="wpcApiVersionChanged()">
-            <option value="0">0</option>
-            <option value="1">1</option>
-        </select>
-    </div>
-
-      <div>
-          <label for="wpc_url">
-              URL
-              <?php echo helpIcon('The endpoint of the web service. Copy it from the remote setup.'); ?>
-          </label>
-          <input type="text" id="wpc_url" placeholder="Url to your Remote WebP Express">
-      </div>
-
-      <div id="wpc_secret_div">
-          <label for="wpc_secret">
-              Secret
-              <?php echo helpIcon('Must match the one set up in webp-convert-cloud-service v0.1'); ?>
-          </label>
-          <input type="text" id="wpc_secret" placeholder="">
-      </div>
-
-      <div id="wpc_api_key_div">
-          <label id="wpc_api_key_label_1" for="wpc_api_key">
-              Secret
-              <?php echo helpIcon('The secret set up on the wpc server. Copy that.'); ?>
-          </label>
-          <label id="wpc_api_key_label_2" for="wpc_api_key">
-              Api key
-              <?php echo helpIcon('The API key is set up on the remote. Copy that.'); ?>
-          </label>
-          <input id="wpc_new_api_key" type="password">
-          <a id="wpc_change_api_key" href="javascript:wpcChangeApiKey()">
-              Click to change
-          </a>
-      </div>
-
-      <div id="wpc_crypt_api_key_in_transfer_div">
-          <label for="wpc_crypt_api_key_in_transfer">
-              Crypt api key in transfer?
-              <?php echo helpIcon('If checked, the api key will be crypted in requests. Crypting the api-key protects it from being stolen during transfer.'); ?>
-          </label>
-          <input id="wpc_crypt_api_key_in_transfer" type="checkbox">
-      </div>
-
-      <?php printAutoQualityOptionForConverterIf('wpc'); ?>
-
-      <p>
-        <b>Psst. The IP of your website is: <?php echo $_SERVER['SERVER_ADDR']; ?>.</b>
-    </p>
-    <?php webp_express_printUpdateButtons() ?>
-    </div>
-</div>
 </td></tr>
 <?php
 

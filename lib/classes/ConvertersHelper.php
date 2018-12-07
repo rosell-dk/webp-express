@@ -19,6 +19,7 @@ class ConvertersHelper
         ['converter' => 'gmagick'],
         ['converter' => 'wpc'],     // we should not set api-version default - it is handled in the javascript
         ['converter' => 'ewww'],
+        ['converter' => 'imagickbinary'],
     ];
 
     public static function getDefaultConverterNames()
