@@ -9,6 +9,8 @@ if (WEBPEXPRESS_MIGRATION_VERSION != get_option('webp-express-migration-version'
     include __DIR__ . '/migrate/migrate.php';
 }
 
+// include __DIR__ . '/migrate/migrate3.php';   // test-running a migration
+
 // uncomment next line to debug an error during activation
 //include __DIR__ . "/debug.php";
 
