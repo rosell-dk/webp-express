@@ -160,4 +160,27 @@ class FileHelper
         }
         return $return;
     }
+
+
+    /* Remove dir and files in it recursively.
+       No warnings
+       returns $success
+    */
+    public static function rrmdir($dir) {
+        if (@is_dir($dir)) {
+            $objects = @scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (@is_dir($dir . "/" . $object))
+                        self::rrmdir($dir . "/" . $object);
+                    else
+                        @unlink($dir . "/" . $object);
+                }
+            }
+            return @rmdir($dir);
+        } else {
+            return false;
+        }
+    }
+
 }
