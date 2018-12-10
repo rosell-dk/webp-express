@@ -47,6 +47,7 @@ register_uninstall_hook(WEBPEXPRESS_PLUGIN, 'webp_express_uninstall');
 add_filter('plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), function ( $links ) {
     $mylinks = array(
         '<a href="' . admin_url( 'options-general.php?page=webp_express_settings_page' ) . '">Settings</a>',
+        '<a href="https://ko-fi.com/rosell" target="_blank">Buy the maintainer a cup of coffee</a>',
     );
     return array_merge($links, $mylinks);
 });
