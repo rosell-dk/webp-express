@@ -162,7 +162,7 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell)
 = 0.8.0 =
 * New conversion method, which calls imagick binary directly. This will make WebP express work out of the box on more systems
 * Made sure not to trigger LFI warning i Wordfence (to activate, click the force .htaccess button)
-* Imagick can now be configured to set quality to auto (but only when the "auto" option isn't generally available)
+* Imagick can now be configured to set quality to auto on systems where the auto option isn't generally available
 * Added Last-Modified header to images. This makes image caching work better
 * On some systems, converted files where stored in ie *..doc-rootwp-content..* rather than *..doc-root/wp-content..*. This is fixed, a clean-up script corrects the file structure upon upgrade.
 
