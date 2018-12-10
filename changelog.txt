@@ -1,3 +1,12 @@
+= 0.8.0 =
+* New conversion method, which calls imagick binary directly. This will make WebP express work out of the box on more systems
+* Made sure not to trigger LFI warning i Wordfence (to activate, click the force .htaccess button)
+* Imagick can now be configured to set quality to auto (but only when the "auto" option isn't generally available)
+* Added Last-Modified header to images. This makes image caching work better
+* On some systems, converted files where stored in ie *..doc-rootwp-content..* rather than *..doc-root/wp-content..*. This is fixed, a clean-up script corrects the file structure upon upgrade.
+
+For more info, see the closed issues on the 0.8.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.8.0
+
 = 0.7.2 =
 Fixed a critical bug which generated an error message which caused corrupt images. It was not the bug itself, but the error message it generated, that caused the images to be corrupted. It only happened when debugging was enabled in php.ini
 

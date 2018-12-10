@@ -137,10 +137,14 @@ Chances are that the default setting of your CDN is not to forward any headers t
 
 The plugin takes care of setting the "Vary" HTTP header to "Accept" when routing WebP images. When the CDN sees this, it knows that the response varies, depending on the "Accept" header. The CDN is thus instructed not to cache the response on URL only, but also on the "Accept" header. This means that it will store an image for every accept header it meets. Luckily, there are (not that many variants for images)[https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation/List_of_default_Accept_values#Values_for_an_image], so it is not an issue.
 
-## Changes in 0.7.0
-This version added option to provide conversion service to other sites!
+## Changes in 0.8.0
+- New conversion method, which calls imagick binary directly. This will make WebP express work out of the box on more systems
+- Made sure not to trigger LFI warning i Wordfence (to activate, click the force .htaccess button)
+- Imagick can now be configured to set quality to auto (but only when the "auto" option isn't generally available)
+- Added Last-Modified header to images. This makes image caching work better
+- On some systems, converted files where stored in ie *..doc-rootwp-content..* rather than *..doc-root/wp-content..*. This is fixed, a clean-up script corrects the file structure upon upgrade.
 
-For more info, see the closed issues on the 0.7.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.7.0
+For more info, see the closed issues on the 0.8.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.8.0
 
 ## Supporting WebP Express
 Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue putting effort into this plugin: [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell).

@@ -43,7 +43,12 @@ if ($options['forward-query-string']) {
         $options['reconvert'] = true;
     }
 }
-$source = $_GET['source'];
+
+if (isset($_GET['source'])) {
+    $source = $_GET['source'];
+} elseif (isset($_GET['xsource'])) {
+    $source = substr($_GET['xsource'], 1);    
+}
 
 // Calculate destination
 $applicationRoot = rtrim($_SERVER["DOCUMENT_ROOT"], '/') . '/';

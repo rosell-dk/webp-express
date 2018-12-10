@@ -65,7 +65,7 @@ class HTAccess
         }
         $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " .
             "/" . Paths::getWodUrlPath() .
-            "?source=%{SCRIPT_FILENAME}" .
+            "?xsource=x%{SCRIPT_FILENAME}" .
             "&wp-content=" . Paths::getWPContentDirRel() .
             ($config['forward-query-string'] ? '&%1' : '') .
             " [NC,L]\n";
