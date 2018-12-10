@@ -71,13 +71,13 @@ function webpexpress_migrate3() {
 
     if ($atLeastOneFileMustBeMoved) {
         if ($movedAtLeastOneFile && !$failedMovingAtLeastOneFile && !$failedRemovingAtLeastOneDir) {
-            Messenger::printMessage(
+            Messenger::addMessage(
                 'info',
                 'Successfully fixed cache directory structure. Dont know what its all about? Never mind, all is okay.'
             );
         } else {
             if ($failedRemovingAtLeastOneDir) {
-                Messenger::printMessage(
+                Messenger::addMessage(
                     'warning',
                     'A minor bug caused the cache directory structure to be wrong on your system ' .
                     '(<a href="https://github.com/rosell-dk/webp-express/issues/96" target="_blank">issue #96</a>). ' .
@@ -88,7 +88,7 @@ function webpexpress_migrate3() {
         }
     }
 
-    Messenger::printMessage(
+    Messenger::addMessage(
         'info',
         '<i>New in WebP Express 0.8.0:</i>' .
         '<ul style="list-style-type:disc;margin-left:20px">' .
