@@ -55,7 +55,8 @@ $docRoot = rtrim($_SERVER["DOCUMENT_ROOT"], '/');
 $imageRoot = $contentDirAbs . '/webp-images';
 
 // Check if source is residing inside document root.
-if (substr($source, 0, strlen($docRoot)) === $docRoot) {
+// (it is, if path starts with document root + '/')
+if (substr($source, 0, strlen($docRoot) + 1) === $docRoot . '/') {
 
     // We store relative to document root.
     // "Eat" the left part off the source parameter which contains the document root.
