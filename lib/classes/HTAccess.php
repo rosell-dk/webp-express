@@ -60,6 +60,7 @@ class HTAccess
 
         $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
         $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
+        $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
         if ($config['forward-query-string']) {
             $rules .= "  RewriteCond %{QUERY_STRING} (.*)\n";
         }
