@@ -316,7 +316,8 @@ APACHE
             ],
             'filePaths' => [
                 'webpExpressRoot' => self::getWebPExpressPluginDirAbs(),
-                'destinationRoot' => self::getCacheDirAbs()
+                'destinationRoot' => self::getCacheDirAbs(),
+                'configRelToDocRoot' => self::getConfigDirRel()
             ]
         ];
     }
