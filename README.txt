@@ -1,6 +1,6 @@
 === WebP Express ===
 Contributors: rosell.dk
-Donate link: https://www.patreon.com/rosell
+Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.0
@@ -72,7 +72,9 @@ The plugin has not been tested in multisite configurations. It's on the roadmap.
 == Supporting WebP Express ==
 Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue wasting time on this plugin:
 
-*[Become a backer or sponsor on Patreon](https://www.patreon.com/rosell)*.
+* [Buy me a Coffee](https://ko-fi.com/rosell)
+* [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell)
+
 
 == Frequently Asked Questions ==
 
@@ -148,9 +150,8 @@ The plugin takes care of setting the "Vary" HTTP header to "Accept" when routing
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation/List_of_default_Accept_values#Values_for_an_image
 - so it is not an issue.
 
-= How do I donate? =
-Putting this question in the "frequently" asked questions section is of course some mixture of humour, sarcasm and wishful thinking. In case there really is someone out there wanting to donate, you can simply write to me, and we can arrange. My contact information is available here https://www.bitwise-it.dk/contact. I have paypal, mobilepay and of course an ordinary bank account.
-
+= How do I buy you a cup of coffee? =
+Easy enough! - [Go here!](https://ko-fi.com/rosell)
 
 == Screenshots ==
 

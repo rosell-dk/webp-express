@@ -147,4 +147,7 @@ The plugin takes care of setting the "Vary" HTTP header to "Accept" when routing
 For more info, see the closed issues on the 0.8.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.8.0
 
 ## Supporting WebP Express
-Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue putting effort into this plugin: [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell).
+Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue putting effort into this plugin:
+
+- [Buy me a Coffee](https://ko-fi.com/rosell)
+- [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell).
