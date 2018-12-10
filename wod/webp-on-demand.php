@@ -47,17 +47,20 @@ if ($options['forward-query-string']) {
 if (isset($_GET['source'])) {
     $source = $_GET['source'];
 } elseif (isset($_GET['xsource'])) {
-    $source = substr($_GET['xsource'], 1);    
+    $source = substr($_GET['xsource'], 1);
 }
 
 // Calculate destination
-$applicationRoot = rtrim($_SERVER["DOCUMENT_ROOT"], '/') . '/';
+$docRoot = rtrim($_SERVER["DOCUMENT_ROOT"], '/');
 $imageRoot = $contentDirAbs . '/webp-images';
 
-if (substr($source, 0, strlen($applicationRoot)) === $applicationRoot) {
-    // Source file is residing inside document root.
-    // We can store relative to that.
-    $sourceRel = substr($source, strlen($applicationRoot));
+// Check if source is residing inside document root.
+if (substr($source, 0, strlen($docRoot)) === $docRoot) {
+
+    // We store relative to document root.
+    // "Eat" the left part off the source parameter which contains the document root.
+    // and also eat the slash (+1)
+    $sourceRel = substr($source, strlen($docRoot) + 1);
     $destination = $imageRoot . '/doc-root/' . $sourceRel . '.webp';
 } else {
     // Source file is residing outside document root.
