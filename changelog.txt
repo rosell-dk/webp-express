@@ -1,4 +1,9 @@
+= 0.8.1 =
+* (released 11 dec 2018) *
+* Fixed javascript bug
+
 = 0.8.0 =
+* (released 11 dec 2018) *
 * New conversion method, which calls imagick binary directly. This will make WebP express work out of the box on more systems
 * Made sure not to trigger LFI warning i Wordfence (to activate, click the force .htaccess button)
 * Imagick can now be configured to set quality to auto on systems where the auto option isn't generally available
