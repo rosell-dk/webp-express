@@ -143,6 +143,7 @@ The plugin takes care of setting the "Vary" HTTP header to "Accept" when routing
 - Imagick can now be configured to set quality to auto (but only when the "auto" option isn't generally available)
 - Added Last-Modified header to images. This makes image caching work better
 - On some systems, converted files where stored in ie *..doc-rootwp-content..* rather than *..doc-root/wp-content..*. This is fixed, a clean-up script corrects the file structure upon upgrade.
+- Added condition in .htaccess that checks that source file exists before handing over to converter
 
 For more info, see the closed issues on the 0.8.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.8.0
 
