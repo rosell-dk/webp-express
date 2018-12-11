@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.0
-Stable tag: 0.7.2
+Stable tag: 0.8.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -158,6 +158,9 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell)
 1. WebP Express settings
 
 == Changelog ==
+
+= 0.8.1 =
+* Fixed javascript bug
 
 = 0.8.0 =
 * New conversion method, which calls imagick binary directly. This will make WebP express work out of the box on more systems
