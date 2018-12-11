@@ -85,7 +85,7 @@ function getConverterOptionsFromQueryString($converter)
     // Set options
     $options = [];
     foreach ($availOptions as $optionName => $optionType) {
-        //echo $optionName . '<br>';
+        //echo $optionName . ':' . $optionType . '<br>';
         switch ($optionType) {
             case 'string':
                 if (isset($_GET[$optionName])) {
@@ -106,34 +106,39 @@ function getConverterOptionsFromQueryString($converter)
     }
 
     if ($converter == 'wpc') {
-        // api-key aren't passed in query string - for security reasons.
-        // If wpc converter is reqested, load it from the options.
 
-        //echo decodePathInQS();
-        $configFilename = $_SERVER['DOCUMENT_ROOT'] . '/' . decodePathInQS($_GET['configDirRel']) . '/config.json';
+        // Handle api key.
+        // If it has been modified on the options page, it is passed as 'new-api-key'.
+        // If it has not been modified, it is not passed at all!
+        // - in that case, we must load it from the config file.
 
-        if (file_exists($configFilename)) {
-            echo '<p><i>Note: To protect the api-key, it was fetched directly from <i>config.json</i> rather than passed in the query string. For the test to work, make sure that the api-key has been saved</i></p>';
+        if (isset($_GET['new-api-key'])) {
+            $options['api-key'] = $_GET['new-api-key'];
+        } elseif (isset($_GET['configDirRel'])) {
 
-            $handle = @fopen($configFilename, "r");
-            $json = fread($handle, filesize($configFilename));
-            fclose($handle);
+            // Fetch api-key from configuration file.
+            $configFilename = $_SERVER['DOCUMENT_ROOT'] . '/' . decodePathInQS($_GET['configDirRel']) . '/config.json';
 
-            $config = json_decode($json, true);
-            if ($config) {
-                foreach ($config['converters'] as $converter) {
-                    if ($converter['converter'] == 'wpc') {
-                        //print_r($converter);
-                        if (isset($converter['options']['api-key'])) {
-                            $options['api-key'] = $converter['options']['api-key'];
-                            //echo 'api-key:' . $converter['options']['api-key'] . '<br>';
-                            //print_r($options);
+            if (file_exists($configFilename)) {
+
+                $handle = @fopen($configFilename, "r");
+                $json = fread($handle, filesize($configFilename));
+                fclose($handle);
+
+                $config = json_decode($json, true);
+                if ($config) {
+                    foreach ($config['converters'] as $converter) {
+                        if ($converter['converter'] == 'wpc') {
+                            //print_r($converter);
+                            if (isset($converter['options']['api-key'])) {
+                                $options['api-key'] = $converter['options']['api-key'];
+                                //echo 'api-key:' . $converter['options']['api-key'] . '<br>';
+                                //print_r($options);
+                            }
                         }
                     }
                 }
             }
-        } else {
-            echo '<p style="color:red">No configuration file found. You need to save option before testing this converter, because the api-key is fetched from config rather than passed in the query string</p>';
         }
         if (!isset($options['api-key'])) {
             echo '<p style="color:red">Warning: No Api key is set</p>';
