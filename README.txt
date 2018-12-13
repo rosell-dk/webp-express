@@ -126,16 +126,18 @@ I am btw considering making an option to have the plugin redirect to the webp in
 = I am on NGINX / OpenResty =
 It is possible to make WebP Express work on NGINX, but it requieres manually inserting redirection rules in the NGINX configuration file (nginx.conf). For standard wordpress installations, the following rules should work:
 
+*Note that the rules stated here previously had a bug*: It had ” rather than ". The slightly slanted quotation mark does not work. Also, it used $request_uri, which contains the querystring, which resulted in errors when querystrings were supplied (ie ?debug)
+
 ```
-if ($http_accept ~* “webp”){
-rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?source=$document_root$request_uri&wp-content=wp-content&%1 break;
+if ($http_accept ~* "webp"){
+  rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content&%1 break;
 }
 ```
-However, the location of the wp-content folder and the plugins folder can be customized with Wordpress. In that case, the above rule must be changed accordingly.
 
-I'd like to make the plugin print the NGINX rules that needs to be inserted, when running on NGINX / NGINX based setup (ie [OpenResty](https://openresty.org/en/)). Please help make that possible by [contributing](https://www.patreon.com/rosell).
+The `wp-content` argument must point to the wp-content folder (relative to document root). In most installations, it is 'wp-content'.
 
 Discussion on this topic here: https://wordpress.org/support/topic/nginx-rewrite-rules-4/
+
 
 = I am on a WAMP stack =
 It has been reported that WebP Express *almost* works on WAMP stack. I'd love to debug this, but do not own a Windows server or access to one... Can you help?
