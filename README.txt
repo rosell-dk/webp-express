@@ -128,15 +128,23 @@ It is possible to make WebP Express work on NGINX, but it requieres manually ins
 
 *Note that the rules stated here previously had a bug*: It had ” rather than ". The slightly slanted quotation mark does not work. Also, it used $request_uri, which contains the querystring, which resulted in errors when querystrings were supplied (ie ?debug)
 
-```
+For 0.8.0:
+`
 if ($http_accept ~* "webp"){
   rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content break;
 }
-```
+`
+
+For 0.7.0:
+`
+if ($http_accept ~* "webp"){
+  rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?source=$request_filename&wp-content=wp-content break;
+}
+`
 
 The `wp-content` argument must point to the wp-content folder (relative to document root). In most installations, it is 'wp-content'.
 
-Discussion on this topic here: https://wordpress.org/support/topic/nginx-rewrite-rules-4/
+Discussion on this topic [here](https://wordpress.org/support/topic/nginx-rewrite-rules-4/)
 
 
 = I am on a WAMP stack =
