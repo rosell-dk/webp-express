@@ -134,6 +134,7 @@ if ($http_accept ~* "webp"){
   rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content break;
 }
 `
+*Beware:* If you copy the code above, you might get an html-encoded ampersand before "wp-content"
 
 For 0.7.0:
 `
@@ -141,6 +142,8 @@ if ($http_accept ~* "webp"){
   rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?source=$request_filename&wp-content=wp-content break;
 }
 `
+*Beware:* If you copy the code above, you might get an html-encoded ampersand before "wp-content"
+
 
 The `wp-content` argument must point to the wp-content folder (relative to document root). In most installations, it is 'wp-content'.
 
