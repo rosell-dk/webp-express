@@ -34,6 +34,7 @@ class HTAccess
         if ($imageTypes == 0) {
             return '# WebP Express disabled (no image types have been choosen to be converted)';
         }
+
         /* Build rules */
         $rules = '';
 
@@ -46,6 +47,8 @@ class HTAccess
         "  RewriteEngine On\n\n";
 
         $pathToExisting = Paths::getPathToExisting();
+
+        $passSourceInQS = (isset($config['pass-source-in-query-string']) ? $config['pass-source-in-query-string'] : true);
 
         /*
         // TODO: handle when wp-content is outside document root.
@@ -66,8 +69,8 @@ class HTAccess
         }
         $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " .
             "/" . Paths::getWodUrlPath() .
-            "?xsource=x%{SCRIPT_FILENAME}" .
-            "&wp-content=" . Paths::getWPContentDirRel() .
+            ($passSourceInQS ? "?xsource=x%{SCRIPT_FILENAME}&" : "?") .
+            "wp-content=" . Paths::getWPContentDirRel() .
             ($config['forward-query-string'] ? '&%1' : '') .
             " [NC,L]\n";
 

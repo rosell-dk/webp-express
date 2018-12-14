@@ -96,5 +96,5 @@ if ($options['forward-query-string']) {
     }
 }
 
-//echo '<pre>' . print_r($options, true) . '</pre>'; exit;
+//echo "<pre>source: $source \ndestination: $destination \n\noptions:" . print_r($options, true) . '</pre>'; exit;
 WebPConvert::convertAndServe($source, $destination, $options);

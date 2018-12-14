@@ -106,6 +106,7 @@ class Config
             unset ($c['id']);
             unset($c['working']);
             unset($c['error']);
+
             if (isset($c['options']['quality']) && ($c['options']['quality'] == 'inherit')) {
                 unset ($c['options']['quality']);
             }
@@ -148,6 +149,9 @@ class Config
         unset($options['image-types']);
         unset($options['cache-control']);
         unset($options['cache-control-custom']);
+        //unset($options['forward-query-string']);  // It is used in webp-on-demand.php, so do not unset!
+        unset($options['pass-source-in-query-string']);
+        unset($options['redirect-to-existing-in-htaccess']);
 
         return $options;
     }
