@@ -7,6 +7,8 @@
 require '../vendor/rosell-dk/webp-convert/build/webp-on-demand-1.inc';
 //require '../vendor/autoload.php';
 
+//print_r($_GET); exit;
+
 use \WebPConvert\WebPConvert;
 
 $docRoot = rtrim($_SERVER["DOCUMENT_ROOT"], '/');
