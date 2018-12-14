@@ -139,9 +139,15 @@ class HTAccess
             }
             if (!isset($oldConfig[$prop])) {
                 if ($prop == 'pass-source-in-query-string') {
+                    if (!isset($newConfig[$prop])) {
+                        return true;
+                    }
                     continue;
                 }
                 if ($prop == 'redirect-to-existing-in-htaccess') {
+                    if (isset($newConfig[$prop])) {
+                        return true;
+                    }
                     continue;
                 }
                 return true;
