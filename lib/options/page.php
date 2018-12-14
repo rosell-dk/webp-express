@@ -342,6 +342,22 @@ echo '</th><td>';
 echo '<input type="text" size=3 id="quality_specific" name="quality-specific" value="' . $qualitySpecific . '">';
 echo '</td></tr>';
 
+// Metadata
+// --------------------
+//$maxQuality = get_option('webp_express_max_quality');
+$metadata = $config['metadata'];
+
+echo '<tr><th scope="row">Metadata';
+echo helpIcon('Decide what to do with image metadata, such as Exif. Note that this setting is not supported by the "Gd" conversion method, as it is not possible to copy the metadata with the Gd extension. Imagickbinary also currently lacks support');
+echo '</th><td>';
+
+echo '<select name="metadata">';
+echo '<option value="none"' . ($metadata == 'none' ? ' selected' : '') . '>No metadata in webp</option>';
+echo '<option value="all"' . ($metadata == 'all' ? ' selected' : '') . '>Copy all metadata to webp</option>';
+echo '</select>';
+echo '</td></tr>';
+//        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
+
 // Converters
 // --------------------
 
@@ -451,21 +467,6 @@ echo '<input type="text" id="cache_control_custom" name="cache-control-custom" v
 echo '</td></tr>';
 
 
-// Metadata
-// --------------------
-//$maxQuality = get_option('webp_express_max_quality');
-$metadata = $config['metadata'];
-
-echo '<tr><th scope="row">Metadata';
-echo helpIcon('Decide what to do with image metadata, such as Exif. Note that this setting is not supported by the "Gd" conversion method, as it is not possible to copy the metadata with the Gd extension');
-echo '</th><td>';
-
-echo '<select name="metadata">';
-echo '<option value="none"' . ($metadata == 'none' ? ' selected' : '') . '>No metadata in webp</option>';
-echo '<option value="all"' . ($metadata == 'all' ? ' selected' : '') . '>Copy all metadata to webp</option>';
-echo '</select>';
-echo '</td></tr>';
-//        echo '<tr><td colspan=2><p>Converted jpeg images will get same quality as original, but not more than this setting. Something between 70-85 is recommended for most websites.</p></td></tr>';
 
 // method
 //echo '<p>When higher values are used, the encoder will spend more time inspecting additional encoding possibilities and decide on the quality gain. Supported by cwebp, wpc and imagick</p>';
