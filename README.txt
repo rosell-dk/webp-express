@@ -154,7 +154,11 @@ Discussion on this topic [here](https://wordpress.org/support/topic/nginx-rewrit
 It has been reported that WebP Express *almost* works on WAMP stack. I'd love to debug this, but do not own a Windows server or access to one... Can you help?
 
 = Why do I not see the option to set WebP quality to auto? =
-The option will only display, if your system is able to detect jpeg qualities. To make your server capable to do that, install *Imagick* or *Gmagick*
+The option will only display, if your system is able to detect jpeg qualities. To make your server capable to do that, install *Imagick extension* (PECL >= 2.2.2) or enable exec() calls and install either *Imagick* or *Gmagick*.
+
+If you have the *Imagick*, the *Imagick binary* or the *Remote WebP Express* conversion method working, but don't have the global "auto" option, you will have the auto option available in options of the individual converter.
+
+Note: If you experience that the general auto option doesn't show, even though the above-mentioned requirements should be in order, check out [this support-thread](https://wordpress.org/support/topic/still-no-auto-option/).
 
 = How do I make this work with a CDN? =
 Chances are that the default setting of your CDN is not to forward any headers to your origin server. But the plugin needs the "Accept" header, because this is where the information is whether the browser accepts webp images or not. You will therefore have to make sure to configure your CDN to forward the "Accept" header.
@@ -162,6 +166,23 @@ Chances are that the default setting of your CDN is not to forward any headers t
 The plugin takes care of setting the "Vary" HTTP header to "Accept" when routing WebP images. When the CDN sees this, it knows that the response varies, depending on the "Accept" header. The CDN is thus instructed not to cache the response on URL only, but also on the "Accept" header. This means that it will store an image for every accept header it meets. Luckily, there are not that many variants for images:
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation/List_of_default_Accept_values#Values_for_an_image
 - so it is not an issue.
+
+= Does it work with lazy loaded images? =
+No plugins/frameworks has yet been discovered, which does not work with *WebP Express*.
+
+The most common way of lazy-loading is by setting a *data-src* attribute on the image and let javascript use that value for setten the *src* attribute. That method works, as the image request, seen from the server side, is indistinguishable from any other image request. It could however be that some obscure lazy load implementation would load the image with an XHR request. In that case, the *Accept* header will not contain 'image/webp', but '*/*', and a jpeg will be served, even though the browser supports webp.
+
+The following lazy load plugins/frameworks has been tested and works with *WebP Express*:
+- [BJ Lazy Load](https://da.wordpress.org/plugins/bj-lazy-load/)
+- [Owl Carousel 2](https://owlcarousel2.github.io/OwlCarousel2/)
+
+= When is feature X coming? =
+No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
+
+Here are my loose plans ahead: The 0.9 release will add redirect rule in .htaccess (optionally), perhaps also include configurable destination. 0.10 will probably be some diagnose tool – this should release some time spend in the forum. 0.11 could be focused on PNG. 0.12 might be displaying rules for NGINX. 0.13 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.14 might be multisite support. 0.15 might be a file manager-like interface for inspecting generated webp files. 0.16 might be WAMP support. This is all guessing. I’m only planning one milestone at the time. You can follow the issue queue here: https://github.com/rosell-dk/webp-express/issues
+
+If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
+
 
 = How do I buy you a cup of coffee? =
 Easy enough! - [Go here!](https://ko-fi.com/rosell)
