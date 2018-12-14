@@ -122,10 +122,27 @@ class HTAccess
             return true;
         }
 
-        $propsToCompare = ['forward-query-string', 'image-types'];
+        $propsToCompare = [
+            'forward-query-string',
+            'image-types',
+            'pass-source-in-query-string',
+            'redirect-to-existing-in-htaccess',
+        ];
 
 
         foreach ($propsToCompare as $prop) {
+            if (!isset($newConfig[$prop])) {
+                continue;
+            }
+            if (!isset($oldConfig[$prop])) {
+                if ($prop == 'pass-source-in-query-string') {
+                    continue;
+                }
+                if ($prop == 'redirect-to-existing-in-htaccess') {
+                    continue;
+                }
+                return true;
+            }
             if ($newConfig[$prop] != $oldConfig[$prop]) {
                 return true;
             }

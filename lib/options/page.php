@@ -103,6 +103,8 @@ $defaultConfig = [
     'max-quality' => 80,
     'quality-specific' => 70,
     'metadata' => 'none',
+    'pass-source-in-query-string' => true,
+    'redirect-to-existing-in-htaccess' => false,
     'web-service' => [
         'enabled' => false,
         'whitelist' => [
@@ -490,6 +492,23 @@ echo '</td></tr>';
 
 //echo '</tbody></table>';
 
+// Redirect to existing with .htaccess
+// --------------------------------
+echo '<tr><th scope="row">Redirect to existing with .htaccess';
+echo helpIcon('Experimental. This will add rules in the .htaccess that redirects directly to existing converted files. If you do not activate this setting, it will be the PHP script that handles the redirection to existing webp files. Best performance is achieved by redirecting in .htaccess, however the feature is new and has not been tested widely. Please try it out, and report any problems in the forum, thanks :)');
+echo '</th><td>';
+echo '<input type="checkbox" id="redirect_to_existing_in_htaccess" name="redirect-to-existing-in-htaccess" value="true" ' . ($config['redirect-to-existing-in-htaccess'] ? 'checked="checked"' : '') . '">';
+echo '</td></tr>';
+
+
+// Pass source path in Query String
+// --------------------------------
+echo '<tr><th scope="row">Pass source in Query String';
+echo helpIcon('Experimental. In v0.8 and below, the .htaccess always passed the filename of the image to the script through the query string. It however seems that the PHP can determine the original file name in a server variable, and therefore does not need it in the query string. Removing it has the benefit of reducing risk of firewalls blocking the request. This option will probably go away in the next release, when it is confirmed that having this option unchecked works across the board. So you better test if it works now, thanks!');
+echo '</th><td>';
+echo '<input type="checkbox" id="pass_source_in_query_string" name="pass-source-in-query-string" value="true" ' . ($config['pass-source-in-query-string'] ? 'checked="checked"' : '') . '">';
+echo '</td></tr>';
+
 
 // Web Service
 // --------------------
@@ -505,31 +524,6 @@ echo "<input type='text' name='whitelist' id='whitelist' value='' style='visibil
 
 ?>
 <div id="whitelist_div"></div>
-<!--
-<div id="whitelist_listen_popup" class="das-popup">
-    <h3>Listening for a request<span class="animated-dots">...</span></h3>
-    <div style="font-size:90%">
-        Send the instructions below to the one that controls the website that you want to grant access.
-        If you control that website, simply open up a new tab and perform the following:
-        <ol>
-            <li>Log in to the website you want to use the web service</li>
-            <li>In WebP Express settings, find the <i>Remote WebP Express</i> conversion method and click <i>configure</i></li>
-            <li>Click "Make request"</li>
-            <li>Enter this url: <b><?php echo Paths::getWebServiceUrl(); ?></b></li>
-        </ol>
-        This popup will close once the above is completed<br><br>
-    </div>
-    <div style="display: inline-block;vertical-align:middle; line-height:27px;">
-        <button onclick="whitelistCancelListening()" class="button button-secondary" type="button">
-            Give up
-        </button>
-        or
-        <button onclick="whitelistAddManually()" class="button button-secondary" type="button">
-            Add manually
-        </button>
-    </div>
-</div>
--->
 <div id="whitelist_properties_popup" class="das-popup">
     <h3 class="hide-in-edit">Authorize website</h3>
     <h3 class="hide-in-add">Edit authorized website</h3>
