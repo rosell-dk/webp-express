@@ -18,12 +18,12 @@ $webExpressContentDirAbs = $docRoot . '/' . $webExpressContentDirRel;
 $configFilename = $webExpressContentDirAbs . '/config/wod-options.json';
 
 if (isset($_GET['source'])) {
-    $source = $_GET['source'];
+    $source = $_GET['source'];     // No url decoding needed as $_GET is already decoded
 } elseif (isset($_GET['xsource'])) {
     $source = substr($_GET['xsource'], 1);
 } else {
     $requestUriNoQS = explode('?', $_SERVER['REQUEST_URI'])[0];
-    $source = $docRoot . $requestUriNoQS;
+    $source = $docRoot . urldecode($requestUriNoQS);
 }
 
 //echo $source; exit;
