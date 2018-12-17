@@ -345,3 +345,18 @@
     display: inline-block;
 }
 */
+
+#webpexpress_settings .block {
+    position: relative;
+    margin: 0 auto 0.5rem;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 0 0 1px rgba(200,215,225,0.25), 0 1px 2px #e9eff3;
+}
+
+@media (min-width: 768px) {
+    #webpexpress_settings .block {
+        padding: 10px 1.5rem 20px;
+    }
+}

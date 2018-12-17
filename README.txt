@@ -185,7 +185,7 @@ If you wish to affect priorities, it is certainly possible. You can try to argue
 
 
 = How do I buy you a cup of coffee? =
-Easy enough! - [Go here!](https://ko-fi.com/rosell)
+Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacoff.ee/rosell).
 
 == Screenshots ==
 
