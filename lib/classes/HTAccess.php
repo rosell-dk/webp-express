@@ -109,25 +109,20 @@ class HTAccess
         $rules .="</IfModule>\n";
 
 // Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
-        $rules .=
-            "<IfModule mod_headers.c>\n\n" .
+        $rules .="<IfModule mod_headers.c>\n\n" .
             "  # Set Vary:Accept header for the image types handled by WebP Express.\n" .
             "  # The purpose is to make CDN cache both original images and converted images.\n" .
             "  SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
-            "  Header append \"Vary\" \"Accept\" env=ADDVARY\n" .
-            "</IfModule>\n";
-
-        $rules .=
-            "<IfModule mod_headers.c>\n" .
-                "  # Set X-WebP-Express header for debugging\n\n" .
-                "  # Apache appends \"REDIRECT_\" in front of the environment variables, but LiteSpeed does not.\n" .
-                "  # The next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
-                "  SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
-                //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
-                "  # Set the debug header\n" .
-                "  Header set \"X-WebP-Express\" \"Redirected to existing webp\" env=EXISTING\n" .
-                //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
-            "</IfModule>\n\n";
+            "  Header append \"Vary\" \"Accept\" env=ADDVARY\n\n" .
+            "  # Set X-WebP-Express header for diagnose purposes\n" .
+            "  # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
+            "  # So, the next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
+            "  SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
+            //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
+            //"  # Set the debug header\n" .
+            "  Header set \"X-WebP-Express\" \"Redirected to existing webp\" env=EXISTING\n" .
+            //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
+        "</IfModule>\n\n";
 
 
 
