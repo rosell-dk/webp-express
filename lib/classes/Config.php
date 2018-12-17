@@ -150,7 +150,7 @@ class Config
         unset($options['cache-control']);
         unset($options['cache-control-custom']);
         //unset($options['forward-query-string']);  // It is used in webp-on-demand.php, so do not unset!
-        unset($options['pass-source-in-query-string']);
+        unset($options['do-not-pass-source-in-query-string']);
         unset($options['redirect-to-existing-in-htaccess']);
 
         return $options;
