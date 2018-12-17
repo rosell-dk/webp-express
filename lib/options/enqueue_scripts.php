@@ -18,7 +18,7 @@ wp_enqueue_script('whitelist');
 //wp_register_script('api_keys', plugins_url('js/api-keys.js', __FILE__), ['daspopup'], '0.7.0-dev8');
 //wp_enqueue_script('api_keys');
 
-wp_register_script( 'page', plugins_url('js/page.js', __FILE__), [], '0.7.0-dev5');
+wp_register_script( 'page', plugins_url('js/page.js', __FILE__), [], '0.7.0-dev6');
 wp_enqueue_script('page');
 
 if (function_exists('wp_add_inline_script')) {
