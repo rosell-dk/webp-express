@@ -1,7 +1,7 @@
 <?php
 // Image types
 // ------------
-echo '<tr><th scope="row">Image types to convert';
+echo '<tr><th scope="row">Image types to send to the converter';
 echo helpIcon('Beware that the Gd conversion method cannot handle transparency for PNGs. PNG conversions havent been tested much yet. Please report any problems with PNG images <a target="_blank" href="https://github.com/rosell-dk/webp-convert/issues/42">here</a>');
 echo '</th><td>';
 
