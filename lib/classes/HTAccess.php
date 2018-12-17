@@ -85,7 +85,7 @@ class HTAccess
             $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $pathToExisting . "/$1.$2.webp -f\n";
-            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $pathToExisting . "/$1.$2.webp [NC,T=image/webp,QSD,L]\n\n"; // (E=EXISTING:1)
+            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $pathToExisting . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n"; // (E=EXISTING:1)
         }
 
         $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
@@ -120,7 +120,7 @@ class HTAccess
             "  SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
             //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
             //"  # Set the debug header\n" .
-            "  Header set \"X-WebP-Express\" \"Redirected to existing webp\" env=EXISTING\n" .
+            "  Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING\n" .
             //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
         "</IfModule>\n\n";
 
