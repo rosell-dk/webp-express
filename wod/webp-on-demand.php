@@ -1,4 +1,5 @@
 <?php
+// https://www.askapache.com/htaccess/crazy-advanced-mod_rewrite-tutorial/#Decoding_Mod_Rewrite_Variables
 
 //echo 'display errors:' . ini_get('display_errors');
 //exit;
