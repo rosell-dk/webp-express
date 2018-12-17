@@ -121,7 +121,7 @@ class HTAccess
             "<IfModule mod_headers.c>\n" .
                 "  # Set X-WebP-Express header for debugging\n\n" .
                 "  # Apache appends \"REDIRECT_\" in front of the environment variables, but LiteSpeed does not.\n" .
-                "  # These next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
+                "  # The next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
                 "  SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
                 //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
                 "  # Set the debug header\n" .
