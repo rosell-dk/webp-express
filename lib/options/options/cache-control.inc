@@ -8,7 +8,7 @@ $cacheControlCustom = $config['cache-control-custom'];
 echo '<tr><th scope="row">Caching';
 echo helpIcon(
     'Controls the cache-control header for the converted image. ' .
-    'This header is only sent when a converted image is successfully delivered (either existing, or new ' .
+    'This header is only sent when a converted image can be successfully delivered (either existing, or new ' .
     'conversion). In case of failure, headers will be sent to prevent caching.');
 echo '</th><td>';
 echo '<select id="cache_control_select" name="cache-control">';
