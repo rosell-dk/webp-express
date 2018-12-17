@@ -51,6 +51,11 @@ class Paths
         return rtrim(ABSPATH, '/');
     }
 
+    public static function getIndexDirRel()
+    {
+        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getIndexDirAbs());
+    }
+
 
     // ------------ .htaccess dir -------------
     // (directory containing the relevant .htaccess)
@@ -119,6 +124,10 @@ class Paths
     {
         $upload_dir = wp_upload_dir(null, false);
         return $upload_dir['basedir'];
+    }
+    public static function getUploadDirRel()
+    {
+        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getUploadDirAbs());
     }
 
     /*
@@ -209,6 +218,11 @@ APACHE
     public static function getPluginDirAbs()
     {
         return untrailingslashit(WP_PLUGIN_DIR);
+    }
+
+    public static function getPluginDirRel()
+    {
+        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getPluginDirAbs());
     }
 
     public static function isPluginDirMovedOutOfAbsPath()
@@ -305,7 +319,7 @@ APACHE
      */
     public static function getPathToExisting()
     {
-        return self::getCacheDirRel() . '/' . self::getHomeDirRel();
+        return self::getCacheDirRel() . '/doc-root/' . self::getHomeDirRel();
     }
 
     public static function getUrlsAndPathsForTheJavascript()

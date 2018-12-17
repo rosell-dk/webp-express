@@ -16,10 +16,9 @@ use \WebPExpress\State;
 
 class HTAccess
 {
-
-    public static function generateHTAccessRulesFromConfigObj($config)
+    // (called from this file only)
+    public static function generateHTAccessRulesFromConfigObj($config, $htaccessDir = 'index')
     {
-
         /* Calculate $fileExt */
         $imageTypes = $config['image-types'];
         $fileExtensions = [];
@@ -46,20 +45,48 @@ class HTAccess
         $rules .= "<IfModule mod_rewrite.c>\n" .
         "  RewriteEngine On\n\n";
 
-        $pathToExisting = Paths::getPathToExisting();
+        //$pathToExisting = Paths::getPathToExisting();
+        //$pathToExisting = Paths::getCacheDirRel() . '/doc-root/' . Paths::getHomeDirRel();
+        //$pathToExisting = Paths::getCacheDirRel() . '/doc-root/' . Paths::getPluginDirRel();
+        //$pathToExisting = Paths::getCacheDirRel() . '/doc-root/' . Paths::getPluginDirRel();
+        $pathToExisting = Paths::getCacheDirRel() . '/doc-root/';
+        switch ($htaccessDir) {
+            case 'index':
+                $pathToExisting .= Paths::getIndexDirRel();
+                break;
+            case 'home':
+                $pathToExisting .= Paths::getHomeDirRel();
+                break;
+            case 'plugin':
+                $pathToExisting .= Paths::getPluginDirRel();
+                break;
+            case 'uploads':
+                $pathToExisting .= Paths::getUploadDirRel();
+                break;
+            case 'wp-content':
+                $pathToExisting .= Paths::getWPContentDirRel();
+                break;
+        }
 
-        $passSourceInQS = (isset($config['pass-source-in-query-string']) ? $config['pass-source-in-query-string'] : true);
+        $passSourceInQS = (isset($config['do-not-pass-source-in-query-string']) && ($config['do-not-pass-source-in-query-string']));
 
-        /*
-        // TODO: handle when wp-content is outside document root.
-        // TODO: this should be made optional
-        if (true) {
-            # Redirect to existing converted image (under appropriate circumstances)
+        $redirectToExisting = (isset($config['redirect-to-existing-in-htaccess']) && ($config['redirect-to-existing-in-htaccess']));
+
+        // TODO: Is it possible to handle when wp-content is outside document root?
+
+        // TODO: It seems $pathToExisting needs to be adjusted, depending on where the .htaccess is located
+        // Ie, if plugin folder has been moved out of ABSPATH, we should ie set
+        // $pathToExisting to 'doc-root/plugins-moved/'
+        // to get: RewriteRule ^\/?(.*)\.(jpe?g)$ /wp-content-moved/webp-express/webp-images/doc-root/plugins-moved/$1.$2.webp [NC,T=image/webp,QSD,E=WEBPACCEPT:1,E=EXISTING:1,L]
+
+        // https://stackoverflow.com/questions/34124819/mod-rewrite-set-custom-header-through-htaccess
+        if ($redirectToExisting) {
+            $rules .= "  # Redirect to existing converted image in cache-dir (if browser supports webp)\n";
             $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $pathToExisting . "/$1.$2.webp -f\n";
-            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $pathToExisting . "/$1.$2.webp [NC,T=image/webp,QSD,L]\n\n";
-        }*/
-
+            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $pathToExisting . "/$1.$2.webp [NC,T=image/webp,QSD,L]\n\n"; // (E=EXISTING:1)
+        }
 
         $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
         $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
@@ -67,22 +94,69 @@ class HTAccess
         if ($config['forward-query-string']) {
             $rules .= "  RewriteCond %{QUERY_STRING} (.*)\n";
         }
+
+        // TODO:
+        // Add "NE" flag?
+        // https://github.com/rosell-dk/webp-convert/issues/95
+        // (and try testing spaces in directory paths)
         $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " .
             "/" . Paths::getWodUrlPath() .
             ($passSourceInQS ? "?xsource=x%{SCRIPT_FILENAME}&" : "?") .
             "wp-content=" . Paths::getWPContentDirRel() .
             ($config['forward-query-string'] ? '&%1' : '') .
-            " [NC,L]\n";
+            " [NC,E=WOD:1,L]\n";
 
-        $rules .="</IfModule>\n" .
-        "AddType image/webp .webp\n";
+        $rules .="</IfModule>\n";
+
+// Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+        $rules .=
+            "<IfModule mod_headers.c>\n\n" .
+            "  # Set Vary:Accept header for the image types handled by WebP Express.\n" .
+            "  # The purpose is to make CDN cache both original images and converted images.\n" .
+            "  SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
+            "  Header append \"Vary\" \"Accept\" env=ADDVARY\n" .
+            "</IfModule>\n";
+
+        $rules .=
+            "<IfModule mod_headers.c>\n" .
+                "  # Set X-WebP-Express header for debugging\n\n" .
+                "  # Apache appends \"REDIRECT_\" in front of the environment variables, but LiteSpeed does not.\n" .
+                "  # These next lines is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
+                "  SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
+                "  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
+                "  # Set the debug headers\n" .
+                "  Header set \"X-WebP-Express\" \"Redirected to existing webp\" env=EXISTING\n" .
+                //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
+            "</IfModule>\n\n";
+
+
+
+        /*if ($redirectToExisting) {
+            $rules .=
+            "<IfModule mod_headers.c>\n" .
+                "  # Append Vary Accept header, when the rules above are redirecting to existing webp\n" .
+                "  # or existing jpg" .
+
+                "  # Apache appends \"REDIRECT_\" in front of the environment variables, but LiteSpeed does not.\n" .
+                "  # These next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
+                "  SetEnvIf REDIRECT_WEBPACCEPT 1 WEBPACCEPT=1\n\n" .
+
+                "  # Make CDN caching possible.\n" .
+                "  # The effect is that the CDN will cache both the webp image and the jpeg/png image and return the proper\n" .
+                "  # image to the proper clients (for this to work, make sure to set up CDN to forward the \"Accept\" header)\n" .
+                "  Header append Vary Accept env=WEBPACCEPT\n" .
+            "</IfModule>\n\n";
+        }*/
+
+        $rules .= "AddType image/webp .webp\n";
 
         return $rules;
     }
 
-    public static function generateHTAccessRulesFromConfigFile() {
+    /* only called from page-messages.inc, but commented out there... */
+    public static function generateHTAccessRulesFromConfigFile($htaccessDir = '') {
         if (Config::isConfigFileThereAndOk()) {
-            return self::generateHTAccessRulesFromConfigObj(Config::loadConfig());
+            return self::generateHTAccessRulesFromConfigObj(Config::loadConfig(), $htaccessDir);
         } else {
             return false;
         }
@@ -128,7 +202,7 @@ class HTAccess
         $propsToCompare = [
             'forward-query-string',
             'image-types',
-            'pass-source-in-query-string',
+            'do-not-pass-source-in-query-string',
             'redirect-to-existing-in-htaccess',
         ];
 
@@ -138,18 +212,27 @@ class HTAccess
                 continue;
             }
             if (!isset($oldConfig[$prop])) {
-                if ($prop == 'pass-source-in-query-string') {
-                    if (!isset($newConfig[$prop])) {
+                if ($prop == 'do-not-pass-source-in-query-string') {
+
+                    // Do not trigger .htaccess update if the new value results
+                    // in same old behaviour (before this option was introduced)
+                    if ($newConfig[$prop] == false) {
+                        continue;
+                    } else {
+                        // Otherwise DO trigger .htaccess update
                         return true;
                     }
-                    continue;
                 }
                 if ($prop == 'redirect-to-existing-in-htaccess') {
-                    if (isset($newConfig[$prop])) {
+                    if ($newConfig[$prop] == false) {
+                        continue;
+                    } else {
                         return true;
                     }
-                    continue;
                 }
+
+                // The option was not set in the old configuration,
+                // - so lets say that .htaccess needs updating
                 return true;
             }
             if ($newConfig[$prop] != $oldConfig[$prop]) {
@@ -311,6 +394,7 @@ class HTAccess
         return $success;
     }
 
+    /* only called in this file */
     public static function saveHTAccessRulesToFirstWritableHTAccessDir($dirs, $rules)
     {
         foreach ($dirs as $dir) {
@@ -398,35 +482,33 @@ class HTAccess
     /**
      *  Try to save the rules.
      *  Returns many details
+     *  (called from migrate1.php, reactivate.php, Config.php and this file)
      */
     public static function saveRules($config) {
 
-        $rules = HTAccess::generateHTAccessRulesFromConfigObj($config);
 
         list($minRequired, $pluginToo, $uploadToo) = self::getHTAccessDirRequirements();
 
-        $indexDir = Paths::getIndexDirAbs();
+        $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'wp-content');
         $wpContentDir = Paths::getWPContentDirAbs();
-
-        $acceptableDirs = [
-            $wpContentDir
-        ];
-        if ($minRequired == 'index') {
-            $acceptableDirs[] = $indexDir;
-        }
+        $wpContentFailed = !(HTAccess::saveHTAccessRulesToFile($wpContentDir . '/.htaccess', $rules, true));
 
         $overidingRulesInWpContentWarning = false;
-        $result = HTAccess::saveHTAccessRulesToFirstWritableHTAccessDir($acceptableDirs, $rules);
-        if ($result == $wpContentDir) {
+        if ($wpContentFailed) {
+            if ($minRequired == 'index') {
+                $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'index');
+                $indexFailed = !(HTAccess::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', $rules, true));
+
+                if ($indexFailed) {
+                    $mainResult = 'failed';
+                } else {
+                    $mainResult = 'index';
+                    $overidingRulesInWpContentWarning = self::haveWeRulesInThisHTAccessBestGuess($wpContentDir . '/.htaccess');
+                }
+            }
+        } else {
             $mainResult = 'wp-content';
-            //if (self::haveWeRulesInThisHTAccessBestGuess($indexDir . '/.htaccess')) {
-            HTAccess::saveHTAccessRulesToFile($indexDir . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false);
-            //}
-        } elseif ($result == $indexDir) {
-            $mainResult = 'index';
-            $overidingRulesInWpContentWarning = self::haveWeRulesInThisHTAccessBestGuess($wpContentDir . '/.htaccess');
-        } elseif ($result === false) {
-            $mainResult = 'failed';
+            HTAccess::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false);
         }
 
         /* plugin */
@@ -442,6 +524,7 @@ class HTAccess
         $pluginFailed = false;
         $pluginFailedBadly = true;
         if ($pluginToo == 'yes') {
+            $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'plugin');
             $pluginDir = Paths::getPluginDirAbs();
             $pluginFailed = !(HTAccess::saveHTAccessRulesToFile($pluginDir . '/.htaccess', $rules, true));
             if ($pluginFailed) {
@@ -463,6 +546,7 @@ class HTAccess
         $uploadFailedBadly = true;
         if ($uploadToo == 'yes') {
             $uploadDir = Paths::getUploadDirAbs();
+            $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'uploads');
             $uploadFailed = !(HTAccess::saveHTAccessRulesToFile($uploadDir . '/.htaccess', $rules, true));
             if ($uploadFailed) {
                 $uploadFailedBadly = self::haveWeRulesInThisHTAccessBestGuess($uploadDir . '/.htaccess');
