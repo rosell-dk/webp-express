@@ -45,6 +45,8 @@ class HTAccess
         $rules .= "<IfModule mod_rewrite.c>\n" .
         "  RewriteEngine On\n\n";
 
+        "  Header set \"X-WebP-Express\" \"Redirected directly to existing webp\"\n" .
+
         //$pathToExisting = Paths::getPathToExisting();
         //$pathToExisting = Paths::getCacheDirRel() . '/doc-root/' . Paths::getHomeDirRel();
         //$pathToExisting = Paths::getCacheDirRel() . '/doc-root/' . Paths::getPluginDirRel();
@@ -85,7 +87,7 @@ class HTAccess
             $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $pathToExisting . "/$1.$2.webp -f\n";
-            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $pathToExisting . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n"; // (E=EXISTING:1)
+            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $pathToExisting . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n";
         }
 
         $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
@@ -104,7 +106,7 @@ class HTAccess
             ($passSourceInQS ? "?xsource=x%{SCRIPT_FILENAME}&" : "?") .
             "wp-content=" . Paths::getWPContentDirRel() .
             ($config['forward-query-string'] ? '&%1' : '') .
-            " [NC,E=WOD:1,L]\n";
+            " [NC,L]\n";        // E=WOD:1
 
         $rules .="</IfModule>\n";
 
