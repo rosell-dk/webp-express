@@ -267,6 +267,14 @@ echo '<form id="webpexpress_settings" action="' . esc_url( admin_url( 'admin-pos
     <input type="hidden" name="action" value="webpexpress_settings_submit">
     <input type="hidden" name="webpexpress_settings_nonce" value="<?php echo $webpexpress_settings_nonce ?>" />
 
+    <fieldset class="block buttons">
+        <table>
+            <tr>
+                <td style="padding-right:20px"><?php submit_button('Save settings', 'primary', 'mysubmit'); ?></td>
+                <td><?php submit_button('Save settings and force new .htaccess rules', 'secondary', 'force'); ?></td>
+            </tr>
+        </table>
+    </fieldset>
 <?php
 
 function helpIcon($text) {
@@ -326,11 +334,6 @@ function helpIcon($text) {
         </tbody>
     </table>
 </fieldset>
-<table>
-    <tr>
-        <td style="padding-right:20px"><?php submit_button('Save settings', 'primary', 'mysubmit'); ?></td>
-        <td><?php submit_button('Save settings and force new .htaccess rules', 'secondary', 'force'); ?></td>
-    </tr>
-</table>
+
 </form>
 </div>

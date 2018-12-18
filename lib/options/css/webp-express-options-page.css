@@ -355,8 +355,24 @@
     box-shadow: 0 0 0 1px rgba(200,215,225,0.25), 0 1px 2px #e9eff3;
 }
 
+#webpexpress_settings .block.buttons {
+    padding: 10px;
+    position: sticky;
+    top: 30px;
+    z-index: 10;
+}
+
 @media (min-width: 768px) {
     #webpexpress_settings .block {
         padding: 10px 1.5rem 20px;
     }
+}
+
+#webpexpress_settings .block.buttons p.submit {
+    margin: 0;
+    padding: 0;
+}
+
+#webpexpress_settings .block.buttons table {
+    float: right;
 }
