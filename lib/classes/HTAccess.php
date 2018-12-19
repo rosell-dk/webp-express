@@ -68,7 +68,8 @@ class HTAccess
                 break;
         }
 
-        $passSourceInQS = (isset($config['do-not-pass-source-in-query-string']) && ($config['do-not-pass-source-in-query-string']));
+        $doNotpassSourceInQS = (isset($config['do-not-pass-source-in-query-string']) && ($config['do-not-pass-source-in-query-string']));
+        $passSourceInQS = !$doNotpassSourceInQS;
 
         $redirectToExisting = (isset($config['redirect-to-existing-in-htaccess']) && ($config['redirect-to-existing-in-htaccess']));
 
