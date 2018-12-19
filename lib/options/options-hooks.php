@@ -16,12 +16,14 @@ add_action('admin_post_webpexpress_settings_submit', function() {
     include __DIR__ . '/submit.php';
 });
 
-global $pagenow;
-if (($pagenow == 'options-general.php') && (isset($_GET['page'])) && ($_GET['page'] == 'webp_express_settings_page')) {
-    add_action('admin_enqueue_scripts', function () {
-        include __DIR__ . '/enqueue_scripts.php';
-    });
-}
+add_action( 'admin_init', function () {
+	global $pagenow;
+	if ( ( 'options-general.php' === $pagenow ) && ( isset( $_GET['page'] ) ) && ( 'webp_express_settings_page' === $_GET['page'] ) ) {
+		add_action( 'admin_enqueue_scripts', function () {
+			include __DIR__ . '/enqueue_scripts.php';
+		} );
+	}
+} );
 
 function webp_express_settings_page_content()
 {
