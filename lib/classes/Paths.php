@@ -20,12 +20,20 @@ class Paths
     }
 
     /**
-     *  Find out if $dir1 is inside - or equal to - $dir2
-     */
+    *  Find out if $dir1 is inside - or equal to - $dir2
+    */
     public static function isDirInsideDir($dir1, $dir2)
     {
         $rel = PathHelper::getRelDir($dir2, $dir1);
         return (substr($rel, 0, 3) != '../');
+    }
+
+    /**
+     *  Return relative dir - relative to realpath(document root)
+     */
+    public static function getRelDir($dir)
+    {
+        return PathHelper::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), $dir);
     }
 
     // ------------ Home Dir -------------
@@ -40,7 +48,7 @@ class Paths
 
     public static function getHomeDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getHomeDirAbs());
+        return self::getRelDir(self::getHomeDirAbs());
     }
 
     // ------------ Index Dir  -------------
@@ -53,7 +61,7 @@ class Paths
 
     public static function getIndexDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getIndexDirAbs());
+        return self::getRelDir(self::getIndexDirAbs());
     }
 
 
@@ -84,7 +92,7 @@ class Paths
     }
     public static function getWPContentDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getWPContentDirAbs());
+        return self::getRelDir(self::getWPContentDirAbs());
     }
 
     public static function isWPContentDirMoved()
@@ -111,7 +119,7 @@ class Paths
 
     public static function getContentDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getContentDirAbs());
+        return self::getRelDir(self::getContentDirAbs());
     }
 
     public static function createContentDirIfMissing()
@@ -127,7 +135,7 @@ class Paths
     }
     public static function getUploadDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getUploadDirAbs());
+        return self::getRelDir(self::getUploadDirAbs());
     }
 
     /*
@@ -159,7 +167,7 @@ class Paths
 
     public static function getConfigDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getConfigDirAbs());
+        return self::getRelDir(self::getConfigDirAbs());
     }
 
     public static function createConfigDirIfMissing()
@@ -205,7 +213,7 @@ APACHE
 
     public static function getCacheDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getCacheDirAbs());
+        return self::getRelDir(self::getCacheDirAbs());
     }
 
     public static function createCacheDirIfMissing()
@@ -222,7 +230,7 @@ APACHE
 
     public static function getPluginDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getPluginDirAbs());
+        return self::getRelDir(self::getPluginDirAbs());
     }
 
     public static function isPluginDirMovedOutOfAbsPath()
