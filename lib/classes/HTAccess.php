@@ -89,6 +89,15 @@ class HTAccess
             $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $pathToExisting . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n";
         }
 
+        if (!$passSourceInQS) {
+            $rules .= "  # Pass REQUEST_FILENAME to PHP by setting request header\n" .
+                "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
+                "  RewriteCond %{REQUEST_FILENAME} -f\n" .
+                "  RewriteRule ^(.*)\.(jpe?g)$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
+                "  <IfModule mod_headers.c>\n" .
+                "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
+                "  </IfModule>\n\n";
+        }
         $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
         $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
         $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
