@@ -161,23 +161,20 @@ The following lazy load plugins/frameworks has been tested and works with *WebP 
 - [BJ Lazy Load](https://da.wordpress.org/plugins/bj-lazy-load/)
 - [Owl Carousel 2](https://owlcarousel2.github.io/OwlCarousel2/)
 
-### When is feature X coming?
+### When is feature X coming? / Roadmap
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
 
-Here are my loose plans ahead: The 0.9 release will add redirect rule in .htaccess (optionally), perhaps also include configurable destination. 0.10 will probably be some diagnose tool – this should release some time spend in the forum. 0.11 could be focused on PNG. 0.12 might be displaying rules for NGINX. 0.13 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.14 might be multisite support. 0.15 might be a file manager-like interface for inspecting generated webp files. 0.16 might be WAMP support. This is all guessing. I’m only planning one milestone at the time. You can follow the issue queue here: https://github.com/rosell-dk/webp-express/issues
+Here are my loose plans ahead: The 0.10 release will probably add a some diagnose tool – this should release some time spend in the forum. I might also throw in configurable destination. 0.11 could be focused on PNG. 0.12 might be displaying rules for NGINX. 0.13 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.14 might be multisite support. 0.15 might be a file manager-like interface for inspecting generated webp files. 0.16 might be WAMP support. This is all guessing. I’m only planning one milestone at the time. You can follow the issue queue here: https://github.com/rosell-dk/webp-express/issues
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
 
-## Changes in 0.8.0
-- New conversion method, which calls imagick binary directly. This will make WebP express work out of the box on more systems
-- Made sure not to trigger LFI warning i Wordfence (to activate, click the force .htaccess button)
-- Imagick can now be configured to set quality to auto (but only when the "auto" option isn't generally available)
-- Added Last-Modified header to images. This makes image caching work better
-- On some systems, converted files where stored in ie *..doc-rootwp-content..* rather than *..doc-root/wp-content..*. This is fixed, a clean-up script corrects the file structure upon upgrade.
-- Added condition in .htaccess that checks that source file exists before handing over to converter
+## Changes in 0.9.0
+- Optionally make .htaccess redirect directly to existing webp (improves performance)
+- Optionally do not send filename from .htaccess to the PHP in Querystring, but use other means (improves security and reduces risks of problems due to firewall rules)
+- Fixed some bugs
 
-For more info, see the closed issues on the 0.8.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.8.0
+For more info, see the closed issues on the 0.9.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.9.0
 
 ## Supporting WebP Express
 Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue putting effort into this plugin:

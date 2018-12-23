@@ -193,6 +193,14 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.9.0 =
+* (released 23 dec 2018) *
+* Optionally make .htaccess redirect directly to existing webp (improves performance)
+* Optionally do not send filename from .htaccess to the PHP in Querystring, but use other means (improves security and reduces risks of problems due to firewall rules)
+* Fixed some bugs
+
+For more info, see the closed issues on the 0.9.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.9.0
+
 = 0.8.1 =
 * Fixed javascript bug
 
@@ -260,6 +268,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.9.0 =
+Option to redirect to existing webp images directly in .htaccess (improves performance)
 
 = 0.8.0 =
 New converter and miscellaneous improvements
