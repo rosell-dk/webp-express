@@ -25,16 +25,24 @@ class TestRun
 {
 
 
+    public static $converterStatus = null; // to cache the result
+
     /**
      *  Get an array of working converters OR false, if tests cannot be made
      */
     public static function getConverterStatus() {
+
+        // Is result cached?
+        if (isset(self::$converterStatus)) {
+            return self::$converterStatus;
+        }
         $source = Paths::getWebPExpressPluginDirAbs() . '/test/small-q61.jpg';
         $destination = Paths::getUploadDirAbs() . '/webp-express-test-conversion.webp';
         if (!FileHelper::canCreateFile($destination)) {
             $destination = Paths::getWPContentDirAbs() . '/webp-express-test-conversion.webp';
         }
-        if (!FileHelper::canCreateFile($destination)) {
+        if (!FileHelper::canCreateFile($destination)) {        
+            self::$converterStatus = false;     // // cache the result
             return false;
         }
         $workingConverters = [];
@@ -79,16 +87,27 @@ class TestRun
             }
         }
         //print_r($errors);
-        return [
+
+        // cache the result
+        self::$converterStatus = [
             'workingConverters' => $workingConverters,
             'errors' => $errors
         ];
+        return self::$converterStatus;
     }
 
+
+    public static $localQualityDetectionWorking = null; // to cache the result
+
     public static function isLocalQualityDetectionWorking() {
-        $q = ConverterHelper::detectQualityOfJpg(
-            Paths::getWebPExpressPluginDirAbs() . '/test/small-q61.jpg'
-        );
-        return ($q === 61);
+        if (isset(self::$localQualityDetectionWorking)) {
+            return self::$localQualityDetectionWorking;
+        } else {
+            $q = ConverterHelper::detectQualityOfJpg(
+                Paths::getWebPExpressPluginDirAbs() . '/test/small-q61.jpg'
+            );
+            self::$localQualityDetectionWorking = ($q === 61);
+            return self::$localQualityDetectionWorking;
+        }
     }
 }

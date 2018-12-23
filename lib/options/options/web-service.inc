@@ -2,8 +2,8 @@
 include_once __DIR__ . '/../../classes/Paths.php';
 use \WebPExpress\Paths;
 
-$whitelist = $config['web-service']['whitelist'];
-echo '<script>window.whitelist = ' . json_encode($whitelist) . '</script>';
+//$whitelist = $config['web-service']['whitelist'];
+//echo '<script>window.whitelist = ' . json_encode($whitelist) . '</script>';
 ?>
 <tr id="share">
     <th scope="row">Enable web service?<?php echo helpIcon('Enabling the web service will allow selected sites to convert webp-images through this site (more options will appear, if you enable)'); ?></th>

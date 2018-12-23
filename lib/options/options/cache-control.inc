@@ -1,6 +1,5 @@
 <?php
-// Cache-Control
-// --------------------
+
 //$maxQuality = get_option('webp_express_max_quality');
 $cacheControl = $config['cache-control'];
 $cacheControlCustom = $config['cache-control-custom'];

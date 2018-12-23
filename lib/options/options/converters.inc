@@ -8,9 +8,9 @@ echo helpIcon('Drag to reorder. The conversion method on top will first be tried
 
 echo '</th><td>';
 
-$converters = $config['converters'];
-echo '<script>window.converters = ' . json_encode($converters) . '</script>';
-echo '<script>window.defaultConverters = ' . json_encode($defaultConverters) . '</script>';
+//$converters = $config['converters'];
+//echo '<script>window.converters = ' . json_encode($converters) . '</script>';
+//echo '<script>window.defaultConverters = ' . json_encode($defaultConverters) . '</script>';
 
 echo "<input type='text' name='converters' value='' style='visibility:hidden; height:0' />";
 

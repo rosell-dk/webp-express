@@ -2,6 +2,9 @@
 
 namespace WebPExpress;
 
+include_once "ConvertersHelper.php";
+use \WebPExpress\ConvertersHelper;
+
 include_once "FileHelper.php";
 use \WebPExpress\FileHelper;
 
@@ -16,6 +19,9 @@ use \WebPExpress\Paths;
 
 include_once "State.php";
 use \WebPExpress\State;
+
+include_once "TestRun.php";
+use \WebPExpress\TestRun;
 
 class Config
 {
@@ -50,6 +56,174 @@ class Config
     public static function loadConfig()
     {
         return self::loadJSONOptions(Paths::getConfigFileName());
+    }
+
+    public static $configForOptionsPage = null;     // cache the result (called twice, - also in enqueue_scripts)
+    public static function getConfigForOptionsPage()
+    {
+        if (isset(self::$configForOptionsPage)) {
+            return self::$configForOptionsPage;
+        }
+        // Test converters
+        $testResult = TestRun::getConverterStatus();
+        $workingConverters = [];
+        if ($testResult) {
+            $workingConverters = $testResult['workingConverters'];
+            //print_r($testResult);
+        }
+
+        $canDetectQuality = TestRun::isLocalQualityDetectionWorking();
+        $defaultConfig = [
+            'cache-control' => 'no-header',
+            'cache-control-custom' => 'public, max-age:3600',
+            'converters' => [],
+            'fail' => 'original',
+            'forward-query-string' => true,
+            'image-types' => 1,
+            'quality-auto' => $canDetectQuality,
+            'max-quality' => 80,
+            'quality-specific' => 70,
+            'metadata' => 'none',
+            'do-not-pass-source-in-query-string' => false,
+            'redirect-to-existing-in-htaccess' => false,
+            'web-service' => [
+                'enabled' => false,
+                'whitelist' => [
+                    /*[
+                    'uid' => '',       // for internal purposes
+                    'label' => '',     // ie website name. It is just for display
+                    'ip' => '',        // restrict to these ips. * pattern is allowed.
+                    'api-key' => '',   // Api key for the entry. Not neccessarily unique for the entry
+                    //'quota' => 60
+                    ]
+                    */
+                ]
+
+            ]
+        ];
+
+        $defaultConverters = ConvertersHelper::$defaultConverters;
+
+        $config = self::loadConfig();
+        //echo '<pre>' . print_r($config, true) . '</pre>';
+        if (!$config) {
+            $config = [];
+        }
+        //$config = [];
+
+        $config = array_merge($defaultConfig, $config);
+        if ($config['converters'] == null) {
+            $config['converters'] = [];
+        }
+        if (!isset($config['web-service'])) {
+            $config['web-service'] = [];
+        }
+        if (!isset($config['web-service']['whitelist'])) {
+            $config['web-service']['whitelist'] = [];
+        }
+
+        // Remove keys in whitelist (so they cannot easily be picked up by examining the html)
+        foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
+            unset($whitelistEntry['api-key']);
+        }
+
+        // Remove keys from WPC converters
+        foreach ($config['converters'] as &$converter) {
+            if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
+                if (isset($converter['options']['api-key'])) {
+                    if ($converter['options']['api-key'] != '') {
+                        $converter['options']['_api-key-non-empty'] = true;
+                    }
+                    unset($converter['options']['api-key']);
+                }
+            }
+        }
+
+        if (count($config['converters']) == 0) {
+            // This is first time visit!
+
+            if (count($workingConverters) == 0) {
+                // No converters are working
+                // Send ewww converter to top
+                $resultPart1 = [];
+                $resultPart2 = [];
+                foreach ($defaultConverters as $converter) {
+                    $converterId = $converter['converter'];
+                    if ($converterId == 'ewww') {
+                        $resultPart1[] = $converter;
+                    } else {
+                        $resultPart2[] = $converter;
+                    }
+                }
+                $config['converters'] = array_merge($resultPart1, $resultPart2);
+            } else {
+                // Send converters not working to the bottom
+                // - and also deactivate them..
+                $resultPart1 = [];
+                $resultPart2 = [];
+                foreach ($defaultConverters as $converter) {
+                    $converterId = $converter['converter'];
+                    if (in_array($converterId, $workingConverters)) {
+                        $resultPart1[] = $converter;
+                    } else {
+                        $converter['deactivated'] = true;
+                        $resultPart2[] = $converter;
+                    }
+                }
+                $config['converters'] = array_merge($resultPart1, $resultPart2);
+            }
+
+            // $workingConverters
+            //echo '<pre>' . print_r($converters, true) . '</pre>';
+        } else {
+            // not first time visit...
+            // merge missing converters in
+            $config['converters'] = ConvertersHelper::mergeConverters($config['converters'], ConvertersHelper::$defaultConverters);
+        }
+
+
+        // Set "working" and "error" properties
+        if ($testResult) {
+            foreach ($config['converters'] as &$converter) {
+                $converterId = $converter['converter'];
+                $hasError = isset($testResult['errors'][$converterId]);
+                $working = !$hasError;
+                if (isset($converter['working']) && ($converter['working'] != $working)) {
+                    if ($working) {
+                        Messenger::printMessage(
+                            'info',
+                            'Hurray! - The <i>' . webpexpress_converterName($converterId) . '</i> conversion method is working now!'
+                        );
+                    } else {
+                        Messenger::printMessage(
+                            'warning',
+                            'Sad news. The <i>' . webpexpress_converterName($converterId) . '</i> conversion method is not working anymore. What happened?'
+                        );
+                    }
+                }
+                $converter['working'] = $working;
+                if ($hasError) {
+                    $error = $testResult['errors'][$converterId];
+                    if ($converterId == 'wpc') {
+                        if (preg_match('/Missing URL/', $error)) {
+                            $error = 'Not configured';
+                        }
+                        if ($error == 'No remote host has been set up') {
+                            $error = 'Not configured';
+                        }
+
+                        if (preg_match('/cloud service is not enabled/', $error)) {
+                            $error = 'The server is not enabled. Click the "Enable web service" on WebP Express settings on the site you are trying to connect to.';
+                        }
+                    }
+                    $converter['error'] = $error;
+                } else {
+                    unset($converter['error']);
+                }
+            }
+        }
+        self::$configForOptionsPage = $config;  // cache the result
+        return $config;
     }
 
     public static function isConfigFileThere()
