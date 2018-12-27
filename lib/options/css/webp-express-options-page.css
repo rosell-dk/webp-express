@@ -161,6 +161,13 @@
     text-align: left;
     max-width: 450px;
 }
+
+.help .popup > p:first-child {
+    margin-top: 0;
+}
+.help .popup > p:last-child {
+    margin-bottom: 0;
+}
 #converters li.operational .popup {
     background-color: #80ff80;
 }
@@ -227,6 +234,7 @@
     font-family: sans-serif;
     position: relative;
 }
+
 
 /*
 .converter-options.wpc #wpc_web_services_div > p {
