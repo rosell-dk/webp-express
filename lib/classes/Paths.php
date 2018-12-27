@@ -36,6 +36,24 @@ class Paths
         return PathHelper::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), $dir);
     }
 
+
+    /**
+     *  Return absolute dir.
+     *  - realpath() is used to resolve soft links
+     *  - trailing dash is removed - we don't use that here.
+     */
+    public static function getAbsDir($dir)
+    {
+        return rtrim(realpath($dir), '/');
+    }
+
+    // ------------ Document Root -------------
+
+    public static function getDocumentRootAbs()
+    {
+        return self::getAbsDir($_SERVER["DOCUMENT_ROOT"]);
+    }
+
     // ------------ Home Dir -------------
 
     public static function getHomeDirAbs()
