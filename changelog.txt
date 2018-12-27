@@ -1,5 +1,5 @@
 = 0.9.0 =
-* (released 23 dec 2018) *
+* (released 27 dec 2018) *
 * Optionally make .htaccess redirect directly to existing webp (improves performance)
 * Optionally do not send filename from .htaccess to the PHP in Querystring, but use other means (improves security and reduces risks of problems due to firewall rules)
 * Fixed some bugs
