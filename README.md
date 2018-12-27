@@ -113,11 +113,8 @@ Easy enough. Browsers looks at the *content type* header rather than the URL to 
 I am btw considering making an option to have the plugin redirect to the webp instead of serving immediately. That would remove the apparent mismatch between file extension and content type header. However, the cost of doing that will be an extra request for each image, which means extra time and worse performance. I believe you'd be ill advised to use that option, so I guess I will not implement it. But perhaps you have good reasons to use it? If you do, please let me know!
 
 ### I am on NGINX / OpenResty
-It is possible to make WebP Express work on NGINX, but it requieres manually inserting redirection rules in the NGINX configuration file (nginx.conf). For standard wordpress installations, the following rules should work:
+It is possible to make WebP Express work on NGINX, but it requieres manually inserting redirection rules in the NGINX configuration file (nginx.conf or the configuration file for the site, found in `/etc/nginx/sites-available`). For standard wordpress installations, the following rules should work:
 
-*Note that the rules stated here previously had a bug*: It had ” rather than ". The slightly slanted quotation mark does not work. Also, it used $request_uri, which contains the querystring, which resulted in errors when querystrings were supplied (ie ?debug)
-
-For 0.8.0:
 ```
 if ($http_accept ~* "webp"){
   rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content break;
@@ -125,17 +122,13 @@ if ($http_accept ~* "webp"){
 ```
 *Beware:* If you copy the code above, you might get an html-encoded ampersand before "wp-content"
 
-For 0.7.0:
-```
-if ($http_accept ~* "webp"){
-  rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?source=$request_filename&wp-content=wp-content break;
-}
-```
-*Beware:* If you copy the code above, you might get an html-encoded ampersand before "wp-content"
-
 The `wp-content` argument must point to the wp-content folder (relative to document root). In most installations, it is 'wp-content'.
 
+Note that the rules above redirects every image request to the PHP script. To get better performance, you can add a rule that redirects jpeg/png requests directly to existing webp images. There are some rules for that [here](https://www.keycdn.com/blog/convert-to-webp-the-successor-of-jpeg#rewriterules-for-nginx-nginx-conf), but they need to be modified because WebP Express stores the webp files in a different location (`wp-content/webp-express/webp-images/doc-root`).
+
 Discussion on this topic [here](https://wordpress.org/support/topic/nginx-rewrite-rules-4/)
+
+
 
 ### I am on a WAMP stack
 It has been reported that WebP Express *almost* works on WAMP stack (Windows, Apache, MySQL, PHP). I'd love to debug this, but do not own a Windows server or access to one... Can you help?
