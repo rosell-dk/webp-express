@@ -167,6 +167,17 @@ The plugin takes care of setting the "Vary" HTTP header to "Accept" when routing
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation/List_of_default_Accept_values#Values_for_an_image
 - so it is not an issue.
 
+= I am on Cloudflare =
+Without configuration, Cloudflare will not maintain separate caches for jpegs and webp; all browsers will get jpeg. To make Cloudflare cache not only by URL, but also by header, you need to use the [Custom Cache Key](https://support.cloudflare.com/hc/en-us/articles/115004290387) page rule, and add *Header content*  to make separate caches depending on the *Accept* request header.
+
+However, the *Custom Cache Key* rule currently requires an *Enterprise* account. And if you already have that, you may as well go with the *Polish* feature, which starts at the “Pro” level plan. With the *Polish* feature, you will not need WebP Express.
+
+To make *WebP Express* work on a free Cloudflare account, you have the following choices:
+
+1. You can configure the CDN not to cache jpeg images by adding the following page rule: If rule matches: `example.com/*.jpg`, set: *Cache level* to: *Bypass*
+
+2. You can set up another CDN (on another provider), which you just use for handling the images. You need to configure that CDN to forward the *Accept header*. You also need to install a Wordpress plugin that points images to that CDN.
+
 = Does it work with lazy loaded images? =
 No plugins/frameworks has yet been discovered, which does not work with *WebP Express*.
 
