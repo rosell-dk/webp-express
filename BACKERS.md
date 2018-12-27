@@ -14,7 +14,7 @@ To become a backer, yourself, visit [my page at patreon](https://www.patreon.com
 | --------------------- | ---------- | ----------------------------------------------------------------------- |
 | Tammy Valgardson      | 2018-12-27 |          |
 
-<p style="font-size:80%">I reserve the right to disallow inappropriate messages. No Trump hooting or bashing here, please. And don't be aggressive, obscene or anything unpleasant. But I don't have to point that out, do I?</p>
+<sub>I reserve the right to disallow inappropriate messages. No Trump hooting or bashing here, please. And don't be aggressive, obscene or anything unpleasant. But I don't have to point that out, do I?</sub>
 
 ## Generous backers via Patron
 
@@ -29,5 +29,5 @@ Examples:
 | John Doe              | 2018-11-23 | I have a similar plugin. <a href="https://example.com/plugin">Check it out!</a> |
 | John Doe 2            | 2018-11-23 | I do in fact sell shoes - with WebP Express logo! |
 
-<small>
-I reserve the right to disallow inappropriate messages and links. No xxx sites or anything freaky or fishy, please. You may however advertise non-freaky-or-fishy things, if you wish. Just remember the audience. No point in trying to sell shoes here</small>
+<sub>
+I reserve the right to disallow inappropriate messages and links. No xxx sites or anything freaky or fishy, please. You may however advertise non-freaky-or-fishy things, if you wish. Just remember the audience. No point in trying to sell shoes here</sub>
