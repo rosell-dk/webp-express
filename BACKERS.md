@@ -14,7 +14,7 @@ To become a backer, yourself, visit [my page at patreon](https://www.patreon.com
 | --------------------- | ---------- | ----------------------------------------------------------------------- |
 | Tammy Valgardson      | 2018-12-27 |          |
 
-<small>I reserve the right to disallow inappropriate messages. No Trump hooting or bashing here, please. And don't be aggressive, obscene or anything unpleasant. But I don't have to point that out, do I?</small>
+<p style="font-size:80%">I reserve the right to disallow inappropriate messages. No Trump hooting or bashing here, please. And don't be aggressive, obscene or anything unpleasant. But I don't have to point that out, do I?</p>
 
 ## Generous backers via Patron
 
