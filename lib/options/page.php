@@ -75,7 +75,7 @@ if (!$testResult) {
         'error',
         'WebP Express cannot save a test conversion, because it does not have write ' .
         'access to your upload folder, nor your wp-content folder. Please provide!'
-    );    
+    );
 }
 
 
@@ -153,6 +153,8 @@ function helpIcon($text) {
             include_once 'options/quality.inc';
             include_once 'options/metadata.inc';
             include_once 'options/converters.inc';
+            include_once 'options/destination-folder.inc';
+            include_once 'options/destination-extension.inc';
             ?>
         </tbody>
     </table>

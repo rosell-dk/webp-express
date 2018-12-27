@@ -96,29 +96,53 @@ if (!file_exists($source)) {
 //echo $source; exit;
 
 
-// Calculate destination
-$imageRoot = $webExpressContentDirAbs . '/webp-images';
 
-// Check if source is residing inside document root.
-// (it is, if path starts with document root + '/')
-if (substr($source, 0, strlen($docRoot) + 1) === $docRoot . '/') {
-
-    // We store relative to document root.
-    // "Eat" the left part off the source parameter which contains the document root.
-    // and also eat the slash (+1)
-    $sourceRel = substr($source, strlen($docRoot) + 1);
-    $destination = $imageRoot . '/doc-root/' . $sourceRel . '.webp';
+// Calculate $destination
+// ----------------------
+$mingled = (isset($options['destination-folder']) && ($options['destination-folder'] == 'mingled'));
+$storeMingled = false;
+if ($mingled) {
+    // Test if source folder is writable.
+    // We will only store "mingled", if it is.
+    $sourceFolder = preg_replace('/\\/[^\\/]*$/', '', $source);
+    if (@is_writable($sourceFolder) && @is_executable($sourceFolder)) {
+        $storeMingled = true;
+    } else {
+        header('X-WebP-Express-Notice: Cannot save file in same directory as source, falling back to separate folder', true);
+        if (isset($_GET['debug'])) {
+            echo 'Notice: Cannot save file in same directory as source, falling back to separate folder<br><br>';
+        }
+    }
+}
+if ($storeMingled) {
+    if (isset($options['destination-extension']) && ($options['destination-extension'] == 'append')) {
+        $destination = $source . '.webp';
+    } else {
+        $destination = preg_replace('/\\.(jpe?g|png)$/', '', $source) . '.webp';
+    }
 } else {
-    // Source file is residing outside document root.
-    // we must add complete path to structure
-    $destination = $imageRoot . '/abs' . $source . '.webp';
+
+    $imageRoot = $webExpressContentDirAbs . '/webp-images';
+
+    // Check if source is residing inside document root.
+    // (it is, if path starts with document root + '/')
+    if (substr($source, 0, strlen($docRoot) + 1) === $docRoot . '/') {
+
+        // We store relative to document root.
+        // "Eat" the left part off the source parameter which contains the document root.
+        // and also eat the slash (+1)
+        $sourceRel = substr($source, strlen($docRoot) + 1);
+        $destination = $imageRoot . '/doc-root/' . $sourceRel . '.webp';
+    } else {
+        // Source file is residing outside document root.
+        // we must add complete path to structure
+        $destination = $imageRoot . '/abs' . $source . '.webp';
+    }
 }
 
-// If we wanted webp images to be located in same folder, with ie ".jpg.webp" extension:
-// $destination = $source . '.webp';
 
-// If we wanted webp images to be located in same folder, with ".webp" extension:
-// $destination = preg_replace('/\.(jpg|jpeg|png)$/', '.webp', $source);
+
+
 
 //echo $destination; exit;
 

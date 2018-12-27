@@ -86,6 +86,8 @@ class Config
             'metadata' => 'none',
             'do-not-pass-source-in-query-string' => false,
             'redirect-to-existing-in-htaccess' => false,
+            'destination-folder' => 'separate',
+            'destination-extension' => 'append',
             'web-service' => [
                 'enabled' => false,
                 'whitelist' => [
