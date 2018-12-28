@@ -113,13 +113,22 @@ Easy enough. Browsers looks at the *content type* header rather than the URL to 
 I am btw considering making an option to have the plugin redirect to the webp instead of serving immediately. That would remove the apparent mismatch between file extension and content type header. However, the cost of doing that will be an extra request for each image, which means extra time and worse performance. I believe you'd be ill advised to use that option, so I guess I will not implement it. But perhaps you have good reasons to use it? If you do, please let me know!
 
 ### I am on NGINX / OpenResty
-It is possible to make WebP Express work on NGINX, but it requieres manually inserting redirection rules in the NGINX configuration file (nginx.conf or the configuration file for the site, found in `/etc/nginx/sites-available`). For standard wordpress installations, the following rules should work:
+It is possible to make WebP Express work on NGINX, but it requieres manually inserting redirection rules in the NGINX configuration file (nginx.conf or the configuration file for the site, found in `/etc/nginx/sites-available`). On most setups the following rules should work:
+
+```
+if ($http_accept ~* "webp"){
+  rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?wp-content=wp-content break;
+}
+```
+
+If it doesn't work, try this instead:
 
 ```
 if ($http_accept ~* "webp"){
   rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content break;
 }
 ```
+
 *Beware:* If you copy the code above, you might get an html-encoded ampersand before "wp-content"
 
 The `wp-content` argument must point to the wp-content folder (relative to document root). In most installations, it is 'wp-content'.
