@@ -185,4 +185,4 @@ For more info, see the closed issues on the 0.9.0 milestone on the github reposi
 Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue putting effort into this plugin:
 
 - [Buy me a Coffee](https://ko-fi.com/rosell)
-- [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell).
+- [Become a backer](https://github.com/rosell-dk/webp-express/blob/master/BACKERS.md)
