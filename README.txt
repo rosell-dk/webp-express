@@ -197,8 +197,12 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.9.1 =
+*(released 28 dec 2018)*
+* Fixed critical bug causing blank page on options page
+
 = 0.9.0 =
-* (released 27 dec 2018) *
+*(released 27 dec 2018)*
 * Optionally make .htaccess redirect directly to existing webp (improves performance)
 * Optionally do not send filename from .htaccess to the PHP in Querystring, but use other means (improves security and reduces risks of problems due to firewall rules)
 * Fixed some bugs
@@ -272,6 +276,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.9.1 =
+Fixed critical bug causing options page to go blank
 
 = 0.9.0 =
 Option to redirect to existing webp images directly in .htaccess (improves performance)

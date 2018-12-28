@@ -1,5 +1,9 @@
+= 0.9.1 =
+*(released 28 dec 2018)*
+* Fixed critical bug causing blank page on options page
+
 = 0.9.0 =
-* (released 27 dec 2018) *
+*(released 27 dec 2018)*
 * Optionally make .htaccess redirect directly to existing webp (improves performance)
 * Optionally do not send filename from .htaccess to the PHP in Querystring, but use other means (improves security and reduces risks of problems due to firewall rules)
 * Fixed some bugs
@@ -7,11 +11,11 @@
 For more info, see the closed issues on the 0.9.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.9.0
 
 = 0.8.1 =
-* (released 11 dec 2018) *
+*(released 11 dec 2018)*
 * Fixed javascript bug
 
 = 0.8.0 =
-* (released 11 dec 2018) *
+*(released 11 dec 2018)*
 * New conversion method, which calls imagick binary directly. This will make WebP express work out of the box on more systems
 * Made sure not to trigger LFI warning i Wordfence (to activate, click the force .htaccess button)
 * Imagick can now be configured to set quality to auto on systems where the auto option isn't generally available

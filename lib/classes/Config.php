@@ -74,21 +74,30 @@ class Config
 
         $canDetectQuality = TestRun::isLocalQualityDetectionWorking();
         $defaultConfig = [
-            'cache-control' => 'no-header',
-            'cache-control-custom' => 'public, max-age:3600',
-            'converters' => [],
-            'fail' => 'original',
+
+            // redirection rules
+            'do-not-pass-source-in-query-string' => false,
+            'redirect-to-existing-in-htaccess' => false,
             'forward-query-string' => true,
             'image-types' => 1,
+            'only-redirect-to-converter-on-cache-miss' => false,
+
+            // conversion options
+            'converters' => [],
             'quality-auto' => $canDetectQuality,
             'max-quality' => 80,
             'quality-specific' => 70,
             'metadata' => 'none',
-            'do-not-pass-source-in-query-string' => false,
-            'redirect-to-existing-in-htaccess' => false,
             'destination-folder' => 'separate',
             'destination-extension' => 'append',
+
+            // serve options
+            'cache-control' => 'no-header',
+            'cache-control-custom' => 'public, max-age:3600',
+            'fail' => 'original',
             'success-response' => 'converted',
+
+            // web service
             'web-service' => [
                 'enabled' => false,
                 'whitelist' => [
@@ -192,15 +201,17 @@ class Config
                 $hasError = isset($testResult['errors'][$converterId]);
                 $working = !$hasError;
                 if (isset($converter['working']) && ($converter['working'] != $working)) {
+
+                    // TODO: webpexpress_converterName($converterId)
                     if ($working) {
                         Messenger::printMessage(
                             'info',
-                            'Hurray! - The <i>' . webpexpress_converterName($converterId) . '</i> conversion method is working now!'
+                            'Hurray! - The <i>' . $converterId . '</i> conversion method is working now!'
                         );
                     } else {
                         Messenger::printMessage(
                             'warning',
-                            'Sad news. The <i>' . webpexpress_converterName($converterId) . '</i> conversion method is not working anymore. What happened?'
+                            'Sad news. The <i>' . $converterId . '</i> conversion method is not working anymore. What happened?'
                         );
                     }
                 }
