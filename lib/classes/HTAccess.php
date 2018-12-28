@@ -45,26 +45,24 @@ class HTAccess
         $rules .= "<IfModule mod_rewrite.c>\n" .
         "  RewriteEngine On\n\n";
 
-        //$pathToExisting = Paths::getPathToExisting();
-        //$pathToExisting = Paths::getCacheDirRel() . '/doc-root/' . Paths::getHomeDirRel();
-        //$pathToExisting = Paths::getCacheDirRel() . '/doc-root/' . Paths::getPluginDirRel();
-        //$pathToExisting = Paths::getCacheDirRel() . '/doc-root/' . Paths::getPluginDirRel();
-        $pathToExisting = Paths::getCacheDirRel() . '/doc-root/';
+        $cacheDirRel = Paths::getCacheDirRel() . '/doc-root';
+
+        $htaccessDirRel = '';
         switch ($htaccessDir) {
             case 'index':
-                $pathToExisting .= Paths::getIndexDirRel();
+                $htaccessDirRel = Paths::getIndexDirRel();
                 break;
             case 'home':
-                $pathToExisting .= Paths::getHomeDirRel();
+                $htaccessDirRel = Paths::getHomeDirRel();
                 break;
             case 'plugin':
-                $pathToExisting .= Paths::getPluginDirRel();
+                $htaccessDirRel = Paths::getPluginDirRel();
                 break;
             case 'uploads':
-                $pathToExisting .= Paths::getUploadDirRel();
+                $htaccessDirRel = Paths::getUploadDirRel();
                 break;
             case 'wp-content':
-                $pathToExisting .= Paths::getWPContentDirRel();
+                $htaccessDirRel = Paths::getWPContentDirRel();
                 break;
         }
 
@@ -82,11 +80,27 @@ class HTAccess
 
         // https://stackoverflow.com/questions/34124819/mod-rewrite-set-custom-header-through-htaccess
         if ($redirectToExisting) {
+
+            $mingled = (isset($config['destination-folder']) && ($config['destination-folder'] == 'mingled'));
+            if ($mingled) {
+                $rules .= "  # Redirect to existing converted image in same dir (if browser supports webp)\n";
+                $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
+
+                if (isset($config['destination-extension']) && ($config['destination-extension'] == 'append')) {
+                    $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp -f\n";
+                    $rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.$2.webp [T=image/webp,QSD,E=EXISTING:1,L]\n\n";
+                } else {
+                    $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp -f\n";
+                    $rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.webp [T=image/webp,QSD,E=EXISTING:1,L]\n\n";
+                }
+            }
+else {
             $rules .= "  # Redirect to existing converted image in cache-dir (if browser supports webp)\n";
             $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
-            $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $pathToExisting . "/$1.$2.webp -f\n";
-            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $pathToExisting . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n";
+            $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp -f\n";
+            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n";
+    }
         }
 
         if (!$passSourceInQS) {
@@ -119,19 +133,21 @@ class HTAccess
 
             // Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
             $rules .="\n  <IfModule mod_headers.c>\n" .
-                "    # Set Vary:Accept header for the image types handled by WebP Express.\n" .
-                "    # The purpose is to make CDN cache both original images and converted images.\n" .
-                "    SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
-                "    Header append \"Vary\" \"Accept\" env=ADDVARY\n\n" .
-                "    # Set X-WebP-Express header for diagnose purposes\n" .
-                "    # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
-                "    # So, the next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
-                "    SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
+                "    <IfModule mod_setenvif.c>\n" .
+                "      # Set Vary:Accept header for the image types handled by WebP Express.\n" .
+                "      # The purpose is to make CDN cache both original images and converted images.\n" .
+                "      SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
+                "      Header append \"Vary\" \"Accept\" env=ADDVARY\n\n" .
+                "      # Set X-WebP-Express header for diagnose purposes\n" .
+                "      # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
+                "      # So, the next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
+                "      SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
                 //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
                 //"  # Set the debug header\n" .
-                "    Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING\n" .
+                "      Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING\n" .
                 //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
-            "  </IfModule>\n\n";
+                "    </IfModule>\n" .
+                "  </IfModule>\n\n";
 
         $rules .="</IfModule>\n";
 
@@ -156,8 +172,9 @@ class HTAccess
             "</IfModule>\n\n";
         }*/
 
-        $rules .= "AddType image/webp .webp\n";
-
+        $rules .= "<IfModule mod_mime.c>\n";
+        $rules .= "  AddType image/webp .webp\n";
+        $rules .= "</IfModule>\n";
         return $rules;
     }
 
