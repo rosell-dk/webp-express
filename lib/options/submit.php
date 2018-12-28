@@ -101,8 +101,9 @@ function webp_express_sanitize_quality_field($text) {
 }
 $config = [
     // redirection rules
-    'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
     'image-types' => sanitize_text_field($_POST['image-types']),
+    'only-redirect-to-converter-on-cache-miss' => isset($_POST['only-redirect-to-converter-on-cache-miss']),
+    'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
     'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
     'forward-query-string' => true,
 

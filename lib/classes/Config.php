@@ -76,11 +76,11 @@ class Config
         $defaultConfig = [
 
             // redirection rules
+            'image-types' => 1,
+            'only-redirect-to-converter-on-cache-miss' => false,
             'do-not-pass-source-in-query-string' => false,
             'redirect-to-existing-in-htaccess' => false,
             'forward-query-string' => true,
-            'image-types' => 1,
-            'only-redirect-to-converter-on-cache-miss' => false,
 
             // conversion options
             'converters' => [],

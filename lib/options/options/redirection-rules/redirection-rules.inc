@@ -5,6 +5,7 @@
         <tbody>
             <?php
             include_once 'image-types.inc';
+            include_once 'only-redirect-to-converter-on-cache-miss.inc';
             include_once 'redirect-to-existing.inc';
             include_once 'do-not-pass-source-path-in-query-string.inc';
             ?>

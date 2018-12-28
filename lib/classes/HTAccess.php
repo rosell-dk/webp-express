@@ -79,14 +79,17 @@ class HTAccess
         // to get: RewriteRule ^\/?(.*)\.(jpe?g)$ /wp-content-moved/webp-express/webp-images/doc-root/plugins-moved/$1.$2.webp [NC,T=image/webp,QSD,E=WEBPACCEPT:1,E=EXISTING:1,L]
 
         // https://stackoverflow.com/questions/34124819/mod-rewrite-set-custom-header-through-htaccess
+        $mingled = (isset($config['destination-folder']) && ($config['destination-folder'] == 'mingled'));
+        $destinationExtension = (isset($config['destination-extension']) ? $config['destination-extension'] : 'append');
+
         if ($redirectToExisting) {
 
-            $mingled = (isset($config['destination-folder']) && ($config['destination-folder'] == 'mingled'));
+
             if ($mingled) {
                 $rules .= "  # Redirect to existing converted image in same dir (if browser supports webp)\n";
                 $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
 
-                if (isset($config['destination-extension']) && ($config['destination-extension'] == 'append')) {
+                if ($destinationExtension == 'append') {
                     $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp -f\n";
                     $rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.$2.webp [T=image/webp,QSD,E=EXISTING:1,L]\n\n";
                 } else {
@@ -94,13 +97,13 @@ class HTAccess
                     $rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.webp [T=image/webp,QSD,E=EXISTING:1,L]\n\n";
                 }
             }
-else {
+
             $rules .= "  # Redirect to existing converted image in cache-dir (if browser supports webp)\n";
             $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp -f\n";
             $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n";
-    }
+
         }
 
         if (!$passSourceInQS) {
@@ -112,12 +115,26 @@ else {
                 "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
                 "  </IfModule>\n\n";
         }
+
         $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
         $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
         $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
-        if ($config['forward-query-string']) {
+        if ($config['only-redirect-to-converter-on-cache-miss']) {
+            if ($mingled) {
+                if ($destinationExtension == 'append') {
+                    $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
+                } else {
+                    $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp !-f\n";
+                }
+            } else {
+                $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
+            }
             $rules .= "  RewriteCond %{QUERY_STRING} (.*)\n";
         }
+        /*
+        if ($config['forward-query-string']) {
+        }*/
+
 
         // TODO:
         // Add "NE" flag?
@@ -229,6 +246,7 @@ else {
             'image-types',
             'do-not-pass-source-in-query-string',
             'redirect-to-existing-in-htaccess',
+            'only-redirect-to-converter-on-cache-miss',
         ];
 
 
@@ -249,6 +267,13 @@ else {
                     }
                 }
                 if ($prop == 'redirect-to-existing-in-htaccess') {
+                    if ($newConfig[$prop] == false) {
+                        continue;
+                    } else {
+                        return true;
+                    }
+                }
+                if ($prop == 'only-redirect-to-converter-on-cache-miss') {
                     if ($newConfig[$prop] == false) {
                         continue;
                     } else {
