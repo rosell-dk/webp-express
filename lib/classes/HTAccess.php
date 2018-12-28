@@ -106,29 +106,34 @@ class HTAccess
 
         }
 
+        $basicConditions = "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
+        $basicConditions .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
+        if ($config['only-redirect-to-converter-on-cache-miss']) {
+            if ($mingled) {
+                if ($destinationExtension == 'append') {
+                    $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
+                } else {
+                    $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp !-f\n";
+                }
+            } else {
+                $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
+            }
+        }
+
+
         if (!$passSourceInQS) {
-            $rules .= "  # Pass REQUEST_FILENAME to PHP by setting request header\n" .
-                "  RewriteCond %{HTTP_ACCEPT} image/webp\n" .
-                "  RewriteCond %{REQUEST_FILENAME} -f\n" .
-                "  RewriteRule ^(.*)\.(jpe?g)$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
+            $rules .= "  # Pass REQUEST_FILENAME to PHP by setting request header\n";
+            $rules .= $basicConditions;
+            $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
                 "  <IfModule mod_headers.c>\n" .
                 "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
                 "  </IfModule>\n\n";
         }
 
         $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
-        $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
-        $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
-        if ($config['only-redirect-to-converter-on-cache-miss']) {
-            if ($mingled) {
-                if ($destinationExtension == 'append') {
-                    $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
-                } else {
-                    $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp !-f\n";
-                }
-            } else {
-                $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
-            }
+        $rules .= $basicConditions;
+
+        if ($config['forward-query-string']) {
             $rules .= "  RewriteCond %{QUERY_STRING} (.*)\n";
         }
         /*
