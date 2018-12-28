@@ -173,5 +173,11 @@ if ($options['forward-query-string']) {
     }
 }
 
+if (isset($options['success-response']) && ($options['success-response'] == 'original')) {
+    $options['serve-original'] = true;
+    $options['add-vary-header'] = false;
+    // TODO: Actually we want caching, but WebP Convert disables caching when 'serve-original' is set.
+}
+
 //echo "<pre>source: $source \ndestination: $destination \n\noptions:" . print_r($options, true) . '</pre>'; exit;
 WebPConvert::convertAndServe($source, $destination, $options);

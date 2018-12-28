@@ -100,17 +100,25 @@ function webp_express_sanitize_quality_field($text) {
     return max(0, min($q, 100));
 }
 $config = [
-    'cache-control' => sanitize_text_field($_POST['cache-control']),
-    'cache-control-custom' => sanitize_text_field($_POST['cache-control-custom']),
-    'converters' => json_decode(wp_unslash($_POST['converters']), true), // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
-    'fail' => sanitize_text_field($_POST['fail']),
-    'image-types' => sanitize_text_field($_POST['image-types']),
-    'metadata' => sanitize_text_field($_POST['metadata']),
-    'forward-query-string' => true,
+    // redirection rules
     'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
+    'image-types' => sanitize_text_field($_POST['image-types']),
     'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
+    'forward-query-string' => true,
+
+    // conversion options
+    'converters' => json_decode(wp_unslash($_POST['converters']), true), // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
+    'metadata' => sanitize_text_field($_POST['metadata']),
     'destination-folder' => $_POST['destination-folder'],
     'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
+
+    // serve options
+    'cache-control' => sanitize_text_field($_POST['cache-control']),
+    'cache-control-custom' => sanitize_text_field($_POST['cache-control-custom']),
+    'fail' => sanitize_text_field($_POST['fail']),
+    'success-response' => sanitize_text_field($_POST['success-response']),
+
+    // web service
     'web-service' => [
         'enabled' => isset($_POST['web-service-enabled']),
         'whitelist' => json_decode(wp_unslash($_POST['whitelist']), true)

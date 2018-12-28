@@ -88,6 +88,7 @@ class Config
             'redirect-to-existing-in-htaccess' => false,
             'destination-folder' => 'separate',
             'destination-extension' => 'append',
+            'success-response' => 'converted',
             'web-service' => [
                 'enabled' => false,
                 'whitelist' => [

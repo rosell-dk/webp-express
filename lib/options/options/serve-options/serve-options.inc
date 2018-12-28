@@ -6,6 +6,7 @@
             <?php
             include_once 'cache-control.inc';
             include_once 'response-on-failure.inc';
+            include_once 'response-on-success.inc';
             ?>
         </tbody>
     </table>
