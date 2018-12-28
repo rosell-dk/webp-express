@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__ . '/../../classes/Paths.php';
+include_once __DIR__ . '/../../../classes/Paths.php';
 use \WebPExpress\Paths;
 
 //$whitelist = $config['web-service']['whitelist'];

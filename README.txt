@@ -157,6 +157,8 @@ The plugin takes care of setting the "Vary" HTTP header to "Accept" when routing
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation/List_of_default_Accept_values#Values_for_an_image
 - so it is not an issue.
 
+In the 0.10.0 release, you will have another (and better) option, as [described here](https://github.com/rosell-dk/webp-express/issues/133)
+
 = I am on Cloudflare =
 Without configuration, Cloudflare will not maintain separate caches for jpegs and webp; all browsers will get jpeg. To make Cloudflare cache not only by URL, but also by header, you need to use the [Custom Cache Key](https://support.cloudflare.com/hc/en-us/articles/115004290387) page rule, and add *Header content*  to make separate caches depending on the *Accept* request header.
 
@@ -167,6 +169,8 @@ To make *WebP Express* work on a free Cloudflare account, you have the following
 1. You can configure the CDN not to cache jpeg images by adding the following page rule: If rule matches: `example.com/*.jpg`, set: *Cache level* to: *Bypass*
 
 2. You can set up another CDN (on another provider), which you just use for handling the images. You need to configure that CDN to forward the *Accept header*. You also need to install a Wordpress plugin that points images to that CDN.
+
+In the 0.10.0 release, you will have another (and better) option, as [described here](https://github.com/rosell-dk/webp-express/issues/133)
 
 = Does it work with lazy loaded images? =
 No plugins/frameworks has yet been discovered, which does not work with *WebP Express*.
@@ -180,10 +184,9 @@ The following lazy load plugins/frameworks has been tested and works with *WebP 
 = When is feature X coming? =
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
 
-Here are my loose plans ahead: The 0.9 release will add redirect rule in .htaccess (optionally), perhaps also include configurable destination. 0.10 will probably be some diagnose tool – this should release some time spend in the forum. 0.11 could be focused on PNG. 0.12 might be displaying rules for NGINX. 0.13 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.14 might be multisite support. 0.15 might be a file manager-like interface for inspecting generated webp files. 0.16 might be WAMP support. This is all guessing. I’m only planning one milestone at the time. You can follow the issue queue here: https://github.com/rosell-dk/webp-express/issues
+Here are my loose plans ahead: The 0.10 release adds possibility to configure where the generated webp files are located. This together with a few other new options allows WebP Express to work together with the [Cache Enabler](https://wordpress.org/plugins/cache-enabler/) plugin. This is a great combination, which eliminates the need to redirect jpeg to webp. Read more about it [here](https://github.com/rosell-dk/webp-express/issues/133). The 0.11 release will probably add a some diagnose tool – this should release some time spend in the forum. 0.12 could be focused on PNG. 0.13 might be displaying rules for NGINX. 0.14 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.15 might be multisite support. 0.16 might be a file manager-like interface for inspecting generated webp files. 0.17 might be WAMP support. This is all guessing. I’m only planning one milestone at the time. You can follow the issue queue here: https://github.com/rosell-dk/webp-express/issues
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
-
 
 = How do I buy you a cup of coffee? =
 Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacoff.ee/rosell).

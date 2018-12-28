@@ -121,66 +121,14 @@ echo '<form id="webpexpress_settings" action="' . esc_url( admin_url( 'admin-pos
         </table>
     </fieldset>
 <?php
-
 function helpIcon($text) {
     return '<div class="help">?<div class="popup">' . $text . '</div></div>';
 }
+
+include_once 'options/redirection-rules/redirection-rules.inc';
+include_once 'options/conversion-options/conversion-options.inc';
+include_once 'options/serve-options/serve-options.inc';
+include_once 'options/web-service-options/web-service-options.inc';
 ?>
-
-<p>
-
-
-
-<fieldset class="block">
-    <h3>Redirection rules</h3>
-    <p><i>The options here affects the rules created in the .htaccess.</i></p>
-    <table class="form-table">
-        <tbody>
-            <?php
-            include_once 'options/image-types.inc';
-            include_once 'options/redirect-to-existing.inc';
-            include_once 'options/do-not-pass-source-path-in-query-string.inc';
-            ?>
-        </tbody>
-    </table>
-</fieldset>
-<fieldset class="block">
-    <h3>Conversion options</h3>
-    <p><i>The options here affects the conversion process</i></p>
-    <table class="form-table">
-        <tbody>
-            <?php
-            include_once 'options/quality.inc';
-            include_once 'options/metadata.inc';
-            include_once 'options/converters.inc';
-            include_once 'options/destination-folder.inc';
-            include_once 'options/destination-extension.inc';
-            ?>
-        </tbody>
-    </table>
-</fieldset>
-<fieldset class="block">
-    <h3>Serve options</h3>
-    <p><i>The options here affects how the image is served after a successful / unsuccessful conversion</i></p>
-    <table class="form-table">
-        <tbody>
-            <?php
-            include_once 'options/cache-control.inc';
-            include_once 'options/response-on-failure.inc';
-            ?>
-        </tbody>
-    </table>
-</fieldset>
-<fieldset class="block">
-    <h3>Web service</h3>
-    <table class="form-table">
-        <tbody>
-            <?php
-            include_once 'options/web-service.inc';
-            ?>
-        </tbody>
-    </table>
-</fieldset>
-
 </form>
 </div>
