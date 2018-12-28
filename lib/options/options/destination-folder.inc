@@ -7,7 +7,7 @@ echo '</th><td>';
 
 $destinationFolder = $config['destination-folder'];
 
-echo '<select name="destination-folder">';
+echo '<select name="destination-folder" id="destination_folder">';
 echo '<option value="separate"' . ($destinationFolder == 'separate' ? ' selected' : '') . '>In separate folder</option>';
 echo '<option value="mingled"' . ($destinationFolder == 'mingled' ? ' selected' : '') . '>Mingled</option>';
 echo '</select>';

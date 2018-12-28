@@ -110,7 +110,7 @@ $config = [
     'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
     'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
     'destination-folder' => $_POST['destination-folder'],
-    'destination-extension' => $_POST['destination-extension'],
+    'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
     'web-service' => [
         'enabled' => isset($_POST['web-service-enabled']),
         'whitelist' => json_decode(wp_unslash($_POST['whitelist']), true)
