@@ -254,6 +254,10 @@ class HTAccess
             'only-redirect-to-converter-on-cache-miss',
         ];
 
+        if (isset($newConfig['redirect-to-existing-in-htaccess']) && $newConfig['redirect-to-existing-in-htaccess']) {
+            $propsToCompare[] = 'destination-folder';
+            $propsToCompare[] = 'destination-extension';
+        }
 
         foreach ($propsToCompare as $prop) {
             if (!isset($newConfig[$prop])) {
@@ -285,6 +289,20 @@ class HTAccess
                         return true;
                     }
                 }
+                if ($prop == 'destination-folder') {
+                    if ($newConfig[$prop] == 'separate') {
+                        continue;
+                    } else {
+                        return true;
+                    }
+                }
+                if ($prop == 'destination-extension') {
+                    if ($newConfig[$prop] == 'append') {
+                        continue;
+                    } else {
+                        return true;
+                    }
+                }
 
                 // The option was not set in the old configuration,
                 // - so lets say that .htaccess needs updating
@@ -295,9 +313,11 @@ class HTAccess
             }
         }
 
+
         if (!isset($oldConfig['paths-used-in-htaccess'])) {
             return true;
         }
+
 
         return self::arePathsUsedInHTAccessOutdated();
     }
