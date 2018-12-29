@@ -16,9 +16,29 @@ use \WebPExpress\State;
 
 class HTAccess
 {
-    // (called from this file only)
+    // (called from this file only. BUT our saveRules methods calls it, and it is called from several classes)
     public static function generateHTAccessRulesFromConfigObj($config, $htaccessDir = 'index')
     {
+        // Any option that is newer than ~v.0.2 may not be set yet.
+        // So, in order to not have to use isset() all over the place, set to values
+        // that results in same behaviour as before the option was introduced.
+        // Beware that this may not be same as the default value in the UI (but it is generally)
+        $defaults = [
+            'forward-query-string' => true,
+            'image-types' => 1,
+            'do-not-pass-source-in-query-string' => false,
+            'redirect-to-existing-in-htaccess' => false,
+            'only-redirect-to-converter-on-cache-miss' => false,
+            'destination-folder' => 'separate',
+            'destination-extension' => 'append',
+            'success-response' => 'converted',
+        ];
+        foreach ($defaults as $prop => $defaultValue) {
+            if (!isset($config[$prop])) {
+                $config[$prop] = $defaultValue;
+            }
+        }
+
         /* Calculate $fileExt */
         $imageTypes = $config['image-types'];
         $fileExtensions = [];
@@ -66,10 +86,7 @@ class HTAccess
                 break;
         }
 
-        $doNotpassSourceInQS = (isset($config['do-not-pass-source-in-query-string']) && ($config['do-not-pass-source-in-query-string']));
-        $passSourceInQS = !$doNotpassSourceInQS;
-
-        $redirectToExisting = (isset($config['redirect-to-existing-in-htaccess']) && ($config['redirect-to-existing-in-htaccess']));
+        $passSourceInQS = !($config['do-not-pass-source-in-query-string']);
 
         // TODO: Is it possible to handle when wp-content is outside document root?
 
@@ -79,17 +96,16 @@ class HTAccess
         // to get: RewriteRule ^\/?(.*)\.(jpe?g)$ /wp-content-moved/webp-express/webp-images/doc-root/plugins-moved/$1.$2.webp [NC,T=image/webp,QSD,E=WEBPACCEPT:1,E=EXISTING:1,L]
 
         // https://stackoverflow.com/questions/34124819/mod-rewrite-set-custom-header-through-htaccess
-        $mingled = (isset($config['destination-folder']) && ($config['destination-folder'] == 'mingled'));
-        $destinationExtension = (isset($config['destination-extension']) ? $config['destination-extension'] : 'append');
+        $mingled = ($config['destination-folder'] == 'mingled');
 
-        if ($redirectToExisting) {
+        if ($config['redirect-to-existing-in-htaccess']) {
 
 
             if ($mingled) {
                 $rules .= "  # Redirect to existing converted image in same dir (if browser supports webp)\n";
                 $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
 
-                if ($destinationExtension == 'append') {
+                if ($config['destination-extension'] == 'append') {
                     $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp -f\n";
                     $rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.$2.webp [T=image/webp,QSD,E=EXISTING:1,L]\n\n";
                 } else {
@@ -110,7 +126,7 @@ class HTAccess
         $basicConditions .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
         if ($config['only-redirect-to-converter-on-cache-miss']) {
             if ($mingled) {
-                if ($destinationExtension == 'append') {
+                if ($config['destination-extension'] == 'append') {
                     $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
                 } else {
                     $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp !-f\n";
@@ -153,14 +169,17 @@ class HTAccess
             " [NC,L]\n";        // E=WOD:1
 
 
-            // Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
-            $rules .="\n  <IfModule mod_headers.c>\n" .
-                "    <IfModule mod_setenvif.c>\n" .
-                "      # Set Vary:Accept header for the image types handled by WebP Express.\n" .
-                "      # The purpose is to make CDN cache both original images and converted images.\n" .
-                "      SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
-                "      Header append \"Vary\" \"Accept\" env=ADDVARY\n\n" .
-                "      # Set X-WebP-Express header for diagnose purposes\n" .
+        // Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+        $rules .= "\n  <IfModule mod_headers.c>\n";
+        $rules .= "    <IfModule mod_setenvif.c>\n";
+        if ($config['success-response'] == 'converted') {
+            $rules .= "      # Set Vary:Accept header for the image types handled by WebP Express.\n" .
+            "      # The purpose is to make CDN aware that the response varies with the Accept header, so it should not just use the URL as cache key, but also the Accept header. \n" .
+            "      SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
+            "      Header append \"Vary\" \"Accept\" env=ADDVARY\n\n";
+        }
+
+        $rules .= "      # Set X-WebP-Express header for diagnose purposes\n" .
                 "      # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
                 "      # So, the next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
                 "      SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
@@ -173,11 +192,7 @@ class HTAccess
 
         $rules .="</IfModule>\n";
 
-
-
-
-
-        /*if ($redirectToExisting) {
+        /*if ($config['redirect-to-existing-in-htaccess']) {
             $rules .=
             "<IfModule mod_headers.c>\n" .
                 "  # Append Vary Accept header, when the rules above are redirecting to existing webp\n" .
@@ -247,77 +262,41 @@ class HTAccess
         }
 
         $propsToCompare = [
-            'forward-query-string',
-            'image-types',
-            'do-not-pass-source-in-query-string',
-            'redirect-to-existing-in-htaccess',
-            'only-redirect-to-converter-on-cache-miss',
+            'forward-query-string' => true,
+            'image-types' => 1,
+            'do-not-pass-source-in-query-string' => false,
+            'redirect-to-existing-in-htaccess' => false,
+            'only-redirect-to-converter-on-cache-miss' => false,
+            'success-response' => 'converted',
         ];
 
         if (isset($newConfig['redirect-to-existing-in-htaccess']) && $newConfig['redirect-to-existing-in-htaccess']) {
-            $propsToCompare[] = 'destination-folder';
-            $propsToCompare[] = 'destination-extension';
+            $propsToCompare['destination-folder'] = 'separate';
+            $propsToCompare['destination-extension'] = 'append';
         }
 
-        foreach ($propsToCompare as $prop) {
+        foreach ($propsToCompare as $prop => $behaviourBeforeIntroduced) {
             if (!isset($newConfig[$prop])) {
                 continue;
             }
             if (!isset($oldConfig[$prop])) {
-                if ($prop == 'do-not-pass-source-in-query-string') {
-
-                    // Do not trigger .htaccess update if the new value results
-                    // in same old behaviour (before this option was introduced)
-                    if ($newConfig[$prop] == false) {
-                        continue;
-                    } else {
-                        // Otherwise DO trigger .htaccess update
-                        return true;
-                    }
+                // Do not trigger .htaccess update if the new value results
+                // in same old behaviour (before this option was introduced)
+                if ($newConfig[$prop] == $behaviourBeforeIntroduced) {
+                    continue;
+                } else {
+                    // Otherwise DO trigger .htaccess update
+                    return true;
                 }
-                if ($prop == 'redirect-to-existing-in-htaccess') {
-                    if ($newConfig[$prop] == false) {
-                        continue;
-                    } else {
-                        return true;
-                    }
-                }
-                if ($prop == 'only-redirect-to-converter-on-cache-miss') {
-                    if ($newConfig[$prop] == false) {
-                        continue;
-                    } else {
-                        return true;
-                    }
-                }
-                if ($prop == 'destination-folder') {
-                    if ($newConfig[$prop] == 'separate') {
-                        continue;
-                    } else {
-                        return true;
-                    }
-                }
-                if ($prop == 'destination-extension') {
-                    if ($newConfig[$prop] == 'append') {
-                        continue;
-                    } else {
-                        return true;
-                    }
-                }
-
-                // The option was not set in the old configuration,
-                // - so lets say that .htaccess needs updating
-                return true;
             }
             if ($newConfig[$prop] != $oldConfig[$prop]) {
                 return true;
             }
         }
 
-
         if (!isset($oldConfig['paths-used-in-htaccess'])) {
             return true;
         }
-
 
         return self::arePathsUsedInHTAccessOutdated();
     }
