@@ -2,7 +2,7 @@
 // Image types
 // ------------
 echo '<tr><th scope="row">Destination folder';
-echo helpIcon('<p>If "In separate folder" is selected, the webp images will be saved to a common root (wp-content/webp-express/webp-images/doc-root), mirroring the folder structure.</p><p>If "Mingled" is selected, the converter will try to save the webp image in the same folder as the original. If that fails (ie for theme or plugin images), the image will be saved in the separate folder</p>');
+echo helpIcon('<p>If "In separate folder" is selected, the webp images will be saved to a common root (wp-content/webp-express/webp-images/doc-root), mirroring the folder structure.</p><p>If "Mingled" is selected, the converter will try to save the webp image in the same folder as the original. If that fails (ie for theme or plugin images), the image will be saved in the separate folder</p><p>Changing this option will cause existing webp images to be moved (only those in the upload folder, and only those that has a corresponding source image)</p>');
 echo '</th><td>';
 
 $destinationFolder = $config['destination-folder'];

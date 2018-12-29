@@ -1,8 +1,10 @@
 <?php
 
+include_once __DIR__ . '/../classes/CacheMover.php';
+use \WebPExpress\CacheMover;
+
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
-
 
 include_once __DIR__ . '/../classes/HTAccess.php';
 use \WebPExpress\HTAccess;
@@ -212,6 +214,8 @@ foreach ($config['server']['whitelist'] as &$entry) {
 }
 */
 
+//echo CacheMover::move($config, $oldConfig);exit;
+
 $result = Config::saveConfigurationAndHTAccess($config, isset($_POST['force']));
 
 /*
@@ -248,6 +252,52 @@ if (!$result['saved-both-config']) {
 
     }
 } else {
+    if (($config['destination-folder'] != $oldConfig['destination-folder']) || ($config['destination-extension'] != $oldConfig['destination-extension'])) {
+        $whatShouldIt = '';
+        if ($config['destination-folder'] == $oldConfig['destination-folder']) {
+            $whatShouldIt = 'renamed';
+            $whatShouldIt2 = 'rename';
+        } else {
+            if ($config['destination-extension'] == $oldConfig['destination-extension']) {
+                $whatShouldIt = 'relocated';
+                $whatShouldIt2 = 'relocate';
+            } else {
+                $whatShouldIt = 'relocated and renamed';
+                $whatShouldIt2 = 'relocate and rename';
+            }
+        }
+
+        list($numFilesMoved, $numFilesFailedMoving) = CacheMover::move($config, $oldConfig);
+        if ($numFilesFailedMoving == 0) {
+            if ($numFilesMoved == 0) {
+                Messenger::addMessage(
+                    'notice',
+                    'No cached webp files needed to be ' . $whatShouldIt
+                );
+
+            } else {
+                Messenger::addMessage(
+                    'success',
+                    'The webp files was ' . $whatShouldIt . ' (' . $whatShouldIt . ' ' . $numFilesMoved . ' images)'
+                );
+            }
+        } else {
+            if ($numFilesMoved == 0) {
+                Messenger::addMessage(
+                    'warning',
+                    'No webp files could not be ' . $whatShouldIt . ' (failed to ' . $whatShouldIt2 . ' ' . $numFilesFailedMoving . ' images)'
+                );
+            } else {
+                Messenger::addMessage(
+                    'warning',
+                    'Some webp files could not be ' . $whatShouldIt . ' (failed to ' . $whatShouldIt2 . ' ' . $numFilesFailedMoving . ' images, but successfully ' . $whatShouldIt . ' ' . $numFilesMoved . ' images)'
+                );
+
+            }
+        }
+    }
+
+
     if (!$result['rules-needed-update']) {
         Messenger::addMessage(
             'success',

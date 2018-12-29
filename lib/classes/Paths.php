@@ -132,7 +132,7 @@ class Paths
         if (!defined(WP_CONTENT_DIR)) {
 
         }
-        return rtrim(WP_CONTENT_DIR, '/') . '/webp-express';
+        return self::getAbsDir(rtrim(WP_CONTENT_DIR, '/') . '/webp-express');
     }
 
     public static function getContentDirRel()
@@ -149,7 +149,7 @@ class Paths
     public static function getUploadDirAbs()
     {
         $upload_dir = wp_upload_dir(null, false);
-        return $upload_dir['basedir'];
+        return self::getAbsDir($upload_dir['basedir']);
     }
     public static function getUploadDirRel()
     {

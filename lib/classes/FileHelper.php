@@ -27,6 +27,19 @@ class FileHelper
         return octdec(substr(decoct($perm), -4));
     }
 
+
+    /**
+     *  Get file permission of a file (integer). Only get the last part, ie 0644
+     *  If failure, it returns $fallback
+     */
+    public static function filePermWithFallback($filename, $fallback) {
+        $perm = self::filePerm();
+        if ($perm === false) {
+            return $fallback;
+        }
+        return $perm;
+    }
+
     public static function humanReadableFilePerm($mode) {
         return substr(decoct($mode), -4);
     }
@@ -58,6 +71,15 @@ class FileHelper
         }
         return false;
     }
+
+    /**
+     *  Create a dir using same permissions as parent.
+     *  If
+     */
+     /*
+    public static function mkdirSamePermissionsAsParent($pathname) {
+
+    }*/
 
     /**
      *  Get directory part of filename.
