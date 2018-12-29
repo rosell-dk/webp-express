@@ -8,12 +8,12 @@ error_reporting(E_ALL);
 //exit;
 
 //require 'webp-on-demand-1.inc';
-require '../vendor/rosell-dk/webp-convert/build/webp-on-demand-1.inc';
 //require '../vendor/autoload.php';
 
 //print_r($_GET); exit;
 
 use \WebPConvert\WebPConvert;
+use \WebPConvert\ServeExistingOrHandOver;
 
 function loadConfig($configFilename) {
     if (!file_exists($configFilename)) {
@@ -150,9 +150,6 @@ if ($storeMingled) {
 //echo '<pre>' . print_r($options, true) . '</pre>';
 //exit;
 
-$options['require-for-conversion'] = 'webp-on-demand-2.inc';
-//$options['require-for-conversion'] = '../../../autoload.php';
-
 foreach ($options['converters'] as &$converter) {
     if (isset($converter['converter'])) {
         $converterId = $converter['converter'];
@@ -173,11 +170,48 @@ if ($options['forward-query-string']) {
     }
 }
 
+function aboutToServeImageCallBack($servingWhat, $whyServingThis, $obj) {
+    return false;   // do not serve!
+}
+
+$options['require-for-conversion'] = 'webp-on-demand-2.inc';
+//$options['require-for-conversion'] = '../../../autoload.php';
+
+include_once '../vendor/rosell-dk/webp-convert/build/webp-on-demand-1.inc';
+
 if (isset($options['success-response']) && ($options['success-response'] == 'original')) {
-    $options['serve-original'] = true;
+
+    /*
+    We want to convert, but serve the original. This is a bit unusual and requires a little tweaking
+
+    First, we use the "decideWhatToServe" method of WebPConvert to find out if we should convert or not
+
+    If result is "destination", it means there is a useful webp image at the destination (no reason to convert)
+    If result is "source", it means that source is lighter than existing webp image (no reason to convert)
+    If result is "fresh-conversion", it means we should convert
+    */
+    $server = new \WebPConvert\Serve\ServeExistingOrHandOver($source, $destination, $options);
+    $server->decideWhatToServe();
+
+    if ($server->whatToServe == 'fresh-conversion') {
+        // Conversion time.
+        // To prevent the serving, we use the callback
+        $options['aboutToServeImageCallBack'] = 'aboutToServeImageCallBack';
+        WebPConvert::convertAndServe($source, $destination, $options);
+
+        // remove the callback, we are going for another round
+        unset($options['aboutToServeImageCallBack']);
+        unset($options['require-for-conversion']);
+    }
+
+    // Serve time
+    $options['serve-original'] = true;      // Serve original
     $options['add-vary-header'] = false;
-    // TODO: Actually we want caching, but WebP Convert disables caching when 'serve-original' is set.
+
+    WebPConvert::convertAndServe($source, $destination, $options);
+
+} else {
+    WebPConvert::convertAndServe($source, $destination, $options);
 }
 
 //echo "<pre>source: $source \ndestination: $destination \n\noptions:" . print_r($options, true) . '</pre>'; exit;
-WebPConvert::convertAndServe($source, $destination, $options);
