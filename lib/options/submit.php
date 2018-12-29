@@ -148,9 +148,24 @@ foreach ($config['converters'] as &$converter) {
 }
 
 $oldConfig = Config::loadConfig();
+$oldConfigExists = ($oldConfig !== false);
+if (!$oldConfigExists) {
+    $oldConfig = [];
+}
+// Set defaults on the props we are using, so we don't have to use isset() all over
+$oldConfigDefaults = [
+    'converters' => [],
+    'destination-folder' => 'separate',
+    'destination-extension' => 'append',
+];
+foreach ($oldConfigDefaults as $prop => $defaultValue) {
+    if (!isset($oldConfig[$prop])) {
+        $oldConfig[$prop] = $defaultValue;
+    }
+}
 
 // Set existing api keys in web service (we removed them from the json array, for security purposes)
-if ($oldConfig !== false) {
+if ($oldConfigExists) {
     if (isset($oldConfig['web-service']['whitelist'])) {
         foreach ($oldConfig['web-service']['whitelist'] as $existingWhitelistEntry) {
             foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
@@ -172,7 +187,7 @@ foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
 
 // Get existing wpc api key from old config
 $existingWpcApiKey = '';
-if ($oldConfig !== false) {
+if ($oldConfigExists) {
     foreach ($oldConfig['converters'] as &$converter) {
         if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
             if (isset($converter['options']['api-key'])) {
