@@ -15,6 +15,11 @@
 </fieldset>
 <?php
 else:
+    if ($config['operation-mode'] == 'just-convert') {
+        // ps: we call it "auto convert", when in this mode
+        include_once 'only-redirect-to-converter-on-cache-miss.inc';
+
+    }
     include_once 'image-types.inc';
 endif;
 ?>
