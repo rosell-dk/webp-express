@@ -171,6 +171,22 @@ But there is a case for using WebP Express rather than Jetpacks "Speed up image 
 
 Jetpack has the same drawback as the *standard* WebP Express configuration: If a user downloads the file, there will be a mismatch between the file extension and the image type (the file is ie called "logo.jpg", but it is really a webp image). I don't think that is a big issue, but for those who do, WebP Express might still be for you, even though you have Jetpack. And that is because WebP Express can be set up just to generate webp's, without doing the internal redirection to webp (will be possible from version 0.10.0). You can then for example use the [Cache Enabler](https://wordpress.org/plugins/cache-enabler/) plugin, which is able to generate and cache two versions of each page. One for browsers that accepts webp and one for those that don't. In the HTML for webp-enabled browsers, the images points directly to the webp files.
 
+Pro Jetpack:
+- It is a free CDN which serves webp out of the box.
+- It optimizes jpegs and pngs as well (but note that only about 1 out of 5 users gets these, as webp is widely supported now)
+
+Con Jetpack:
+- It is a big plugin to install if you are only after the CDN
+- It requires that you create an account on Wordpress.com
+
+Pro WebP Express:
+- You have control over quality and metadata
+- It is a small plugin and care has been taken to add only very little overhead
+- Plays well together with Cache Enabler. By not redirecting jpg to webp, there is no need to do any special configuration on the CDN and no issue with misleading file extension, if user downloads a file.
+
+Con WebP Express:
+- If you are using a CDN and you are redirecting jpg to webp, you must configure the CDN to forward the Accept header. It is not possible on all CDNs. 
+
 = Why do I not see the option to set WebP quality to auto? =
 The option will only display, if your system is able to detect jpeg qualities. To make your server capable to do that, install *Imagick extension* (PECL >= 2.2.2) or enable exec() calls and install either *Imagick* or *Gmagick*.
 
