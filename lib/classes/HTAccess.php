@@ -172,7 +172,8 @@ class HTAccess
         // Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
         $rules .= "\n  <IfModule mod_headers.c>\n";
         $rules .= "    <IfModule mod_setenvif.c>\n";
-        if ($config['success-response'] == 'converted') {
+
+        if (($config['success-response'] == 'converted') || ($config['redirect-to-existing-in-htaccess'])) {
             $rules .= "      # Set Vary:Accept header for the image types handled by WebP Express.\n" .
             "      # The purpose is to make CDN aware that the response varies with the Accept header, so it should not just use the URL as cache key, but also the Accept header. \n" .
             "      SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
