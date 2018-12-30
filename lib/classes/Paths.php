@@ -13,8 +13,10 @@ class Paths
 
     public static function createDirIfMissing($dir)
     {
-        if (!file_exists($dir)) {
-          wp_mkdir_p($dir);
+        if (!@file_exists($dir)) {
+            // We use the wp_mkdir_p, because it takes care of setting folder
+            // permissions to that of parent, and handles creating deep structures too
+            wp_mkdir_p($dir);
         }
         return file_exists($dir);
     }
@@ -39,12 +41,22 @@ class Paths
 
     /**
      *  Return absolute dir.
-     *  - realpath() is used to resolve soft links
-     *  - trailing dash is removed - we don't use that here.
+     *  - realpath() is used to resolve soft links and resolve '../' and './'
+     *  - trailing dash is removed - we don't use that around here.
+     *
+     *  realpath() only works on existing dirs.
+     *  If realpath fails, PathHelper::canonicalize() will be used insead.
+     *  (this takes care of resolving '../' and './', but does NOT resolve soft links)
      */
     public static function getAbsDir($dir)
     {
-        return rtrim(realpath($dir), '/');
+        $result = realpath($dir);
+        if ($result === false) {
+            $dir = PathHelper::canonicalize($dir);
+        } else {
+            $dir = $result;
+        }
+        return rtrim($dir, '/');
     }
 
     // ------------ Document Root -------------
@@ -61,7 +73,7 @@ class Paths
         if (!function_exists('get_home_path')) {
             require_once ABSPATH . 'wp-admin/includes/file.php';
         }
-        return rtrim(get_home_path(), '/');
+        return self::getAbsDir(get_home_path());
     }
 
     public static function getHomeDirRel()
@@ -74,7 +86,7 @@ class Paths
 
     public static function getIndexDirAbs()
     {
-        return rtrim(ABSPATH, '/');
+        return self::getAbsDir(ABSPATH);
     }
 
     public static function getIndexDirRel()
@@ -106,7 +118,7 @@ class Paths
     // ------------ WP Content Dir -------------
     public static function getWPContentDirAbs()
     {
-        return rtrim(WP_CONTENT_DIR, '/');
+        return self::getAbsDir(WP_CONTENT_DIR);
     }
     public static function getWPContentDirRel()
     {
@@ -129,10 +141,7 @@ class Paths
 
     public static function getContentDirAbs()
     {
-        if (!defined(WP_CONTENT_DIR)) {
-
-        }
-        return self::getAbsDir(rtrim(WP_CONTENT_DIR, '/') . '/webp-express');
+        return self::getWPContentDirAbs() . '/webp-express';
     }
 
     public static function getContentDirRel()
