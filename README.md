@@ -137,10 +137,28 @@ Note that the rules above redirects every image request to the PHP script. To ge
 
 Discussion on this topic [here](https://wordpress.org/support/topic/nginx-rewrite-rules-4/)
 
-
-
 ### I am on a WAMP stack
 It has been reported that WebP Express *almost* works on WAMP stack (Windows, Apache, MySQL, PHP). I'd love to debug this, but do not own a Windows server or access to one... Can you help?
+
+### I am using Jetpack
+If you install Jetpack and enable the "Speed up image load times" then Jetpack will alter the HTML such that images are pointed to their CDN.
+
+Ie:
+`<img src="https://example.com/wp-content/uploads/2018/09/architecture.jpg">`
+
+becomes:
+`<img src="https://i0.wp.com/example.com/wp-content/uploads/2018/09/architecture.jpg">`
+
+Jetpack automatically serves webp files to browsers that supports it using same mechanism as the standard WebP Express configuration: If the "Accept" header contains "image/webp", a webp is served (keeping original file extension, but setting the "content-type" header to "image/webp"), otherwise a jpg is served.
+
+As images are no longer pointed to your original server, the .htaccess rules created by WebP Express will not have any effect.
+
+So if you are using Jetpack you don't really need WebP Express?
+Well, there is no point in having the "Speed up image load times" enabled together with WebP Express.
+
+But there is a case for using WebP Express rather than Jetpacks "Speed up image load times" feature:
+
+Jetpack has the same drawback as the *standard* WebP Express configuration: If a user downloads the file, there will be a mismatch between the file extension and the image type (the file is ie called "logo.jpg", but it is really a webp image). I don't think that is a big issue, but for those who do, WebP Express might still be for you, even though you have Jetpack. And that is because WebP Express can be set up just to generate webp's, without doing the internal redirection to webp (will be possible from version 0.10.0). You can then for example use the [Cache Enabler](https://wordpress.org/plugins/cache-enabler/) plugin, which is able to generate and cache two versions of each page. One for browsers that accepts webp and one for those that don't. In the HTML for webp-enabled browsers, the images points directly to the webp files.
 
 ### Why do I not see the option to set WebP quality to auto?
 The option will only display, if your system is able to detect jpeg qualities. To make your server capable to do that, install *Imagick extension* (PECL >= 2.2.2) or enable exec() calls and install either *Imagick* or *Gmagick*.
