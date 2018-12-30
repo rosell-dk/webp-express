@@ -159,7 +159,29 @@
     min-width: 150px;
     font-weight: normal;
     text-align: left;
-    max-width: 450px;
+}
+
+.help .popup.narrow {
+    width: 200px;
+}
+.help .popup {
+    width: 250px;
+}
+.help .popup.wide {
+    width: 350px;
+}
+.help .popup.wider {
+    width: 450px;
+}
+@media (max-width: 500px) {
+    .help .popup {
+        max-width: 380px;
+    }
+}
+@media (max-width: 400px) {
+    .help .popup {
+        max-width: 280px;
+    }
 }
 
 .help .popup > p:first-child {
@@ -181,9 +203,6 @@
 
 }
 
-.help .popup {
-    min-width: 250px;
-}
 
 /*
 #converters li > a.remove-converter {

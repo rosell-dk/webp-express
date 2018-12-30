@@ -122,7 +122,18 @@ echo '<form id="webpexpress_settings" action="' . esc_url( admin_url( 'admin-pos
     </fieldset>
 <?php
 function helpIcon($text) {
-    return '<div class="help">?<div class="popup">' . $text . '</div></div>';
+    $className = '';
+    if (strlen($text) < 80) {
+        $className = 'narrow';
+    }
+    if (strlen($text) > 150) {
+        if (strlen($text) > 300) {
+            $className = 'wider';
+        } else {
+            $className = 'wide';
+        }
+    }
+    return '<div class="help">?<div class="popup ' . $className . '">' . $text . '</div></div>';
 }
 
 include_once 'options/redirection-rules/redirection-rules.inc';
