@@ -40,7 +40,7 @@ if (!Paths::createContentDirIfMissing()) {
     Messenger::printMessage(
         'error',
         'WebP Express needs to create a directory "webp-express" under your wp-content folder, but does not have permission to do so.<br>' .
-            'Please create the folder manually, or change the file permissions of your wp-content folder.'
+            'Please create the folder manually, or change the file permissions of your wp-content folder (failed to create this folder: ' . Paths::getContentDirAbs() . ')'
     );
 } else {
     if (!Paths::createConfigDirIfMissing()) {
