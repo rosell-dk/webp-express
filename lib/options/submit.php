@@ -101,42 +101,77 @@ function webp_express_sanitize_quality_field($text) {
     $q = round($q);
     return max(0, min($q, 100));
 }
-$config = [
+
+$config = Config::getDefaultConfig();
+$config = array_merge($config, [
+    'operation-mode' => $_POST['operation-mode'],
+
     // redirection rules
     'image-types' => sanitize_text_field($_POST['image-types']),
-    'only-redirect-to-converter-on-cache-miss' => isset($_POST['only-redirect-to-converter-on-cache-miss']),
-    'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
-    'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
     'forward-query-string' => true,
-
-    // conversion options
-    'converters' => json_decode(wp_unslash($_POST['converters']), true), // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
-    'metadata' => sanitize_text_field($_POST['metadata']),
-    'destination-folder' => $_POST['destination-folder'],
-    'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
 
     // serve options
     'cache-control' => sanitize_text_field($_POST['cache-control']),
     'cache-control-custom' => sanitize_text_field($_POST['cache-control-custom']),
-    'fail' => sanitize_text_field($_POST['fail']),
-    'success-response' => sanitize_text_field($_POST['success-response']),
+]);
 
-    // web service
-    'web-service' => [
-        'enabled' => isset($_POST['web-service-enabled']),
-        'whitelist' => json_decode(wp_unslash($_POST['whitelist']), true)
-    ]
-];
 
-$auto = (isset($_POST['quality-auto']) && $_POST['quality-auto'] == 'auto_on');
-$config['quality-auto'] = $auto;
+if ($_POST['operation-mode'] != 'just-redirect') {
+    $auto = (isset($_POST['quality-auto']) && $_POST['quality-auto'] == 'auto_on');
+    $config['quality-auto'] = $auto;
 
-if ($auto) {
-    $config['max-quality'] = webp_express_sanitize_quality_field($_POST['max-quality']);
-    $config['quality-specific'] = 70;
-} else {
-    $config['max-quality'] = 80;
-    $config['quality-specific'] = webp_express_sanitize_quality_field($_POST['quality-specific']);
+    if ($auto) {
+        $config['max-quality'] = webp_express_sanitize_quality_field($_POST['max-quality']);
+        $config['quality-specific'] = 70;
+    } else {
+        $config['max-quality'] = 80;
+        $config['quality-specific'] = webp_express_sanitize_quality_field($_POST['quality-specific']);
+    }
+
+    $config = array_merge($config, [
+        'converters' => json_decode(wp_unslash($_POST['converters']), true), // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
+        'metadata' => sanitize_text_field($_POST['metadata']),
+        'web-service' => [
+            'enabled' => isset($_POST['web-service-enabled']),
+            'whitelist' => json_decode(wp_unslash($_POST['whitelist']), true)
+        ]
+    ]);
+}
+
+if ($_POST['operation-mode'] == 'advanced') {
+    $config = array_merge($config, [
+        'only-redirect-to-converter-on-cache-miss' => isset($_POST['only-redirect-to-converter-on-cache-miss']),
+        'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
+        'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
+        'destination-folder' => $_POST['destination-folder'],
+        'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
+        'fail' => sanitize_text_field($_POST['fail']),
+        'success-response' => sanitize_text_field($_POST['success-response']),
+    ]);
+}
+if ($_POST['operation-mode'] == 'standard') {
+    $config = array_merge($config, [
+        'only-redirect-to-converter-on-cache-miss' => false,
+        'do-not-pass-source-in-query-string' => true,
+        'redirect-to-existing-in-htaccess' => true,
+        'destination-folder' => 'separate',
+        'destination-extension' => 'append',
+        'fail' => 'original',
+        'success-response' => 'converted',
+    ]);
+}
+if ($_POST['operation-mode'] == 'just-convert') {
+    $config = array_merge($config, [
+        'only-redirect-to-converter-on-cache-miss' => true,
+        'do-not-pass-source-in-query-string' => true,
+        'redirect-to-existing-in-htaccess' => false,
+        'destination-folder' => 'mingled',
+        'destination-extension' => $_POST['destination-extension'],
+        'fail' => 'original',
+        'success-response' => 'converted',
+    ]);
+}
+if ($_POST['operation-mode'] == 'just-redirect') {
 }
 
 //echo '<pre>' . print_r($config['converters'], true) . '</pre>';
@@ -164,53 +199,56 @@ foreach ($oldConfigDefaults as $prop => $defaultValue) {
     }
 }
 
-// Set existing api keys in web service (we removed them from the json array, for security purposes)
-if ($oldConfigExists) {
-    if (isset($oldConfig['web-service']['whitelist'])) {
-        foreach ($oldConfig['web-service']['whitelist'] as $existingWhitelistEntry) {
-            foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
-                if ($whitelistEntry['uid'] == $existingWhitelistEntry['uid']) {
-                    $whitelistEntry['api-key'] = $existingWhitelistEntry['api-key'];
+if (isset($config['web-service'])) {
+    // Set existing api keys in web service (we removed them from the json array, for security purposes)
+    if ($oldConfigExists) {
+        if (isset($oldConfig['web-service']['whitelist'])) {
+            foreach ($oldConfig['web-service']['whitelist'] as $existingWhitelistEntry) {
+                foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
+                    if ($whitelistEntry['uid'] == $existingWhitelistEntry['uid']) {
+                        $whitelistEntry['api-key'] = $existingWhitelistEntry['api-key'];
+                    }
                 }
             }
         }
     }
-}
 
-// Set new api keys in web service
-foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
-    if (!empty($whitelistEntry['new-api-key'])) {
-        $whitelistEntry['api-key'] = $whitelistEntry['new-api-key'];
-        unset($whitelistEntry['new-api-key']);
+    // Set new api keys in web service
+    foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
+        if (!empty($whitelistEntry['new-api-key'])) {
+            $whitelistEntry['api-key'] = $whitelistEntry['new-api-key'];
+            unset($whitelistEntry['new-api-key']);
+        }
     }
 }
 
-// Get existing wpc api key from old config
-$existingWpcApiKey = '';
-if ($oldConfigExists) {
-    foreach ($oldConfig['converters'] as &$converter) {
+if (isset($config['converters'])) {
+    // Get existing wpc api key from old config
+    $existingWpcApiKey = '';
+    if ($oldConfigExists) {
+        foreach ($oldConfig['converters'] as &$converter) {
+            if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
+                if (isset($converter['options']['api-key'])) {
+                    $existingWpcApiKey = $converter['options']['api-key'];
+                }
+            }
+        }
+    }
+
+    // Set wpc api key in new config
+    // - either to the existing, or to a new
+    foreach ($config['converters'] as &$converter) {
         if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
-            if (isset($converter['options']['api-key'])) {
-                $existingWpcApiKey = $converter['options']['api-key'];
+            unset($converter['options']['_api-key-non-empty']);
+            if (isset($converter['options']['new-api-key'])) {
+                $converter['options']['api-key'] = $converter['options']['new-api-key'];
+                unset($converter['options']['new-api-key']);
+            } else {
+                $converter['options']['api-key'] = $existingWpcApiKey;
             }
         }
     }
 }
-
-// Set wpc api key in new config
-// - either to the existing, or to a new
-foreach ($config['converters'] as &$converter) {
-    if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
-        unset($converter['options']['_api-key-non-empty']);
-        if (isset($converter['options']['new-api-key'])) {
-            $converter['options']['api-key'] = $converter['options']['new-api-key'];
-            unset($converter['options']['new-api-key']);
-        } else {
-            $converter['options']['api-key'] = $existingWpcApiKey;
-        }
-    }
-}
-
 
 // create password hashes for new passwords
 /*

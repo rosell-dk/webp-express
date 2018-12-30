@@ -1,3 +1,4 @@
+<?php if ($config['operation-mode'] == 'advanced') : ?>
 <fieldset class="block">
     <h3>Redirection rules</h3>
     <p><i>The options here affects the rules created in the .htaccess.</i></p>
@@ -12,3 +13,8 @@
         </tbody>
     </table>
 </fieldset>
+<?php
+else:
+    include_once 'image-types.inc';
+endif;
+?>

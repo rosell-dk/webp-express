@@ -24,17 +24,20 @@ wp_enqueue_script('daspopup');
 
 $config = Config::getConfigForOptionsPage();
 
-// Converters
-wp_register_script('converters', plugins_url('js/converters.js', __FILE__), ['sortable','daspopup'], $version);
-webp_express_add_inline_script('converters', 'window.webpExpressPaths = ' . json_encode(Paths::getUrlsAndPathsForTheJavascript()) . ';', 'before');
-webp_express_add_inline_script('converters', 'window.converters = ' . json_encode($config['converters']) . ';', 'before');
-wp_enqueue_script('converters');
+if (!(isset($config['operation-mode']) &&  $config['operation-mode'] == 'just-redirect')) {
+    // Converters
+    wp_register_script('converters', plugins_url('js/converters.js', __FILE__), ['sortable','daspopup'], $version);
+    webp_express_add_inline_script('converters', 'window.webpExpressPaths = ' . json_encode(Paths::getUrlsAndPathsForTheJavascript()) . ';', 'before');
+    webp_express_add_inline_script('converters', 'window.converters = ' . json_encode($config['converters']) . ';', 'before');
+    wp_enqueue_script('converters');
 
 
-// Whitelist
-wp_register_script('whitelist', plugins_url('js/whitelist.js', __FILE__), ['daspopup'], $version);
-webp_express_add_inline_script('whitelist', 'window.whitelist = ' . json_encode($config['web-service']['whitelist']) . ';', 'before');
-wp_enqueue_script('whitelist');
+    // Whitelist
+    wp_register_script('whitelist', plugins_url('js/whitelist.js', __FILE__), ['daspopup'], $version);
+    webp_express_add_inline_script('whitelist', 'window.whitelist = ' . json_encode($config['web-service']['whitelist']) . ';', 'before');
+    wp_enqueue_script('whitelist');
+    
+}
 
 //wp_register_script('api_keys', plugins_url('js/api-keys.js', __FILE__), ['daspopup'], '0.7.0-dev8');
 //wp_enqueue_script('api_keys');

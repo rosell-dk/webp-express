@@ -58,22 +58,11 @@ class Config
         return self::loadJSONOptions(Paths::getConfigFileName());
     }
 
-    public static $configForOptionsPage = null;     // cache the result (called twice, - also in enqueue_scripts)
-    public static function getConfigForOptionsPage()
-    {
-        if (isset(self::$configForOptionsPage)) {
-            return self::$configForOptionsPage;
-        }
-        // Test converters
-        $testResult = TestRun::getConverterStatus();
-        $workingConverters = [];
-        if ($testResult) {
-            $workingConverters = $testResult['workingConverters'];
-            //print_r($testResult);
-        }
-
+    public static function getDefaultConfig() {
         $canDetectQuality = TestRun::isLocalQualityDetectionWorking();
-        $defaultConfig = [
+        return [
+
+            'operation-mode' => 'standard',
 
             // redirection rules
             'image-types' => 1,
@@ -113,6 +102,21 @@ class Config
 
             ]
         ];
+    }
+
+    public static $configForOptionsPage = null;     // cache the result (called twice, - also in enqueue_scripts)
+    public static function getConfigForOptionsPage()
+    {
+        if (isset(self::$configForOptionsPage)) {
+            return self::$configForOptionsPage;
+        }
+        // Test converters
+        $testResult = TestRun::getConverterStatus();
+        $workingConverters = [];
+        if ($testResult) {
+            $workingConverters = $testResult['workingConverters'];
+            //print_r($testResult);
+        }
 
         $defaultConverters = ConvertersHelper::$defaultConverters;
 
@@ -123,7 +127,7 @@ class Config
         }
         //$config = [];
 
-        $config = array_merge($defaultConfig, $config);
+        $config = array_merge(self::getDefaultConfig(), $config);
         if ($config['converters'] == null) {
             $config['converters'] = [];
         }

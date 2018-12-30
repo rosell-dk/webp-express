@@ -1,7 +1,21 @@
 <?php
 // Image types
 // ------------
-echo '<tr><th scope="row">Image types to send to the converter';
+echo '<tr><th scope="row">';
+switch ($config['operation-mode']) {
+    case 'standard':
+        echo 'Image types to work on';
+        break;
+    case 'just-convert':
+        echo 'Image types to convert';
+        break;
+    case 'just-redirect':
+        echo 'Image types to redirect';
+        break;
+    case 'advanced':
+        echo 'Image types to send to the converter';
+        break;
+}
 echo helpIcon('<p>Beware that the Gd conversion method cannot handle transparency for PNGs. PNG conversions havent been tested much yet. Please report any problems with PNG images <a target="_blank" href="https://github.com/rosell-dk/webp-convert/issues/42">here</a></p><p>The term "send" means an internal redirect on the server (not to be confused with an external redirect, such as a 301 or 302 response)</p>');
 echo '</th><td>';
 
@@ -14,9 +28,9 @@ echo '</th><td>';
 $imageTypes = $config['image-types'];
 
 echo '<select name="image-types">';
-echo '<option value="0"' . ($imageTypes == 0 ? ' selected' : '') . '>Do not send any image request to the converter!</option>';
-echo '<option value="1"' . ($imageTypes == 1 ? ' selected' : '') . '>Only send jpegs to the converter</option>';
-echo '<option value="3"' . ($imageTypes == 3 ? ' selected' : '') . '>Send both jpegs and pngs to the converter</option>';
+echo '<option value="0"' . ($imageTypes == 0 ? ' selected' : '') . '>None! (disable)</option>';
+echo '<option value="1"' . ($imageTypes == 1 ? ' selected' : '') . '>Only jpegs</option>';
+echo '<option value="3"' . ($imageTypes == 3 ? ' selected' : '') . '>Both jpegs and pngs</option>';
 echo '</select>';
 
 echo '</td></tr>';
