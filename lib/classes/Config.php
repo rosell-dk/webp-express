@@ -58,6 +58,55 @@ class Config
         return self::loadJSONOptions(Paths::getConfigFileName());
     }
 
+    /**
+     *   Loads Config (if available), fills in the rest with defaults
+     */
+    public static function getConfigWithDefaults()
+    {
+        $config = Config::loadConfig();
+        if ($config === false) {
+            $config = [];
+        }
+        $config = array_merge($config, self::getDefaultConfig());        // at some point, we might need array_merge_recursive
+        return $config;
+    }
+
+    /**
+     *   Apply operation mode (set the hidden defaults that comes along with the mode)
+     */
+    public static function applyOperationMode($config)
+    {
+        if (!isset($config['operation-mode'])) {
+            $config['operation-mode'] = 'standard';
+        }
+
+        if ($config['operation-mode'] == 'standard') {
+            $config = array_merge($config, [
+                'only-redirect-to-converter-on-cache-miss' => false,
+                'do-not-pass-source-in-query-string' => true,
+                'redirect-to-existing-in-htaccess' => true,
+                'destination-folder' => 'separate',
+                'destination-extension' => 'append',
+                'fail' => 'original',
+                'success-response' => 'converted',
+            ]);
+        } elseif ($config['operation-mode'] == 'just-convert') {
+            $config = array_merge($config, [
+                'only-redirect-to-converter-on-cache-miss' => true,
+                'do-not-pass-source-in-query-string' => true,
+                'redirect-to-existing-in-htaccess' => false,
+                'destination-folder' => 'mingled',
+                'fail' => 'original',
+                'success-response' => 'converted',
+            ]);
+        } elseif ($config['operation-mode'] == 'just-convert') {
+            // TODO:
+        }
+
+        return $config;
+    }
+
+
     public static function getDefaultConfig() {
         $canDetectQuality = TestRun::isLocalQualityDetectionWorking();
         return [
