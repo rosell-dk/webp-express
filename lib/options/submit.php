@@ -172,6 +172,7 @@ if ($_POST['operation-mode'] == 'just-convert') {
     ]);
 }
 if ($_POST['operation-mode'] == 'just-redirect') {
+    // TODO.
 }
 
 //echo '<pre>' . print_r($config['converters'], true) . '</pre>';
