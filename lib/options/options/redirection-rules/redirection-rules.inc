@@ -5,10 +5,11 @@
     <table class="form-table">
         <tbody>
             <?php
+            include_once 'enable-redirection-to-converter.inc';
             include_once 'image-types.inc';
+            include_once 'do-not-pass-source-path-in-query-string.inc';
             include_once 'only-redirect-to-converter-on-cache-miss.inc';
             include_once 'redirect-to-existing.inc';
-            include_once 'do-not-pass-source-path-in-query-string.inc';
             ?>
         </tbody>
     </table>
@@ -17,7 +18,9 @@
 else:
     if ($config['operation-mode'] == 'just-convert') {
         // ps: we call it "auto convert", when in this mode
-        include_once 'only-redirect-to-converter-on-cache-miss.inc';
+        include_once 'enable-redirection-to-converter.inc';
+
+        //include_once 'only-redirect-to-converter-on-cache-miss.inc';
 
     }
     include_once 'image-types.inc';

@@ -24,6 +24,7 @@ class HTAccess
         // that results in same behaviour as before the option was introduced.
         // Beware that this may not be same as the default value in the UI (but it is generally)
         $defaults = [
+            'enable-redirection-to-converter' => true,
             'forward-query-string' => true,
             'image-types' => 1,
             'do-not-pass-source-in-query-string' => false,
@@ -33,10 +34,10 @@ class HTAccess
             'destination-extension' => 'append',
             'success-response' => 'converted',
         ];
-        foreach ($defaults as $prop => $defaultValue) {
-            if (!isset($config[$prop])) {
-                $config[$prop] = $defaultValue;
-            }
+        $config = array_merge($defaults, $config);
+
+        if ((!$config['enable-redirection-to-converter']) && (!$config['redirect-to-existing-in-htaccess'])) {
+            return '# WebP Express does not need to write any rules (it has not been set up to redirect to converter, nor to existing webp)';
         }
 
         /* Calculate $fileExt */
@@ -51,16 +52,18 @@ class HTAccess
         $fileExt = implode('|', $fileExtensions);
 
         if ($imageTypes == 0) {
-            return '# WebP Express disabled (no image types have been choosen to be converted)';
+            return '# WebP Express disabled (no image types have been choosen to be converted/redirected)';
         }
 
         /* Build rules */
         $rules = '';
 
+        /*
         // The next line sets an environment variable.
         // On the options page, we verify if this is set to diagnose if "AllowOverride None" is presented in 'httpd.conf'
         //$rules .= "# The following SetEnv allows to diagnose if .htaccess files are turned off\n";
         //$rules .= "SetEnv HTACCESS on\n\n";
+        */
 
         $rules .= "<IfModule mod_rewrite.c>\n" .
         "  RewriteEngine On\n\n";
@@ -99,8 +102,6 @@ class HTAccess
         $mingled = ($config['destination-folder'] == 'mingled');
 
         if ($config['redirect-to-existing-in-htaccess']) {
-
-
             if ($mingled) {
                 $rules .= "  # Redirect to existing converted image in same dir (if browser supports webp)\n";
                 $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
@@ -119,78 +120,78 @@ class HTAccess
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp -f\n";
             $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n";
-
         }
 
-        $basicConditions = "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
-        $basicConditions .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
-        if ($config['only-redirect-to-converter-on-cache-miss']) {
-            if ($mingled) {
-                if ($config['destination-extension'] == 'append') {
-                    $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
+        if ($config['enable-redirection-to-converter']) {
+            $basicConditions = "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
+            $basicConditions .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
+            if ($config['only-redirect-to-converter-on-cache-miss']) {
+                if ($mingled) {
+                    if ($config['destination-extension'] == 'append') {
+                        $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
+                    } else {
+                        $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp !-f\n";
+                    }
                 } else {
-                    $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp !-f\n";
+                    $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
                 }
-            } else {
-                $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
             }
-        }
 
 
-        if (!$passSourceInQS) {
-            $rules .= "  # Pass REQUEST_FILENAME to PHP by setting request header\n";
+            if (!$passSourceInQS) {
+                $rules .= "  # Pass REQUEST_FILENAME to PHP by in request header\n";
+                $rules .= $basicConditions;
+                $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
+                    "  <IfModule mod_headers.c>\n" .
+                    "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
+                    "  </IfModule>\n\n";
+            }
+
+            $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
             $rules .= $basicConditions;
-            $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
-                "  <IfModule mod_headers.c>\n" .
-                "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
-                "  </IfModule>\n\n";
+
+            if ($config['forward-query-string']) {
+                $rules .= "  RewriteCond %{QUERY_STRING} (.*)\n";
+            }
+            /*
+            if ($config['forward-query-string']) {
+            }*/
+
+
+            // TODO:
+            // Add "NE" flag?
+            // https://github.com/rosell-dk/webp-convert/issues/95
+            // (and try testing spaces in directory paths)
+            $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " .
+                "/" . Paths::getWodUrlPath() .
+                ($passSourceInQS ? "?xsource=x%{SCRIPT_FILENAME}&" : "?") .
+                "wp-content=" . Paths::getWPContentDirRel() .
+                ($config['forward-query-string'] ? '&%1' : '') .
+                " [NC,L]\n";        // E=WOD:1
+
+
+            // Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+            $rules .= "\n  <IfModule mod_headers.c>\n";
+            $rules .= "    <IfModule mod_setenvif.c>\n";
+
+            if (($config['success-response'] == 'converted') || ($config['redirect-to-existing-in-htaccess'])) {
+                $rules .= "      # Set Vary:Accept header for the image types handled by WebP Express.\n" .
+                "      # The purpose is to make CDN aware that the response varies with the Accept header, so it should not just use the URL as cache key, but also the Accept header. \n" .
+                "      SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
+                "      Header append \"Vary\" \"Accept\" env=ADDVARY\n\n";
+            }
+
+            $rules .= "      # Set X-WebP-Express header for diagnose purposes\n" .
+                    "      # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
+                    "      # So, the next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
+                    "      SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
+                    //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
+                    //"  # Set the debug header\n" .
+                    "      Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING\n" .
+                    //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
+                    "    </IfModule>\n" .
+                    "  </IfModule>\n\n";
         }
-
-        $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
-        $rules .= $basicConditions;
-
-        if ($config['forward-query-string']) {
-            $rules .= "  RewriteCond %{QUERY_STRING} (.*)\n";
-        }
-        /*
-        if ($config['forward-query-string']) {
-        }*/
-
-
-        // TODO:
-        // Add "NE" flag?
-        // https://github.com/rosell-dk/webp-convert/issues/95
-        // (and try testing spaces in directory paths)
-        $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " .
-            "/" . Paths::getWodUrlPath() .
-            ($passSourceInQS ? "?xsource=x%{SCRIPT_FILENAME}&" : "?") .
-            "wp-content=" . Paths::getWPContentDirRel() .
-            ($config['forward-query-string'] ? '&%1' : '') .
-            " [NC,L]\n";        // E=WOD:1
-
-
-        // Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
-        $rules .= "\n  <IfModule mod_headers.c>\n";
-        $rules .= "    <IfModule mod_setenvif.c>\n";
-
-        if (($config['success-response'] == 'converted') || ($config['redirect-to-existing-in-htaccess'])) {
-            $rules .= "      # Set Vary:Accept header for the image types handled by WebP Express.\n" .
-            "      # The purpose is to make CDN aware that the response varies with the Accept header, so it should not just use the URL as cache key, but also the Accept header. \n" .
-            "      SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
-            "      Header append \"Vary\" \"Accept\" env=ADDVARY\n\n";
-        }
-
-        $rules .= "      # Set X-WebP-Express header for diagnose purposes\n" .
-                "      # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
-                "      # So, the next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
-                "      SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
-                //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
-                //"  # Set the debug header\n" .
-                "      Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING\n" .
-                //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
-                "    </IfModule>\n" .
-                "  </IfModule>\n\n";
-
         $rules .="</IfModule>\n";
 
         /*if ($config['redirect-to-existing-in-htaccess']) {

@@ -2,8 +2,9 @@
 $operationMode = $config['operation-mode'];
 ?>
 <fieldset class="block">
-<h3>Operation mode:
-<select name="operation-mode">
+<h3>Operation mode: <?php echo helpIcon('<p>Think of the operation modes as presets that matches normal use-cases. Usually you want to stick with <i>Standard</i> or perhaps <i>Just convert</i>. The Tweaked mode has no presets. That is: Here, you can set all options.</p><p>Changing from ie. "Standard" mode to "Tweaked" mode enables you to see the underlying options for that mode (and tweak them). Changing back will override the tweaks (you will lose them).</p><p>You will never loose your converter configurations by changing mode</p>');?>
+<input type="hidden" name="operation-mode" id="operation_mode" value="<?php echo $operationMode ?>">
+<select name="change-operation-mode" id="change_operation_mode">
     <option value="standard"<?php if ($operationMode == 'standard') echo ' selected'?>>Standard</option>
     <option value="just-convert"<?php if ($operationMode == 'just-convert') echo ' selected'?>>Just convert</option>
     <option value="just-redirect"<?php if ($operationMode == 'just-redirect') echo ' selected'?>>Just redirect</option>
@@ -28,12 +29,17 @@ $operationMode = $config['operation-mode'];
     <i>In "just convert" mode, WebP Express is used just for converting.<br>
     Combined with a plugin that can alter HTML for webp-use (ie Cache Enabler or Shortpixel), the redirection trick can be avoided.</i>
     <div class="help">?<div class="popup">
-        Benefits of avoiding the redirection trick:
-        <ol>
-            <li>CDN's will not have to be set up to forward the Accept header</li>
-            <li>If a user downloads an image, it will not have wrong file extension</li>
-        </ol>
-        PS: The FAQ has instructions for using WebPExpress with Cache Enabler and Shortpixel
+        <p>
+            Benefits of avoiding the redirection trick:
+            <ol>
+                <li>CDN's will not have to be set up to forward the Accept header</li>
+                <li>If a user downloads an image, it will not have wrong file extension</li>
+            </ol>
+            PS: Instructions for using WebPExpress with Cache Enabler and Shortpixel are found in the FAQ
+        </p>
+        <p>
+            PPS: Images refererenced from CSS or added dynamically with javascript will not be served as webp in this mode.
+        </p>
     </div>
     </div>
     <br><br>

@@ -6,7 +6,7 @@ use \WebPExpress\Paths;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$version = '0.10.0-b3';
+$version = '0.10.0-dev2';
 
 function webp_express_add_inline_script($id, $script, $position) {
     if (function_exists('wp_add_inline_script')) {
@@ -36,7 +36,7 @@ if (!(isset($config['operation-mode']) &&  $config['operation-mode'] == 'just-re
     wp_register_script('whitelist', plugins_url('js/whitelist.js', __FILE__), ['daspopup'], $version);
     webp_express_add_inline_script('whitelist', 'window.whitelist = ' . json_encode($config['web-service']['whitelist']) . ';', 'before');
     wp_enqueue_script('whitelist');
-    
+
 }
 
 //wp_register_script('api_keys', plugins_url('js/api-keys.js', __FILE__), ['daspopup'], '0.7.0-dev8');

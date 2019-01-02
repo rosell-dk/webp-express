@@ -58,62 +58,19 @@ class Config
         return self::loadJSONOptions(Paths::getConfigFileName());
     }
 
-    /**
-     *   Loads Config (if available), fills in the rest with defaults
-     */
-    public static function getConfigWithDefaults()
-    {
-        $config = Config::loadConfig();
-        if ($config === false) {
-            $config = [];
-        }
-        $config = array_merge($config, self::getDefaultConfig());        // at some point, we might need array_merge_recursive
-        return $config;
-    }
-
-    /**
-     *   Apply operation mode (set the hidden defaults that comes along with the mode)
-     */
-    public static function applyOperationMode($config)
-    {
-        if (!isset($config['operation-mode'])) {
-            $config['operation-mode'] = 'standard';
+    public static function getDefaultConfig($skipQualityAuto = false) {
+        if ($skipQualityAuto) {
+            $qualityAuto = null;
+        } else {
+            $qualityAuto = TestRun::isLocalQualityDetectionWorking();
         }
 
-        if ($config['operation-mode'] == 'standard') {
-            $config = array_merge($config, [
-                'only-redirect-to-converter-on-cache-miss' => false,
-                'do-not-pass-source-in-query-string' => true,
-                'redirect-to-existing-in-htaccess' => true,
-                'destination-folder' => 'separate',
-                'destination-extension' => 'append',
-                'fail' => 'original',
-                'success-response' => 'converted',
-            ]);
-        } elseif ($config['operation-mode'] == 'just-convert') {
-            $config = array_merge($config, [
-                'only-redirect-to-converter-on-cache-miss' => true,
-                'do-not-pass-source-in-query-string' => true,
-                'redirect-to-existing-in-htaccess' => false,
-                'destination-folder' => 'mingled',
-                'fail' => 'original',
-                'success-response' => 'converted',
-            ]);
-        } elseif ($config['operation-mode'] == 'just-redirect') {
-            // TODO:
-        }
-
-        return $config;
-    }
-
-
-    public static function getDefaultConfig() {
-        $canDetectQuality = TestRun::isLocalQualityDetectionWorking();
         return [
 
             'operation-mode' => 'standard',
 
             // redirection rules
+            'enable-redirection-to-converter' => true,
             'image-types' => 1,
             'only-redirect-to-converter-on-cache-miss' => false,
             'do-not-pass-source-in-query-string' => false,
@@ -122,7 +79,7 @@ class Config
 
             // conversion options
             'converters' => [],
-            'quality-auto' => $canDetectQuality,
+            'quality-auto' => $qualityAuto,
             'max-quality' => 80,
             'quality-specific' => 70,
             'metadata' => 'none',
@@ -153,33 +110,71 @@ class Config
         ];
     }
 
-    public static $configForOptionsPage = null;     // cache the result (called twice, - also in enqueue_scripts)
-    public static function getConfigForOptionsPage()
+    /**
+     *   Apply operation mode (set the hidden defaults that comes along with the mode)
+     *   @return An altered configuration array
+     */
+    public static function applyOperationMode($config)
     {
-        if (isset(self::$configForOptionsPage)) {
-            return self::$configForOptionsPage;
-        }
-        // Test converters
-        $testResult = TestRun::getConverterStatus();
-        $workingConverters = [];
-        if ($testResult) {
-            $workingConverters = $testResult['workingConverters'];
-            //print_r($testResult);
+        if (!isset($config['operation-mode'])) {
+            $config['operation-mode'] = 'standard';
         }
 
-        $defaultConverters = ConvertersHelper::$defaultConverters;
+        if ($config['operation-mode'] == 'standard') {
+            $config = array_merge($config, [
+                'enable-redirection-to-converter' => true,
+                'only-redirect-to-converter-on-cache-miss' => false,
+                'do-not-pass-source-in-query-string' => true,
+                'redirect-to-existing-in-htaccess' => true,
+                'destination-folder' => 'separate',
+                'destination-extension' => 'append',
+                'fail' => 'original',
+                'success-response' => 'converted',
+            ]);
+        } elseif ($config['operation-mode'] == 'just-convert') {
+            $config = array_merge($config, [
+                'only-redirect-to-converter-on-cache-miss' => true,
+                'do-not-pass-source-in-query-string' => true,
+                'redirect-to-existing-in-htaccess' => false,
+                'destination-folder' => 'mingled',
+                'fail' => 'original',
+                'success-response' => 'original',
+            ]);
+        } elseif ($config['operation-mode'] == 'just-redirect') {
 
-        $config = self::loadConfig();
-        //echo '<pre>' . print_r($config, true) . '</pre>';
-        if (!$config) {
-            $config = [];
-        }
-        //$config = [];
+            // TODO: Go through these...
 
-        $config = array_merge(self::getDefaultConfig(), $config);
-        if ($config['converters'] == null) {
-            $config['converters'] = [];
+            $config = array_merge($config, [
+                'enable-redirection-to-converter' => false,
+            ]);
         }
+
+        return $config;
+    }
+
+    /**
+     *   Loads Config (if available), fills in the rest with defaults
+     *   also applies operation mode.
+     */
+    public static function loadConfigAndFix($checkQualityDetection = true)
+    {
+        $config = Config::loadConfig();
+        if ($config === false) {
+            $config = self::getDefaultConfig(!$checkQualityDetection);
+        } else {
+            if ($checkQualityDetection) {
+                if (isset($config['quality-auto']) && ($config['quality-auto'])) {
+                    $qualityDetectionWorking = TestRun::isLocalQualityDetectionWorking();
+                    if (!TestRun::isLocalQualityDetectionWorking()) {
+                        $config['quality-auto'] = false;
+                    }
+                }
+            }
+            $config = array_merge(self::getDefaultConfig(true), $config);
+        }
+
+        $config = self::applyOperationMode($config);
+
         if (!isset($config['web-service'])) {
             $config['web-service'] = [];
         }
@@ -187,25 +182,28 @@ class Config
             $config['web-service']['whitelist'] = [];
         }
 
-        // Remove keys in whitelist (so they cannot easily be picked up by examining the html)
-        foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
-            unset($whitelistEntry['api-key']);
+        if ($config['converters'] == null) {
+            $config['converters'] = [];
         }
 
-        // Remove keys from WPC converters
-        foreach ($config['converters'] as &$converter) {
-            if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
-                if (isset($converter['options']['api-key'])) {
-                    if ($converter['options']['api-key'] != '') {
-                        $converter['options']['_api-key-non-empty'] = true;
-                    }
-                    unset($converter['options']['api-key']);
-                }
-            }
-        }
+        if (count($config['converters']) > 0) {
+            // merge missing converters in
+            $config['converters'] = ConvertersHelper::mergeConverters(
+                $config['converters'],
+                ConvertersHelper::$defaultConverters
+            );
+        } else {
 
-        if (count($config['converters']) == 0) {
             // This is first time visit!
+            // We must add converters.
+            // We want to order them according to which ones that are working,
+            // so we run
+            $testResult = TestRun::getConverterStatus();
+            $workingConverters = [];
+            if ($testResult) {
+                $workingConverters = $testResult['workingConverters'];
+                //print_r($testResult);
+            }
 
             if (count($workingConverters) == 0) {
                 // No converters are working
@@ -237,15 +235,47 @@ class Config
                 }
                 $config['converters'] = array_merge($resultPart1, $resultPart2);
             }
-
-            // $workingConverters
-            //echo '<pre>' . print_r($converters, true) . '</pre>';
-        } else {
-            // not first time visit...
-            // merge missing converters in
-            $config['converters'] = ConvertersHelper::mergeConverters($config['converters'], ConvertersHelper::$defaultConverters);
         }
 
+        return $config;
+    }
+
+
+    public static $configForOptionsPage = null;     // cache the result (called twice, - also in enqueue_scripts)
+    public static function getConfigForOptionsPage()
+    {
+        if (isset(self::$configForOptionsPage)) {
+            return self::$configForOptionsPage;
+        }
+
+        // Test converters
+        $testResult = TestRun::getConverterStatus();
+        $workingConverters = [];
+        if ($testResult) {
+            $workingConverters = $testResult['workingConverters'];
+            //print_r($testResult);
+        }
+
+        $defaultConverters = ConvertersHelper::$defaultConverters;
+
+        $config = self::loadConfigAndFix();
+
+        // Remove keys in whitelist (so they cannot easily be picked up by examining the html)
+        foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
+            unset($whitelistEntry['api-key']);
+        }
+
+        // Remove keys from WPC converters
+        foreach ($config['converters'] as &$converter) {
+            if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
+                if (isset($converter['options']['api-key'])) {
+                    if ($converter['options']['api-key'] != '') {
+                        $converter['options']['_api-key-non-empty'] = true;
+                    }
+                    unset($converter['options']['api-key']);
+                }
+            }
+        }
 
         // Set "working" and "error" properties
         if ($testResult) {
