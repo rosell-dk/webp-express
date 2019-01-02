@@ -6,6 +6,7 @@
         <tbody>
             <?php
             include_once 'enable-redirection-to-converter.inc';
+            include_once 'only-redirect-to-converter-for-webp-enabled-browsers.inc';
             include_once 'image-types.inc';
             include_once 'do-not-pass-source-path-in-query-string.inc';
             include_once 'only-redirect-to-converter-on-cache-miss.inc';

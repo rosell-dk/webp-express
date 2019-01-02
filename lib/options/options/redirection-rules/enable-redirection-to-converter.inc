@@ -8,11 +8,11 @@
     </th>
     <td>
         <input
-            type="checkbox"
             id="enable_redirection_to_converter"
             name="enable-redirection-to-converter"
-            value="true"
             <?php echo ($config['enable-redirection-to-converter'] ? 'checked="checked"' : '') ?>
+            value="true"
+            type="checkbox"
         >
     </td>
 </tr>

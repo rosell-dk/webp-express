@@ -73,6 +73,7 @@ class Config
             'enable-redirection-to-converter' => true,
             'image-types' => 1,
             'only-redirect-to-converter-on-cache-miss' => false,
+            'only-redirect-to-converter-for-webp-enabled-browsers' => true,
             'do-not-pass-source-in-query-string' => false,
             'redirect-to-existing-in-htaccess' => false,
             'forward-query-string' => true,
@@ -123,6 +124,7 @@ class Config
         if ($config['operation-mode'] == 'standard') {
             $config = array_merge($config, [
                 'enable-redirection-to-converter' => true,
+                'only-redirect-to-converter-for-webp-enabled-browsers' => true,
                 'only-redirect-to-converter-on-cache-miss' => false,
                 'do-not-pass-source-in-query-string' => true,
                 'redirect-to-existing-in-htaccess' => true,
@@ -133,6 +135,7 @@ class Config
             ]);
         } elseif ($config['operation-mode'] == 'just-convert') {
             $config = array_merge($config, [
+                'only-redirect-to-converter-for-webp-enabled-browsers' => false,
                 'only-redirect-to-converter-on-cache-miss' => true,
                 'do-not-pass-source-in-query-string' => true,
                 'redirect-to-existing-in-htaccess' => false,
@@ -205,6 +208,8 @@ class Config
                 //print_r($testResult);
             }
 
+            $defaultConverters = ConvertersHelper::$defaultConverters;
+
             if (count($workingConverters) == 0) {
                 // No converters are working
                 // Send ewww converter to top
@@ -255,8 +260,6 @@ class Config
             $workingConverters = $testResult['workingConverters'];
             //print_r($testResult);
         }
-
-        $defaultConverters = ConvertersHelper::$defaultConverters;
 
         $config = self::loadConfigAndFix();
 

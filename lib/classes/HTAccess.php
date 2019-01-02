@@ -123,7 +123,10 @@ class HTAccess
         }
 
         if ($config['enable-redirection-to-converter']) {
-            $basicConditions = "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
+            $basicConditions = '';
+            if ($config['only-redirect-to-converter-for-webp-enabled-browsers']) {
+                $basicConditions = "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
+            }
             $basicConditions .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             if ($config['only-redirect-to-converter-on-cache-miss']) {
                 if ($mingled) {
@@ -147,7 +150,15 @@ class HTAccess
                     "  </IfModule>\n\n";
             }
 
-            $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
+            $rules .= "  # Redirect images to webp-on-demand.php ";
+            if ($config['only-redirect-to-converter-for-webp-enabled-browsers']) {
+                $rules .= "(if browser supports webp)\n";
+            } else {
+                $rules .= "(regardless whether browser supports webp or not!)\n";
+            }
+            if ($config['only-redirect-to-converter-on-cache-miss']) {
+                $rules .= "  # - but only, when no existing converted image is found\n";
+            }
             $rules .= $basicConditions;
 
             if ($config['forward-query-string']) {

@@ -137,6 +137,7 @@ switch ($_POST['operation-mode']) {
     case 'tweaked':
         $config = array_merge($config, [
             'enable-redirection-to-converter' => isset($_POST['enable-redirection-to-converter']),
+            'only-redirect-to-converter-for-webp-enabled-browsers' => isset($_POST['only-redirect-to-converter-for-webp-enabled-browsers']),
             'only-redirect-to-converter-on-cache-miss' => isset($_POST['only-redirect-to-converter-on-cache-miss']),
             'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
             'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
