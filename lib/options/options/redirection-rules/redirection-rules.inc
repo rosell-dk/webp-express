@@ -19,7 +19,8 @@
 else:
     if ($config['operation-mode'] == 'just-convert') {
         // ps: we call it "auto convert", when in this mode
-        include_once 'enable-redirection-to-converter.inc';
+        // PPS: we include it directly in page.php now.
+        //include_once 'enable-redirection-to-converter.inc';
 
         //include_once 'only-redirect-to-converter-on-cache-miss.inc';
 

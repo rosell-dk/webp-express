@@ -141,6 +141,12 @@ if ($config['operation-mode'] == 'just-redirect') {
     include_once 'options/conversion-options/destination-extension.inc';
 }
 include_once 'options/serve-options/serve-options.inc';
+
+if ($config['operation-mode'] == 'just-convert') {
+    // ps: we call it "auto convert", when in this mode
+    include_once 'options/redirection-rules/enable-redirection-to-converter.inc';
+}
+
 if ($config['operation-mode'] != 'just-redirect') {
     include_once 'options/web-service-options/web-service-options.inc';
 }

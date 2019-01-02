@@ -20,8 +20,9 @@ else:
     include_once 'metadata.inc';
     include_once 'converters.inc';
 
-    if ($config['operation-mode'] != 'standard') {
-        include_once 'destination-extension.inc';
+    if ($config['operation-mode'] == 'standard') {
+        include_once 'destination-folder.inc';
     }
+    include_once 'destination-extension.inc';
 endif;
 ?>

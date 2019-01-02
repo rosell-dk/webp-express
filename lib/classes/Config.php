@@ -128,8 +128,6 @@ class Config
                 'only-redirect-to-converter-on-cache-miss' => false,
                 'do-not-pass-source-in-query-string' => true,
                 'redirect-to-existing-in-htaccess' => true,
-                'destination-folder' => 'separate',
-                'destination-extension' => 'append',
                 'fail' => 'original',
                 'success-response' => 'converted',
             ]);
@@ -149,6 +147,7 @@ class Config
 
             $config = array_merge($config, [
                 'enable-redirection-to-converter' => false,
+                'destination-folder' => 'mingled',
             ]);
         }
 
