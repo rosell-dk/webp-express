@@ -285,6 +285,10 @@ class Config
                 $converterId = $converter['converter'];
                 $hasError = isset($testResult['errors'][$converterId]);
                 $working = !$hasError;
+
+                /*
+                Don't print this stuff here. It can end up in the head tag.
+                TODO: Move it somewhere
                 if (isset($converter['working']) && ($converter['working'] != $working)) {
 
                     // TODO: webpexpress_converterName($converterId)
@@ -300,6 +304,7 @@ class Config
                         );
                     }
                 }
+                */
                 $converter['working'] = $working;
                 if ($hasError) {
                     $error = $testResult['errors'][$converterId];

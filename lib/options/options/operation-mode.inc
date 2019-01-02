@@ -27,7 +27,7 @@ $operationMode = $config['operation-mode'];
 <?php if ($config['operation-mode'] == 'just-convert') : ?>
 <p><div>
     <i>In "just convert" mode, WebP Express is used just for converting.<br>
-    Combined with a plugin that can alter HTML for webp-use (ie Cache Enabler or Shortpixel), the redirection trick can be avoided.</i>
+    Combined with a plugin that can alter HTML for webp-use (ie <a target="_blank" href="https://da.wordpress.org/plugins/cache-enabler/">Cache Enabler</a> or <a target="_blank" href="https://wordpress.org/plugins/shortpixel-image-optimiser/">Shortpixel</a>), the redirection trick can be avoided.</i>
     <div class="help">?<div class="popup">
         <p>
             Benefits of avoiding the redirection trick:
