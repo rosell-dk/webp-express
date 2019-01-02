@@ -6,7 +6,7 @@ use \WebPExpress\Paths;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$version = '0.10.0-dev2';
+$version = '0.10.0-dev4';
 
 function webp_express_add_inline_script($id, $script, $position) {
     if (function_exists('wp_add_inline_script')) {
@@ -25,6 +25,16 @@ wp_enqueue_script('daspopup');
 $config = Config::getConfigForOptionsPage();
 
 if (!(isset($config['operation-mode']) &&  $config['operation-mode'] == 'just-redirect')) {
+
+    // Remove empty options arrays.
+    // These cause trouble in json because they are encoded as [] rather than {}
+
+    foreach ($config['converters'] as &$converter) {
+        if (isset($converter['options']) && (count(array_keys($converter['options'])) == 0)) {
+            unset($converter['options']);
+        }
+    }
+
     // Converters
     wp_register_script('converters', plugins_url('js/converters.js', __FILE__), ['sortable','daspopup'], $version);
     webp_express_add_inline_script('converters', 'window.webpExpressPaths = ' . json_encode(Paths::getUrlsAndPathsForTheJavascript()) . ';', 'before');
