@@ -1,4 +1,4 @@
-<?php if ($config['operation-mode'] == 'advanced') : ?>
+<?php if ($config['operation-mode'] == 'tweaked') : ?>
     <fieldset class="block">
     <h3>Serve options</h3>
     <p><i>The options here affects how the image is served after a successful / unsuccessful conversion</i></p>

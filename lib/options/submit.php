@@ -138,7 +138,7 @@ if ($_POST['operation-mode'] != 'just-redirect') {
     ]);
 }
 
-if ($_POST['operation-mode'] == 'advanced') {
+if ($_POST['operation-mode'] == 'tweaked') {
     $config = array_merge($config, [
         'only-redirect-to-converter-on-cache-miss' => isset($_POST['only-redirect-to-converter-on-cache-miss']),
         'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),

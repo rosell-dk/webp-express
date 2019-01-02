@@ -1,4 +1,4 @@
-<?php if ($config['operation-mode'] == 'advanced') : ?>
+<?php if ($config['operation-mode'] == 'tweaked') : ?>
 <fieldset class="block">
     <h3>Conversion options</h3>
     <p><i>The options here affects the conversion process</i></p>

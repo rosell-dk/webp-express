@@ -7,7 +7,7 @@ $operationMode = $config['operation-mode'];
     <option value="standard"<?php if ($operationMode == 'standard') echo ' selected'?>>Standard</option>
     <option value="just-convert"<?php if ($operationMode == 'just-convert') echo ' selected'?>>Just convert</option>
     <option value="just-redirect"<?php if ($operationMode == 'just-redirect') echo ' selected'?>>Just redirect</option>
-    <option value="advanced"<?php if ($operationMode == 'advanced') echo ' selected'?>>Advanced</option>
+    <option value="tweaked"<?php if ($operationMode == 'tweaked') echo ' selected'?>>Tweaked</option>
 </select></h3>
 
 <?php if ($config['operation-mode'] == 'standard') : ?>

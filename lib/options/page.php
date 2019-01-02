@@ -128,7 +128,7 @@ function helpIcon($text) {
 
 include_once 'options/operation-mode.inc';
 
-if ($config['operation-mode'] != 'advanced') {
+if ($config['operation-mode'] != 'tweaked') {
     echo '<fieldset class="block">';
     echo '<table class="form-table"><tbody>';
 }
@@ -145,7 +145,7 @@ if ($config['operation-mode'] != 'just-redirect') {
     include_once 'options/web-service-options/web-service-options.inc';
 }
 
-if ($config['operation-mode'] != 'advanced') {
+if ($config['operation-mode'] != 'tweaked') {
     echo '</tbody></table>';
     echo '</fieldset>';
 }

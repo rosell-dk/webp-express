@@ -99,7 +99,7 @@ class Config
                 'fail' => 'original',
                 'success-response' => 'converted',
             ]);
-        } elseif ($config['operation-mode'] == 'just-convert') {
+        } elseif ($config['operation-mode'] == 'just-redirect') {
             // TODO:
         }
 

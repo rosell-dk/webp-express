@@ -12,7 +12,7 @@ switch ($config['operation-mode']) {
     case 'just-redirect':
         echo 'Image types to redirect';
         break;
-    case 'advanced':
+    case 'tweaked':
         echo 'Image types to send to the converter';
         break;
 }

@@ -1,4 +1,4 @@
-<?php if ($config['operation-mode'] == 'advanced') : ?>
+<?php if ($config['operation-mode'] == 'tweaked') : ?>
     <fieldset class="block">
     <h3>Web service</h3>
     <table class="form-table">
