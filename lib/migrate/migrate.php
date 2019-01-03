@@ -29,6 +29,17 @@ if (!(State::getState('configured', false))) {
     update_option('webp-express-migration-version', WEBPEXPRESS_MIGRATION_VERSION);
 } else {
 
+    for ($x = intval(get_option('webp-express-migration-version', 0)); $x < WEBPEXPRESS_MIGRATION_VERSION; $x++) {
+        if (intval(get_option('webp-express-migration-version', 0)) == $x) {
+            // run migration X+1, which upgrades from X to X+1
+            // It must take care of updating the "webp-express-migration-version" option to X+1, - if successful.
+            // If unsuccessful, it must leaves the option unaltered, which will prevent
+            // newer migrations to run, until the problem with that migration is fixed.
+            include __DIR__ . '/migrate' . ($x + 1) . '.php';
+        }
+
+    }
+/*
     if (intval(get_option('webp-express-migration-version', 0)) == 0) {
         // run migration 1
         // It must take care of updating migration-version to 1, - if successful.
@@ -47,4 +58,5 @@ if (!(State::getState('configured', false))) {
         // run migration 3
         include __DIR__ . '/migrate3.php';
     }
+    */
 }
