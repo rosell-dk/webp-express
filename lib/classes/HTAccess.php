@@ -120,6 +120,33 @@ class HTAccess
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp -f\n";
             $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n";
+
+
+            $cacheControlHeader = Config::getCacheControlHeader($config);
+            if ($cacheControlHeader != '') {
+                // TODO: Should we also set the Expires header?
+                // ie:  Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+
+                $rules .= "\n";
+                $rules .= "  # Set Cache-Control header so these direct redirections also get cached\n";
+                $rules .= "  <IfModule mod_headers.c>\n";
+                $rules .= "    <FilesMatch \"\.webp$\">\n";
+                $rules .= "      Header set Cache-Control \"" . $cacheControlHeader . "\"\n";
+                $rules .= "    </FilesMatch>\n";
+                $rules .= "  </IfModule>\n\n";
+
+                /*
+                // if mod_headers is missing, try mod_expires
+                $rules .= "  <IfModule !mod_headers.c>\n";
+                $rules .= "    <IfModule mod_expires.c>\n";
+                $rules .= "      ExpiresActive On\n";
+                $rules .= "      ExpiresByType image/webp \"access plus 2 weeks\"\n";
+                $rules .= "    </IfModule>\n";
+                $rules .= "  </IfModule>\n\n";
+                */
+
+            }
+
         }
 
         if ($config['enable-redirection-to-converter']) {
@@ -181,7 +208,6 @@ class HTAccess
                 " [NC,L]\n";        // E=WOD:1
 
 
-            // Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
             $rules .= "\n  <IfModule mod_headers.c>\n";
             $rules .= "    <IfModule mod_setenvif.c>\n";
 
@@ -281,6 +307,8 @@ class HTAccess
             'redirect-to-existing-in-htaccess' => false,
             'only-redirect-to-converter-on-cache-miss' => false,
             'success-response' => 'converted',
+            'cache-control' => 'no-header',
+            'cache-control-custom' => 'public, max-age:3600',
         ];
 
         if (isset($newConfig['redirect-to-existing-in-htaccess']) && $newConfig['redirect-to-existing-in-htaccess']) {
