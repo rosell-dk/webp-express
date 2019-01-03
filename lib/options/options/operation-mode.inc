@@ -52,6 +52,14 @@ $operationMode = $config['operation-mode'];
     </div>
 </div></p>
 <?php endif; ?>
+<?php if ($config['operation-mode'] == 'just-redirect') : ?>
+<p>
+    <div>
+        <i>In "just redirect" mode, WebP Express is used just for redirecting jpeg and pngs to existing webp images in the same folder.<br>
+        This mode can for example be used in combination with Optimus HQ.</i>
+    </div>
+</p>
+<?php endif; ?>
 </fieldset>
 <!--
 <p><div>
