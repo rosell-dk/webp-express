@@ -185,7 +185,7 @@ Pro WebP Express:
 - Plays well together with Cache Enabler. By not redirecting jpg to webp, there is no need to do any special configuration on the CDN and no issue with misleading file extension, if user downloads a file.
 
 Con WebP Express:
-- If you are using a CDN and you are redirecting jpg to webp, you must configure the CDN to forward the Accept header. It is not possible on all CDNs. 
+- If you are using a CDN and you are redirecting jpg to webp, you must configure the CDN to forward the Accept header. It is not possible on all CDNs.
 
 = Why do I not see the option to set WebP quality to auto? =
 The option will only display, if your system is able to detect jpeg qualities. To make your server capable to do that, install *Imagick extension* (PECL >= 2.2.2) or enable exec() calls and install either *Imagick* or *Gmagick*.
@@ -214,7 +214,45 @@ To make *WebP Express* work on a free Cloudflare account, you have the following
 
 2. You can set up another CDN (on another provider), which you just use for handling the images. You need to configure that CDN to forward the *Accept header*. You also need to install a Wordpress plugin that points images to that CDN.
 
-In the 0.10.0 release, you will have another (and better) option, as [described here](https://github.com/rosell-dk/webp-express/issues/133)
+3. You can switch operation mode to "Just convert" and use either Cache Enabler or Shortpixel to modify the HTML. See the follwoning FAQ items
+
+= WebP Express / Cache Enabler setup =
+The WebP Express / Cache Enabler setup is quite potent and very CDN-friendly.
+
+You need:
+1 x WebP Express
+1 x Cache Enabler.
+
+#### 1. Setup WebP Express
+- Open WebP Express options
+- Switch to *Just convert* operation mode
+- Set *File extension* to "Set to .webp"
+- Make sure the *Auto convert* option is ticked off
+
+#### 2. Setup Cache Enabler
+- Open the options
+- Tick of the *Create an additional cached version for WebP image support* option
+
+
+#### 3. Let rise in a warm place until doubled
+*WebP Express* creates *webp* images on need basis. It needs page visits in order to do the convertions . Bulk conversion is on the roadmap, but until then, you need to visit all pages of relevance. You can either do it manually, let your visitors do it (that is: wait a bit), or, if you are on linux, you can use `wget` to grab your website:
+
+```
+wget -e robots=off -r -np -w 2 http://www.example.com
+```
+
+**flags:**
+`-e robots=off` makes wget ignore rules in robots.txt
+`-np` (no-parent) makes wget stay within the boundaries (doesn't go into parent folders)
+`w 2` Waits two seconds between each request, in order not to stress the server
+
+#### 4. Clear the Cache Enabler cache.
+Click the "Clear Cache" button in the top right corner in order to clear the Cache Enabler cache.
+
+#### 5. Inspect the HTML
+When visiting a page with images on, different HTML will be served to browsers, depending on whether they support webp or not.
+
+In a webp-enabled browser, the HTML may look like this: `<img src="image.webp">`, while in a non-webp enabled browser, it looks like this: `<img src="image.jpg">`
 
 = Does it work with lazy loaded images? =
 No plugins/frameworks has yet been discovered, which does not work with *WebP Express*.
@@ -228,7 +266,7 @@ The following lazy load plugins/frameworks has been tested and works with *WebP 
 = When is feature X coming? =
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
 
-Here are my loose plans ahead: The 0.10 release adds possibility to configure where the generated webp files are located. This together with a few other new options allows WebP Express to work together with the [Cache Enabler](https://wordpress.org/plugins/cache-enabler/) plugin. This is a great combination, which eliminates the need to redirect jpeg to webp. Read more about it [here](https://github.com/rosell-dk/webp-express/issues/133). The 0.11 release will probably add a some diagnose tool – this should release some time spend in the forum. 0.12 could be focused on PNG. 0.13 might be displaying rules for NGINX. 0.14 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.15 might be multisite support. 0.16 might be a file manager-like interface for inspecting generated webp files. 0.17 might be WAMP support. This is all guessing. I’m only planning one milestone at the time. You can follow the issue queue here: https://github.com/rosell-dk/webp-express/issues
+Here are my loose plans ahead: The 0.11 release will probably add a some diagnose tool – this should release some time spend in the forum. 0.12 could be focused on PNG. 0.13 might be displaying rules for NGINX. 0.14 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.15 might be multisite support. 0.16 might be a file manager-like interface for inspecting generated webp files. 0.17 might be WAMP support. This is all guessing. I’m only planning one milestone at the time. You can follow the issue queue here: https://github.com/rosell-dk/webp-express/issues
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
