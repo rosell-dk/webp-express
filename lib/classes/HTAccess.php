@@ -121,13 +121,11 @@ class HTAccess
             $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp -f\n";
             $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n";
 
-
             $cacheControlHeader = Config::getCacheControlHeader($config);
             if ($cacheControlHeader != '') {
-                // TODO: Should we also set the Expires header?
-                // ie:  Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
 
-                $rules .= "\n";
+                // Add Cache-Control header for webp files (this requires mod_headers)
+//                $rules .= "\n";
                 $rules .= "  # Set Cache-Control header so these direct redirections also get cached\n";
                 $rules .= "  <IfModule mod_headers.c>\n";
                 $rules .= "    <FilesMatch \"\.webp$\">\n";
@@ -135,15 +133,41 @@ class HTAccess
                 $rules .= "    </FilesMatch>\n";
                 $rules .= "  </IfModule>\n\n";
 
-                /*
-                // if mod_headers is missing, try mod_expires
-                $rules .= "  <IfModule !mod_headers.c>\n";
-                $rules .= "    <IfModule mod_expires.c>\n";
-                $rules .= "      ExpiresActive On\n";
-                $rules .= "      ExpiresByType image/webp \"access plus 2 weeks\"\n";
-                $rules .= "    </IfModule>\n";
-                $rules .= "  </IfModule>\n\n";
-                */
+                // Fall back to mod_expires if mod_headers is unavailable
+                $cacheControl = $config['cache-control'];
+                if ($cacheControl == 'custom') {
+                    $expires = '';
+                    if (preg_match('/max-age=(\d+)/', $config['cache-control-custom'], $matches)) {
+                        if (isset($matches[1])) {
+                            $expires = $matches[1] . ' seconds';
+                        }
+                    }
+                    $options['cache-control-custom'];
+                } else {
+                    $cacheControlOptions = [
+                        'no-header' => '',
+                        'one-second' => '1 seconds',
+                        'one-minute' => '1 minutes',
+                        'one-hour' => '1 hours',
+                        'one-day' => '1 days',
+                        'one-week' => '1 weeks',
+                        'one-month' => '1 months',
+                        'one-year' => '1 years',
+                    ];
+                    $expires = $cacheControlOptions[$cacheControl];
+                }
+
+                if ($expires != '') {
+                    // in case mod_headers is missing, try mod_expires
+                    $rules .= "  # Fall back to mod_expires if mod_headers is unavailable\n";
+                    $rules .= "  <IfModule !mod_headers.c>\n";
+                    $rules .= "    <IfModule mod_expires.c>\n";
+                    $rules .= "      ExpiresActive On\n";
+                    $rules .= "      ExpiresByType image/webp \"access plus " . $expires . "\"\n";
+                    $rules .= "    </IfModule>\n";
+                    $rules .= "  </IfModule>\n\n";
+
+                }
 
             }
 
