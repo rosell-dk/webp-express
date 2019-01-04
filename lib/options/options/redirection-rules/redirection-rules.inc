@@ -25,6 +25,9 @@ else:
         //include_once 'only-redirect-to-converter-on-cache-miss.inc';
 
     }
+    if ($config['operation-mode'] == 'standard') {
+        include_once 'redirect-to-existing.inc';
+    }
     include_once 'image-types.inc';
 endif;
 ?>

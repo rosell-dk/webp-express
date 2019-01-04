@@ -126,9 +126,11 @@ if ($_POST['operation-mode'] != 'just-redirect') {
 
 switch ($_POST['operation-mode']) {
     case 'standard':
+        $config = array_merge($config, [
+            'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
+        ]);
         break;
     case 'just-convert':
-
         $config = array_merge($config, [
             'destination-extension' => $_POST['destination-extension'],
             'enable-redirection-to-converter' => isset($_POST['enable-redirection-to-converter']),  // PS: its called "autoconvert" in this mode

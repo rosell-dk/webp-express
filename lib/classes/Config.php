@@ -127,7 +127,7 @@ class Config
                 'only-redirect-to-converter-for-webp-enabled-browsers' => true,
                 'only-redirect-to-converter-on-cache-miss' => false,
                 'do-not-pass-source-in-query-string' => true,
-                'redirect-to-existing-in-htaccess' => true,
+                //'redirect-to-existing-in-htaccess' => true,
                 'fail' => 'original',
                 'success-response' => 'converted',
             ]);
