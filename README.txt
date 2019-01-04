@@ -219,17 +219,26 @@ To make *WebP Express* work on a free Cloudflare account, you have the following
 ### WebP Express / ShortPixel setup
 Here is a recipe for using WebP Express together with ShortPixel, such that WebP Express generates the webp's, and ShortPixel only is used to create `<picture>` tags, when it detects a webp image in the same folder as an original.
 
-The reason for doing this would normally be in order to have it working with your CDN, as not all CDN's can be configured to work with the Standard WebP Express setup.
+The reason for doing this could be:
+1. You are using a CDN which cannot be configured to work with the Standard WebP Express setup.
+2. You think it is problematic that when a user saves an image, it has the jpg extension, even though it is a webp image.
 
 You need:
 1 x WebP Express
 1 x ShortPixel
 
 #### 1. Setup WebP Express
+If you are using a CDN which cannot be configured to work in *Standard mode*:
 - Open WebP Express options
-- Switch to *Just convert* operation mode
+- Switch to *Just convert* mode.
 - Set *File extension* to "Set to .webp"
 - Make sure the *Auto convert* option is enabled
+
+If you want to *ShortPixel* to create <picture> tags but still want the magic to work on other images (such as images are referenced from CSS or javascript):
+- Open WebP Express options
+- Switch to *Standard* mode.
+- Set *Destination folder* to "Mingled"
+- Set *File extension* to "Set to .webp"
 
 #### 2. Setup ShortPixel
 - Install [ShortPixel](https://wordpress.org/plugins/shortpixel-image-optimiser/) the usual way
@@ -258,17 +267,26 @@ Cache Enabler will not work if you are caching HTML on a CDN, because the HTML v
 ### WebP Express / Cache Enabler setup
 The WebP Express / Cache Enabler setup is quite potent and very CDN-friendly. Cache Enabler is used for generating and caching two versions of the HTML (one for webp-enabled browsers and one for webp-disabled browsers)
 
-The reason for doing this would normally be in order to have it working with your CDN, as not all CDN's can be configured to work with the Standard WebP Express setup.
+The reason for doing this could be:
+1. You are using a CDN which cannot be configured to work with the Standard WebP Express setup.
+2. You think it is problematic that when a user saves an image, it has the jpg extension, even though it is a webp image.
 
 You need:
 1 x WebP Express
-1 x Cache Enabler.
+1 x Cache Enabler
 
 #### 1. Setup WebP Express
+If you are using a CDN which cannot be configured to work in *Standard mode*:
 - Open WebP Express options
-- Switch to *Just convert* operation mode
+- Switch to *Just convert* mode.
 - Set *File extension* to "Set to .webp"
 - Make sure the *Auto convert* option is enabled
+
+If you want to *Cache Enabler* to create <picture> tags but still want the magic to work on other images (such as images are referenced from CSS or javascript):
+- Open WebP Express options
+- Switch to *Standard* mode.
+- Set *Destination folder* to "Mingled"
+- Set *File extension* to "Set to .webp"
 
 #### 2. Setup Cache Enabler
 - Open the options
