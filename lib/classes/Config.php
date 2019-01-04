@@ -365,6 +365,9 @@ class Config
 
     public static function getCacheControlHeader($config) {
         $cacheControl = $config['cache-control'];
+        if ($cacheControl == 'custom') {
+            return $config['cache-control-custom'];
+        }
         $cacheControlOptions = [
             'no-header' => '',
             'one-second' => 'public, max-age=1',
@@ -376,11 +379,7 @@ class Config
             'one-year' => 'public, max-age=31536000',
         ];
 
-        if (isset($cacheControlOptions[$cacheControl])) {
-            return $cacheControlOptions[$cacheControl];
-        } else {
-            return $options['cache-control-custom'];
-        }
+        return $cacheControlOptions[$cacheControl];
     }
 
     public static function generateWodOptionsFromConfigObj($config)
