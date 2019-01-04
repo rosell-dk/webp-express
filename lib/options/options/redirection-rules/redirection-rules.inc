@@ -1,7 +1,7 @@
 <?php if ($config['operation-mode'] == 'tweaked') : ?>
 <fieldset class="block">
     <h3>Redirection rules</h3>
-    <p><i>The options here affects the rules created in the .htaccess.</i></p>
+    <div><i>The options here affects the rules created in the .htaccess. <?php echo helpIcon('And so does some other options. If "Redirect directly to converted image" is set, the "Destination folder" and "File Extension" and "Caching" options will be used'); ?></i></div>
     <table class="form-table">
         <tbody>
             <?php
