@@ -75,8 +75,8 @@ class Config
             'only-redirect-to-converter-on-cache-miss' => false,
             'only-redirect-to-converter-for-webp-enabled-browsers' => true,
             'do-not-pass-source-in-query-string' => false,
-            'redirect-to-existing-in-htaccess' => false,
-            'forward-query-string' => true,
+            'redirect-to-existing-in-htaccess' => true,
+            'forward-query-string' => false,
 
             // conversion options
             'converters' => [],
