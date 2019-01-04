@@ -19,7 +19,7 @@ function webpexpress_migrate4() {
             if (Config::saveConfigurationFile($config)) {
                 Messenger::addMessage(
                     'info',
-                    'WebP Express 0.10 introduces <i>operation modes</i>. Your configuration <i>almost</i> fits the mode called' .
+                    'WebP Express 0.10 introduces <i>operation modes</i>. Your configuration <i>almost</i> fits the mode called ' .
                         '<i>Standard</i>, however as you have set the <i>Response on failure</i> option to something other than' .
                         '<i>Original</i>, your setup has been put into <i>Tweaked</i> mode. ' .
                         '<a href="' . Paths::getSettingsUrl() . '">You might want to change that</a>.'
