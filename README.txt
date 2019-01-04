@@ -349,6 +349,13 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.10.0 =
+* Introduced "Operation modes" in order to keep setting screens simple but still allow tweaking
+* WebP Express can now be used in conjunction with Cache Enabler and ShortPixel
+* Cache-Control header is now added in *.htaccess*, when redirecting directly to existing webp
+
+For more info, see the closed issues on the 0.10.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/7?closed=1
+
 = 0.9.1 =
 *(released 28 dec 2018)*
 * Fixed critical bug causing blank page on options page
@@ -356,7 +363,7 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 = 0.9.0 =
 *(released 27 dec 2018)*
 * Optionally make .htaccess redirect directly to existing webp (improves performance)
-* Optionally do not send filename from .htaccess to the PHP in Querystring, but use other means (improves security and reduces risks of problems due to firewall rules)
+* Optionally do not send filename from *.htaccess* to the PHP in Querystring, but use other means (improves security and reduces risks of problems due to firewall rules)
 * Fixed some bugs
 
 For more info, see the closed issues on the 0.9.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.9.0
@@ -428,6 +435,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.10.0 =
+WebP Express can now be used in conjunction with Cache Enabler and ShortPixel. Also introduced "Operation modes" in order to keep setting screens simple but still allow tweaking.
 
 = 0.9.1 =
 Fixed critical bug causing options page to go blank
