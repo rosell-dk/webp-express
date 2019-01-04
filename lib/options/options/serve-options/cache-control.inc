@@ -3,23 +3,106 @@
 //$maxQuality = get_option('webp_express_max_quality');
 $cacheControl = $config['cache-control'];
 $cacheControlCustom = $config['cache-control-custom'];
+$cacheControlMaxAge = $config['cache-control-max-age'];
+$cacheControlPublic = $config['cache-control-public'];
+?>
 
-echo '<tr><th scope="row">Caching';
-echo helpIcon(
-    'Controls the cache-control header for the converted image. ' .
-    'This header is only sent when a converted image can be successfully delivered (either existing, or new ' .
-    'conversion). In case of failure, headers will be sent to prevent caching.');
-echo '</th><td>';
-echo '<select id="cache_control_select" name="cache-control">';
-echo '<option value="no-header"' . ($cacheControl == 'no-header' ? ' selected' : '') . '>Do not set Cache-Control header</option>';
-echo '<option value="one-second"' . ($cacheControl == 'one-second' ? ' selected' : '') . '>One second</option>';
-echo '<option value="one-minute"' . ($cacheControl == 'one-minute' ? ' selected' : '') . '>One minute</option>';
-echo '<option value="one-hour"' . ($cacheControl == 'one-hour' ? ' selected' : '') . '>One hour</option>';
-echo '<option value="one-day"' . ($cacheControl == 'one-day' ? ' selected' : '') . '>One day</option>';
-echo '<option value="one-week"' . ($cacheControl == 'one-week' ? ' selected' : '') . '>One week</option>';
-echo '<option value="one-month"' . ($cacheControl == 'one-month' ? ' selected' : '') . '>One month</option>';
-echo '<option value="one-year"' . ($cacheControl == 'one-year' ? ' selected' : '') . '>One year</option>';
-echo '<option value="custom"' . ($cacheControl == 'custom' ? ' selected' : '') . '>Custom Cache-Control header</option>';
-echo '</select><br>';
-echo '<input type="text" id="cache_control_custom" name="cache-control-custom" value="' . $cacheControlCustom . '">';
-echo '</td></tr>';
+<tr>
+    <th scope="row">Cache-Control header <?php echo helpIcon(
+        'Controls the cache-control header on successful conversion / direct redirection to converted ' .
+        'image in .htaccess. In case of convert failure, headers will be sent to prevent caching.'); ?>
+    </th>
+    <td>
+        <select id="cache_control_select" name="cache-control">
+            <option value="no-header" <?php if ($cacheControl == 'no-header') echo ' selected' ?>>Do not set</option>
+            <option value="set" <?php if ($cacheControl == 'set') echo ' selected' ?>>Set</option>
+            <option value="custom" <?php if ($cacheControl == 'custom') echo ' selected' ?>>Custom</option>
+            <?php
+            /*
+                echo '<option value="no-header"' . ($cacheControl == 'no-header' ? ' selected' : '') . '>Do not set Cache-Control header</option>';
+                echo '<option value="one-second"' . ($cacheControl == 'one-second' ? ' selected' : '') . '>One second</option>';
+                echo '<option value="one-minute"' . ($cacheControl == 'one-minute' ? ' selected' : '') . '>One minute</option>';
+                echo '<option value="one-hour"' . ($cacheControl == 'one-hour' ? ' selected' : '') . '>One hour</option>';
+                echo '<option value="one-day"' . ($cacheControl == 'one-day' ? ' selected' : '') . '>One day</option>';
+                echo '<option value="one-week"' . ($cacheControl == 'one-week' ? ' selected' : '') . '>One week</option>';
+                echo '<option value="one-month"' . ($cacheControl == 'one-month' ? ' selected' : '') . '>One month</option>';
+                echo '<option value="one-year"' . ($cacheControl == 'one-year' ? ' selected' : '') . '>One year</option>';
+                echo '<option value="custom"' . ($cacheControl == 'custom' ? ' selected' : '') . '>Custom Cache-Control header</option>';
+                */
+            ?>
+        </select>
+        <div id="cache_control_custom_div" style="display:inline-block;">
+            <input type="text" id="cache_control_custom" name="cache-control-custom" value="<?php echo $cacheControlCustom ?>">
+            <?php echo helpIcon(
+                'You can read about possible options ' .
+                '<a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control">here</a>',
+                'no-margin-left'
+            );?>
+        </div>
+
+        <div id="cache_control_set_div" style="display:inline-block;">
+            <select id="cache_control_public" name="cache-control-public">
+                <?php
+                webpexpress_selectBoxOptions(($cacheControlPublic ? 'public' : 'private'), [
+                    'public' => 'Public',
+                    'private' => 'Private',
+                ]);
+                ?>
+            </select>
+            <?php echo helpIcon(
+                'Setting this to public means that you are allow caching in shared caches. ' .
+                'Only do this, if you are sure your CDN or reverse proxy can handle that the ' .
+                'response varies depending on the Accept header.',
+                'no-margin-left set-margin-right'
+            );
+            ?>
+            </select>
+            <select id="cache_control_max_age" name="cache-control-max-age">
+                <?php
+                webpexpress_selectBoxOptions($cacheControlMaxAge, [
+                    'one-second' => 'One second',
+                    'one-minute' => 'One minute',
+                    'one-hour' => 'One hour',
+                    'one-day' => 'One day',
+                    'one-week' => 'One week',
+                    'one-month' => 'One month',
+                    'one-year' => 'One year',
+                ]);
+                ?>
+            </select>
+            <?php echo helpIcon(
+                'This sets the max-age value. If want to set s-maxage, or generally need more control, ' .
+                'choose "custom" in the first combobox (You can read about possible options ' .
+                '<a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control">here</a>)',
+                'no-margin-left'
+            );?>
+        </div>
+        <br>
+        <!--
+        <table>
+            <tbody>
+                <tr>
+                    <td style="font-weight: bold; margin:0; padding:0">max-age</td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        Allow caching in shared caches (ie CDNs or reverse proxies)
+                        <?php echo helpIcon(''); ?>
+                    </th>
+                    <td>
+                        <input
+                            name="cache-control-public"
+                            <?php echo ($config['cache-control-public'] ? 'checked="checked"' : '') ?>
+                            value="true"
+                            type="checkbox"
+                        >
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    -->
+
+    </td>
+</tr>

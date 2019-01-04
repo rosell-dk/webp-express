@@ -111,7 +111,7 @@ echo '<form id="webpexpress_settings" action="' . esc_url( admin_url( 'admin-pos
         </table>
     </fieldset>
 <?php
-function helpIcon($text) {
+function helpIcon($text, $customClass = '') {
     $className = '';
     if (strlen($text) < 80) {
         $className = 'narrow';
@@ -123,7 +123,15 @@ function helpIcon($text) {
             $className = 'wide';
         }
     }
-    return '<div class="help">?<div class="popup ' . $className . '">' . $text . '</div></div>';
+    return '<div class="help ' . $customClass . '">?<div class="popup ' . $className . '">' . $text . '</div></div>';
+}
+
+function webpexpress_selectBoxOptions($selected, $options) {
+    foreach ($options as $optionValue => $text) {
+        echo '<option value="' . $optionValue . '"' . ($optionValue == $selected ? ' selected' : '') . '>';
+        echo $text;
+        echo '</option>';
+    }
 }
 
 include_once 'options/operation-mode.inc';

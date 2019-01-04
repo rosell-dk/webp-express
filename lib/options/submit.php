@@ -42,6 +42,19 @@ $config = array_merge($config, [
     'cache-control-custom' => sanitize_text_field($_POST['cache-control-custom']),
 ]);
 
+$cacheControl = sanitize_text_field($_POST['cache-control']);
+switch ($cacheControl) {
+    case 'no-header':
+        break;
+    case 'set':
+        $config['cache-control-max-age'] =  sanitize_text_field($_POST['cache-control-max-age']);
+        $config['cache-control-public'] =  (sanitize_text_field($_POST['cache-control-public']) == 'public');
+        break;
+    case 'custom':
+        $config['cache-control-custom'] = sanitize_text_field($_POST['cache-control-custom']);
+        break;
+}
+
 // Set options that are available in all operation modes, except the "just-redirect" mode
 if ($_POST['operation-mode'] != 'just-redirect') {
 

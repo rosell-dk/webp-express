@@ -137,24 +137,34 @@ class HTAccess
                 $cacheControl = $config['cache-control'];
                 if ($cacheControl == 'custom') {
                     $expires = '';
-                    if (preg_match('/max-age=(\d+)/', $config['cache-control-custom'], $matches)) {
-                        if (isset($matches[1])) {
-                            $expires = $matches[1] . ' seconds';
+
+                    // Do not add Expire header if private is set
+                    // - because then the user don't want caching in proxies / CDNs.
+                    //   the Expires header doesn't differentiate between private/public
+                    if (!(preg_match('/private/', $config['cache-control-custom']))) {
+                        if (preg_match('/max-age=(\d+)/', $config['cache-control-custom'], $matches)) {
+                            if (isset($matches[1])) {
+                                $expires = $matches[1] . ' seconds';
+                            }
                         }
                     }
-                    $options['cache-control-custom'];
-                } else {
-                    $cacheControlOptions = [
-                        'no-header' => '',
-                        'one-second' => '1 seconds',
-                        'one-minute' => '1 minutes',
-                        'one-hour' => '1 hours',
-                        'one-day' => '1 days',
-                        'one-week' => '1 weeks',
-                        'one-month' => '1 months',
-                        'one-year' => '1 years',
-                    ];
-                    $expires = $cacheControlOptions[$cacheControl];
+
+                } elseif ($cacheControl == 'no-header') {
+                    $expires = '';
+                } elseif ($cacheControl == 'set') {
+                    if ($config['cache-control-public']) {
+                        $cacheControlOptions = [
+                            'no-header' => '',
+                            'one-second' => '1 seconds',
+                            'one-minute' => '1 minutes',
+                            'one-hour' => '1 hours',
+                            'one-day' => '1 days',
+                            'one-week' => '1 weeks',
+                            'one-month' => '1 months',
+                            'one-year' => '1 years',
+                        ];
+                        $expires = $cacheControlOptions[$config['cache-control-max-age']];
+                    }
                 }
 
                 if ($expires != '') {
@@ -166,9 +176,7 @@ class HTAccess
                     $rules .= "      ExpiresByType image/webp \"access plus " . $expires . "\"\n";
                     $rules .= "    </IfModule>\n";
                     $rules .= "  </IfModule>\n\n";
-
                 }
-
             }
 
         }
@@ -333,6 +341,8 @@ class HTAccess
             'success-response' => 'converted',
             'cache-control' => 'no-header',
             'cache-control-custom' => 'public, max-age:3600',
+            'cache-control-max-age' => 'one-week',
+            'cache-control-public' => true,
         ];
 
         if (isset($newConfig['redirect-to-existing-in-htaccess']) && $newConfig['redirect-to-existing-in-htaccess']) {

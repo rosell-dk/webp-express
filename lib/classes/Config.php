@@ -88,8 +88,10 @@ class Config
             'destination-extension' => 'append',
 
             // serve options
-            'cache-control' => 'no-header',
-            'cache-control-custom' => 'public, max-age:3600',
+            'cache-control' => 'no-header',     /* can be "no-header", "set" or "custom" */
+            'cache-control-custom' => 'private, max-age:3600',
+            'cache-control-max-age' => 'one-week',
+            'cache-control-public' => false,
             'fail' => 'original',
             'success-response' => 'converted',
 
@@ -365,21 +367,26 @@ class Config
 
     public static function getCacheControlHeader($config) {
         $cacheControl = $config['cache-control'];
-        if ($cacheControl == 'custom') {
-            return $config['cache-control-custom'];
+        switch ($cacheControl) {
+            case 'custom':
+                return $config['cache-control-custom'];
+            case 'no-header':
+                return '';
+            default:
+                $public = (isset($config['cache-control-public']) ? $config['cache-control-public'] : true);
+                $maxAge = (isset($config['cache-control-max-age']) ? $config['cache-control-max-age'] : $cacheControl);
+                $maxAgeOptions = [
+                    'one-second' => 'max-age=1',
+                    'one-minute' => 'max-age=60',
+                    'one-hour' => 'max-age=3600',
+                    'one-day' => 'max-age=86400',
+                    'one-week' => 'max-age=604800',
+                    'one-month' => 'max-age=2592000',
+                    'one-year' => 'max-age=31536000',
+                ];
+                return ($public ? 'public, ' : 'private, ') . $maxAgeOptions[$maxAge];
         }
-        $cacheControlOptions = [
-            'no-header' => '',
-            'one-second' => 'public, max-age=1',
-            'one-minute' => 'public, max-age=60',
-            'one-hour' => 'public, max-age=3600',
-            'one-day' => 'public, max-age=86400',
-            'one-week' => 'public, max-age=604800',
-            'one-month' => 'public, max-age=2592000',
-            'one-year' => 'public, max-age=31536000',
-        ];
 
-        return $cacheControlOptions[$cacheControl];
     }
 
     public static function generateWodOptionsFromConfigObj($config)
@@ -430,6 +437,10 @@ class Config
         unset($options['image-types']);
         unset($options['cache-control']);
         unset($options['cache-control-custom']);
+        unset($options['cache-control-public']);
+        unset($options['cache-control-max-age']);
+
+
         //unset($options['forward-query-string']);  // It is used in webp-on-demand.php, so do not unset!
         unset($options['do-not-pass-source-in-query-string']);
         unset($options['redirect-to-existing-in-htaccess']);

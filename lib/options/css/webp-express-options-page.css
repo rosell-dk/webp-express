@@ -253,6 +253,12 @@
     font-family: sans-serif;
     position: relative;
 }
+.help.no-margin-left {
+    margin-left: 0px;
+}
+.help.set-margin-right {
+    margin-right: 7px;
+}
 
 
 /*
