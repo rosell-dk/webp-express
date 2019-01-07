@@ -51,7 +51,7 @@ $cacheControlPublic = $config['cache-control-public'];
                 ?>
             </select>
             <?php echo helpIcon(
-                '<p>Setting this to public means that you are allow caching in shared caches. ' .
+                '<p>Set either the "public" or "private" directive. Setting this to public means that you are allow caching in shared caches. ' .
                 'Only do this, if you are sure your CDN or reverse proxy can handle that the ' .
                 'response varies depending on the Accept header.</p>' .
                 '<p>Note: I am not completely sure that all forward  proxies handles varied responses. ' .
