@@ -89,7 +89,7 @@ class Config
 
             // serve options
             'cache-control' => 'no-header',     /* can be "no-header", "set" or "custom" */
-            'cache-control-custom' => 'private, max-age:3600',
+            'cache-control-custom' => 'public, max-age:86400, stale-while-revalidate=604800, stale-if-error=604800',
             'cache-control-max-age' => 'one-week',
             'cache-control-public' => false,
             'fail' => 'original',
