@@ -6,7 +6,7 @@ use \WebPExpress\Paths;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$version = '0.10.0-dev5';
+$version = '0.10.0';
 
 function webp_express_add_inline_script($id, $script, $position) {
     if (function_exists('wp_add_inline_script')) {
