@@ -50,6 +50,14 @@ function webpexpress_migrate4() {
             );
         }
 
+        if (!isset($config['redirect-to-existing-in-htaccess'])) {
+            Messenger::addMessage(
+                'info',
+                'In WebP Express 0.10, the "Redirect directly to converted image when available" option is no longer in beta. ' .
+                    'You might want to <a href="' . Paths::getSettingsUrl() . '">go and activate it</a>.'
+            );
+        }
+
     }
 
     // PSST: When creating new migration files, remember to update WEBPEXPRESS_MIGRATION_VERSION in admin.php
