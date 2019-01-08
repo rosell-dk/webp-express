@@ -194,14 +194,35 @@ If you have the *Imagick*, the *Imagick binary* or the *Remote WebP Express* con
 
 Note: If you experience that the general auto option doesn't show, even though the above-mentioned requirements should be in order, check out [this support-thread](https://wordpress.org/support/topic/still-no-auto-option/).
 
-= How do I make this work with a CDN? =
-Chances are that the default setting of your CDN is not to forward any headers to your origin server. But the plugin needs the "Accept" header, because this is where the information is whether the browser accepts webp images or not. You will therefore have to make sure to configure your CDN to forward the "Accept" header.
+= How do I configure my CDN? (Standard mode) =
+In *Standard* operation mode, the response *varies* depending on whether the browser supports webp or not (which browsers signals in the *Accept* header). Some CDN's support this out of the box, others requires some configuration and others doesn't support it at all.
 
-The plugin takes care of setting the "Vary" HTTP header to "Accept" when routing WebP images. When the CDN sees this, it knows that the response varies, depending on the "Accept" header. The CDN is thus instructed not to cache the response on URL only, but also on the "Accept" header. This means that it will store an image for every accept header it meets. Luckily, there are not that many variants for images:
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation/List_of_default_Accept_values#Values_for_an_image
-- so it is not an issue.
+For a CDN to cooperate, it needs to
+1) forward the *Accept* header and
+2) Honour the Vary:Accept response header.
 
-In the 0.10.0 release, you will have another (and better) option, as [described here](https://github.com/rosell-dk/webp-express/issues/133)
+You can also make it "work" on some CDN's by bypassing cache for images. But I rather suggest that you try out the *Just convert* mode (see next FAQ item)
+
+#### Status of some CDN's
+
+- *KeyCDN*: Does not support varied responses. I have added a feature request [here](https://community.keycdn.com/t/support-vary-accept-header-for-conditional-webp/1864). You can give it a +1 if you like!
+- *Cloudflare*: See the "I am on Cloudflare" item
+- *Cloudfront*: Works, but needs to be configured to forward the accept header. Go to *Distribution settings*, find the *Behavior tab*, select the Behavior and click the Edit button. Choose *Whitelist* from *Forward Headers* and then add the "Accept" header to the whitelist.
+
+I shall add more to the list. You are welcome to help out [here](https://wordpress.org/support/topic/which-cdns-works-in-standard-mode/).
+
+= How do I configure my CDN? (Just convert mode) =
+In *Just convert* mode, there is no trickery with varied responses, so no special attention is required *on the CDN*.
+
+In *Just-convert* mode, to get things going, you must install a plugin which alters the HTML. Before continuing,  read the *WebP Express / ShortPixel setup* and the *WebP Express / Cache Enabler setup* items.
+
+If you have set up your whole site to be on CDN, things should now work.
+
+If however you only want the static assets to be on the CDN, you need a plugin to alter the HTML for that (ie w3tc). So now we have two alterations!
+
+But this should work, as long the alterations that creates `<picture>` tags happens *before* the alterations that points the images to the CDN.
+
+Tip: In *ShortPixel*, you can select if HTML alterations should happen in hooks or in output buffer. Hooks are executed before they reaches the output buffer.
 
 = I am on Cloudflare =
 Without configuration, Cloudflare will not maintain separate caches for jpegs and webp; all browsers will get jpeg. To make Cloudflare cache not only by URL, but also by header, you need to use the [Custom Cache Key](https://support.cloudflare.com/hc/en-us/articles/115004290387) page rule, and add *Header content*  to make separate caches depending on the *Accept* request header.
