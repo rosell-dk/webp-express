@@ -203,7 +203,7 @@ For a CDN to cooperate, it needs to
 
 You can also make it "work" on some CDN's by bypassing cache for images. But I rather suggest that you try out the *Just convert* mode (see next FAQ item)
 
-#### Status of some CDN's
+*Status of some CDN's*:
 
 - *KeyCDN*: Does not support varied responses. I have added a feature request [here](https://community.keycdn.com/t/support-vary-accept-header-for-conditional-webp/1864). You can give it a +1 if you like!
 - *Cloudflare*: See the "I am on Cloudflare" item
