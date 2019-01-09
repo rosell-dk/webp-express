@@ -135,6 +135,16 @@ if ($_POST['operation-mode'] != 'just-redirect') {
             }
         }
     }
+
+    // Alter HTML
+
+    $config['alter-html'] = [];
+    $config['alter-html']['enabled'] = isset($_POST['alter-html-enabled']);
+    $config['alter-html']['only-for-webp-enabled-browsers'] = isset($_POST['alter-html-only-for-webp-enabled-browsers']);
+    $config['alter-html']['only-for-webps-that-exists'] = isset($_POST['alter-html-only-for-webps-that-exists']);
+    $config['alter-html']['replacement'] = $_POST['alter-html-replacement'];
+    $config['alter-html']['hooks'] = $_POST['alter-html-hooks'];
+
 }
 
 switch ($_POST['operation-mode']) {

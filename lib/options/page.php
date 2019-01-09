@@ -134,6 +134,44 @@ function webpexpress_selectBoxOptions($selected, $options) {
     }
 }
 
+function webpexpress_radioButtons($optionName, $selected, $options, $helpTexts = []) {
+    echo '<ul style="margin-left: 20px; margin-top: 5px">';
+    foreach ($options as $optionValue => $text) {
+        $id = str_replace('-', '_', $optionName . '_' . $optionValue);
+        echo '<li>';
+        echo '<input type="radio" id="' . $id . '"';
+        if ($optionValue == $selected) {
+            echo ' checked="checked"';
+        }
+        echo ' name="' . $optionName . '" value="' . $optionValue . '">';
+        echo '<label for="' . $id . '">';
+        echo $text;
+        if (isset($helpTexts[$optionValue])) {
+            echo helpIcon($helpTexts[$optionValue]);
+        }
+        echo '</label>';
+        echo '</li>';
+    }
+    echo '</ul>';
+}
+
+function webpexpress_checkbox($optionName, $checked, $label, $helpText = '') {
+    $id = str_replace('-', '_', $optionName);
+    echo '<input value="true" type="checkbox" style="margin-right:10px" ';
+    echo 'name="' . $optionName . '"';
+    echo 'id="' . $id . '"';
+    if ($checked) {
+        echo ' checked="checked"';
+    }
+    echo '>';
+    echo '<label for="' . $id . '">';
+    echo $label . '</label>';
+    if ($helpText != '') {
+        echo helpIcon($helpText);
+    }
+
+}
+
 include_once 'options/operation-mode.inc';
 
 if ($config['operation-mode'] != 'tweaked') {
@@ -149,6 +187,10 @@ if ($config['operation-mode'] == 'just-redirect') {
     include_once 'options/conversion-options/destination-extension.inc';
 }
 include_once 'options/serve-options/serve-options.inc';
+
+if ($config['operation-mode'] != 'just-redirect') {
+    include_once 'options/alter-html/alter-html.inc';
+}
 
 if ($config['operation-mode'] == 'just-convert') {
     // ps: we call it "auto convert", when in this mode

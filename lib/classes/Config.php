@@ -95,6 +95,15 @@ class Config
             'fail' => 'original',
             'success-response' => 'converted',
 
+            // alter html options
+            'alter-html' => [
+                'enabled' => false,
+                'replacement' => 'picture',          // "picture" or "extension"
+                'hooks' => 'content-hooks',             // "content-hooks" or "init"
+                'only-for-webp-enabled-browsers' => false,     // If true, there will be two HTML versions of each page
+                'only-for-webps-that-exists' => false,
+            ],
+
             // web service
             'web-service' => [
                 'enabled' => false,
@@ -156,13 +165,8 @@ class Config
         return $config;
     }
 
-    /**
-     *   Loads Config (if available), fills in the rest with defaults
-     *   also applies operation mode.
-     */
-    public static function loadConfigAndFix($checkQualityDetection = true)
+    public static function fix($config, $checkQualityDetection = true)
     {
-        $config = Config::loadConfig();
         if ($config === false) {
             $config = self::getDefaultConfig(!$checkQualityDetection);
         } else {
@@ -174,7 +178,10 @@ class Config
                     }
                 }
             }
-            $config = array_merge(self::getDefaultConfig(true), $config);
+            $defaultConfig = self::getDefaultConfig(true);
+            $config = array_merge($defaultConfig, $config);
+
+            $config['alter-html'] = array_replace_recursive($defaultConfig['alter-html'], $config['alter-html']);
         }
 
         $config = self::applyOperationMode($config);
@@ -244,6 +251,15 @@ class Config
         }
 
         return $config;
+    }
+
+    /**
+     *   Loads Config (if available), fills in the rest with defaults
+     *   also applies operation mode.
+     */
+    public static function loadConfigAndFix($checkQualityDetection = true)
+    {
+        return self::fix(Config::loadConfig(), $checkQualityDetection);
     }
 
 
@@ -347,6 +363,17 @@ class Config
         return self::loadJSONOptions(Paths::getWodOptionsFileName());
     }
 
+    /**
+     *  Some of the options in config needs to be quickly accessible
+     *  These are stored in wordpress autoloaded options
+     */
+    public static function updateAutoloadedOptions($config)
+    {
+        $config = self::fix($config, false);
+        update_option('webp-express-alter-html', $config['alter-html']['enabled'], true);
+Messenger::addMessage('notice', 'set option:' . $config['alter-html']['enabled'] . ':' . get_option('webp-express-alter-html', false));
+    }
+
     public static function saveConfigurationFile($config)
     {
         $config['paths-used-in-htaccess'] = [
@@ -359,7 +386,9 @@ class Config
             $success = self::saveJSONOptions(Paths::getConfigFileName(), $config);
             if ($success) {
                 State::setState('configured', true);
+                self::updateAutoloadedOptions($config);
             }
+
             return $success;
         }
         return false;

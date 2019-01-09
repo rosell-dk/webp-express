@@ -153,12 +153,17 @@
     /*left: 22px;
     top: 20px;*/
     margin-top: -5px;
-    font-size: 12px;
     /*white-space: nowrap;*/
-    color: #000;
     min-width: 150px;
+}
+
+.popup,
+.popup p {
     font-weight: normal;
     text-align: left;
+    line-height: 1.5;
+    font-size: 14px;
+    color: #000;
 }
 
 .help .popup.narrow {
@@ -252,6 +257,12 @@
     vertical-align: top;
     font-family: sans-serif;
     position: relative;
+    font-style: normal;
+}
+.help { /* new look! */
+    background-color: transparent;
+    border: 1px solid #999;
+    color: #333;
 }
 .help.no-margin-left {
     margin-left: 0px;
@@ -408,4 +419,12 @@
 
 #webpexpress_settings .block.buttons table {
     float: right;
+}
+
+#alter_html_options_div div > label {
+    font-style: italic;
+}
+
+#alter_html_options_div > div {
+    margin-top: 15px;
 }
