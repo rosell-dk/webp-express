@@ -64,16 +64,5 @@ if (get_option('webp-express-alter-html-content-hooks', false)) {
     // add_action( 'wp_head', 'shortPixelAddPictureJs');
 }
 
-/*
-if (get_option('webp-express-alter-html', false)) {
-    $options = json_decode(get_option('webp-express-alter-html-options', null), true);
-    if (self::$options !== null) {
-        if ($options['hooks'] == 'init') {
-            add_action( 'init', 'webp_express_output_buffer', 1 );
-        } else {
-            // TODO...
-        }
-    }
-}*/
 
 //add_action( 'template_redirect', 'webp_express_template_redirect' );
