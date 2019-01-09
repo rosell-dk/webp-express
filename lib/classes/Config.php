@@ -370,8 +370,21 @@ class Config
     public static function updateAutoloadedOptions($config)
     {
         $config = self::fix($config, false);
-        update_option('webp-express-alter-html', $config['alter-html']['enabled'], true);
-Messenger::addMessage('notice', 'set option:' . $config['alter-html']['enabled'] . ':' . get_option('webp-express-alter-html', false));
+        update_option('webp-express-alter-html-init-hook', (($config['alter-html']['enabled']) && ($config['alter-html']['hooks'] == 'init')), true);
+        update_option('webp-express-alter-html-content-hooks', (($config['alter-html']['enabled']) && ($config['alter-html']['hooks'] == 'content-hooks')), true);
+
+        //update_option('webp-express-alter-html', $config['alter-html']['enabled'], true);
+
+        $obj = $config['alter-html'];
+        unset($obj['enabled']);
+        $obj['destination-folder'] = $config['destination-folder'];
+        $obj['destination-extension'] = $config['destination-extension'];
+
+        update_option(
+            'webp-express-alter-html-options',
+            json_encode($obj, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK),
+            true
+        );
     }
 
     public static function saveConfigurationFile($config)

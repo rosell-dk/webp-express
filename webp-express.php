@@ -51,8 +51,29 @@ function webp_express_output_buffer() {
         ob_start('webPExpressAlterHtml');
     }
 }
-if (get_option('webp-express-alter-html', false)) {
+
+if (get_option('webp-express-alter-html-init-hook', false)) {
     add_action( 'init', 'webp_express_output_buffer', 1 );
+    // add_action( 'wp_head', 'shortPixelAddPictureJs');
 }
+
+if (get_option('webp-express-alter-html-content-hooks', false)) {
+    add_filter( 'the_content', 'webPExpressAlterHtml', 10000 ); // priority big, so it will be executed last
+    add_filter( 'the_excerpt', 'webPExpressAlterHtml', 10000 );
+    add_filter( 'post_thumbnail_html', 'webPExpressAlterHtml');
+    // add_action( 'wp_head', 'shortPixelAddPictureJs');
+}
+
+/*
+if (get_option('webp-express-alter-html', false)) {
+    $options = json_decode(get_option('webp-express-alter-html-options', null), true);
+    if (self::$options !== null) {
+        if ($options['hooks'] == 'init') {
+            add_action( 'init', 'webp_express_output_buffer', 1 );
+        } else {
+            // TODO...
+        }
+    }
+}*/
 
 //add_action( 'template_redirect', 'webp_express_template_redirect' );

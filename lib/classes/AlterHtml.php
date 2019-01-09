@@ -12,15 +12,7 @@ namespace WebPExpress;
 
 class AlterHtml
 {
-    public static $options = [
-        'enabled' => true,
-        'replacement' => 'picture',          // "picture" or "extension"
-        'hooks' => 'content-hooks',             // "content-hooks" or "init"
-        'only-for-webp-enabled-browsers' => false,     // If true, there will be two HTML versions of each page
-        'only-for-webps-that-exists' => false,
-        'destination-folder' => 'separate',
-        'destination-extension' => 'append',
-    ];
+    public static $options = null;
 
     public static function lazyGet($img, $type) {
         return array(
@@ -37,14 +29,34 @@ class AlterHtml
         );
     }
 
+    /*
+     *
+     */
     public static function alter($content) {
         // Don't do anything with the RSS feed.
         if ( is_feed() || is_admin() ) { return $content; }
+
+        /* ie: [
+            'enabled' => false,
+            'replacement' => 'picture',          // "picture" or "extension"
+            'hooks' => 'content-hooks',             // "content-hooks" or "init"
+            'only-for-webp-enabled-browsers' => false,     // If true, there will be two HTML versions of each page
+            'only-for-webps-that-exists' => false,
+            'destination-folder' => 'mingled',
+            'destination-extension' => 'append'
+           ]
+        */
+
+        if (self::$options == null) {
+            self::$options = json_decode(get_option('webp-express-alter-html-options', null), true);
+        }
 
         return preg_replace_callback('/<img[^>]*>/', array('\WebPExpress\AlterHtml', 'convertImage'), $content);
     }
 
     public static function convertImage($match) {
+
+        //return 'look:' . print_r(self::$options, true);
 
         // Do nothing with images that have the 'webpexpress-processed' class.
         if ( strpos($match[0], 'webpexpress-processed') ) { return $match[0]; }
