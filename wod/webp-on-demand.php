@@ -104,6 +104,9 @@ $storeMingled = false;
 if ($mingled) {
     // Test if source folder is writable.
     // We will only store "mingled", if it is.
+
+    // TODO: Implement new strategy: Only store "mingled" for uploads.
+    // So rather, we should test if in uploads folder
     $sourceFolder = preg_replace('/\\/[^\\/]*$/', '', $source);
     if (@is_writable($sourceFolder) && @is_executable($sourceFolder)) {
         $storeMingled = true;

@@ -151,6 +151,8 @@ switch ($_POST['operation-mode']) {
     case 'standard':
         $config = array_merge($config, [
             'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
+            'destination-folder' => $_POST['destination-folder'],
+            'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
         ]);
         break;
     case 'just-convert':

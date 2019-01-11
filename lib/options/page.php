@@ -96,6 +96,19 @@ $webpexpress_settings_nonce = wp_create_nonce('webpexpress_settings_nonce');
 ?>
 
 <?php
+//echo get_theme_root_uri();
+
+include_once __DIR__ . '/../classes/AlterHtmlHelper.php';
+//use \WebPExpress\FileHelper;
+
+//$url = 'http://we0/wp-content-moved/themes/twentyseventeen/assets/images/header.jpg';
+/*$url = 'http://we0/wordpress/uploads-moved/2018/12/tegning5-300x265.jpg';
+echo '' . $url . '<br>';
+$webPUrl = \WebPExpress\AlterHtmlHelper::getWebPUrl($url, $url);
+echo '' . $webPUrl . '<br>';
+echo '<br><img width=200 src="' . $webPUrl . '">';
+*/
+//echo '<pre>' . print_r($_SERVER, true) . '</pre>';
 
 echo '<form id="webpexpress_settings" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="post" >';
 ?>
@@ -143,7 +156,7 @@ function webpexpress_radioButtons($optionName, $selected, $options, $helpTexts =
         if ($optionValue == $selected) {
             echo ' checked="checked"';
         }
-        echo ' name="' . $optionName . '" value="' . $optionValue . '">';
+        echo ' name="' . $optionName . '" value="' . $optionValue . '" style="margin-right: 10px">';
         echo '<label for="' . $id . '">';
         echo $text;
         if (isset($helpTexts[$optionValue])) {
@@ -157,7 +170,8 @@ function webpexpress_radioButtons($optionName, $selected, $options, $helpTexts =
 
 function webpexpress_checkbox($optionName, $checked, $label, $helpText = '') {
     $id = str_replace('-', '_', $optionName);
-    echo '<input value="true" type="checkbox" style="margin-right:10px" ';
+    echo '<div style="margin:10px 0 0 10px;">';
+    echo '<input value="true" type="checkbox" style="margin-right: 10px" ';
     echo 'name="' . $optionName . '"';
     echo 'id="' . $id . '"';
     if ($checked) {
@@ -169,6 +183,7 @@ function webpexpress_checkbox($optionName, $checked, $label, $helpText = '') {
     if ($helpText != '') {
         echo helpIcon($helpText);
     }
+    echo '</div>';
 
 }
 

@@ -6,11 +6,11 @@ namespace WebPExpress;
 //use \WebPExpress\State;
 
 /**
- * Class AlterHtml - convert an <img> tag to a <picture> tag and add the webp versions of the images
+ * Class AlterHtmlPicture - convert an <img> tag to a <picture> tag and add the webp versions of the images
  * Based this code on code from the ShortPixel plugin, which used code from Responsify WP plugin
  */
 
-class AlterHtml
+class AlterHtmlPicture extends AlterHtml
 {
     public static $options = null;
 
@@ -32,26 +32,11 @@ class AlterHtml
     /*
      *
      */
-    public static function alter($content) {
-        // Don't do anything with the RSS feed.
-        if ( is_feed() || is_admin() ) { return $content; }
+    public static function alter($content, $options) {
 
-        /* ie: [
-            'enabled' => false,
-            'replacement' => 'picture',          // "picture" or "extension"
-            'hooks' => 'content-hooks',             // "content-hooks" or "init"
-            'only-for-webp-enabled-browsers' => false,     // If true, there will be two HTML versions of each page
-            'only-for-webps-that-exists' => false,
-            'destination-folder' => 'mingled',
-            'destination-extension' => 'append'
-           ]
-        */
+        self::$options = $options;
 
-        if (self::$options == null) {
-            self::$options = json_decode(get_option('webp-express-alter-html-options', null), true);
-        }
-
-        return preg_replace_callback('/<img[^>]*>/', array('\WebPExpress\AlterHtml', 'convertImage'), $content);
+        return preg_replace_callback('/<img[^>]*>/', array('\WebPExpress\AlterHtmlPicture', 'convertImage'), $content);
     }
 
     public static function convertImage($match) {

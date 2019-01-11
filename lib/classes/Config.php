@@ -98,8 +98,8 @@ class Config
             // alter html options
             'alter-html' => [
                 'enabled' => false,
-                'replacement' => 'picture',          // "picture" or "extension"
-                'hooks' => 'content-hooks',             // "content-hooks" or "init"
+                'replacement' => 'picture',          // "picture" or "url"
+                'hooks' => 'ob',             // "content-hooks" or "ob"
                 'only-for-webp-enabled-browsers' => false,     // If true, there will be two HTML versions of each page
                 'only-for-webps-that-exists' => false,
             ],
@@ -148,7 +148,7 @@ class Config
                 'only-redirect-to-converter-on-cache-miss' => true,
                 'do-not-pass-source-in-query-string' => true,
                 'redirect-to-existing-in-htaccess' => false,
-                'destination-folder' => 'mingled',
+                //'destination-folder' => 'mingled',
                 'fail' => 'original',
                 'success-response' => 'original',
             ]);
@@ -370,8 +370,10 @@ class Config
     public static function updateAutoloadedOptions($config)
     {
         $config = self::fix($config, false);
-        update_option('webp-express-alter-html-init-hook', (($config['alter-html']['enabled']) && ($config['alter-html']['hooks'] == 'init')), true);
-        update_option('webp-express-alter-html-content-hooks', (($config['alter-html']['enabled']) && ($config['alter-html']['hooks'] == 'content-hooks')), true);
+
+        update_option('webp-express-alter-html', $config['alter-html']['enabled'], true);
+        update_option('webp-express-alter-html-hooks', $config['alter-html']['hooks'], true);
+        update_option('webp-express-alter-html-replacement', $config['alter-html']['replacement'], true);
 
         //update_option('webp-express-alter-html', $config['alter-html']['enabled'], true);
 

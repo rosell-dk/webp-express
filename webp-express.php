@@ -36,48 +36,9 @@ function webp_express_process_post() {
 }
 add_action( 'init', 'webp_express_process_post' );
 
-function webPExpressAlterHtml($content) {
-    if(function_exists('is_amp_endpoint') && is_amp_endpoint()) {
-        //for AMP pages the <picture> tag is not allowed
-        return $content;
-    }
-    require_once __DIR__ . '/lib/classes/AlterHtml.php';
-
-    return \WebPExpress\AlterHtml::alter($content);
-}
-
-function webp_express_output_buffer() {
-    if (!is_admin() || (function_exists("wp_doing_ajax") && wp_doing_ajax()) || (defined( 'DOING_AJAX' ) && DOING_AJAX)) {
-        ob_start('webPExpressAlterHtml');
-    }
-}
-
-function webpExpressAddPictureJs() {
-    // Don't do anything with the RSS feed.
-    if ( is_feed() || is_admin() ) { return; }
-
-    echo '<script>'
-       . 'document.createElement( "picture" );'
-       . 'if(!window.HTMLPictureElement && document.addEventListener) {'
-            . 'window.addEventListener("DOMContentLoaded", function() {'
-                . 'var s = document.createElement("script");'
-                . 's.src = "' . plugins_url('/js/picturefill.min.js', __FILE__) . '";'
-                . 'document.body.appendChild(s);'
-            . '});'
-        . '}'
-       . '</script>';
-}
-
-if (get_option('webp-express-alter-html-init-hook', false)) {
-    add_action( 'init', 'webp_express_output_buffer', 1 );
-    add_action( 'wp_head', 'webpExpressAddPictureJs');
-}
-
-if (get_option('webp-express-alter-html-content-hooks', false)) {
-    add_filter( 'the_content', 'webPExpressAlterHtml', 10000 ); // priority big, so it will be executed last
-    add_filter( 'the_excerpt', 'webPExpressAlterHtml', 10000 );
-    add_filter( 'post_thumbnail_html', 'webPExpressAlterHtml');
-    add_action( 'wp_head', 'webpExpressAddPictureJs');
+if (get_option('webp-express-alter-html', false)) {
+    require_once __DIR__ . '/lib/classes/AlterHtmlInit.php';
+    \WebPExpress\AlterHtmlInit::setHooks();
 }
 
 
