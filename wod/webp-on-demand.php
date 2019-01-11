@@ -95,29 +95,40 @@ if (!file_exists($source)) {
 
 //echo $source; exit;
 
+// Determine if we should store mingled or not
+function storeMingled() {
+    global $options;
+    global $source;
+    global $docRoot;
+
+    $destinationOptionSetToMingled = (isset($options['destination-folder']) && ($options['destination-folder'] == 'mingled'));
+    if (!$destinationOptionSetToMingled) {
+        return false;
+    }
+
+    // Option is set for mingled.
+    // But we will only store "mingled", for images in upload folder
+
+    if (!isset($options['paths']['uploadDirRel'])) {
+        // Hm, we dont know the upload dir, as the configuration hasn't been regenerated.
+        // This should not happen because configuration file is saved upon migration to 0.11
+        // So we can do this wild guess:
+        return preg_match('/\\/uploads\\//', $source);
+    }
+
+    $uploadDirAbs = $docRoot . '/' . $options['paths']['uploadDirRel'];
+    if (strpos($source, $uploadDirAbs) === 0) {
+        // We are in upload folder
+        return true;
+    }
+    return false;
+}
 
 
 // Calculate $destination
 // ----------------------
-$mingled = (isset($options['destination-folder']) && ($options['destination-folder'] == 'mingled'));
-$storeMingled = false;
-if ($mingled) {
-    // Test if source folder is writable.
-    // We will only store "mingled", if it is.
 
-    // TODO: Implement new strategy: Only store "mingled" for uploads.
-    // So rather, we should test if in uploads folder
-    $sourceFolder = preg_replace('/\\/[^\\/]*$/', '', $source);
-    if (@is_writable($sourceFolder) && @is_executable($sourceFolder)) {
-        $storeMingled = true;
-    } else {
-        header('X-WebP-Express-Notice: Cannot save file in same directory as source, falling back to separate folder', true);
-        if (isset($_GET['debug'])) {
-            echo 'Notice: Cannot save file in same directory as source, falling back to separate folder<br><br>';
-        }
-    }
-}
-if ($storeMingled) {
+if (storeMingled($options)) {
     if (isset($options['destination-extension']) && ($options['destination-extension'] == 'append')) {
         $destination = $source . '.webp';
     } else {
