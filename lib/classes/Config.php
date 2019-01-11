@@ -45,7 +45,7 @@ class Config
 
     public static function saveJSONOptions($filename, $obj)
     {
-        $result = @file_put_contents($filename, json_encode($obj, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK));
+        $result = @file_put_contents($filename, json_encode($obj, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT));
         /*if ($result === false) {
             echo 'COULD NOT' . $filename;
         }*/
@@ -483,11 +483,28 @@ class Config
         unset($options['cache-control-custom']);
         unset($options['cache-control-public']);
         unset($options['cache-control-max-age']);
+        unset($options['paths-used-in-htaccess']);
+        unset($options['web-service']);
+        unset($options['alter-html']);
+        unset($options['enable-redirection-to-converter']);
+        unset($options['operation-mode']);
+        unset($options['only-redirect-to-converter-for-webp-enabled-browsers']);
+        unset($options['only-redirect-to-converter-on-cache-miss']);
+
+
+        //unset($options['']);
+        //unset($options['']);
+        //unset($options['']);
+
 
 
         //unset($options['forward-query-string']);  // It is used in webp-on-demand.php, so do not unset!
         unset($options['do-not-pass-source-in-query-string']);
         unset($options['redirect-to-existing-in-htaccess']);
+
+        $options['paths'] = [
+            'uploadDirRel' => Paths::getUploadDirRel()
+        ];
 
         return $options;
     }
