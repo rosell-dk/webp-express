@@ -26,27 +26,16 @@
                         'the original image. It also adds a script that dynamically loads picturefill.js in browsers ' .
                         'that doesnt support the picture tag.</p>' .
                         '<p><em>Beware that this structural change may affect styling!</em></p>',
-                    'url' => '"Image URLs" replaces the image URLs in src, srcset and ref attributes to point to ' .
-                        'the webp <i>rather than</i> the original. If you do that, either make sure to add ' .
-                        'javascript that makes older browsers capable of displaying webp or set the "" option below to ""'
+                    'url' => '<p>"Image URLs" replaces the image URLs in src, srcset and ref attributes to point to ' .
+                        'the webp <i>rather than</i> the original.</p>' .
+                        '<p>Note that you will have to do something for the browsers that does not support webp. ' .
+                        'For example, you can enable the option below. ' .
+                        'Or you can add the <a href="https://webpjs.appspot.com/">webpjs</a> javascript library. ' .
+                        'In the next release, you will be able to add the webjs library with this plugin.'
                 ]
                 );
                 ?>
-            </div>
-            <div>
-                <label>When to replace</label>
-                <div>
-                    <?php
-                    webpexpress_checkbox(
-                        'alter-html-only-for-webps-that-exists',
-                        $config['alter-html']['only-for-webps-that-exists'],
-                        'Only for webps that exists',
-                        'Usually you should keep this disabled and enable the option for automatically creating ' .
-                            'missing webp files when requested'
-                    );
-                    ?>
-                </div>
-                <div>
+                <div id="alter_html_url_options_div" style="margin-left:39px; margin-top: -5px;">
                     <?php
                     webpexpress_checkbox(
                         'alter-html-only-for-webp-enabled-browsers',
@@ -56,6 +45,20 @@
                             'a browser that supports webp. Note that this will not play well with plugins that caches ' .
                             'the page. Instead of enabling this option, you should consider using the Cache Enabler plugin, ' .
                             'which does the same, but with page caching.'
+                    );
+                    ?>
+                </div>
+            </div>
+            <div>
+                <div style="margin-left: 11px">
+                    <?php
+                    webpexpress_checkbox(
+                        'alter-html-for-webps-that-has-yet-to-exist',
+                        (!$config['alter-html']['only-for-webps-that-exists']),
+                        'Reference webps that hasn\'t been converted yet',
+                        'If you enable this option, there will be references to webp files that doesnt exist yet. ' .
+                            'And that will be ok! - Just make sure to enable the option to create the missing webp files ' .
+                            'on demand (the "webp realizer" feature)'
                     );
                     ?>
                 </div>

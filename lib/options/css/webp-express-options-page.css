@@ -421,7 +421,7 @@
     float: right;
 }
 
-#alter_html_options_div div > label {
+#alter_html_options_div > div > label {
     font-style: italic;
 }
 

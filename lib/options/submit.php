@@ -140,8 +140,12 @@ if ($_POST['operation-mode'] != 'just-redirect') {
 
     $config['alter-html'] = [];
     $config['alter-html']['enabled'] = isset($_POST['alter-html-enabled']);
-    $config['alter-html']['only-for-webp-enabled-browsers'] = isset($_POST['alter-html-only-for-webp-enabled-browsers']);
-    $config['alter-html']['only-for-webps-that-exists'] = isset($_POST['alter-html-only-for-webps-that-exists']);
+    if ($_POST['alter-html-replacement'] == 'url') {
+        $config['alter-html']['only-for-webp-enabled-browsers'] = isset($_POST['alter-html-only-for-webp-enabled-browsers']);
+    } else {
+        $config['alter-html']['only-for-webp-enabled-browsers'] = false;
+    }
+    $config['alter-html']['only-for-webps-that-exists'] = (!isset($_POST['alter-html-for-webps-that-has-yet-to-exist']));
     $config['alter-html']['replacement'] = $_POST['alter-html-replacement'];
     $config['alter-html']['hooks'] = $_POST['alter-html-hooks'];
 
