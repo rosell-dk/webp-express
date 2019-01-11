@@ -2,150 +2,42 @@
 
 namespace WebPExpress;
 
-//include_once "State.php";
-//use \WebPExpress\State;
-
 /**
  * Class AlterHtmlPicture - convert an <img> tag to a <picture> tag and add the webp versions of the images
  * Based this code on code from the ShortPixel plugin, which used code from Responsify WP plugin
  */
 
-class AlterHtmlPicture extends AlterHtml
-{
-    public static $options = null;
+use \WebPExpress\AlterHtmlHelper;
 
-    public static function lazyGet($img, $type) {
+class AlterHtmlPicture
+{
+
+
+    /**
+     * Look for attributes such as "data-lazy-src" and "data-src" and prefer them over "src"
+     *
+     * @param $attributes  an array of attributes for the element
+     * @param $attrName    ie "src", "srcset" or "sizes"
+     *
+     * @return [value:.., attrName:...]  (value is the value of the attribute and attrName is the name of the attribute used)
+     *
+     */
+    private static function lazyGet($attributes, $attrName) {
         return array(
             'value' =>
-                (isset($img['data-lazy-' . $type]) && strlen($img['data-lazy-' . $type])) ?
-                    $img['data-lazy-' . $type]
-                    : (isset($img['data-' . $type]) && strlen($img['data-' . $type]) ?
-                        $img['data-' . $type]
-                        : (isset($img[$type]) && strlen($img[$type]) ? $img[$type] : false)),
-            'prefix' =>
-                (isset($img['data-lazy-' . $type]) && strlen($img['data-lazy-' . $type])) ? 'data-lazy-'
-                    : (isset($img['data-' . $type]) && strlen($img['data-' . $type]) ? 'data-'
-                        : (isset($img[$type]) && strlen($img[$type]) ? '' : false))
+                (isset($attributes['data-lazy-' . $attrName]) && strlen($attributes['data-lazy-' . $attrName])) ?
+                    trim($attributes['data-lazy-' . $attrName])
+                    : (isset($attributes['data-' . $attrName]) && strlen($attributes['data-' . $attrName]) ?
+                        trim($attributes['data-' . $attrName])
+                        : (isset($attributes[$attrName]) && strlen($attributes[$attrName]) ? trim($attributes[$attrName]) : false)),
+            'attrName' =>
+                (isset($attributes['data-lazy-' . $attrName]) && strlen($attributes['data-lazy-' . $attrName])) ? 'data-lazy-' . $attrName
+                    : (isset($attributes['data-' . $attrName]) && strlen($attributes['data-' . $attrName]) ? 'data-' . $attrName
+                        : (isset($attributes[$attrName]) && strlen($attributes[$attrName]) ? $attrName : false))
         );
     }
 
-    /*
-     *
-     */
-    public static function alter($content, $options) {
-
-        self::$options = $options;
-
-        return preg_replace_callback('/<img[^>]*>/', array('\WebPExpress\AlterHtmlPicture', 'convertImage'), $content);
-    }
-
-    public static function convertImage($match) {
-
-        //return 'look:' . print_r(self::$options, true);
-
-        // Do nothing with images that have the 'webpexpress-processed' class.
-        if ( strpos($match[0], 'webpexpress-processed') ) { return $match[0]; }
-
-        //return 'look:' . print_r($match, true);
-        $img = self::getAttributes($match[0]);
-        //return 'look:' . print_r($img, true);
-
-
-        $srcInfo = self::lazyGet($img, 'src');
-        //return 'look:' . print_r($srcInfo, true);
-
-        $src = $srcInfo['value'];
-        $srcPrefix = $srcInfo['prefix'];
-
-        $srcsetInfo = self::lazyGet($img, 'srcset');
-        $srcset = $srcsetInfo['value'];
-        $srcsetPrefix = $srcset ? $srcsetInfo['prefix'] : $srcInfo['prefix'];
-
-        $sizesInfo = self::lazyGet($img, 'sizes');
-        $sizes = $sizesInfo['value'];
-        $sizesPrefix = $sizesInfo['prefix'];
-
-        //check if there are webps
-        /*$id = $thisClass::url_to_attachment_id( $src );
-        if(!$id) {
-            return $match[0];
-        }
-        $imageBase = dirname(get_attached_file($id)) . '/';
-        */
-        $updir = wp_upload_dir(null, false);
-        $proto = explode("://", $src);
-        if(count($proto) > 1) {
-            //check that baseurl uses the same http/https proto and if not, change
-            $proto = $proto[0];
-            if(strpos($updir['baseurl'], $proto."://") === false) {
-                $base = explode("://", $updir['baseurl']);
-                if(count($base) > 1) {
-                    $updir['baseurl'] = $proto . "://" . $base[1];
-                }
-            }
-        }
-
-        //$imageBase = str_replace($updir['baseurl'], SHORTPIXEL_UPLOADS_BASE, $src);
-
-        $imageBase = str_replace($updir['baseurl'], $updir['basedir'], $src);
-        if($imageBase == $src) {
-            return $match[0];
-        }
-        $imageBase = dirname($imageBase) . '/';
-
-        // We don't wanna have src-ish attributes on the <picture>
-        unset($img['src']);
-        unset($img['data-src']);
-        unset($img['data-lazy-src']);
-        //unset($img['srcset']);
-        //unset($img['sizes']);
-
-        $srcsetWebP = '';
-        if($srcset) {
-
-            $defs = explode(",", $srcset);
-            foreach($defs as $item) {
-                $parts = preg_split('/\s+/', trim($item));
-                //echo(" file: " . $parts[0] . " ext: " . pathinfo($parts[0], PATHINFO_EXTENSION) . " basename: " . wp_basename($parts[0], '.' . pathinfo($parts[0], PATHINFO_EXTENSION)));
-
-                $useThis = true;
-                if (self::$options['only-for-webps-that-exists']) {
-                    $fileWebP = $imageBase . wp_basename($parts[0], '.' . pathinfo($parts[0], PATHINFO_EXTENSION)) . '.webp';
-                    $useThis = file_exists($fileWebP);
-
-                }
-                if ($useThis) {
-                    $srcsetWebP .= (strlen($srcsetWebP) ? ',': '')
-                        . preg_replace('/\.[a-zA-Z0-9]+$/', '.webp', $parts[0])
-                        . (isset($parts[1]) ? ' ' . $parts[1] : '');
-                }
-            }
-            //$srcsetWebP = preg_replace('/\.[a-zA-Z0-9]+\s+/', '.webp ', $srcset);
-        } else {
-            $srcset = trim($src);
-
-            $useThis = true;
-            if (self::$options['only-for-webps-that-exists']) {
-                $fileWebP = $imageBase . wp_basename($srcset, '.' . pathinfo($srcset, PATHINFO_EXTENSION)) . '.webp';
-                $useThis = file_exists($fileWebP);
-            }
-            if ($useThis) {
-                $srcsetWebP = preg_replace('/\.[a-zA-Z0-9]+$/', '.webp', $srcset);
-            }
-        }
-        if(!strlen($srcsetWebP))  { return $match[0]; }
-
-        //add the exclude class so if this content is processed again in other filter, the img is not converted again in picture
-        $img['class'] = (isset($img['class']) ? $img['class'] . " " : "") . "webpexpress-processed";
-
-        return '<picture ' . self::create_attributes($img) . '>'
-        .'<source ' . $srcsetPrefix . 'srcset="' . $srcsetWebP . '"' . ($sizes ? ' ' . $sizesPrefix . 'sizes="' . $sizes . '"' : '') . ' type="image/webp">'
-        .'<source ' . $srcsetPrefix . 'srcset="' . $srcset . '"' . ($sizes ? ' ' . $sizesPrefix . 'sizes="' . $sizes . '"' : '') . '>'
-        .'<img ' . $srcPrefix . 'src="' . $src . '" ' . self::create_attributes($img) . '>'
-        .'</picture>';
-    }
-
-    public static function getAttributes( $image_node )
+    private static function getAttributes( $image_node )
     {
         if(function_exists("mb_convert_encoding")) {
             $image_node = mb_convert_encoding($image_node, 'HTML-ENTITIES', 'UTF-8');
@@ -166,7 +58,7 @@ class AlterHtmlPicture extends AlterHtml
      * @param $attribute_array
      * @return string
      */
-    public static function create_attributes( $attribute_array )
+    private static function createAttributes($attribute_array)
     {
         $attributes = '';
         foreach ($attribute_array as $attribute => $value) {
@@ -177,37 +69,86 @@ class AlterHtmlPicture extends AlterHtml
     }
 
     /**
-     * @param $image_url
-     * @return array
+     *  Replace <image> tag with <picture> tag.
      */
-     /*
-    public static function url_to_attachment_id ( $image_url ) {
-        // Thx to https://github.com/kylereicks/picturefill.js.wp/blob/master/inc/class-model-picturefill-wp.php
-        global $wpdb;
-        $original_image_url = $image_url;
-        $image_url = preg_replace('/^(.+?)(-\d+x\d+)?\.(jpg|jpeg|png|gif)((?:\?|#).+)?$/i', '$1.$3', $image_url);
-        $prefix = $wpdb->prefix;
-        $attachment_id = $wpdb->get_col($wpdb->prepare("SELECT ID FROM " . $prefix . "posts" . " WHERE guid='%s';", $image_url ));
+    private static function replaceCallback($match) {
 
-        //try the other proto (https - http) if full urls are used
-        if ( empty($attachment_id) && strpos($image_url, 'http://') === 0 ) {
-            $image_url_other_proto =  strpos($image_url, 'https') === 0 ?
-                str_replace('https://', 'http://', $image_url) :
-                str_replace('http://', 'https://', $image_url);
-            $attachment_id = $wpdb->get_col($wpdb->prepare("SELECT ID FROM " . $prefix . "posts" . " WHERE guid='%s';", $image_url_other_proto ));
+        $imgTag = $match[0];
+
+        // Do nothing with images that have the 'webpexpress-processed' class.
+        if ( strpos($imgTag, 'webpexpress-processed') ) {
+            return $imgTag;
         }
 
-        //try using only path
-        if (empty($attachment_id) ) {
-            $image_path = parse_url($image_url, PHP_URL_PATH); //some sites have different domains in posts guid (site changes, etc.)
-            $attachment_id = $wpdb->get_col($wpdb->prepare("SELECT ID FROM " . $prefix . "posts" . " WHERE guid like'%%%s';", $image_path ));
+        $attributes = self::getAttributes($imgTag);
+
+        $srcInfo = self::lazyGet($attributes, 'src');
+        $srcsetInfo = self::lazyGet($attributes, 'srcset');
+        $sizesInfo = self::lazyGet($attributes, 'sizes');
+
+        // We don't wanna have src-ish attributes on the <picture>
+        unset($attributes['src']);
+        unset($attributes['data-src']);
+        unset($attributes['data-lazy-src']);
+        //unset($attributes['srcset']);
+        //unset($attributes['sizes']);
+
+        $srcsetWebP = '';
+        if ($srcsetInfo['value']) {
+
+            $srcsetArr = explode(', ', $srcset);
+            $srcsetArrWebP = [];
+            foreach ($srcsetArr as $i => $srcSetEntry) {
+                // $srcSetEntry is ie "http://example.com/image.jpg 520w"
+                list($src, $width) = preg_split('/\s+/', trim($srcSetEntry));        // Note that $width might not be set
+
+                $webpUrl = \WebPExpress\AlterHtmlHelper::getWebPUrl($src, false);
+                if ($webpUrl !== false) {
+                    $srcsetArrWebP[] = $webpUrl . (isset($width) ? ' ' . $width : '');
+                }
+            }
+            $srcsetWebP = implode(', ', $srcsetArrWebP);
+            if (strlen($srcsetWebP) == 0)  {
+                // We have no webps for you, so no reason to create <picture> tag
+                return $imgTag;
+            }
+
+        } else {
+            // Being a little hackish here.
+            // - we use src instead of srcset
+            $srcsetInfo = $srcInfo;
+
+            $srcsetWebP = \WebPExpress\AlterHtmlHelper::getWebPUrl($srcInfo['value'], false);
+            if ($srcsetWebP === false) {
+                // No reason to create <picture> tag
+                return $imgTag;
+            }
         }
 
-        //try using the initial URL
-        if ( empty($attachment_id) ) {
-            $attachment_id = $wpdb->get_col($wpdb->prepare("SELECT ID FROM " . $prefix . "posts" . " WHERE guid='%s';", $original_image_url ));
-        }
-        return !empty($attachment_id) ? $attachment_id[0] : false;
-    }*/
+        // add the exclude class so if this content is processed again in other filter, the img is not converted again in picture
+        $attributes['class'] = (isset($attributes['class']) ? $attributes['class'] . " " : "") . "webpexpress-processed";
+
+        // TODO:
+        // We currently set src-set on picture tag.
+        // We inherited that behaviour from ShortPixel. But does it make any sense?
+        // Maybe ask them in forum?
+
+        $sizesAttr = ($sizesInfo['value'] ? (' ' . $sizesInfo['attrName'] . '="' . $sizesInfo['value'] . '"') : '');
+        return '<picture ' . self::createAttributes($attributes) . '>'
+            . '<source ' . $srcsetInfo['attrName'] . '="' . $srcsetWebP . '"' . $sizesAttr . ' type="image/webp">'
+            . '<source ' . $srcsetInfo['attrName'] . '="' . $srcsetInfo["value"] . '"' . $sizesAttr . '>'
+            . '<img ' . $srcInfo['attrName'] . '="' . $srcInfo['value'] . '" ' . self::createAttributes($attributes) . '>'
+            . '</picture>';
+    }
+
+    /*
+     *
+     */
+    public static function alter($content) {
+        require_once "AlterHtmlHelper.php";
+
+        // TODO: We should not replace <img> tags that are inside <picture> tags already, now should we?
+        return preg_replace_callback('/<img[^>]*>/', 'self::replaceCallback', $content);
+    }
 
 }
