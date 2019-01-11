@@ -1,15 +1,26 @@
-<?php
-// Image types
-// ------------
-echo '<tr><th scope="row">Destination folder';
-echo helpIcon('<p>If "In separate folder" is selected, the webp images will be saved to a common root (wp-content/webp-express/webp-images/doc-root), mirroring the folder structure. If on the other hand, "Mingled" is selected, the converter will try to save the webp image in the same folder as the original. If that fails (ie for theme or plugin images), the image will be saved in the separate folder. If you are using WebP Express together with <a target="blank" href="https://da.wordpress.org/plugins/cache-enabler/">Cache enabler</a> or <a target="_blank" href="https://wordpress.org/plugins/shortpixel-image-optimiser/">Shortpixel</a>, set this option to "mingled"</p><p>Changing this option will cause existing webp images to be moved (only those in the upload folder, and only those that has a corresponding source image)</p>');
-echo '</th><td>';
 
-$destinationFolder = $config['destination-folder'];
+<tr>
+    <th scope="row">Destination folder<?php
+        echo helpIcon('<p>' .
+            '<span style="text-decoration:underline">Mingled:</span><br>' .
+            'When "Mingled" is selected, the webp images will be put in the same folder as the original <i>but only for images in the uploads folder</i>. ' .
+            'Other images, such as theme images are stored separately.<br>' .
+            'If you are using WebP Express together with <a target="blank" href="https://da.wordpress.org/plugins/cache-enabler/">Cache enabler</a> or ' .
+            '<a target="_blank" href="https://wordpress.org/plugins/shortpixel-image-optimiser/">Shortpixel</a>, choose this option<br><br>' .
 
-echo '<select name="destination-folder" id="destination_folder">';
-echo '<option value="separate"' . ($destinationFolder == 'separate' ? ' selected' : '') . '>In separate folder</option>';
-echo '<option value="mingled"' . ($destinationFolder == 'mingled' ? ' selected' : '') . '>Mingled</option>';
-echo '</select>';
-
-echo '</td></tr>';
+            '<span style="text-decoration:underline">In separate folder:</span><br>' .
+            'Images are stored in a separate folder ' .
+            '(wp-content/webp-express/webp-images/doc-root).' .
+            '<p><i>Note: Changing this option will cause existing webp images to be moved</i></p>');
+    ?></th>
+    <td>
+        <select name="destination-folder" id="destination_folder">
+            <?php
+            webpexpress_selectBoxOptions($config['destination-folder'], [
+                'separate' => 'In separate folder',
+                'mingled' => 'Mingled',
+            ]);
+            ?>
+        </select>
+    </td>
+</tr>
