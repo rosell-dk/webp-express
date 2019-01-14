@@ -116,42 +116,42 @@ class Paths
     }
 
     // ------------ WP Content Dir -------------
-    public static function getWPContentDirAbs()
+    public static function getContentDirAbs()
     {
         return self::getAbsDir(WP_CONTENT_DIR);
     }
-    public static function getWPContentDirRel()
+    public static function getContentDirRel()
     {
-        return self::getRelDir(self::getWPContentDirAbs());
+        return self::getRelDir(self::getContentDirAbs());
     }
 
     public static function isWPContentDirMoved()
     {
-        return (self::getWPContentDirAbs() != (ABSPATH . 'wp-content'));
+        return (self::getContentDirAbs() != (ABSPATH . 'wp-content'));
     }
 
     public static function isWPContentDirMovedOutOfAbsPath()
     {
-        return !(self::isDirInsideDir(self::getWPContentDirAbs(), ABSPATH));
+        return !(self::isDirInsideDir(self::getContentDirAbs(), ABSPATH));
     }
 
 
     // ------------ Content Dir -------------
     // (the "webp-express" directory inside wp-content)
 
-    public static function getContentDirAbs()
+    public static function getWebPExpressContentDirAbs()
     {
-        return self::getWPContentDirAbs() . '/webp-express';
+        return self::getContentDirAbs() . '/webp-express';
     }
 
-    public static function getContentDirRel()
+    public static function getWebPExpressContentDirRel()
     {
-        return self::getRelDir(self::getContentDirAbs());
+        return self::getRelDir(self::getWebPExpressContentDirAbs());
     }
 
     public static function createContentDirIfMissing()
     {
-        return self::createDirIfMissing(self::getContentDirAbs());
+        return self::createDirIfMissing(self::getWebPExpressContentDirAbs());
     }
 
     // ------------ Upload Dir -------------
@@ -171,13 +171,13 @@ class Paths
         if ( defined( 'UPLOADS' ) ) {
             return ABSPATH . rtrim(UPLOADS, '/');
         } else {
-            return self::getWPContentDirAbs() . '/uploads';
+            return self::getContentDirAbs() . '/uploads';
         }
     }*/
 
     public static function isUploadDirMovedOutOfWPContentDir()
     {
-        return !(self::isDirInsideDir(self::getUploadDirAbs(), self::getWPContentDirAbs()));
+        return !(self::isDirInsideDir(self::getUploadDirAbs(), self::getContentDirAbs()));
     }
 
     public static function isUploadDirMovedOutOfAbsPath()
@@ -189,7 +189,7 @@ class Paths
 
     public static function getConfigDirAbs()
     {
-        return self::getContentDirAbs() . '/config';
+        return self::getWebPExpressContentDirAbs() . '/config';
     }
 
     public static function getConfigDirRel()
@@ -235,7 +235,7 @@ APACHE
 
     public static function getCacheDirAbs()
     {
-        return self::getContentDirAbs() . '/webp-images';
+        return self::getWebPExpressContentDirAbs() . '/webp-images';
     }
 
     public static function getCacheDirRel()
@@ -267,7 +267,7 @@ APACHE
 
     public static function isPluginDirMovedOutOfWpContent()
     {
-        return !(self::isDirInsideDir(self::getPluginDirAbs(), self::getWPContentDirAbs()));
+        return !(self::isDirInsideDir(self::getPluginDirAbs(), self::getContentDirAbs()));
     }
 
     // ------------ WebP Express Plugin Dir -------------
@@ -320,6 +320,31 @@ APACHE
     {
         return self::getUrlPathFromUrl(self::getHomeUrl());
     }
+
+
+    public static function getUploadUrl()
+    {
+        $uploadDir = wp_upload_dir(null, false);
+        return untrailingslashit($uploadDir['baseurl']);
+    }
+
+    public static function getUploadUrlPath()
+    {
+        return self::getUrlPathFromUrl(self::getUploadUrl());
+    }
+
+    public static function getContentUrl()
+    {
+        return untrailingslashit(content_url());
+    }
+
+    public static function getContentUrlPath()
+    {
+        return self::getUrlPathFromUrl(self::getContentUrl());
+    }
+
+
+
 
     /**
      *  Get Url to plugin (this is in fact an incomplete URL, you need to append ie '/webp-on-demand.php' to get a full URL)

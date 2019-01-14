@@ -36,4 +36,4 @@ foreach ($optionsToDelete as $i => $optionName) {
 }
 
 // remove content dir (config plus images)
-webpexpress_rrmdir(Paths::getContentDirAbs());
+webpexpress_rrmdir(Paths::getWebPExpressContentDirAbs());

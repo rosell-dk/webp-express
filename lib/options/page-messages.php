@@ -40,7 +40,7 @@ if (!Paths::createContentDirIfMissing()) {
     Messenger::printMessage(
         'error',
         'WebP Express needs to create a directory "webp-express" under your wp-content folder, but does not have permission to do so.<br>' .
-            'Please create the folder manually, or change the file permissions of your wp-content folder (failed to create this folder: ' . Paths::getContentDirAbs() . ')'
+            'Please create the folder manually, or change the file permissions of your wp-content folder (failed to create this folder: ' . Paths::getWebPExpressContentDirAbs() . ')'
     );
 } else {
     if (!Paths::createConfigDirIfMissing()) {
@@ -79,7 +79,7 @@ if (Config::isConfigFileThere()) {
 
 if (
     HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getIndexDirAbs() . '/.htaccess') &&
-    HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getWPContentDirAbs() . '/.htaccess')
+    HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getContentDirAbs() . '/.htaccess')
 ) {
     if (!HTAccess::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false)) {
         Messenger::printMessage(

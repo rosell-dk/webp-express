@@ -39,9 +39,9 @@ class TestRun
         $source = Paths::getWebPExpressPluginDirAbs() . '/test/small-q61.jpg';
         $destination = Paths::getUploadDirAbs() . '/webp-express-test-conversion.webp';
         if (!FileHelper::canCreateFile($destination)) {
-            $destination = Paths::getWPContentDirAbs() . '/webp-express-test-conversion.webp';
+            $destination = Paths::getContentDirAbs() . '/webp-express-test-conversion.webp';
         }
-        if (!FileHelper::canCreateFile($destination)) {        
+        if (!FileHelper::canCreateFile($destination)) {
             self::$converterStatus = false;     // // cache the result
             return false;
         }

@@ -179,10 +179,10 @@ class AlterHtmlHelper
             $relPathFromDocRoot = '/webp-express/webp-images/doc-root/';
             $relPathFromDocRoot .= PathHelper::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), $baseDir) . $srcPathRel;
 
-            $destPathAbs = Paths::getWPContentDirAbs() . $relPathFromDocRoot . '.webp';
-            // TODO:
-            // No calls to wordpress functions in this class.
-            $destUrl = content_url() . $relPathFromDocRoot . '.webp';
+            list ($contentDirAbs, $contentUrl) = self::$options['bases']['content'];
+
+            $destPathAbs = $contentDirAbs . $relPathFromDocRoot . '.webp';
+            $destUrl = $contentUrl . $relPathFromDocRoot . '.webp';
         }
 
         $webpMustExist = self::$options['only-for-webps-that-exists'];
@@ -211,16 +211,8 @@ class AlterHtmlHelper
             return $returnValueOnFail;
         }
 
-        //echo 'source url: ' . $sourceUrl . '<br>';
-        //echo 'webp url: ';
-        $uploadDir = wp_upload_dir();
+        foreach (self::$options['bases'] as $id => list($baseDir, $baseUrl)) {
 
-        $bases = [
-            [$uploadDir['baseurl'], $uploadDir['basedir']],
-            [content_url(), Paths::getWPContentDirAbs()]
-        ];
-
-        foreach ($bases as $i => list($baseUrl, $baseDir)) {
             $result = self::getWebPUrlInBase($sourceUrl, $baseUrl, $baseDir);
             if ($result !== false) {
                 return $result;

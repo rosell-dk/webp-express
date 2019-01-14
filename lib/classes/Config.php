@@ -381,6 +381,16 @@ class Config
         unset($obj['enabled']);
         $obj['destination-folder'] = $config['destination-folder'];
         $obj['destination-extension'] = $config['destination-extension'];
+        $obj['bases'] = [
+            'uploads' => [
+                Paths::getUploadDirAbs(),
+                Paths::getUploadUrl()
+            ],
+            'content' => [
+                Paths::getContentDirAbs(),
+                Paths::getContentUrl()
+            ],
+        ];
 
         update_option(
             'webp-express-alter-html-options',

@@ -85,7 +85,7 @@ class HTAccess
                 $htaccessDirRel = Paths::getUploadDirRel();
                 break;
             case 'wp-content':
-                $htaccessDirRel = Paths::getWPContentDirRel();
+                $htaccessDirRel = Paths::getContentDirRel();
                 break;
         }
 
@@ -235,7 +235,7 @@ class HTAccess
             $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " .
                 "/" . Paths::getWodUrlPath() .
                 ($passSourceInQS ? "?xsource=x%{SCRIPT_FILENAME}&" : "?") .
-                "wp-content=" . Paths::getWPContentDirRel() .
+                "wp-content=" . Paths::getContentDirRel() .
                 ($config['forward-query-string'] ? '&%1' : '') .
                 " [NC,L]\n";        // E=WOD:1
 
@@ -405,7 +405,7 @@ class HTAccess
 
     public static function whichHTAccessDirIsThis($dir) {
         switch ($dir) {
-            case Paths::getWPContentDirAbs():
+            case Paths::getContentDirAbs():
                 return 'wp-content';
             case Paths::getIndexDirAbs():
                 return 'index';
@@ -544,7 +544,7 @@ class HTAccess
         //return self::saveHTAccessRules('# Plugin is deactivated');
         $indexDir = Paths::getIndexDirAbs();
         $homeDir = Paths::getHomeDirAbs();
-        $wpContentDir = Paths::getWPContentDirAbs();
+        $wpContentDir = Paths::getContentDirAbs();
         $pluginDir = Paths::getPluginDirAbs();
         $uploadDir = Paths::getUploadDirAbs();
 
@@ -619,7 +619,7 @@ class HTAccess
         list($minRequired, $pluginToo, $uploadToo) = self::getHTAccessDirRequirements();
 
         $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'wp-content');
-        $wpContentDir = Paths::getWPContentDirAbs();
+        $wpContentDir = Paths::getContentDirAbs();
         $wpContentFailed = !(HTAccess::saveHTAccessRulesToFile($wpContentDir . '/.htaccess', $rules, true));
 
         $overidingRulesInWpContentWarning = false;
