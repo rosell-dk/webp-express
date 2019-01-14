@@ -201,7 +201,7 @@ class HTAccess
 
 
             if (!$passSourceInQS) {
-                $rules .= "  # Pass REQUEST_FILENAME to PHP by in request header\n";
+                $rules .= "  # Pass REQUEST_FILENAME to PHP in request header\n";
                 $rules .= $basicConditions;
                 $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
                     "  <IfModule mod_headers.c>\n" .
