@@ -152,14 +152,14 @@ if ($_POST['operation-mode'] != 'just-redirect') {
 }
 
 switch ($_POST['operation-mode']) {
-    case 'standard':
+    case 'varied-responses':
         $config = array_merge($config, [
             'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
             'destination-folder' => $_POST['destination-folder'],
             'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
         ]);
         break;
-    case 'just-convert':
+    case 'no-varied-responses':
         $config = array_merge($config, [
             'destination-extension' => $_POST['destination-extension'],
             'enable-redirection-to-converter' => isset($_POST['enable-redirection-to-converter']),  // PS: its called "autoconvert" in this mode

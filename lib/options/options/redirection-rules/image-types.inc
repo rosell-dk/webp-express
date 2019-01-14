@@ -3,10 +3,10 @@
 // ------------
 echo '<tr><th scope="row">';
 switch ($config['operation-mode']) {
-    case 'standard':
+    case 'varied-responses':
         echo 'Image types to work on';
         break;
-    case 'just-convert':
+    case 'no-varied-responses':
         echo 'Image types to convert';
         break;
     case 'just-redirect':

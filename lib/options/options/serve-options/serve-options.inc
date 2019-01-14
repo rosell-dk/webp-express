@@ -14,7 +14,7 @@
 </fieldset>
 <?php
 else:
-    if ($config['operation-mode'] != 'just-convert') {
+    if ($config['operation-mode'] != 'no-varied-responses') {
         include_once 'cache-control.inc';
     }
 endif;

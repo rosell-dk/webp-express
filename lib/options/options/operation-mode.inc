@@ -12,13 +12,13 @@ $operationMode = $config['operation-mode'];
 ?>
 <input type="hidden" name="operation-mode" id="operation_mode" value="<?php echo $operationMode ?>">
 <select name="change-operation-mode" id="change_operation_mode">
-    <option value="standard"<?php if ($operationMode == 'standard') echo ' selected'?>>Varied image responses</option>
-    <option value="just-convert"<?php if ($operationMode == 'just-convert') echo ' selected'?>>No varied image responses</option>
+    <option value="standard"<?php if ($operationMode == 'varied-responses') echo ' selected'?>>Varied image responses</option>
+    <option value="no-varied-responses"<?php if ($operationMode == 'no-varied-responses') echo ' selected'?>>No varied image responses</option>
     <option value="just-redirect"<?php if ($operationMode == 'just-redirect') echo ' selected'?>>Just redirect</option>
     <option value="tweaked"<?php if ($operationMode == 'tweaked') echo ' selected'?>>Tweaked</option>
 </select></h3>
 
-<?php if ($config['operation-mode'] == 'standard') : ?>
+<?php if ($config['operation-mode'] == 'varied-responses') : ?>
 <p><div>
     <i>In the "Varied image responses" mode, WebP Express creates redirection rules for images, such that a request for a jpeg will
         result in a webp &ndash; but only if the request comes from a webp-enabled browser.
@@ -27,7 +27,7 @@ $operationMode = $config['operation-mode'];
     </i>
 </div></p>
 <?php endif; ?>
-<?php if ($config['operation-mode'] == 'just-convert') : ?>
+<?php if ($config['operation-mode'] == 'no-varied-responses') : ?>
 <p><div>
     <i>In "No varied image responses" mode, a jpeg is always served as a jpeg.
         Instead of varying the image response, WebP Express alters the HTML for webp usage.</i>

@@ -17,7 +17,7 @@
 </fieldset>
 <?php
 else:
-    if ($config['operation-mode'] == 'just-convert') {
+    if ($config['operation-mode'] == 'no-varied-responses') {
         // ps: we call it "auto convert", when in this mode
         // PPS: we include it directly in page.php now.
         //include_once 'enable-redirection-to-converter.inc';
@@ -25,7 +25,7 @@ else:
         //include_once 'only-redirect-to-converter-on-cache-miss.inc';
 
     }
-    if ($config['operation-mode'] == 'standard') {
+    if ($config['operation-mode'] == 'varied-responses') {
         include_once 'redirect-to-existing.inc';
     }
     include_once 'image-types.inc';

@@ -1,7 +1,7 @@
 <tr>
     <th scope="row">Alter HTML? <?php echo helpIcon(
         '<p>Alter HTML to either use picture tag syntax for pointing to webp versions or point directly to webps.</p>' .
-        (($config['operation-mode'] == 'standard') ? '<p>This is not needed in Standard operation mode, but enabling it has the benefit that when a user downloads an image, it will have the correct extension.</p>' : '')
+        (($config['operation-mode'] == 'varied-responses') ? '<p>This is not needed in Standard operation mode, but enabling it has the benefit that when a user downloads an image, it will have the correct extension.</p>' : '')
         );
     ?>
     </th>

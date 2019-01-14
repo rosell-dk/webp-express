@@ -67,7 +67,7 @@ class Config
 
         return [
 
-            'operation-mode' => 'standard',
+            'operation-mode' => 'varied-responses',
 
             // redirection rules
             'enable-redirection-to-converter' => true,
@@ -129,10 +129,10 @@ class Config
     public static function applyOperationMode($config)
     {
         if (!isset($config['operation-mode'])) {
-            $config['operation-mode'] = 'standard';
+            $config['operation-mode'] = 'varied-responses';
         }
 
-        if ($config['operation-mode'] == 'standard') {
+        if ($config['operation-mode'] == 'varied-responses') {
             $config = array_merge($config, [
                 'enable-redirection-to-converter' => true,
                 'only-redirect-to-converter-for-webp-enabled-browsers' => true,
@@ -142,7 +142,7 @@ class Config
                 'fail' => 'original',
                 'success-response' => 'converted',
             ]);
-        } elseif ($config['operation-mode'] == 'just-convert') {
+        } elseif ($config['operation-mode'] == 'no-varied-responses') {
             $config = array_merge($config, [
                 'only-redirect-to-converter-for-webp-enabled-browsers' => false,
                 'only-redirect-to-converter-on-cache-miss' => true,

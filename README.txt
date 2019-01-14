@@ -248,7 +248,7 @@ You need:
 1 x WebP Express
 1 x ShortPixel
 
-#### 1. Setup WebP Express
+*1. Setup WebP Express*
 If you are using a CDN which cannot be configured to work in *Standard mode*:
 - Open WebP Express options
 - Switch to *Just convert* mode.
@@ -261,7 +261,7 @@ If you want to *ShortPixel* to create <picture> tags but still want the magic to
 - Set *Destination folder* to "Mingled"
 - Set *File extension* to "Set to .webp"
 
-#### 2. Setup ShortPixel
+*2. Setup ShortPixel*
 - Install [ShortPixel](https://wordpress.org/plugins/shortpixel-image-optimiser/) the usual way
 - Get an API key and enter it on the options page.
 - In *Advanced*, enable the following options:
@@ -272,13 +272,13 @@ If you want to *ShortPixel* to create <picture> tags but still want the magic to
     - *Automatically optimize images added by users in front end.*
     - *Automatically optimize Media Library items after they are uploaded (recommended).*
 
-#### 3. Visit a page
+*3. Visit a page*
 As there are presumably no webps generated yet, ShortPixel will not generate `<picture>` tags on the first visit. However, the images that are referenced causes the WebP Express *Auto convert* feature to kick in and generate webp images for each image on that page.
 
-#### 4. Visit the page again
+*4. Visit the page again*
 As *WebP Express* have generated webps in the same folder as the originals, *ShortPixel* detects these, and you should see `<picture>` tags which references the webp's.
 
-#### ShortPixel or Cache Enabler ?
+*ShortPixel or Cache Enabler ?*
 Cache Enabler has the advantage over ShortPixel that the HTML structure remains the same. With ShortPixel, image tags are wrapped in a `<picture>` tag structure, and by doing that, there is a risk of breaking styles.
 
 Further, Cache Enabler *caches* the HTML. This is good for performance. However, this also locks you to using that plugin for caching. With ShortPixel, you can keep using your favourite caching plugin.
@@ -296,7 +296,7 @@ You need:
 1 x WebP Express
 1 x Cache Enabler
 
-#### 1. Setup WebP Express
+*1. Setup WebP Express*
 If you are using a CDN which cannot be configured to work in *Standard mode*:
 - Open WebP Express options
 - Switch to *Just convert* mode.
@@ -309,12 +309,12 @@ If you want to *Cache Enabler* to create <picture> tags but still want the magic
 - Set *Destination folder* to "Mingled"
 - Set *File extension* to "Set to .webp"
 
-#### 2. Setup Cache Enabler
+*2. Setup Cache Enabler*
 - Open the options
 - Enable of the *Create an additional cached version for WebP image support* option
 
 
-#### 3. Let rise in a warm place until doubled
+*3. Let rise in a warm place until doubled*
 *WebP Express* creates *webp* images on need basis. It needs page visits in order to do the convertions . Bulk conversion is on the roadmap, but until then, you need to visit all pages of relevance. You can either do it manually, let your visitors do it (that is: wait a bit), or, if you are on linux, you can use `wget` to grab your website:
 
 ```
@@ -326,19 +326,19 @@ wget -e robots=off -r -np -w 2 http://www.example.com
 `-np` (no-parent) makes wget stay within the boundaries (doesn't go into parent folders)
 `w 2` Waits two seconds between each request, in order not to stress the server
 
-#### 4. Clear the Cache Enabler cache.
+*4. Clear the Cache Enabler cache.*
 Click the "Clear Cache" button in the top right corner in order to clear the Cache Enabler cache.
 
-#### 5. Inspect the HTML
+*5. Inspect the HTML*
 When visiting a page with images on, different HTML will be served to browsers, depending on whether they support webp or not.
 
 In a webp-enabled browser, the HTML may look like this: `<img src="image.webp">`, while in a non-webp enabled browser, it looks like this: `<img src="image.jpg">`
 
 
-#### 6. Optionally add Cache Enabler rewrite rules in your .htaccess
+*6. Optionally add Cache Enabler rewrite rules in your .htaccess*
 *Cache Enabler* provides some rewrite rules that redirects to the cached file directly in the `.htaccess`, bypassing PHP entirely. Their plugin doesn't do that for you, so you will have to do it manually in order to get the best performance. The rules are in the "Advanced configuration" section on [this page](https://www.keycdn.com/support/wordpress-cache-enabler-plugin).
 
-#### ShortPixel or Cache Enabler ?
+*ShortPixel or Cache Enabler ?*
 Cache Enabler has the advantage over ShortPixel that the HTML structure remains the same. With ShortPixel, image tags are wrapped in a `<picture>` tag structure, and by doing that, there is a risk of breaking styles.
 
 Further, Cache Enabler *caches* the HTML. This is good for performance. However, this also locks you to using that plugin for caching. With ShortPixel, you can keep using your favourite caching plugin.
@@ -346,7 +346,7 @@ Further, Cache Enabler *caches* the HTML. This is good for performance. However,
 Cache Enabler will not work if you are caching HTML on a CDN, because the HTML varies depending on the *Accept* header and it doesn't signal this with a Vary:Accept header. You could however add that manually. ShortPixel does not have that issue, as the HTML is the same for all.
 
 = Does it work with lazy loaded images? =
-No plugins/frameworks has yet been discovered, which does not work with *WebP Express*.
+No plugins/frameworks has yet been discovered, which does not work with *WebP Express* in standard mode.
 
 The most common way of lazy-loading is by setting a *data-src* attribute on the image and let javascript use that value for setten the *src* attribute. That method works, as the image request, seen from the server side, is indistinguishable from any other image request. It could however be that some obscure lazy load implementation would load the image with an XHR request. In that case, the *Accept* header will not contain 'image/webp', but '*/*', and a jpeg will be served, even though the browser supports webp.
 

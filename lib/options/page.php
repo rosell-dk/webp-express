@@ -197,7 +197,7 @@ if ($config['operation-mode'] != 'just-redirect') {
     include_once 'options/alter-html/alter-html.inc';
 }
 
-if ($config['operation-mode'] == 'just-convert') {
+if ($config['operation-mode'] == 'no-varied-responses') {
     // ps: we call it "auto convert", when in this mode
     include_once 'options/redirection-rules/enable-redirection-to-converter.inc';
 }

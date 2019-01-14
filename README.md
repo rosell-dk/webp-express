@@ -158,7 +158,7 @@ Well, there is no point in having the "Speed up image load times" enabled togeth
 
 But there is a case for using WebP Express rather than Jetpacks "Speed up image load times" feature:
 
-Jetpack has the same drawback as the *Standard* WebP Express operation mode: If a user downloads the file, there will be a mismatch between the file extension and the image type (the file is ie called "logo.jpg", but it is really a webp image). I don't think that is a big issue, but for those who do, WebP Express might still be for you, even though you have Jetpack. And that is because WebP Express can be set up just to generate webp's, without doing the internal redirection to webp (will be possible from version 0.10.0). You can then for example use the [Cache Enabler](https://wordpress.org/plugins/cache-enabler/) plugin, which is able to generate and cache two versions of each page. One for browsers that accepts webp and one for those that don't. In the HTML for webp-enabled browsers, the images points directly to the webp files.
+Jetpack has the same drawback as the *Varied image responses* operation mode: If a user downloads the file, there will be a mismatch between the file extension and the image type (the file is ie called "logo.jpg", but it is really a webp image). I don't think that is a big issue, but for those who do, WebP Express might still be for you, even though you have Jetpack. And that is because WebP Express can be set up just to generate webp's, without doing the internal redirection to webp (will be possible from version 0.10.0). You can then for example use the [Cache Enabler](https://wordpress.org/plugins/cache-enabler/) plugin, which is able to generate and cache two versions of each page. One for browsers that accepts webp and one for those that don't. In the HTML for webp-enabled browsers, the images points directly to the webp files.
 
 Pro Jetpack:
 - It is a free CDN which serves webp out of the box.
@@ -183,14 +183,14 @@ If you have the *Imagick*, the *Imagick binary* or the *Remote WebP Express* con
 
 Note: If you experience that the general auto option doesn't show, even though the above-mentioned requirements should be in order, check out [this support-thread](https://wordpress.org/support/topic/still-no-auto-option/).
 
-### How do I configure my CDN? (Standard mode)
-In *Standard* operation mode, the response *varies* depending on whether the browser supports webp or not (which browsers signals in the *Accept* header). Some CDN's support this out of the box, others requires some configuration and others doesn't support it at all.
+### How do I configure my CDN in "Varied image responses" operation mode
+In *Varied image responses* operation mode, the response *varies* depending on whether the browser supports webp or not (which browsers signals in the *Accept* header). Some CDN's support this out of the box, others requires some configuration and others doesn't support it at all.
 
 For a CDN to cooperate, it needs to
 1) forward the *Accept* header and
 2) Honour the Vary:Accept response header.
 
-You can also make it "work" on some CDN's by bypassing cache for images. But I rather suggest that you try out the *Just convert* mode (see next FAQ item)
+You can also make it "work" on some CDN's by bypassing cache for images. But I rather suggest that you try out the *No varied image responses* mode (see next FAQ item)
 
 #### Status of some CDN's
 
@@ -230,27 +230,28 @@ To make *WebP Express* work on a free Cloudflare account, you have the following
 Here is a recipe for using WebP Express together with ShortPixel, such that WebP Express generates the webp's, and ShortPixel only is used to create `<picture>` tags, when it detects a webp image in the same folder as an original.
 
 The reason for doing this could be:
-1. You are using a CDN which cannot be configured to work with the Standard WebP Express setup.
-2. You think it is problematic that when a user saves an image, it has the jpg extension, even though it is a webp image.
+1. You are using a CDN which cannot be configured to work in the "Varied image responses" mode.
+2. You could tweak your CDN to work in the "Varied image responses" mode, but you would have to do it by using the entire Accept header as key. Doing that would increase the risk of cache MISS, and you therefore decided that do not want to do that.
+3. You think it is problematic that when a user saves an image, it has the jpg extension, even though it is a webp image.
 
 You need:
 1 x WebP Express
 1 x ShortPixel
 
-#### 1. Setup WebP Express
-If you are using a CDN which cannot be configured to work in *Standard mode*:
+*1. Setup WebP Express*
+If you do not want to use serve varied images:
 - Open WebP Express options
-- Switch to *Just convert* mode.
+- Switch to *No varied image responses* mode.
 - Set *File extension* to "Set to .webp"
 - Make sure the *Auto convert* option is enabled
 
 If you want to *ShortPixel* to create <picture> tags but still want the magic to work on other images (such as images are referenced from CSS or javascript):
 - Open WebP Express options
-- Switch to *Standard* mode.
+- Switch to *Varied image responses* mode.
 - Set *Destination folder* to "Mingled"
 - Set *File extension* to "Set to .webp"
 
-#### 2. Setup ShortPixel
+*2. Setup ShortPixel*
 - Install [ShortPixel](https://wordpress.org/plugins/shortpixel-image-optimiser/) the usual way
 - Get an API key and enter it on the options page.
 - In *Advanced*, enable the following options:
@@ -261,13 +262,13 @@ If you want to *ShortPixel* to create <picture> tags but still want the magic to
     - *Automatically optimize images added by users in front end.*
     - *Automatically optimize Media Library items after they are uploaded (recommended).*
 
-#### 3. Visit a page
+*3. Visit a page*
 As there are presumably no webps generated yet, ShortPixel will not generate `<picture>` tags on the first visit. However, the images that are referenced causes the WebP Express *Auto convert* feature to kick in and generate webp images for each image on that page.
 
-#### 4. Visit the page again
+*4. Visit the page again*
 As *WebP Express* have generated webps in the same folder as the originals, *ShortPixel* detects these, and you should see `<picture>` tags which references the webp's.
 
-#### ShortPixel or Cache Enabler ?
+*ShortPixel or Cache Enabler ?*
 Cache Enabler has the advantage over ShortPixel that the HTML structure remains the same. With ShortPixel, image tags are wrapped in a `<picture>` tag structure, and by doing that, there is a risk of breaking styles.
 
 Further, Cache Enabler *caches* the HTML. This is good for performance. However, this also locks you to using that plugin for caching. With ShortPixel, you can keep using your favourite caching plugin.
@@ -275,34 +276,35 @@ Further, Cache Enabler *caches* the HTML. This is good for performance. However,
 Cache Enabler will not work if you are caching HTML on a CDN, because the HTML varies depending on the *Accept* header and it doesn't signal this with a Vary:Accept header. You could however add that manually. ShortPixel does not have that issue, as the HTML is the same for all.
 
 ### WebP Express / Cache Enabler setup
-The WebP Express / Cache Enabler setup is quite potent and very CDN-friendly. Cache Enabler is used for generating and caching two versions of the HTML (one for webp-enabled browsers and one for webp-disabled browsers)
+The WebP Express / Cache Enabler setup is quite potent and very CDN-friendly. *Cache Enabler* is used for generating and caching two versions of the HTML (one for webp-enabled browsers and one for webp-disabled browsers)
 
 The reason for doing this could be:
-1. You are using a CDN which cannot be configured to work with the Standard WebP Express setup.
-2. You think it is problematic that when a user saves an image, it has the jpg extension, even though it is a webp image.
+1. You are using a CDN which cannot be configured to work in the "Varied image responses" mode.
+2. You could tweak your CDN to work in the "Varied image responses" mode, but you would have to do it by using the entire Accept header as key. Doing that would increase the risk of cache MISS, and you therefore decided that do not want to do that.
+3. You think it is problematic that when a user saves an image, it has the jpg extension, even though it is a webp image.
 
 You need:
 1 x WebP Express
 1 x Cache Enabler
 
-#### 1. Setup WebP Express
-If you are using a CDN which cannot be configured to work in *Standard mode*:
+*1. Setup WebP Express*
+If you do not want to use serve varied images:
 - Open WebP Express options
-- Switch to *Just convert* mode.
+- Switch to *No varied image responses* mode.
 - Set *File extension* to "Set to .webp"
 - Make sure the *Auto convert* option is enabled
 
 If you want to *Cache Enabler* to create <picture> tags but still want the magic to work on other images (such as images are referenced from CSS or javascript):
 - Open WebP Express options
-- Switch to *Standard* mode.
+- Switch to *Varied image responses* mode.
 - Set *Destination folder* to "Mingled"
 - Set *File extension* to "Set to .webp"
 
-#### 2. Setup Cache Enabler
+*2. Setup Cache Enabler*
 - Open the options
 - Enable of the *Create an additional cached version for WebP image support* option
 
-#### 3. Let rise in a warm place until doubled
+*3. Let rise in a warm place until doubled*
 *WebP Express* creates *webp* images on need basis. It needs page visits in order to do the convertions . Bulk conversion is on the roadmap, but until then, you need to visit all pages of relevance. You can either do it manually, let your visitors do it (that is: wait a bit), or, if you are on linux, you can use `wget` to grab your website:
 
 ```
@@ -314,19 +316,19 @@ wget -e robots=off -r -np -w 2 http://www.example.com
 `-np` (no-parent) makes wget stay within the boundaries (doesn't go into parent folders)
 `w 2` Waits two seconds between each request, in order not to stress the server
 
-#### 4. Clear the Cache Enabler cache.
+*4. Clear the Cache Enabler cache.*
 Click the "Clear Cache" button in the top right corner in order to clear the Cache Enabler cache.
 
-#### 5. Inspect the HTML
+*5. Inspect the HTML*
 When visiting a page with images on, different HTML will be served to browsers, depending on whether they support webp or not.
 
 In a webp-enabled browser, the HTML may look like this: `<img src="image.webp">`, while in a non-webp enabled browser, it looks like this: `<img src="image.jpg">`
 
 
-#### 6. Optionally add Cache Enabler rewrite rules in your .htaccess
+*6. Optionally add Cache Enabler rewrite rules in your .htaccess*
 *Cache Enabler* provides some rewrite rules that redirects to the cached file directly in the `.htaccess`, bypassing PHP entirely. Their plugin doesn't do that for you, so you will have to do it manually in order to get the best performance. The rules are in the "Advanced configuration" section on [this page](https://www.keycdn.com/support/wordpress-cache-enabler-plugin).
 
-#### ShortPixel or Cache Enabler ?
+*ShortPixel or Cache Enabler ?*
 Cache Enabler has the advantage over ShortPixel that the HTML structure remains the same. With ShortPixel, image tags are wrapped in a `<picture>` tag structure, and by doing that, there is a risk of breaking styles.
 
 Further, Cache Enabler *caches* the HTML. This is good for performance. However, this also locks you to using that plugin for caching. With ShortPixel, you can keep using your favourite caching plugin.
