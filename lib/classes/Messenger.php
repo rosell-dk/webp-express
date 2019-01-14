@@ -19,8 +19,14 @@ class Messenger
     public static function addMessage($level, $msg) {
 
         update_option('webp-express-messages-pending', true, true);  // We want this option to be autoloaded
-
         $pendingMessages = State::getState('pendingMessages', []);
+
+        // Ensure we do not add a message that is already pending.
+        foreach ($pendingMessages as $i => $entry) {
+            if ($entry['message'] == $msg) {
+                return;
+            }
+        }
         $pendingMessages[] = ['level' => $level, 'message' => $msg];
         State::setState('pendingMessages', $pendingMessages);
     }
