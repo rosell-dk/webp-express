@@ -12,7 +12,7 @@ $operationMode = $config['operation-mode'];
 ?>
 <input type="hidden" name="operation-mode" id="operation_mode" value="<?php echo $operationMode ?>">
 <select name="change-operation-mode" id="change_operation_mode">
-    <option value="standard"<?php if ($operationMode == 'varied-responses') echo ' selected'?>>Varied image responses</option>
+    <option value="varied-responses"<?php if ($operationMode == 'varied-responses') echo ' selected'?>>Varied image responses</option>
     <option value="no-varied-responses"<?php if ($operationMode == 'no-varied-responses') echo ' selected'?>>No varied image responses</option>
     <option value="just-redirect"<?php if ($operationMode == 'just-redirect') echo ' selected'?>>Just redirect</option>
     <option value="tweaked"<?php if ($operationMode == 'tweaked') echo ' selected'?>>Tweaked</option>
