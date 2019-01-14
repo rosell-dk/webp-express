@@ -58,6 +58,24 @@ class HTAccess
         /* Build rules */
         $rules = '';
 
+/*
+TODO: Generate rules for webp-realizer. Something like this:
+
+# Pass REQUEST_FILENAME to PHP in request header
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{DOCUMENT_ROOT}/wordpress/uploads-moved/$1 -f
+RewriteRule ^(.*)\.(webp)$ - [E=REQFN:%{REQUEST_FILENAME}]
+<IfModule mod_headers.c>
+  RequestHeader set REQFN "%{REQFN}e" env=REQFN
+</IfModule>
+
+# WebP Realizer: Redirect non-existing webp images to converter when a corresponding jpeg/png is found
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{DOCUMENT_ROOT}/wordpress/uploads-moved/$1 -f
+RewriteRule ^(.*)\.(webp)$ /plugins-moved/webp-express/wod/webp-realizer.php?wp-content=wp-content-moved [NC,L]
+*/
+
+
         /*
         // The next line sets an environment variable.
         // On the options page, we verify if this is set to diagnose if "AllowOverride None" is presented in 'httpd.conf'
@@ -178,6 +196,53 @@ class HTAccess
                     $rules .= "  </IfModule>\n\n";
                 }
             }
+        }
+
+        if (true) {
+            /*
+            # Pass REQUEST_FILENAME to PHP in request header
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{DOCUMENT_ROOT}/wordpress/uploads-moved/$1 -f
+            RewriteRule ^(.*)\.(webp)$ - [E=REQFN:%{REQUEST_FILENAME}]
+            <IfModule mod_headers.c>
+              RequestHeader set REQFN "%{REQFN}e" env=REQFN
+            </IfModule>
+
+            # WebP Realizer: Redirect non-existing webp images to converter when a corresponding jpeg/png is found
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{DOCUMENT_ROOT}/wordpress/uploads-moved/$1 -f
+            RewriteRule ^(.*)\.(webp)$ /plugins-moved/webp-express/wod/webp-realizer.php?wp-content=wp-content-moved [NC,L]
+            */
+            $passSourceInQSRealizer = $passSourceInQS;
+
+            $basicConditionsRealizer = '';
+            $basicConditionsRealizer .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
+            if ($mingled) {
+                if ($config['destination-extension'] == 'append') {
+                    $basicConditionsRealizer .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1 -f\n";
+                } else {
+                    //$basicConditionsRealizer .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp !-f\n";
+                }
+            } else {
+                //$basicConditionsRealizer .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
+            }
+
+
+            $rules .= "  # Pass REQUEST_FILENAME to webp-realizer.php in request header\n";
+            $rules .= $basicConditionsRealizer;
+            $rules .= "  RewriteRule ^(.*)\.(webp)$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
+                "  <IfModule mod_headers.c>\n" .
+                "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
+                "  </IfModule>\n\n";
+
+            $rules .= "  # WebP Realizer: Redirect non-existing webp images to webp-realizer.php, which will locate corresponding jpg/png, convert it, and deliver the webp (if possible) \n";
+            $rules .= $basicConditionsRealizer;
+
+            $rules .= "  RewriteRule ^(.*)\.(webp)$ " .
+                "/" . Paths::getWebPRealizerUrlPath() .
+                ($passSourceInQSRealizer ? "?xdestination=x%{SCRIPT_FILENAME}&" : "?") .
+                "wp-content=" . Paths::getContentDirRel() .
+                " [NC,L]\n\n";        // E=WOD:1
 
         }
 
@@ -201,7 +266,7 @@ class HTAccess
 
 
             if (!$passSourceInQS) {
-                $rules .= "  # Pass REQUEST_FILENAME to PHP in request header\n";
+                $rules .= "  # Pass REQUEST_FILENAME to webp-on-demand.php in request header\n";
                 $rules .= $basicConditions;
                 $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
                     "  <IfModule mod_headers.c>\n" .

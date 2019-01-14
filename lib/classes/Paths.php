@@ -364,6 +364,11 @@ APACHE
         return self::getPluginUrlPath() . '/wod/webp-on-demand.php';
     }
 
+    public static function getWebPRealizerUrlPath()
+    {
+        return self::getPluginUrlPath() . '/wod/webp-realizer.php';
+    }
+
     public static function getWebServiceUrl()
     {
         //return self::getPluginUrl() . '/wpc.php';
