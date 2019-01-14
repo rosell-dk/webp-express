@@ -87,13 +87,13 @@ $allowInHeader = true;  // todo: implement setting
 $source = getSource($allowInQS, $allowInHeader);
 //$source = getSource(false, false);
 
+//echo $source; exit;
+
 if (!file_exists($source)) {
     header('X-WebP-Express-Error: Source file not found!', true);
     echo 'Source file not found!';
     exit;
 }
-
-//echo $source; exit;
 
 // Determine if we should store mingled or not
 function storeMingled() {
