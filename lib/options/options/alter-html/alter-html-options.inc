@@ -1,6 +1,7 @@
 <tr>
-    <th scope="row">Alter HTML? <?php echo helpIcon(
+    <th scope="row">Alter HTML? <span style="color:darkorange">(beta)</span><?php echo helpIcon(
         '<p>Alter HTML to either use picture tag syntax for pointing to webp versions or point directly to webps.</p>' .
+        '<p>The feature is new in 0.11.0. It is based on code from Cache Enabler (image urls) and ShortPixel (picture tags), but I needed altering it, as this plugin does not limit its scope to the uploads folder. I have tested pretty thoroughly, but it has yet to stand the tests of the real world.</p>' .
         (($config['operation-mode'] == 'varied-responses') ? '<p>This is not needed in Standard operation mode, but enabling it has the benefit that when a user downloads an image, it will have the correct extension.</p>' : '')
         );
     ?>
