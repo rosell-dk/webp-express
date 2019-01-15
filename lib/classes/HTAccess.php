@@ -55,25 +55,77 @@ class HTAccess
             return '# WebP Express disabled (no image types have been choosen to be converted/redirected)';
         }
 
+
+        // Build cache control rules
+        $ccRules = '';
+        $cacheControlHeader = Config::getCacheControlHeader($config);
+        if ($cacheControlHeader != '') {
+
+            if ($config['redirect-to-existing-in-htaccess']) {
+                $ccRules .= "  # Set Cache-Control header so these direct redirections also get the header set\n";
+                if ($config['enable-redirection-to-webp-realizer']) {
+                    $ccRules .= "  # (and also webp-realizer.php)\n";
+                }
+            } else {
+                if ($config['enable-redirection-to-webp-realizer']) {
+                    $ccRules .= "  # Set Cache-Control header for requests to webp images\n";
+                }
+            }
+            $ccRules .= "  <IfModule mod_headers.c>\n";
+            $ccRules .= "    <FilesMatch \"\.webp$\">\n";
+            $ccRules .= "      Header set Cache-Control \"" . $cacheControlHeader . "\"\n";
+            $ccRules .= "    </FilesMatch>\n";
+            $ccRules .= "  </IfModule>\n\n";
+
+            // Fall back to mod_expires if mod_headers is unavailable
+            $cacheControl = $config['cache-control'];
+            if ($cacheControl == 'custom') {
+                $expires = '';
+
+                // Do not add Expire header if private is set
+                // - because then the user don't want caching in proxies / CDNs.
+                //   the Expires header doesn't differentiate between private/public
+                if (!(preg_match('/private/', $config['cache-control-custom']))) {
+                    if (preg_match('/max-age=(\d+)/', $config['cache-control-custom'], $matches)) {
+                        if (isset($matches[1])) {
+                            $expires = $matches[1] . ' seconds';
+                        }
+                    }
+                }
+
+            } elseif ($cacheControl == 'no-header') {
+                $expires = '';
+            } elseif ($cacheControl == 'set') {
+                if ($config['cache-control-public']) {
+                    $cacheControlOptions = [
+                        'no-header' => '',
+                        'one-second' => '1 seconds',
+                        'one-minute' => '1 minutes',
+                        'one-hour' => '1 hours',
+                        'one-day' => '1 days',
+                        'one-week' => '1 weeks',
+                        'one-month' => '1 months',
+                        'one-year' => '1 years',
+                    ];
+                    $expires = $cacheControlOptions[$config['cache-control-max-age']];
+                }
+            }
+
+            if ($expires != '') {
+                // in case mod_headers is missing, try mod_expires
+                $ccRules .= "  # Fall back to mod_expires if mod_headers is unavailable\n";
+                $ccRules .= "  <IfModule !mod_headers.c>\n";
+                $ccRules .= "    <IfModule mod_expires.c>\n";
+                $ccRules .= "      ExpiresActive On\n";
+                $ccRules .= "      ExpiresByType image/webp \"access plus " . $expires . "\"\n";
+                $ccRules .= "    </IfModule>\n";
+                $ccRules .= "  </IfModule>\n\n";
+            }
+        }
+
+
         /* Build rules */
         $rules = '';
-
-/*
-TODO: Generate rules for webp-realizer. Something like this:
-
-# Pass REQUEST_FILENAME to PHP in request header
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{DOCUMENT_ROOT}/wordpress/uploads-moved/$1 -f
-RewriteRule ^(.*)\.(webp)$ - [E=REQFN:%{REQUEST_FILENAME}]
-<IfModule mod_headers.c>
-  RequestHeader set REQFN "%{REQFN}e" env=REQFN
-</IfModule>
-
-# WebP Realizer: Redirect non-existing webp images to converter when a corresponding jpeg/png is found
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{DOCUMENT_ROOT}/wordpress/uploads-moved/$1 -f
-RewriteRule ^(.*)\.(webp)$ /plugins-moved/webp-express/wod/webp-realizer.php?wp-content=wp-content-moved [NC,L]
-*/
 
 
         /*
@@ -139,66 +191,11 @@ RewriteRule ^(.*)\.(webp)$ /plugins-moved/webp-express/wod/webp-realizer.php?wp-
             $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp -f\n";
             $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n";
 
-            $cacheControlHeader = Config::getCacheControlHeader($config);
-            if ($cacheControlHeader != '') {
+            $rules .= $ccRules;
 
-                // Add Cache-Control header for webp files (this requires mod_headers)
-//                $rules .= "\n";
-                $rules .= "  # Set Cache-Control header so these direct redirections also get cached\n";
-                $rules .= "  <IfModule mod_headers.c>\n";
-                $rules .= "    <FilesMatch \"\.webp$\">\n";
-                $rules .= "      Header set Cache-Control \"" . $cacheControlHeader . "\"\n";
-                $rules .= "    </FilesMatch>\n";
-                $rules .= "  </IfModule>\n\n";
-
-                // Fall back to mod_expires if mod_headers is unavailable
-                $cacheControl = $config['cache-control'];
-                if ($cacheControl == 'custom') {
-                    $expires = '';
-
-                    // Do not add Expire header if private is set
-                    // - because then the user don't want caching in proxies / CDNs.
-                    //   the Expires header doesn't differentiate between private/public
-                    if (!(preg_match('/private/', $config['cache-control-custom']))) {
-                        if (preg_match('/max-age=(\d+)/', $config['cache-control-custom'], $matches)) {
-                            if (isset($matches[1])) {
-                                $expires = $matches[1] . ' seconds';
-                            }
-                        }
-                    }
-
-                } elseif ($cacheControl == 'no-header') {
-                    $expires = '';
-                } elseif ($cacheControl == 'set') {
-                    if ($config['cache-control-public']) {
-                        $cacheControlOptions = [
-                            'no-header' => '',
-                            'one-second' => '1 seconds',
-                            'one-minute' => '1 minutes',
-                            'one-hour' => '1 hours',
-                            'one-day' => '1 days',
-                            'one-week' => '1 weeks',
-                            'one-month' => '1 months',
-                            'one-year' => '1 years',
-                        ];
-                        $expires = $cacheControlOptions[$config['cache-control-max-age']];
-                    }
-                }
-
-                if ($expires != '') {
-                    // in case mod_headers is missing, try mod_expires
-                    $rules .= "  # Fall back to mod_expires if mod_headers is unavailable\n";
-                    $rules .= "  <IfModule !mod_headers.c>\n";
-                    $rules .= "    <IfModule mod_expires.c>\n";
-                    $rules .= "      ExpiresActive On\n";
-                    $rules .= "      ExpiresByType image/webp \"access plus " . $expires . "\"\n";
-                    $rules .= "    </IfModule>\n";
-                    $rules .= "  </IfModule>\n\n";
-                }
-            }
         }
 
-        if (true) {
+        if ($config['enable-redirection-to-webp-realizer']) {
             /*
             # Pass REQUEST_FILENAME to PHP in request header
             RewriteCond %{REQUEST_FILENAME} !-f
@@ -244,6 +241,9 @@ RewriteRule ^(.*)\.(webp)$ /plugins-moved/webp-express/wod/webp-realizer.php?wp-
                 "wp-content=" . Paths::getContentDirRel() .
                 " [NC,L]\n\n";        // E=WOD:1
 
+            if (!$config['redirect-to-existing-in-htaccess']) {
+                $rules .= $ccRules;
+            }
         }
 
         if ($config['enable-redirection-to-converter']) {

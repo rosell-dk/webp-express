@@ -77,6 +77,7 @@ class Config
             'do-not-pass-source-in-query-string' => false,
             'redirect-to-existing-in-htaccess' => true,
             'forward-query-string' => false,
+            'enable-redirection-to-webp-realizer' => true,
 
             // conversion options
             'converters' => [],

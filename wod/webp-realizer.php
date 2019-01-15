@@ -201,6 +201,13 @@ $options['fail'] = '404';
 $options['critical-fail'] = '404';
 //$options['show-report'] = true;
 
+function aboutToServeImageCallBack($servingWhat, $whyServingThis, $obj) {
+    // Redirect to same location.
+    header('Location: ?fresh' , 302);
+    return false;   // tell webp-convert not to serve!
+}
+
+$options['aboutToServeImageCallBack'] = 'aboutToServeImageCallBack';
 
 include_once '../vendor/rosell-dk/webp-convert/build/webp-on-demand-1.inc';
 WebPConvert::convertAndServe($source, $destination, $options);
