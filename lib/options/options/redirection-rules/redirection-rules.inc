@@ -11,6 +11,7 @@
             include_once 'do-not-pass-source-path-in-query-string.inc';
             include_once 'only-redirect-to-converter-on-cache-miss.inc';
             include_once 'redirect-to-existing.inc';
+            include_once 'enable-redirection-to-webp-realizer.inc';
             ?>
         </tbody>
     </table>
@@ -28,6 +29,7 @@ else:
     if ($config['operation-mode'] == 'varied-responses') {
         include_once 'redirect-to-existing.inc';
     }
+    include_once 'enable-redirection-to-webp-realizer.inc';
     include_once 'image-types.inc';
 endif;
 ?>

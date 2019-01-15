@@ -160,6 +160,7 @@ class Config
             $config = array_merge($config, [
                 'enable-redirection-to-converter' => false,
                 'destination-folder' => 'mingled',
+                'enable-redirection-to-webp-realizer' => false,
             ]);
         }
 
@@ -501,6 +502,7 @@ class Config
         unset($options['operation-mode']);
         unset($options['only-redirect-to-converter-for-webp-enabled-browsers']);
         unset($options['only-redirect-to-converter-on-cache-miss']);
+        unset($options['enable-redirection-to-webp-realizer']);
 
 
         //unset($options['']);

@@ -58,6 +58,9 @@ switch ($cacheControl) {
 // Set options that are available in all operation modes, except the "just-redirect" mode
 if ($_POST['operation-mode'] != 'just-redirect') {
 
+    $config['enable-redirection-to-webp-realizer'] = isset($_POST['enable-redirection-to-webp-realizer']);
+
+
     // Metadata
     // --------
     $config['metadata'] = sanitize_text_field($_POST['metadata']);
