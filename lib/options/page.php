@@ -121,7 +121,11 @@ function helpIcon($text, $customClass = '') {
     }
     if (strlen($text) > 150) {
         if (strlen($text) > 300) {
-            $className = 'wider';
+            if (strlen($text) > 500) {
+                $className = 'widest';
+            } else {
+                $className = 'wider';
+            }
         } else {
             $className = 'wide';
         }
@@ -198,8 +202,13 @@ if ($config['operation-mode'] != 'just-redirect') {
 }
 
 if ($config['operation-mode'] == 'no-varied-responses') {
+
+    include_once 'options/redirection-rules/enable-redirection-to-webp-realizer.inc';
+
     // ps: we call it "auto convert", when in this mode
     include_once 'options/redirection-rules/enable-redirection-to-converter.inc';
+
+
 }
 
 if ($config['operation-mode'] != 'just-redirect') {

@@ -178,6 +178,9 @@
 .help .popup.wider {
     width: 450px;
 }
+.help .popup.widest {
+    width: 600px;
+}
 @media (max-width: 500px) {
     .help .popup {
         max-width: 380px;

@@ -47,13 +47,7 @@ $operationMode = $config['operation-mode'];
     </div>
     </div>
     <br><br>
-    <i>An auto-convert option is available!</i>
-    <div class="help">?<div class="popup">
-        <em>The auto-convertion works this way: When an image is requested (jpeg or png), a rule in the <i>.htaccess</i> detects if
-        that image has been converted. If not, the request is redirected to the converter, which creates the
-        webp, but returns <b>the original</b> image</em>
-        </div>
-    </div>
+    <i>A couple of options are available for automatically triggering webp conversion.</i>
 </div></p>
 <?php endif; ?>
 <?php if ($config['operation-mode'] == 'just-redirect') : ?>
