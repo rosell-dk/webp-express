@@ -72,14 +72,12 @@ class AlterHtmlPicture
      *  Replace <image> tag with <picture> tag.
      */
     private static function replaceCallback($match) {
-
         $imgTag = $match[0];
 
         // Do nothing with images that have the 'webpexpress-processed' class.
         if ( strpos($imgTag, 'webpexpress-processed') ) {
             return $imgTag;
         }
-
         $attributes = self::getAttributes($imgTag);
 
         $srcInfo = self::lazyGet($attributes, 'src');
@@ -96,7 +94,7 @@ class AlterHtmlPicture
         $srcsetWebP = '';
         if ($srcsetInfo['value']) {
 
-            $srcsetArr = explode(', ', $srcset);
+            $srcsetArr = explode(', ', $srcsetInfo["value"]);
             $srcsetArrWebP = [];
             foreach ($srcsetArr as $i => $srcSetEntry) {
                 // $srcSetEntry is ie "http://example.com/image.jpg 520w"
@@ -115,7 +113,7 @@ class AlterHtmlPicture
 
         } else {
             // Being a little hackish here.
-            // - we use src instead of srcset
+            // - we use src attribute instead of srcset
             $srcsetInfo = $srcInfo;
 
             $srcsetWebP = \WebPExpress\AlterHtmlHelper::getWebPUrl($srcInfo['value'], false);
