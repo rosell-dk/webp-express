@@ -166,7 +166,7 @@ class HTAccess
         // TODO: It seems $pathToExisting needs to be adjusted, depending on where the .htaccess is located
         // Ie, if plugin folder has been moved out of ABSPATH, we should ie set
         // $pathToExisting to 'doc-root/plugins-moved/'
-        // to get: RewriteRule ^\/?(.*)\.(jpe?g)$ /wp-content-moved/webp-express/webp-images/doc-root/plugins-moved/$1.$2.webp [NC,T=image/webp,QSD,E=WEBPACCEPT:1,E=EXISTING:1,L]
+        // to get: RewriteRule ^\/?(.*)\.(jpe?g)$ /wp-content-moved/webp-express/webp-images/doc-root/plugins-moved/$1.$2.webp [NC,T=image/webp,E=WEBPACCEPT:1,E=EXISTING:1,L]
 
         // https://stackoverflow.com/questions/34124819/mod-rewrite-set-custom-header-through-htaccess
         $mingled = ($config['destination-folder'] == 'mingled');
@@ -178,10 +178,10 @@ class HTAccess
 
                 if ($config['destination-extension'] == 'append') {
                     $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp -f\n";
-                    $rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.$2.webp [T=image/webp,QSD,E=EXISTING:1,L]\n\n";
+                    $rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.$2.webp [T=image/webp,E=EXISTING:1,L]\n\n";
                 } else {
                     $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp -f\n";
-                    $rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.webp [T=image/webp,QSD,E=EXISTING:1,L]\n\n";
+                    $rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1,L]\n\n";
                 }
             }
 
@@ -189,7 +189,7 @@ class HTAccess
             $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp -f\n";
-            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n";
+            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
 
             $rules .= $ccRules;
 
