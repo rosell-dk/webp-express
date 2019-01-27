@@ -1,0 +1,310 @@
+<?php
+
+/**
+ * WebPConvert - Convert JPEG & PNG to WebP with PHP
+ *
+ * @link https://github.com/rosell-dk/webp-convert
+ * @license MIT
+ */
+
+namespace WebPExpressTests;
+
+//use WebPConvert\WebPConvert;
+use PHPUnit\Framework\TestCase;
+use Sunra\PhpSimple\HtmlDomParser;
+
+class BananaTest extends TestCase
+{
+
+    public static $searchInTags = ['img', 'source', 'input', 'iframe'];
+
+    public function replace($html, $replaceFunction)
+    {
+        if ($html == '') {
+            return '';
+        }
+        $dom = HtmlDomParser::str_get_html( $html );
+
+        foreach (self::$searchInTags as $tagName) {
+            $elems = $dom->find($tagName);
+            foreach ($elems as $index => $elem) {
+                $attributes = $elem->getAllAttributes();
+                foreach ($elem->getAllAttributes() as $attrName => $attrValue) {
+                    if (($attrName == 'src') || ($attrName == 'srcset') || (strpos($attrName, 'data-') === 0)) {
+                        $elem->setAttribute($attrName, call_user_func($replaceFunction, $attrValue));
+                    }
+                }
+            }
+
+        }
+
+        return $dom->save();
+
+/*
+        $dom = new \DOMDocument();
+        @$dom->loadHTML($image_node);
+        $images = $dom->getElementsByTagName('img');
+        //print_r($images);
+        echo $dom->saveHTML($image_node);
+*/
+        //$this->assertTrue(true);
+    }
+
+    public function isValidUrl($url)
+    {
+        return preg_match('#(png|jpe?g)$#', $url);
+    }
+
+    public function handleSrc($attrValue, $validateUrlFunction, $urlFunction)
+    {
+        if (call_user_func($validateUrlFunction, $attrValue)) {
+            return call_user_func($urlFunction, $attrValue);
+        } else {
+            return $attrValue;
+        }
+
+    }
+
+    public function handleSrcSet($attrValue, $validateUrlFunction, $urlFunction)
+    {
+        // $attrValue is ie: <img data-x="1.jpg 1000w, 2.jpg">
+        $srcsetArr = explode(',', $attrValue);
+        foreach ($srcsetArr as $i => $srcSetEntry) {
+            // $srcSetEntry is ie "image.jpg 520w", but can also lack width, ie just "image.jpg"
+            $srcSetEntry = trim($srcSetEntry);
+            $entryParts = preg_split('/\s+/', $srcSetEntry);
+            if (count($entryParts) == 2) {
+                list($src, $width) = $entryParts;
+            } else {
+                $src = $srcSetEntry;
+                $width = null;
+            }
+
+            if (call_user_func($validateUrlFunction, $src)) {
+                $webpUrl = call_user_func($urlFunction, $src);
+                $srcsetArr[$i] = $webpUrl . (isset($width) ? ' ' . $width : '');
+            }
+        }
+        return implode(', ', $srcsetArr);
+    }
+
+    public function star($str) {
+        return '*';
+    }
+
+    public function testBasic1()
+    {
+        $starTests = [
+            ['<img src="http://example.com/1.jpg">', '<img src="*">'],
+            ['<body!><p><!-- bad html here!--><img src="http://example.com/2.jpg"></p></a>', '<body!><p><!-- bad html here!--><img src="*"></p></a>'],
+            ['<img src="/3.jpg">', '<img src="*">'],
+            ['<img src="http://example.com/4.jpeg" alt="">', '<img src="*" alt="">'],
+            ['', ''],
+            ['a', 'a'],
+        ];
+
+        foreach ($starTests as list($html, $expectedOutput)) {
+            $output = self::replace($html, 'self::star');
+            $this->assertEquals($expectedOutput, $output);
+        }
+    }
+
+    public function appendWebP($str) {
+        return $str . '.webp';
+    }
+
+    public function testBasic2()
+    {
+        $appendWebPTests = [
+            ['<img src="http://example.com/1.jpg">', '<img src="http://example.com/1.jpg.webp">'],
+            ['<img src="3.jpg"><img src="4.jpg">', '<img src="3.jpg.webp"><img src="4.jpg.webp">'],
+            ['<img src="5.jpg" data-src="6.jpg">', '<img src="5.jpg.webp" data-src="6.jpg.webp">'],
+            ['<img src="7.jpg" data-cvpsrc="8.jpg">', '<img src="7.jpg.webp" data-cvpsrc="8.jpg.webp">'],
+            ['<img src="/5.jpg">', '<img src="/5.jpg.webp">'],
+            ['<img src="/6.jpg"/>', '<img src="/6.jpg.webp"/>'],
+            ['<img src = "/7.jpg">', '<img src = "/7.jpg.webp">'],
+            ['<img src=/8.jpg alt="">', '<img src=/8.jpg.webp alt="">'],
+            ['<img src=/9.jpg>', '<img src=/9.jpg.webp>'],
+            ['<img src=/10.jpg alt="hello">', '<img src=/10.jpg.webp alt="hello">'],
+            ['<img src=/11.jpg />', '<img src=/11.jpg.webp />'],
+            //['<img src=/12_.jpg/>', '<img src=/12_.jpg.webp>'],
+            ['<input type="image" src="/flamingo13.jpg">', '<input type="image" src="/flamingo13.jpg.webp">'],
+            ['<iframe src="/image14.jpg"></iframe>', '<iframe src="/image14.jpg.webp"></iframe>'],
+            ['<img data-cvpsrc="/15.jpg">', '<img data-cvpsrc="/15.jpg.webp">'],
+            ['<picture><source src="16.jpg"><img src="17.jpg"></picture>', '<picture><source src="16.jpg.webp"><img src="17.jpg.webp"></picture>'],
+            ['<img src="18.jpg" srcset="19.jpg 1000w">', '<img src="18.jpg.webp" srcset="19.jpg 1000w.webp">'],
+            ['', ''],
+            ['', ''],
+            ['', ''],
+            ['', ''],
+//            ['<img src="http://example.com/102.jpg" srcset="http://example.com/103.jpg 1000w">', '<img src="http://example.com/102.jpg.webp" srcset="http://example.com/103.jpg.webp 1000w">']
+        ];
+
+        foreach ($appendWebPTests as list($html, $expectedOutput)) {
+            $output = self::replace($html, 'self::appendWebP');
+            $this->assertEquals($expectedOutput, $output);
+        }
+    }
+
+
+    public function isSrcSetOut($value)
+    {
+        return self::looksLikeSrcSet($value) ? 'yes' : 'no';
+    }
+
+    public function testSrcSetDetection()
+    {
+        /*
+        In srcset, the whole attribute must be matched
+        <img src="http://example.com/111.jpg" srcset="http://example.com/112.jpg 1000w">
+        <img src="http://example.com/header.jpg" srcset="http://example.com/header.jpg 1000w,http://example.com/header.jpg 1000w, http://example.com/header.jpg 2000w">
+        <img src="http://example.com/header.jpg" srcset="http://example.com/header-150x150.jpg 500w,http://example.com/header.jpg-300x300.jpg" sizes="(max-width: 480px) 100vw, (max-width: 900px) 33vw, 254px" alt="" width="100" height="100">
+        */
+
+        $isSrcSettests = [
+            ['<img data-x="1.jpg 1000w">', '<img data-x="yes">'],
+            ['<img data-x="2.jpg">', '<img data-x="no">'],
+            ['<img src="3.jpg" data-x="/4.jpg 1000w,/header.jpg 1000w, /header.jpg 2000w">', '<img src="no" data-x="yes">'],
+            ['<img data-x="5.jpg 1000w, 6.jpg">', '<img data-x="yes">'],
+        ];
+
+        foreach ($isSrcSettests as list($html, $expectedOutput)) {
+            $output = self::replace($html, 'self::isSrcSetOut');
+            $this->assertEquals($expectedOutput, $output);
+        }
+    }
+
+    public function looksLikeSrcSet($value)
+    {
+        if (preg_match('#\s\d*w#', $value)) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public function alwaysAppend($value)
+    {
+        if (self::looksLikeSrcSet($value)) {
+            return self::handleSrcSet($value, 'self::isValidUrl', 'self::appendWebP');
+        }
+        return self::handleSrc($value, 'self::isValidUrl', 'self::appendWebP');
+    }
+
+
+    public function testAlwaysAppend()
+    {
+        /*
+        In srcset, the whole attribute must be matched
+        <img src="http://example.com/111.jpg" srcset="http://example.com/112.jpg 1000w">
+        <img src="http://example.com/header.jpg" srcset="http://example.com/header.jpg 1000w,http://example.com/header.jpg 1000w, http://example.com/header.jpg 2000w">
+        <img src="http://example.com/header.jpg" srcset="http://example.com/header-150x150.jpg 500w,http://example.com/header.jpg-300x300.jpg" sizes="(max-width: 480px) 100vw, (max-width: 900px) 33vw, 254px" alt="" width="100" height="100">
+        */
+
+        $alwaysAppendTests = [
+            ['<img data-x="1.jpg">', '<img data-x="1.jpg.webp">'],
+            ['<img data-x="2.jpg 1000w">', '<img data-x="2.jpg.webp 1000w">'],
+            ['<img data-x="3.jpg 1000w, 4.jpg 2000w">', '<img data-x="3.jpg.webp 1000w, 4.jpg.webp 2000w">'],
+            ['<img data-x="5.jpg 1000w, 6.jpg">', '<img data-x="5.jpg.webp 1000w, 6.jpg.webp">'],
+            ['<img data-x="7.gif 1000w, 8.jpg">', '<img data-x="7.gif 1000w, 8.jpg.webp">'],
+            ['<img data-lazy-original="9.jpg">', '<img data-lazy-original="9.jpg.webp">'],
+
+        ];
+
+        $skipTheseTests = [
+            '<img src="7.gif">',
+            '<img src="8.jpg.webp">',
+            '<img src="9.jpg?width=200">',      // better safe than sorry
+            '<img src="10.jpglilo">',
+            'src="header.jpeg"',
+            '<script src="http://example.com/script.js?preload=image.jpg">',
+            '<img><script src="http://example.com/script.js?preload=image.jpg">',
+        ];
+
+        foreach ($skipTheseTests as $skipThis) {
+            $alwaysAppendTests[] = [$skipThis, $skipThis];
+        }
+
+        /*
+        The following should NOT produce matches:
+        -----------------------------------------
+
+        Ignore URLs with query string:
+
+        <article data-src="http://example.com/header.jpg" />
+        <img><script src="http://example.com/script.js?preload=image.jpg">
+        */
+
+        foreach ($alwaysAppendTests as list($html, $expectedOutput)) {
+            $output = self::replace($html, 'self::alwaysAppend');
+            $this->assertEquals($expectedOutput, $output);
+        }
+    }
+
+
+    /*
+    public function testRegex()
+    {
+        //$regex = '#(?<=(?:<(img|source|input|iframe)[^>]*\s+(src|srcset|data-[^=]*)\s*=\s*[\"\']?))(?:[^\"\'>]+)(\.png|\.jp[e]?g)(\s\d+w)?(?=\/?[\"\'\s\>])#';
+        //$regex = '#(?<=(?:(ref|src|set)=[\"\']))(?:http[s]?[^\"\']+)(\.png|\.jp[e]?g)(?:[^\"\']+)?(?=[\"\')])#';
+        $regex = '#(?:<(img|source|input|iframe)[^>]*\s+(src|srcset|data-[^=]*)\s*=\s*[\"\']?)((?:[^\"\'>]+)(?:\.(?:png|jp[e]?g)))(\s\d+w)?(?:\/?[\"\'\s\>])#';
+
+        $mustMatchOneTests = [
+            ['<img src="http://example.com/1.jpg">', 'img', 'src', 'http://example.com/1.jpg'],
+            ['<img src="2.jpg">', 'img', 'src', '2.jpg'],
+            ['<img src="/3.jpg">', 'img', 'src', '/3.jpg'],
+            ['<img src="http://example.com/4.jpeg" alt="">', 'img', 'src', 'http://example.com/4.jpeg'],
+            ['<img src="http://example.com/5.jpg">', 'img', 'src', 'http://example.com/5.jpg'],
+            ['<img src="http://example.com/6.jpg"/>', 'img', 'src', 'http://example.com/6.jpg'],
+            ['<img src = "http://example.com/7.jpg">', 'img', 'src', 'http://example.com/7.jpg'],
+            ['<img src=http://example.com/8.jpg alt="">', 'img', 'src', 'http://example.com/8.jpg'],
+            ['<img src=http://example.com/9.jpg>', 'img', 'src', 'http://example.com/9.jpg'],
+            ['<img src=http://example.com/10.jpg alt="hello">', 'img', 'src', 'http://example.com/10.jpg'],
+            ['<img src=http://example.com/11.jpg />', 'img', 'src', 'http://example.com/11.jpg'],
+            ['<img src=http://example.com/12_.jpg/>', 'img', 'src', 'http://example.com/12_.jpg'],
+            ['<input type="image" src="http://example.com/flamingo13.jpg">', 'input', 'src', 'http://example.com/flamingo13.jpg'],
+            ['<iframe src="http://example.com/image14.jpg"></iframe>', 'iframe', 'src', 'http://example.com/image14.jpg'],
+            ['<img data-cvpsrc="http://example.com/15.jpg">', 'img', 'data-cvpsrc', 'http://example.com/15.jpg'],
+
+
+        ];
+
+        foreach ($mustMatchOneTests as $testArr) {
+            $returnValue = preg_match($regex, $testArr[0], $matches);
+            $this->assertTrue(($returnValue ? true : false));
+            if ($returnValue) {
+                $this->assertEquals($matches[1], $testArr[1]);
+                $this->assertEquals($matches[2], $testArr[2]);
+                $this->assertEquals($matches[3], $testArr[3]);
+            }
+        }
+
+        $mustMatchMultipleTests = [
+            [
+                '<picture><source src="http://example.com/100.jpg"><img src="http://example.com/101.jpg"></picture>',
+                [
+                    ['source', 'src', 'http://example.com/100.jpg'],
+                    ['img', 'src', 'http://example.com/101.jpg']
+                ]
+            ],
+            [
+                '<img src="http://example.com/102.jpg" srcset="http://example.com/103.jpg 1000w">',
+                [
+                    ['img', 'src', 'http://example.com/102.jpg'],
+                    ['img', 'srcset', 'http://example.com/103.jpg 1000w']
+                ]
+            ]
+        ];
+
+        foreach ($mustMatchMultipleTests as $testArr) {
+            preg_match_all($regex, $testArr[0], $matches);
+            foreach ($testArr[1] as $i => $testArr2) {
+                $this->assertEquals($matches[1][$i], $testArr2[0]);
+                $this->assertEquals($matches[2][$i], $testArr2[1]);
+                $this->assertEquals($matches[3][$i], $testArr2[2]);
+            }
+//            print_r($matches);
+        }
+    */
+
+}

@@ -144,7 +144,6 @@ class AlterHtmlPicture
      */
     public static function alter($content) {
         require_once "AlterHtmlHelper.php";
-
         // TODO: We should not replace <img> tags that are inside <picture> tags already, now should we?
         return preg_replace_callback('/<img[^>]*>/', 'self::replaceCallback', $content);
     }

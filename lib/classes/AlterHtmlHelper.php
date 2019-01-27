@@ -195,8 +195,8 @@ class AlterHtmlHelper
 
 
     /**
-     *  Get url for webp, given a certain base
-     *  returns false if no webp
+     *  Get url for webp
+     *  returns second argument if no webp
      *
      *  @param $imageUrl    (ie http://example.com/wp-content/image.jpg)
      *  @param $baseUrl     (ie http://example.com/wp-content)
@@ -204,8 +204,35 @@ class AlterHtmlHelper
      */
     public static function getWebPUrl($sourceUrl, $returnValueOnFail)
     {
-        self::$options = json_decode(get_option('webp-express-alter-html-options', null), true);
+        if (!isset(self::$options)) {
+            self::$options = json_decode(get_option('webp-express-alter-html-options', null), true);
+        }
 
+
+        // Currently we do not handle relative urls - so we skip
+        if (!preg_match('#^https?://#', $sourceUrl)) {
+            return $returnValueOnFail;
+        }
+
+        switch (self::$options['image-types']) {
+            case 0:
+                return $returnValueOnFail;
+            case 1:
+                if (!preg_match('#(jpe?g)$#', $sourceUrl)) {
+                    return $returnValueOnFail;
+                }
+                break;
+            case 2:
+                if (!preg_match('#(png)$#', $sourceUrl)) {
+                    return $returnValueOnFail;
+                }
+                break;
+            case 3:
+                if (!preg_match('#(jpe?g|png)$#', $sourceUrl)) {
+                    return $returnValueOnFail;
+                }
+                break;
+        }
 
         if ((self::$options['only-for-webp-enabled-browsers']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') === false)) {
             return $returnValueOnFail;
@@ -221,5 +248,10 @@ class AlterHtmlHelper
         return $returnValueOnFail;
     }
 
+/*
+    public static function getWebPUrlOrSame($sourceUrl, $returnValueOnFail)
+    {
+        return self::getWebPUrl($sourceUrl, $sourceUrl);
+    }*/
 
 }

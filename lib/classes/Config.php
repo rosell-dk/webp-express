@@ -393,6 +393,7 @@ class Config
                 Paths::getContentUrl()
             ],
         ];
+        $obj['image-types'] = $config['image-types'];   // 0=none,1=jpg, 2=png, 3=both
 
         update_option(
             'webp-express-alter-html-options',

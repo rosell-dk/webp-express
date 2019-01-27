@@ -70,6 +70,7 @@ class AlterHtmlInit
     }
 
     public static function setHooks() {
+
         if (get_option('webp-express-alter-html-replacement') == 'picture') {
 //            add_action( 'wp_head', '\\WebPExpress\\AlterHtmlInit::addPictureJs');
         }
@@ -86,12 +87,35 @@ class AlterHtmlInit
                 if the "Only for webps that exists" feature is enabled)
             */
             add_action( 'init', '\\WebPExpress\\AlterHtmlInit::startOutputBuffer', 1 );
-            //add_action( 'template_redirect', 'webpExpressOutputBuffer', 1 );
+            add_action( 'template_redirect', '\\WebPExpress\\AlterHtmlInit::startOutputBuffer', 10000 );
 
         } else {
-            add_filter( 'the_content', '\\WebPExpress\\AlterHtmlInit::alterHtml', 10000 ); // priority big, so it will be executed last
-            add_filter( 'the_excerpt', '\\WebPExpress\\AlterHtmlInit::alterHtml', 10000 );
-            add_filter( 'post_thumbnail_html', '\\WebPExpress\\AlterHtmlInit::alterHtml');
+            add_filter( 'the_content', '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999 ); // priority big, so it will be executed last
+            add_filter( 'the_excerpt', '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999 );
+            add_filter( 'post_thumbnail_html', '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999);
+
+
+            /*
+            TODO:
+            check out these hooks (used by Jecpack, in class.photon.php)
+
+            // Images in post content and galleries
+    		add_filter( 'the_content', array( __CLASS__, 'filter_the_content' ), 999999 );
+    		add_filter( 'get_post_galleries', array( __CLASS__, 'filter_the_galleries' ), 999999 );
+    		add_filter( 'widget_media_image_instance', array( __CLASS__, 'filter_the_image_widget' ), 999999 );
+
+    		// Core image retrieval
+    		add_filter( 'image_downsize', array( $this, 'filter_image_downsize' ), 10, 3 );
+    		add_filter( 'rest_request_before_callbacks', array( $this, 'should_rest_photon_image_downsize' ), 10, 3 );
+    		add_filter( 'rest_request_after_callbacks', array( $this, 'cleanup_rest_photon_image_downsize' ) );
+
+    		// Responsive image srcset substitution
+    		add_filter( 'wp_calculate_image_srcset', array( $this, 'filter_srcset_array' ), 10, 5 );
+    		add_filter( 'wp_calculate_image_sizes', array( $this, 'filter_sizes' ), 1, 2 ); // Early so themes can still easily filter.
+
+    		// Helpers for maniuplated images
+    		add_action( 'wp_enqueue_scripts', array( $this, 'action_wp_enqueue_scripts' ), 9 );
+            */
         }
     }
 
