@@ -1,8 +1,12 @@
 <tr>
     <th scope="row">Alter HTML? <span style="color:darkorange">(beta)</span><?php echo helpIcon(
         '<p>Alter HTML to either use picture tag syntax for pointing to webp versions or point directly to webps.</p>' .
-        '<p>The feature is new in 0.11.0. It is based on code from Cache Enabler (image urls) and ShortPixel (picture tags), but I needed altering it, as this plugin does not limit its scope to the uploads folder. I have tested pretty thoroughly, but it has yet to stand the tests of the real world.</p>' .
-        (($config['operation-mode'] == 'varied-responses') ? '<p>This is not needed in Standard operation mode, but enabling it has the benefit that when a user downloads an image, it will have the correct extension.</p>' : '')
+        '<p>The feature is new in 0.11.0. It is marked as beta because of that, but it has been tested on many setups and with ' .
+        'many test cases, so it should be quite stable.</p>' .
+        (($config['operation-mode'] == 'varied-responses') ?
+            '<p>You do not need to enable this in <i>Varied image responses</i> operation mode, but enabling it has some benefits: ' .
+            'Caching is improved if you are on a CDN as the webp images that are requested directly does not need to be keyed by the Accept header. ' .
+            'Also, when a user downloads an image, it will have the correct extension.</p>' : '')
         );
     ?>
     </th>
@@ -29,7 +33,7 @@
                         '<p><em>Beware that this structural change may affect styling!</em></p>' .
                         '<p>PS: This functionality is handled by ' .
                         '<a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this external library</a>' .
-                        ', created for the purpose.</p>',
+                        ' (I have pushed the code to an external library so it can be used by other projects besides this plugin)</p>',
                     'url' => '<p>"Image URLs" replaces the image URLs to point to ' .
                         'the webp <i>rather than</i> the original. Handles src, srcset, common lazy-load attributes and even ' .
                         'inline styles</p>' .
