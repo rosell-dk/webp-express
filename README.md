@@ -195,24 +195,24 @@ If you have the *Imagick*, the *Imagick binary* or the *Remote WebP Express* con
 Note: If you experience that the general auto option doesn't show, even though the above-mentioned requirements should be in order, check out [this support-thread](https://wordpress.org/support/topic/still-no-auto-option/).
 
 ### How do I configure my CDN ("Varied image responses" mode)?
-In *Varied image responses* operation mode, the response *varies* depending on whether the browser supports webp or not (which browsers signals in the *Accept* header). Some CDN's support this out of the box, others requires some configuration and others doesn't support it at all.
+In *Varied image responses* operation mode, the image responses *varies* depending on whether the browser supports webp or not (which browsers signals in the *Accept* header). Some CDN's support this out of the box, others requires some configuration and others doesn't support it at all.
 
 For a CDN to cooperate, it needs to
 1) forward the *Accept* header and
 2) Honour the Vary:Accept response header.
 
-You can also make it "work" on some CDN's by bypassing cache for images. But I rather suggest that you try out the *No varied image responses* mode (see next FAQ item)
+You can also make it "work" on some CDN's by bypassing cache for images. But I rather suggest that you try out the *CDN friendly* mode (see next FAQ item)
 
 #### Status of some CDN's
 
-- *KeyCDN*: Does not support varied responses. I have added a feature request [here](https://community.keycdn.com/t/support-vary-accept-header-for-conditional-webp/1864). You can give it a +1 if you like!
+- *KeyCDN*: Does not support varied image responses. I have added a feature request [here](https://community.keycdn.com/t/support-vary-accept-header-for-conditional-webp/1864). You can give it a +1 if you like!
 - *Cloudflare*: See the "I am on Cloudflare" item
 - *Cloudfront*: Works, but needs to be configured to forward the accept header. Go to *Distribution settings*, find the *Behavior tab*, select the Behavior and click the Edit button. Choose *Whitelist* from *Forward Headers* and then add the "Accept" header to the whitelist.
 
 I shall add more to the list. You are welcome to help out [here](https://wordpress.org/support/topic/which-cdns-works-in-standard-mode/).
 
-### How do I make it work with CDN? ("No varied image responses" mode)
-In *No varied image responses* mode, there is no trickery with varied responses, so no special attention is required *on the CDN*.
+### How do I make it work with CDN? ("CDN friendly" mode)
+In *CDN friendly* mode, there is no trickery with varied image responses, so no special attention is required *on the CDN*.
 
 However, there are other pitfalls.
 
@@ -269,10 +269,7 @@ To make *WebP Express* work on a free Cloudflare account, you have the following
 ### WebP Express / ShortPixel setup
 Here is a recipe for using WebP Express together with ShortPixel, such that WebP Express generates the webp's, and ShortPixel only is used to create `<picture>` tags, when it detects a webp image in the same folder as an original.
 
-The reason for doing this could be:
-1. You are using a CDN which cannot be configured to work in the "Varied image responses" mode.
-2. You could tweak your CDN to work in the "Varied image responses" mode, but you would have to do it by using the entire Accept header as key. Doing that would increase the risk of cache MISS, and you therefore decided that do not want to do that.
-3. You think it is problematic that when a user saves an image, it has the jpg extension, even though it is a webp image.
+**There is really no need to do this anymore, because WebP Express is now capable of replacing img tags with picture tags (check out the Alter HTML option)**
 
 You need:
 1 x WebP Express
@@ -281,9 +278,9 @@ You need:
 *1. Setup WebP Express*
 If you do not want to use serve varied images:
 - Open WebP Express options
-- Switch to *No varied image responses* mode.
+- Switch to *CDN friendly* mode.
 - Set *File extension* to "Set to .webp"
-- Make sure the *Auto convert* option is enabled
+- Make sure the *Convert non-existing webp-files upon request to original image* option is enabled
 
 If you want to *ShortPixel* to create <picture> tags but still want the magic to work on other images (such as images are referenced from CSS or javascript):
 - Open WebP Express options
@@ -316,7 +313,7 @@ Further, Cache Enabler *caches* the HTML. This is good for performance. However,
 Cache Enabler will not work if you are caching HTML on a CDN, because the HTML varies depending on the *Accept* header and it doesn't signal this with a Vary:Accept header. You could however add that manually. ShortPixel does not have that issue, as the HTML is the same for all.
 
 ### WebP Express / Cache Enabler setup
-The WebP Express / Cache Enabler setup is quite potent and very CDN-friendly. *Cache Enabler* is used for generating and caching two versions of the HTML (one for webp-enabled browsers and one for webp-disabled browsers)
+The WebP Express / Cache Enabler setup is quite potent and very CDN-friendly. *Cache Enabler* is used for generating *and caching* two versions of the HTML (one for webp-enabled browsers and one for webp-disabled browsers)
 
 The reason for doing this could be:
 1. You are using a CDN which cannot be configured to work in the "Varied image responses" mode.
@@ -330,21 +327,24 @@ You need:
 *1. Setup WebP Express*
 If you do not want to use serve varied images:
 - Open WebP Express options
-- Switch to *No varied image responses* mode.
+- Switch to *CDN friendly* mode.
 - Set *File extension* to "Set to .webp"
-- Make sure the *Auto convert* option is enabled
+- Enable *Alter HTML* and select *Replace image URLs*. It is not absolutely neccessary, as Cache Enabler also alters HTML - but there are several reasons to do it. Firstly, *Cache Enabler* doesn't get as many URLs replaced as we do. WebP Express for example also replaces background urls in inline styles. Secondly, *Cache enabler* has [problems in edge cases](https://regexr.com/46isf). Thirdly, WebP Express can be configured to alter HTML to point to corresponding webp images, *before they even exists* which can be used in conjunction with the the *Convert non-existing webp-files upon request* option. And this is smart, because then you don't have trouble with *Cache Enabler* caching HTML which references the original images due to that some images hasn't been converted yet.
+- If you enabled *Alter HTML*, also enable *Reference webps that hasn't been converted yet* and *Convert non-existing webp-files upon request*
+- If you did not enable *Alter HTML*, enable *Convert non-existing webp-files upon request to original image*
 
 If you want to *Cache Enabler* to create <picture> tags but still want the magic to work on other images (such as images are referenced from CSS or javascript):
 - Open WebP Express options
 - Switch to *Varied image responses* mode.
 - Set *Destination folder* to "Mingled"
 - Set *File extension* to "Set to .webp"
+- I suggest you enable *Alter HTML* and select *Replace image URLs*. And also enable *Reference webps that hasn't been converted yet* and *Convert non-existing webp-files upon request*.
 
 *2. Setup Cache Enabler*
 - Open the options
 - Enable of the *Create an additional cached version for WebP image support* option
 
-*3. Let rise in a warm place until doubled*
+*3. If you did not enable Alter HTML and Reference webps that hasn't been converted yet: Let rise in a warm place until doubled*
 *WebP Express* creates *webp* images on need basis. It needs page visits in order to do the conversions . Bulk conversion is on the roadmap, but until then, you need to visit all pages of relevance. You can either do it manually, let your visitors do it (that is: wait a bit), or, if you are on linux, you can use `wget` to grab your website:
 
 ```
@@ -368,12 +368,6 @@ In a webp-enabled browser, the HTML may look like this: `<img src="image.webp">`
 *6. Optionally add Cache Enabler rewrite rules in your .htaccess*
 *Cache Enabler* provides some rewrite rules that redirects to the cached file directly in the `.htaccess`, bypassing PHP entirely. Their plugin doesn't do that for you, so you will have to do it manually in order to get the best performance. The rules are in the "Advanced configuration" section on [this page](https://www.keycdn.com/support/wordpress-cache-enabler-plugin).
 
-*ShortPixel or Cache Enabler ?*
-Cache Enabler has the advantage over ShortPixel that the HTML structure remains the same. With ShortPixel, image tags are wrapped in a `<picture>` tag structure, and by doing that, there is a risk of breaking styles.
-
-Further, Cache Enabler *caches* the HTML. This is good for performance. However, this also locks you to using that plugin for caching. With ShortPixel, you can keep using your favourite caching plugin.
-
-Cache Enabler will not work if you are caching HTML on a CDN, because the HTML varies depending on the *Accept* header and it doesn't signal this with a Vary:Accept header. You could however add that manually. ShortPixel does not have that issue, as the HTML is the same for all.
 
 ### Does it work with lazy loaded images?
 No plugins/frameworks has yet been discovered, which does not work with *WebP Express*.
@@ -384,13 +378,19 @@ The following lazy load plugins/frameworks has been tested and works with *WebP 
 - [BJ Lazy Load](https://da.wordpress.org/plugins/bj-lazy-load/)
 - [Owl Carousel 2](https://owlcarousel2.github.io/OwlCarousel2/)
 
+I have only tested the above in *Varied image responses* mode, but it should also work in *CDN friendly* mode. Both *Alter HTML* options have been designed to work with standard lazy load attributes.
+
 ### When is feature X coming? / Roadmap
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
 
-Here are my current plans ahead: The 0.11 release will add ability to alter HTML (both picture tag syntax, as ShortPixel does and replace image URLs as Cache Enabler does). The 0.12 release will allow webp for all browsers! - using [this wonderful javascript library](https://webpjs.appspot.com/). The 0.13 release will probably add a some diagnose tool – this should release some time spend in the forum. 0.14 could be focused on PNG. 0.15 might be displaying rules for NGINX. 0.16 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.17 might be multisite support. 0.18 might be a file manager-like interface for inspecting generated webp files. 0.19 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
+Here are my current plans ahead: The 0.12 release will allow webp for all browsers! - using [this wonderful javascript library](https://webpjs.appspot.com/). The 0.13 release will probably be multisite support, as this has been requested by many. 0.14 might be adding some diagnose tool – this should release some time spend in the forum. 0.54 could be focused on PNG. 0.16 might be displaying rules for NGINX. 0.17 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.18 might be a file manager-like interface for inspecting generated webp files. 0.19 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.10.0
+- Introduced "Operation modes" in order to keep setting screens simple but still allow tweaking
+- WebP Express can now be used in conjunction with Cache Enabler and ShortPixel
+- Cache-Control header is now added in *.htaccess*, when redirecting directly to existing webp
 
 ## Changes in 0.9.0
 - Optionally make .htaccess redirect directly to existing webp (improves performance)

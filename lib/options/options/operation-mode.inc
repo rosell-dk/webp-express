@@ -4,16 +4,16 @@ $operationMode = $config['operation-mode'];
 <fieldset class="block">
 <h3>Operation mode: <?php echo helpIcon(
     '<p>Think of the operation modes as presets that matches normal use-cases. ' .
-    'Usually you want to stick with <i>Standard</i> or perhaps <i>Just convert</i>. ' .
+    'Usually you want to stick with <i>Varied image responses</i> or perhaps <i>CDN friendly</i>. ' .
     'The Tweaked mode has no presets. That is: Here, you can set all options.</p>' .
-    '<p>Changing from ie. "Standard" mode to "Tweaked" mode enables you to see the underlying options for that mode (and tweak them). ' .
+    '<p>Changing from ie. "Varied image responses" mode to "Tweaked" mode enables you to see the underlying options for that mode (and tweak them). ' .
     'Changing back will override the tweaks (you will lose them).</p>' .
     '<p>You will never loose your converter configurations by changing mode</p>');
 ?>
 <input type="hidden" name="operation-mode" id="operation_mode" value="<?php echo $operationMode ?>">
 <select name="change-operation-mode" id="change_operation_mode">
     <option value="varied-responses"<?php if ($operationMode == 'varied-responses') echo ' selected'?>>Varied image responses</option>
-    <option value="no-varied-responses"<?php if ($operationMode == 'no-varied-responses') echo ' selected'?>>No varied image responses</option>
+    <option value="no-varied-responses"<?php if ($operationMode == 'no-varied-responses') echo ' selected'?>>CDN friendly</option>
     <option value="just-redirect"<?php if ($operationMode == 'just-redirect') echo ' selected'?>>Just redirect</option>
     <option value="tweaked"<?php if ($operationMode == 'tweaked') echo ' selected'?>>Tweaked</option>
 </select></h3>
@@ -29,7 +29,7 @@ $operationMode = $config['operation-mode'];
 <?php endif; ?>
 <?php if ($config['operation-mode'] == 'no-varied-responses') : ?>
 <p><div>
-    <i>In "No varied image responses" mode, a jpeg is always served as a jpeg.
+    <i>In "CDN friendly" mode, a jpeg is always served as a jpeg.
         Instead of varying the image response, WebP Express alters the HTML for webp usage.</i>
     <div class="help">?<div class="popup">
         <p>
@@ -42,7 +42,7 @@ $operationMode = $config['operation-mode'];
             PS: This mode also works great with <a target="_blank" href="https://da.wordpress.org/plugins/cache-enabler/">Cache Enabler</a>. Instructions are found in the FAQ.
         </p>
         <p>
-            PPS: Images refererenced from CSS or added dynamically with javascript will not be served as webp in this mode.
+            PPS: Images refererenced from external CSS or added dynamically with javascript will not be served as webp in this mode.
         </p>
     </div>
     </div>

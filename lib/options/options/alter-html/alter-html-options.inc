@@ -22,17 +22,25 @@
                     'picture' => 'Replace &lt;img&gt; tags with &lt;picture&gt; tags, adding the webp to srcset.',
                     'url' => 'Replace image URLs',
                 ], [
-                    'picture' => '<p>"Picture tag" replaces images with &lt;picture&gt; tags and adds the webp to the src-set. ' .
+                    'picture' => '<p>"Picture tag" replaces &lt;img&gt tags with &lt;picture&gt; tags and adds the webp as an extra source. ' .
                         'This effectively points webp-enabled browsers to the webp variant and other browsers to ' .
                         'the original image. It also adds a script that dynamically loads picturefill.js in browsers ' .
                         'that doesnt support the picture tag.</p>' .
-                        '<p><em>Beware that this structural change may affect styling!</em></p>',
-                    'url' => '<p>"Image URLs" replaces the image URLs in src, srcset and ref attributes to point to ' .
-                        'the webp <i>rather than</i> the original.</p>' .
+                        '<p><em>Beware that this structural change may affect styling!</em></p>' .
+                        '<p>PS: This functionality is handled by ' .
+                        '<a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this external library</a>' .
+                        ', created for the purpose.</p>',
+                    'url' => '<p>"Image URLs" replaces the image URLs to point to ' .
+                        'the webp <i>rather than</i> the original. Handles src, srcset, common lazy-load attributes and even ' .
+                        'inline styles</p>' .
                         '<p>Note that you will have to do something for the browsers that does not support webp. ' .
-                        'For example, you can enable the option below. ' .
+                        'For example, you can enable the <i>Only do the replacements in webp enabled browsers</i> option, which ' .
+                        'will show up when you enable this option. ' .
                         'Or you can add the <a href="https://webpjs.appspot.com/">webpjs</a> javascript library. ' .
-                        'In the next release, you will be able to add the webjs library with this plugin.'
+                        'In the next release, you will be able to add the webjs library with this plugin. ' .
+                        '<p>PS: This replace functionality is handled by ' .
+                        '<a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this external library</a>' .
+                        ', created for the purpose.</p>',
                 ]
                 );
                 ?>
