@@ -3,6 +3,11 @@
 include_once __DIR__ . '/../classes/State.php';
 use \WebPExpress\State;
 
+use \WebPConvert\Converters\Ewww;
+use \WebPExpress\Messenger;
+use \WebPExpress\Config;
+
+
 /*
 In 0.4.0, we had a 'webp-express-configured' option.
 As long as there are still users on 0.4 or below, we must do the following:
@@ -39,24 +44,32 @@ if (!(State::getState('configured', false))) {
         }
 
     }
-/*
-    if (intval(get_option('webp-express-migration-version', 0)) == 0) {
-        // run migration 1
-        // It must take care of updating migration-version to 1, - if successful.
-        include __DIR__ . '/migrate1.php';
-    }
-
-    // We make sure to grab the option again - it might have been changed in the migration above
-    if (intval(get_option('webp-express-migration-version', 0)) == 1) {
-        // run migration 2
-        include __DIR__ . '/migrate2.php';
-    }
-
-
-    // We make sure to grab the option again - it might have been changed in the migration above
-    if (intval(get_option('webp-express-migration-version', 0)) == 2) {
-        // run migration 3
-        include __DIR__ . '/migrate3.php';
-    }
-    */
 }
+
+
+function webpexpress_keepEwwwSubscriptionAlive() {
+    include_once __DIR__ . '/../../vendor/autoload.php';
+    include_once __DIR__ . '/../classes/Messenger.php';
+    include_once __DIR__ . '/../classes/Config.php';
+
+    $config = Config::loadConfigAndFix(false);
+    foreach ($config['converters'] as $i => $converter) {
+        if (
+            ($converter['converter'] == 'ewww') &&
+            (!(isset($converter['deactivated'])) || (!$converter['deactivated'])) &&
+            (isset($converter['options']['key'])))
+        {
+            $ewwwConvertResult = Ewww::keepSubscriptionAlive(__DIR__ . '/../../test/very-small.jpg', $converter['options']['key']);
+
+            if ($ewwwConvertResult === true) {
+                Messenger::addMessage(
+                    'info',
+                    'Successfully optimized regular jpg with <i>ewww</i> converter in order to keep the subscription alive'
+                );
+            }
+        }
+    }
+}
+
+// create
+webpexpress_keepEwwwSubscriptionAlive();
