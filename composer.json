@@ -3,7 +3,7 @@
     "description": "WebP for the masses",
     "type": "project",
     "license": "MIT",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "repositories": [
         {
             "type": "vcs",
@@ -17,7 +17,7 @@
     "require": {
         "rosell-dk/webp-convert": "dev-master",
         "rosell-dk/webp-convert-cloud-service": "dev-master",
-        "sunra/php-simple-html-dom-parser": "dev-master"
+        "rosell-dk/dom-util-for-webp": "^0.2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0@dev"

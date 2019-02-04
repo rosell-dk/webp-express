@@ -13,26 +13,13 @@ use \WebPExpress\AlterHtmlInit;
  */
 
 use \WebPExpress\AlterHtmlHelper;
-use \WebPExpress\ImageUrlsReplacer;
+//use \WebPExpress\ImageUrlsReplacer;
+use DOMUtilForWebP\ImageUrlReplacer;
 
-class AlterHtmlImageUrls
+class AlterHtmlImageUrls extends ImageUrlReplacer
 {
-    public static function alter($content) {
-        require_once __DIR__ . "../../../vendor/autoload.php";
-        require_once "AlterHtmlHelper.php";
-        require_once "ImageUrlsReplacer.php";
-
-        //return ImageUrlsReplacer::hello();
-
-        //ImageUrlsReplacer::$urlReplacerFunction = '\WebPExpress\AlterHtmlHelper::getWebPUrl';
-        ImageUrlsReplacer::$urlReplacerFunction = '\WebPExpress\AlterHtmlImageUrls::replaceUrl';
-        //return $content;
-        return ImageUrlsReplacer::replace($content);
-    }
-
-    public static function replaceUrl($url) {
-        //return 'hello';
-        return AlterHtmlHelper::getWebPUrl($url, $url);
+    public function replaceUrl($url) {
+        return AlterHtmlHelper::getWebPUrl($url, null);
     }
 
      /*

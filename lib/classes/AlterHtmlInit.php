@@ -43,11 +43,15 @@ class AlterHtmlInit
         }
 
         if (get_option('webp-express-alter-html-replacement') == 'picture') {
+            require_once __DIR__ . "../../../vendor/autoload.php";
+            require_once __DIR__ . '/AlterHtmlHelper.php';
             require_once __DIR__ . '/AlterHtmlPicture.php';
-            return \WebPExpress\AlterHtmlPicture::alter($content);
+            return \WebPExpress\AlterHtmlPicture::replace($content);
         } else {
+            require_once __DIR__ . "../../../vendor/autoload.php";
+            require_once __DIR__ . '/AlterHtmlHelper.php';
             require_once __DIR__ . '/AlterHtmlImageUrls.php';
-            return \WebPExpress\AlterHtmlImageUrls::alter($content);
+            return \WebPExpress\AlterHtmlImageUrls::replace($content);
         }
     }
 
