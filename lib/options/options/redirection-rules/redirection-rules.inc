@@ -28,7 +28,7 @@ else:
     }
     if ($config['operation-mode'] == 'varied-responses') {
         include_once 'redirect-to-existing.inc';
-        include_once 'enable-redirection-to-webp-realizer.inc';
+        //include_once 'enable-redirection-to-webp-realizer.inc';
     }
     include_once 'image-types.inc';
 endif;
