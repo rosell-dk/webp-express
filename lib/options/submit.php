@@ -164,7 +164,8 @@ switch ($_POST['operation-mode']) {
         break;
     case 'no-varied-responses':
         $config = array_merge($config, [
-            'destination-extension' => $_POST['destination-extension'],
+            'destination-folder' => $_POST['destination-folder'],
+            'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
             'enable-redirection-to-converter' => isset($_POST['enable-redirection-to-converter']),  // PS: its called "autoconvert" in this mode
         ]);
         break;

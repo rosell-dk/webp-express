@@ -149,7 +149,6 @@ class Config
                 'only-redirect-to-converter-on-cache-miss' => true,
                 'do-not-pass-source-in-query-string' => true,
                 'redirect-to-existing-in-htaccess' => false,
-                //'destination-folder' => 'mingled',
                 'fail' => 'original',
                 'success-response' => 'original',
             ]);
