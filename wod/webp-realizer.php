@@ -30,27 +30,27 @@ function loadConfig($configFilename) {
     return json_decode($json, true);
 }
 
-function getDestination($allowInQS, $allowInHeader) {
-    //echo '<pre>' . print_r($_SERVER, true) . '</pre>'; exit;
+function getDestinationRealPath($dest) {
+    //echo $_SERVER["DOCUMENT_ROOT"] . '<br>' . $dest . '<br>';
+    if (strpos($dest, $_SERVER["DOCUMENT_ROOT"]) === 0) {
+        return realpath($_SERVER["DOCUMENT_ROOT"]) . substr($dest, strlen($_SERVER["DOCUMENT_ROOT"]));
+    } else {
+        return $dest;
+    }
+}
 
+function getDestination($allowInQS, $allowInHeader) {
     // First check if it is in an environment variable - thats the safest way
     foreach ($_SERVER as $key => $item) {
         if (substr($key, -14) == 'REDIRECT_REQFN') {
-            return $item;
+            return getDestinationRealPath($item);
         }
     }
 
     if ($allowInHeader) {
         if (isset($_SERVER['HTTP_REQFN'])) {
-            return $_SERVER['HTTP_REQFN'];
-        }
-    }
-
-    if ($allowInQS) {
-        if (isset($_GET['destination'])) {
-            return $_GET['destination'];     // No url decoding needed as $_GET is already decoded
-        } elseif (isset($_GET['xdestination'])) {
-            return substr($_GET['xdestination'], 1);
+            //echo 'dest:' . $_SERVER['HTTP_REQFN'];
+            return getDestinationRealPath($_SERVER['HTTP_REQFN']);
         }
     }
 
