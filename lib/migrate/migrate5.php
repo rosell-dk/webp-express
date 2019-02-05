@@ -9,6 +9,8 @@ use \WebPExpress\Config;
 include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
 
+include_once __DIR__ . '/../classes/CacheMover.php';
+use \WebPExpress\CacheMover;
 
 function webpexpress_migrate5() {
 
@@ -27,6 +29,10 @@ function webpexpress_migrate5() {
     }
 
     if (Config::saveConfigurationFileAndWodOptions($config)) {
+
+        // Moving destination in v0.10 might have created bad permissions. - so lets fix the permissions
+        CacheMover::chmodFixSubDirs(CacheMover::getUploadFolder($config['destination-folder']));
+
         Messenger::addMessage(
             'info',
             'Successfully migrated webp express options for 0.11+'

@@ -33,7 +33,7 @@ class FileHelper
      *  If failure, it returns $fallback
      */
     public static function filePermWithFallback($filename, $fallback) {
-        $perm = self::filePerm();
+        $perm = self::filePerm($filename);
         if ($perm === false) {
             return $fallback;
         }
@@ -71,6 +71,39 @@ class FileHelper
         }
         return false;
     }
+
+    public static function chmod_r($dir, $perm = null, $owner = null, $group = null) {
+        $fileIterator = new \FilesystemIterator($dir);
+        while ($fileIterator->valid()) {
+            $filename = $fileIterator->getFilename();
+            $filepath = $dir . "/" . $filename;
+
+            // chmod
+            if (!is_null($perm)) {
+                self::chmod($filepath, $perm);
+            }
+
+            // chown
+            if (!is_null($owner)) {
+                @chown($filepath, $owner);
+            }
+
+            // chgrp
+            if (!is_null($group)) {
+                @chgrp($filepath, $group);
+
+            }
+
+            // recurse
+            if (@is_dir($filepath)) {
+                self::chmod_r($filepath, $perm, $owner, $group);
+            }
+
+            // next!
+            $fileIterator->next();
+        }
+    }
+
 
     /**
      *  Create a dir using same permissions as parent.

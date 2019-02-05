@@ -8,7 +8,6 @@ use \WebPExpress\FileHelper;
 include_once "Paths.php";
 use \WebPExpress\Paths;
 
-
 class CacheMover
 {
 
@@ -20,6 +19,26 @@ class CacheMover
             case 'separate':
                 return Paths::getCacheDirAbs() . '/doc-root/' . Paths::getUploadDirRel();
         }
+    }
+
+    /**
+     *  Sets permission, uid and gid of all subfolders/files of a dir to same as the dir
+     */
+    public static function chmodFixSubDirs($dir)
+    {
+        $perm = FileHelper::filePermWithFallback($dir, 0775);
+        $stat = @stat($dir);
+        $uid = null;
+        $gid = null;
+        if ($stat !== false) {
+            if (isset($stat['uid'])) {
+                $uid = $stat['uid'];
+            }
+            if (isset($stat['gid'])) {
+                $uid = $stat['gid'];
+            }
+        }
+        FileHelper::chmod_r($dir, $perm, $uid, $gid);
     }
 
     /**
@@ -52,7 +71,11 @@ class CacheMover
         echo 'ext:' . $fromExt . ' => ' . $toExt . '<br>';
         echo '</pre>';*/
 
-        return self::moveRecursively($fromDir, $toDir, $srcDir, $fromExt, $toExt);
+
+        $result = self::moveRecursively($fromDir, $toDir, $srcDir, $fromExt, $toExt);
+        self::chmodFixSubDirs($toDir);
+
+        return $result;
         //self::moveRecursively($toDir, $fromDir, $srcDir, $fromExt, $toExt);
     }
 
@@ -81,10 +104,10 @@ class CacheMover
             $filename = $fileIterator->getFilename();
 
             if (($filename != ".") && ($filename != "..")) {
-                //$filePerm = FileHelper::filePermWithFallback($filePerm, 0777);
+                //$filePerm = FileHelper::filePermWithFallback($filename, 0777);
 
                 if (@is_dir($fromDir . "/" . $filename)) {
-                    list($r1, $r2) = self::moveRecursively($fromDir . "/" . $filename, $toDir . "/" . $filename, $srcDir . "/" . $filename, $fromExt, $toExt, 0);
+                    list($r1, $r2) = self::moveRecursively($fromDir . "/" . $filename, $toDir . "/" . $filename, $srcDir . "/" . $filename, $fromExt, $toExt);
                     $numFilesMoved += $r1;
                     $numFilesFailedMoving += $r2;
 
@@ -136,7 +159,8 @@ class CacheMover
 
                         if ($newFilename !== null) {
                             //echo 'moving to: ' . $toDir . '/' .$newFilename . "<br>";
-                            if (@rename($fromDir . "/" . $filename, $toDir . "/" . $newFilename)) {
+                            $toFilename = $toDir . "/" . $newFilename;
+                            if (@rename($fromDir . "/" . $filename, $toFilename)) {
                                 $numFilesMoved++;
                             } else {
                                 $numFilesFailedMoving++;
