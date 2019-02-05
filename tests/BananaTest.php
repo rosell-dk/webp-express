@@ -16,7 +16,6 @@ use Sunra\PhpSimple\HtmlDomParser;
 class BananaTest extends TestCase
 {
 
-
     public function testPotatoPotato()
     {
         $this->assertEquals('potato', 'potato');
