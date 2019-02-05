@@ -190,8 +190,8 @@ class Config
         if (!isset($config['web-service'])) {
             $config['web-service'] = [];
         }
-        if (!isset($config['web-service']['whitelist'])) {
-            $config['web-service']['whitelist'] = [];
+        if (($config['cache-control'] == 'set') && ($config['cache-control-max-age'] == '')) {
+            $config['cache-control-max-age'] = 'one-week';
         }
 
         if ($config['converters'] == null) {
@@ -432,6 +432,7 @@ class Config
                 $public = (isset($config['cache-control-public']) ? $config['cache-control-public'] : true);
                 $maxAge = (isset($config['cache-control-max-age']) ? $config['cache-control-max-age'] : $cacheControl);
                 $maxAgeOptions = [
+                    '' => 'max-age=604800',      // it has happened, but I don't think it can happen again...
                     'one-second' => 'max-age=1',
                     'one-minute' => 'max-age=60',
                     'one-hour' => 'max-age=3600',

@@ -37,23 +37,27 @@ $config = array_merge($config, [
     'image-types' => sanitize_text_field($_POST['image-types']),
     'forward-query-string' => true,
 
-    // serve options
-    'cache-control' => sanitize_text_field($_POST['cache-control']),
-    'cache-control-custom' => sanitize_text_field($_POST['cache-control-custom']),
 ]);
 
-$cacheControl = sanitize_text_field($_POST['cache-control']);
-switch ($cacheControl) {
-    case 'no-header':
-        break;
-    case 'set':
-        $config['cache-control-max-age'] =  sanitize_text_field($_POST['cache-control-max-age']);
-        $config['cache-control-public'] =  (sanitize_text_field($_POST['cache-control-public']) == 'public');
-        break;
-    case 'custom':
-        $config['cache-control-custom'] = sanitize_text_field($_POST['cache-control-custom']);
-        break;
+// Set options that are available in all operation modes, except the "CDN friendly" mode
+if ($_POST['operation-mode'] != 'no-varied-responses') {
+
+    $cacheControl = sanitize_text_field($_POST['cache-control']);
+    $config['cache-control'] = $cacheControl;
+
+    switch ($cacheControl) {
+        case 'no-header':
+            break;
+        case 'set':
+            $config['cache-control-max-age'] =  sanitize_text_field($_POST['cache-control-max-age']);
+            $config['cache-control-public'] =  (sanitize_text_field($_POST['cache-control-public']) == 'public');
+            break;
+        case 'custom':
+            $config['cache-control-custom'] = sanitize_text_field($_POST['cache-control-custom']);
+            break;
+    }
 }
+
 
 // Set options that are available in all operation modes, except the "just-redirect" mode
 if ($_POST['operation-mode'] != 'just-redirect') {
