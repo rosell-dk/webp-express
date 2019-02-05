@@ -17,7 +17,7 @@
                     '<b>From the next release on on, this option will only be available in the <i>Tweaked</i> operation mode</b></p>'
                 ); ?>
         <?php else: ?>
-            Enable redirection to converter?<?php echo helpIcon('This will add rules in the .htaccess that redirects to converter'); ?>
+            Enable redirection to converter?<?php echo helpIcon('This will add rules in the .htaccess that redirects images (jpg/png) to the script'); ?>
         <?php endif; ?>
     </th>
     <td>
