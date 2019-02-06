@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.0
-Stable tag: 0.11.0
+Stable tag: 0.11.1
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -418,6 +418,9 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 1. WebP Express settings
 
 == Changelog ==
+
+= 0.11.1 =
+* Fixed bug which caused the new "Convert non-existing webp-files upon request" not to work on all setups
 
 = 0.11.0 =
 * Alter HTML to point to webp files (choose between picture tags or simply altering all image urls)
