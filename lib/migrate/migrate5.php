@@ -35,7 +35,7 @@ function webpexpress_migrate5() {
 
         Messenger::addMessage(
             'info',
-            'Successfully migrated webp express options for 0.11+'
+            'Successfully migrated WebP Express options for 0.11+'
         );
 
         // PSST: When creating new migration files, remember to update WEBPEXPRESS_MIGRATION_VERSION in admin.php
