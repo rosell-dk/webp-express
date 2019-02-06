@@ -58,20 +58,8 @@ function getDestination($allowInQS, $allowInHeader) {
     // correct result in all setups (ie "folder method 1")
     $requestUriNoQS = explode('?', $_SERVER['REQUEST_URI'])[0];
     $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
-    $source = $docRoot . urldecode($requestUriNoQS);
-    if (@file_exists($source)) {
-        return $source;
-    }
-
-    header('X-WebP-Express-Error: None of the available methods for locating destination file works', true);
-    echo 'None of the available methods for locating destination file works!';
-    if (!$allowInHeader) {
-        echo '<br>Have you tried allowing destination to be passed as a request header?';
-    }
-    if (!$allowInQS) {
-        echo '<br>Have you tried allowing destination to be passed in querystring?';
-    }
-    exit;
+    $dest = $docRoot . urldecode($requestUriNoQS);
+    return $dest;
 }
 
 $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
