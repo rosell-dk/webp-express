@@ -1,3 +1,9 @@
+= 0.11.0 =
+* Alter HTML to point to webp files (choose between picture tags or simply altering all image urls)
+* Convert non-existing webp-files upon request (means you can reference the converted webp files before they are actually converted!)
+
+For more info, see the closed issues on the 0.11.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/14?closed=1
+
 = 0.10.0 =
 * Introduced "Operation modes" in order to keep setting screens simple but still allow tweaking
 * WebP Express can now be used in conjunction with Cache Enabler and ShortPixel
