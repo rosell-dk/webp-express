@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.0
-Stable tag: 0.10.0
+Stable tag: 0.11.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -46,6 +46,21 @@ The plugin builds on [WebPConvert](https://github.com/rosell-dk/webp-convert) an
 
 ### Configuring
 You configure the plugin in *Settings > WebP Express*.
+
+#### Operation modes
+As sort of a main switch, you can choose between the following modes of operation:
+
+*Varied image responses*:
+WebP Express creates redirection rules for images, such that a request for a jpeg will result in a webp – but only if the request comes from a webp-enabled browser. If a webp already exists, it is served immediately. Otherwise it is converted and then served. Note that not all CDN's handles varied responses well.
+
+*CDN friendly*:
+In "CDN friendly" mode, a jpeg is always served as a jpeg. Instead of varying the image response, WebP Express alters the HTML for webp usage.
+
+*Just redirect*:
+In "just redirect" mode, WebP Express is used just for redirecting jpeg and pngs to existing webp images in the same folder. So in this mode, WebP express will not do any converting. It may be that you use another plugin for that, or that you converted the images off-line and uploaded them manually.
+
+*Tweaked*:
+Here you have all options available.
 
 #### Conversion methods
 WebP Express has a bunch of methods available for converting images: Executing cwebp binary, Gd extension, Imagick extension, ewww cloud converter and remote WebP express. Each requires *something*. In many cases, one of the conversion methods will be available. You can quickly identify which converters are working - there is a green icon next to them. Hovering conversion methods that are not working will show you what is wrong.
@@ -94,7 +109,7 @@ Once, you have a converter, that works, when you click the "test"-button, you ar
 
 If you are working in a browser that supports webp (ie Google Chrome), you will see a link "Convert test image (show debug)" after a successful save. Click that to test if it works. The screen should show a textual report of the conversion process. If it shows an image, it means that the *.htaccess* redirection isn't working. It may be that your server just needs some time. Some servers has set up caching. It could also be that your images are handled by nginx.
 
-Note that the plugin does not change any HTML. In the HTML the image src is still set to ie "example.jpg". To verify that the plugin is working (without clicking the test button), do the following:
+Note that the plugin does not change any HTML (unless you enabled the *Alter HTML* option). In the HTML the image src is still set to ie "example.jpg". To verify that the plugin is working (without clicking the test button), do the following:
 
 - Open the page in Google Chrome
 - Right-click the page and choose "Inspect"
@@ -404,6 +419,12 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.11.0 =
+* Alter HTML to point to webp files (choose between picture tags or simply altering all image urls)
+* Convert non-existing webp-files upon request (means you can reference the converted webp files before they are actually converted!)
+
+For more info, see the closed issues on the 0.11.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/14?closed=1
+
 = 0.10.0 =
 * Introduced "Operation modes" in order to keep setting screens simple but still allow tweaking
 * WebP Express can now be used in conjunction with Cache Enabler and ShortPixel
@@ -490,6 +511,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.11.0 =
+WebP Express can now alter HTML to either point to webp images directly or by using the picture tag syntax. Also, non-existing webp-files can be converted upon request (means you can reference the converted webp files before they are actually converted!)
 
 = 0.10.0 =
 WebP Express can now be used in conjunction with Cache Enabler and ShortPixel. Also introduced "Operation modes" in order to keep setting screens simple but still allow tweaking.
