@@ -23,10 +23,17 @@ class CacheMover
 
     /**
      *  Sets permission, uid and gid of all subfolders/files of a dir to same as the dir
+     *  (but for files, do not set executable flag)
      */
-    public static function chmodFixSubDirs($dir)
+    public static function chmodFixSubDirs($dir, $alsoSetOnDirs)
     {
-        $perm = FileHelper::filePermWithFallback($dir, 0775);
+        $dirPerm = FileHelper::filePermWithFallback($dir, 0775);
+        $filePerm = $dirPerm & 0666;        // set executable flags to 0
+        /*echo 'dir:' . $dir . "\n";
+        echo 'Dir perm:' . FileHelper::humanReadableFilePerm($dirPerm) . "\n";
+        echo 'File perm:' . FileHelper::humanReadableFilePerm($filePerm) . "\n";*/
+        //return;
+
         $stat = @stat($dir);
         $uid = null;
         $gid = null;
@@ -38,7 +45,7 @@ class CacheMover
                 $uid = $stat['gid'];
             }
         }
-        FileHelper::chmod_r($dir, $perm, $uid, $gid);
+        FileHelper::chmod_r($dir, $dirPerm, $filePerm, $uid, $gid, '#\.webp$#', ($alsoSetOnDirs ? null : '#^$#'));
     }
 
     /**
@@ -73,7 +80,7 @@ class CacheMover
 
 
         $result = self::moveRecursively($fromDir, $toDir, $srcDir, $fromExt, $toExt);
-        self::chmodFixSubDirs($toDir);
+        self::chmodFixSubDirs($toDir, ($newConfig['destination-folder'] == 'separate'));
 
         return $result;
         //self::moveRecursively($toDir, $fromDir, $srcDir, $fromExt, $toExt);

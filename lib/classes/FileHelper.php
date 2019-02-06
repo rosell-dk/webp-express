@@ -45,7 +45,7 @@ class FileHelper
     }
 
     public static function humanReadableFilePermOfFile($filename) {
-        return self::readableFilePerm(self::filePerm($filename));
+        return self::humanReadableFilePerm(self::filePerm($filename));
     }
 
     /**
@@ -72,31 +72,48 @@ class FileHelper
         return false;
     }
 
-    public static function chmod_r($dir, $perm = null, $owner = null, $group = null) {
+    public static function chmod_r($dir, $dirPerm = null, $filePerm = null, $uid = null, $gid = null, $regexFileMatchPattern = null, $regexDirMatchPattern = null) {
         $fileIterator = new \FilesystemIterator($dir);
+
         while ($fileIterator->valid()) {
             $filename = $fileIterator->getFilename();
             $filepath = $dir . "/" . $filename;
 
-            // chmod
-            if (!is_null($perm)) {
-                self::chmod($filepath, $perm);
-            }
+//            echo $filepath . "\n";
 
-            // chown
-            if (!is_null($owner)) {
-                @chown($filepath, $owner);
-            }
+            $isDir = @is_dir($filepath);
 
-            // chgrp
-            if (!is_null($group)) {
-                @chgrp($filepath, $group);
+            if ((!$isDir && (is_null($regexFileMatchPattern) || preg_match($regexFileMatchPattern, $filename))) ||
+                    ($isDir && (is_null($regexDirMatchPattern) || preg_match($regexDirMatchPattern, $filename)))) {
+                // chmod
+                if ($isDir) {
+                    if (!is_null($dirPerm)) {
+                        self::chmod($filepath, $dirPerm);
+                        //echo '. chmod dir to:' . self::humanReadableFilePerm($dirPerm) . '. result:' . self::humanReadableFilePermOfFile($filepath) . "\n";
+                    }
+                } else {
+                    if (!is_null($filePerm)) {
+                        self::chmod($filepath, $filePerm);
+                        //echo '. chmod file to:' . self::humanReadableFilePerm($filePerm) . '. result:' . self::humanReadableFilePermOfFile($filepath) . "\n";
+                    }
 
+                }
+
+                // chown
+                if (!is_null($uid)) {
+                    @chown($filepath, $uid);
+                }
+
+                // chgrp
+                if (!is_null($gid)) {
+                    @chgrp($filepath, $gid);
+
+                }
             }
 
             // recurse
-            if (@is_dir($filepath)) {
-                self::chmod_r($filepath, $perm, $owner, $group);
+            if ($isDir) {
+                self::chmod_r($filepath, $dirPerm, $filePerm, $uid, $gid, $regexFileMatchPattern, $regexDirMatchPattern);
             }
 
             // next!

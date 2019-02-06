@@ -31,11 +31,13 @@ function webpexpress_migrate5() {
     if (Config::saveConfigurationFileAndWodOptions($config)) {
 
         // Moving destination in v0.10 might have created bad permissions. - so lets fix the permissions
-        CacheMover::chmodFixSubDirs(CacheMover::getUploadFolder($config['destination-folder']));
+        //CacheMover::chmodFixSubDirs(CacheMover::getUploadFolder($config['destination-folder']));
+        CacheMover::chmodFixSubDirs(Paths::getCacheDirAbs(), true);
+        CacheMover::chmodFixSubDirs(Paths::getUploadDirAbs(), false);
 
         Messenger::addMessage(
             'info',
-            'Successfully migrated WebP Express options for 0.11+'
+            'Successfully migrated webp express options for 0.11+'
         );
 
         // PSST: When creating new migration files, remember to update WEBPEXPRESS_MIGRATION_VERSION in admin.php
