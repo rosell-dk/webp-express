@@ -36,8 +36,8 @@ class HTAccess
         ];
         $config = array_merge($defaults, $config);
 
-        if ((!$config['enable-redirection-to-converter']) && (!$config['redirect-to-existing-in-htaccess'])) {
-            return '# WebP Express does not need to write any rules (it has not been set up to redirect to converter, nor to existing webp)';
+        if ((!$config['enable-redirection-to-converter']) && (!$config['redirect-to-existing-in-htaccess']) && (!$config['enable-redirection-to-webp-realizer'])) {
+            return '# WebP Express does not need to write any rules (it has not been set up to redirect to converter, nor to existing webp, and the "convert non-existing webp-files upon request" option has not been enabled)';
         }
 
         /* Calculate $fileExt */
