@@ -150,29 +150,194 @@ Easy enough. Browsers looks at the *content type* header rather than the URL to 
 I am btw considering making an option to have the plugin redirect to the webp instead of serving immediately. That would remove the apparent mismatch between file extension and content type header. However, the cost of doing that will be an extra request for each image, which means extra time and worse performance. I believe you'd be ill advised to use that option, so I guess I will not implement it. But perhaps you have good reasons to use it? If you do, please let me know!
 
 = I am on NGINX / OpenResty =
-It is possible to make WebP Express work on NGINX, but it requires manually inserting redirection rules in the NGINX configuration file (nginx.conf or the configuration file for the site, found in `/etc/nginx/sites-available`). On most setups the following rules should work:
+It is possible to make WebP Express work on NGINX, but it requires manually inserting redirection rules in the NGINX configuration file (nginx.conf or the configuration file for the site, found in `/etc/nginx/sites-available`).
 
-```
+There are two different approaches to achieve the redirections. One based on *rewrite* and one based on *try_files*. As *try_files* performs best, I shall recommend that.
+
+#### method 1 (try_files)
+
+Lets take this step by step.
+First step is to redirect images to the script. Second step is redirecting directly to existing webp images. Finally, as an optional third step, you can add extra rules for enabling the *Convert non-existing webp-files upon request* functionality
+
+**Step 1**: *Redirecting images to the script*
+
+The following will redirect all images under wp-content to the script, but only for webp-enabled browsers.
+
+Insert the following in the `server` context of your configuration file (usually found in `/etc/nginx/sites-available`). The `server` context is the part of the configuration that starts with "server {" and ends with the matching "}".
+
+`
+location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
+  add_header Vary Accept;
+  if ($http_accept !~* "webp"){
+    break;
+  }
+  try_files
+    /nonexisting-because-try-files-needs-fallback
+    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content
+    ;
+}
+`
+*Beware when copy/pasting: You might get html-encoded characters. Verify that the ampersand before "wp-content" isn't encoded*
+
+If you have moved wp-content to a non-standard place, you must change accordingly. Especially note that you must also change the wp-content parameter to the script. It expects a relative path to wp-content (from document root) and is needed so the script can find the configuration file.
+
+The `xsource` parameter helps the script finding the source file. It is only needed on some setups. You can try deleting it and see if it still works.
+
+Beware that if you haven't enabled *png* conversion, you should replace "(png|jpe?g)" with "jpe?g", so the first line becomes:
+`
+location ~* ^/?wp-content/.*\.jpe?g$ {
+`
+
+If you cannot get this to work then perhaps you need to add the following to your `mime.types` configuration file:
+`image/webp  webp;`
+
+If you still cannot get it to work, you can instead try *method 2*
+
+
+**Step 2**: *Redirecting directly to existing webp images.*
+
+Once you got this working, lets improve performance by redirecting directly to existing webp images. This step isn't necessary, as the script also does that - but invoking the php script takes more resources that the direct redirect. Also, a direct redirect will produce *ETag* response header, which is increases caching performance.
+
+The second step builds on Eugene Lazutkins solution original published [here](http://www.lazutkin.com/blog/2014/02/23/serve-files-with-nginx-conditionally/).
+
+The rules looks for existing webp files by appending ".webp" to the URL. So for this to work, you must configure *WebP Express* to store the converted files like that:
+1. Set *Destination folder* to *mingled*
+2. Set *File extension* to *Append ".webp"*
+
+Now, place the following in the `server` context (replacing what you inserted in step 1):
+
+`
+# WebP Express rules
+# --------------------
+location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
+  add_header Vary Accept;
+  # expires 365d;
+  if ($http_accept !~* "webp"){
+    break;
+  }
+  try_files
+    $uri.webp
+    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content
+    ;
+}
+# ------------------- (WebP Express rules ends here)
+`
+*Beware when copy/pasting: You might get html-encoded characters. Verify that the ampersand before "wp-content" isn't encoded*
+
+Again, beware that if you haven't enabled *png* conversion, you should replace "(png|jpe?g)" with "jpe?g".
+
+**Step 3:**: *Caching*
+In most cases you can and should allow images to be cached for a long period. To do that, simply uncomment the "expires 365d;" line, by removing the "#" in front of it.
+
+**Step 4:**: *Routing non-existing webp requests to converter*
+
+Simply add the following rules below the ones you added in step 2:
+
+`
+location ~* ^/?wp-content/.*\.(png|jpe?g)\.webp$ {
+    try_files
+      $uri
+      /wp-content/plugins/webp-express/wod/webp-realizer.php?wp-content=wp-content
+      ;
+}
+`
+
+Again, beware that if you haven't enabled *png* conversion, you should replace "(png|jpe?g)" with "jpe?g".
+
+
+#### method 2 (rewrite)
+
+**Step 1**: *Redirecting images to the script*
+
+Insert the following in the `server` context:
+
+`
+# WebP Express rules
+# --------------------
 if ($http_accept ~* "webp"){
   rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?wp-content=wp-content break;
 }
-```
+# ------------------- (WebP Express rules ends here)
+`
 
-If it doesn't work, try this instead:
+**Step 2**: *Redirecting directly to existing webp images.*
 
-```
-if ($http_accept ~* "webp"){
-  rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content break;
+Insert the following in the `server` context (replacing the rules you inserted in step 1)
+`
+# WebP Express rules
+# --------------------
+location ~* ^/wp-content/.*\.(png|jpe?g)$ {
+    add_header Vary Accept;
+    expires 365d;
 }
-```
+location ~* ^/wp-content/.*\.webp$ {
+    expires 365d;
+    if ($whattodo = AB) {
+        add_header Vary Accept;
+    }
+}
+if ($http_accept ~* "webp"){
+    set $whattodo A;
+}
+if (-f $request_filename.webp) {
+    set $whattodo  "${whattodo}B";
+}
+if ($whattodo = AB) {
+    rewrite ^(.*) $1.webp last;
+}
+if ($whattodo = A) {
+    rewrite ^/wp-content/.*\.(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content break;
+}
+# ------------------- (WebP Express rules ends here)
+`
+*Beware when copy/pasting: You might get html-encoded characters. Verify that the ampersand before "wp-content" isn't encoded*
 
-*Beware:* If you copy the code above, you might get an html-encoded ampersand before "wp-content"
+Again, `wp-content` argument must point to the wp-content folder (relative to document root). In most installations, it is 'wp-content'.
 
-The `wp-content` argument must point to the wp-content folder (relative to document root). In most installations, it is 'wp-content'.
+And again, the rules looks for existing webp files by appending ".webp" to the URL. So for this to work, you must configure *WebP Express* to store the converted files like that:
+1. Set *Destination folder* to *mingled*
+2. Set *File extension* to *Append ".webp"*
 
-Note that the rules above redirects every image request to the PHP script. To get better performance, you can add a rule that redirects jpeg/png requests directly to existing webp images. There are some rules for that [here](https://www.keycdn.com/blog/convert-to-webp-the-successor-of-jpeg#rewriterules-for-nginx-nginx-conf), but they need to be modified because WebP Express stores the webp files in a different location (`wp-content/webp-express/webp-images/doc-root`).
+The "expires 365d;" lines set caching to one year. You can remove these lines if you wish.
+
+I have not set any expire on the webp-on-demand.php request. This is not needed, as the script sets this according to what you set up in WebP Express settings. Also, trying to do it would require a new location block matching webp-on-demand.php, but that would override the location block handling php files, and thus break the functionality.
+
+It is possible to put this stuff inside a `location` directive. However, having `if` directives inside `location` directives [is considered evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/). But it seems that in our case, it works. If you wish to do that, use the following rules instead:
+
+`
+# WebP Express rules
+# --------------------
+location ~* ^/wp-content/.*\.(png|jpe?g)$ {
+    add_header Vary Accept;
+    expires 365d;
+
+    if ($http_accept ~* "webp"){
+        set $whattodo A;
+    }
+    if (-f $request_filename.webp) {
+        set $whattodo  "${whattodo}B";
+    }
+    if ($whattodo = AB) {
+        rewrite ^(.*) $1.webp last;
+    }
+    if ($whattodo = A) {
+        rewrite ^/wp-content/.*\.(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content last;
+    }
+}
+
+location ~* ^/wp-content/.*\.webp$ {
+    expires 365d;
+    if ($whattodo = AB) {
+        add_header Vary Accept;
+    }
+}
+# ------------------- (WebP Express rules ends here)
+`
+*Beware when copy/pasting: You might get html-encoded characters. Verify that the ampersand before "wp-content" isn't encoded*
 
 Discussion on this topic [here](https://wordpress.org/support/topic/nginx-rewrite-rules-4/)
+And here: https://github.com/rosell-dk/webp-express/issues/166
+
 
 = I am on a WAMP stack =
 It has been reported that WebP Express *almost* works on WAMP stack. I'd love to debug this, but do not own a Windows server or access to one... Can you help?
