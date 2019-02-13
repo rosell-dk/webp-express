@@ -155,7 +155,7 @@ First step is to redirect images to the script. Second step is redirecting direc
 
 The following will redirect all images under wp-content to the script, but only for webp-enabled browsers.
 
-Insert the following in the `server` context of your configuration file (usually found in `/etc/nginx/sites-available`). The `server` context is the part of the configuration that starts with "server {" and ends with the matching "}".
+Insert the following in the `server` context of your configuration file (usually found in `/etc/nginx/sites-available`). "The `server` context" refers to the part of the configuration that starts with "server {" and ends with the matching "}".
 
 ```nginx
 location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
@@ -190,8 +190,6 @@ If you still cannot get it to work, you can instead try *method 2*
 
 Once you got this working, lets improve performance by redirecting directly to existing webp images. This step isn't necessary, as the script also does that - but invoking the php script takes more resources that the direct redirect. Also, a direct redirect will produce *ETag* response header, which is increases caching performance.
 
-The second step builds on Eugene Lazutkins solution original published [here](http://www.lazutkin.com/blog/2014/02/23/serve-files-with-nginx-conditionally/).
-
 The rules looks for existing webp files by appending ".webp" to the URL. So for this to work, you must configure *WebP Express* to store the converted files like that:
 1. Set *Destination folder* to *mingled*
 2. Set *File extension* to *Append ".webp"*
@@ -218,10 +216,12 @@ location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
 
 Again, beware that if you haven't enabled *png* conversion, you should replace "(png|jpe?g)" with "jpe?g".
 
+Credits: This second step builds on [Eugene Lazutkins solution](http://www.lazutkin.com/blog/2014/02/23/serve-files-with-nginx-conditionally/).
+
 **Step 3:**: *Caching*
 In most cases you can and should allow images to be cached for a long period. To do that, simply uncomment the "expires 365d;" line, by removing the "#" in front of it.
 
-**Step 4:**: *Routing non-existing webp requests to converter*
+**Step 4:**: *Routing requests for non-existing webps to the converter*
 
 Simply add the following rules below the ones you added in step 2:
 
