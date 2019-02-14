@@ -573,6 +573,9 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 1. WebP Express settings
 
 == Changelog ==
+= 0.11.2 =
+* Fixed bug which caused Alter HTML to fail miserably on some setups
+* AlterHTML now also looks for lazy load attributes in DIV and LI tags.
 
 = 0.11.1 =
 * Fixed bug which caused the new "Convert non-existing webp-files upon request" not to work on all setups
