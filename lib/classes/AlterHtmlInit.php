@@ -23,14 +23,15 @@ class AlterHtmlInit
             return $content;
         }
 
+        if (is_admin() ) {
+            return $content;
+        }
+
         if (get_option('webp-express-alter-html-replacement') == 'picture') {
             if(function_exists('is_amp_endpoint') && is_amp_endpoint()) {
                 //for AMP pages the <picture> tag is not allowed
                 return $content;
             }
-            /*if (is_admin() ) {
-                return $content;
-            }*/
         }
 
         if (!isset(self::$options)) {
