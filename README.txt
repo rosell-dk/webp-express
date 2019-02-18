@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.0
-Stable tag: 0.11.2
+Stable tag: 0.11.3
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -573,6 +573,14 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 1. WebP Express settings
 
 == Changelog ==
+= 0.11.3 =
+* Fixed bug: Alter HTML caused media library not to display images on some systems. Alter HTML is now disabled in admin mode.
+* Alter HTML (picture tags) could produce the source tags with "src" attribute. But source tags inside picture tags must use "srcset" attribute. Fixed.
+* Alter HTML (image urls): srcsets containing "x" descriptors wasn't handled (ie, srcset="image.jpg 1x")
+* Fixed rewrite rules when placed in root so they are confined to wp-content and uploads. In particular, they no longer apply in wp-admin area, which might have caused problems, ie with media library.
+* Added warning when rules are placed in root and "Convert non-existing webp-files upon request" feature is enabled and WebP Express rules are to be placed below Wordpress rules
+* Fixed bug: The code that determined if WebP Express had placed rules in a .htaccess failed in "CDN friendly" mode. The effect was that these rules was not cleaned up upon plugin deactivation
+
 = 0.11.2 =
 * Fixed bug which caused Alter HTML to fail miserably on some setups
 * AlterHTML now also looks for lazy load attributes in DIV and LI tags.
@@ -672,6 +680,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.11.3 =
+Fixed several bugs. You should update :)
 
 = 0.11.0 =
 WebP Express can now alter HTML to either point to webp images directly or by using the picture tag syntax. Also, non-existing webp-files can be converted upon request (means you can reference the converted webp files before they are actually converted!)

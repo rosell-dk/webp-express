@@ -4,6 +4,7 @@
 * Alter HTML (image urls): srcsets containing "x" descriptors wasn't handled (ie, srcset="image.jpg 1x")
 * Fixed rewrite rules when placed in root so they are confined to wp-content and uploads. In particular, they no longer apply in wp-admin area, which might have caused problems, ie with media library.
 * Added warning when rules are placed in root and "Convert non-existing webp-files upon request" feature is enabled and WebP Express rules are to be placed below Wordpress rules
+* Fixed bug: The code that determined if WebP Express had placed rules in a .htaccess failed in "CDN friendly" mode. The effect was that these rules was not cleaned up upon plugin deactivation
 
 = 0.11.2 =
 * Fixed bug which caused Alter HTML to fail miserably on some setups
