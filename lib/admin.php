@@ -4,14 +4,13 @@ use \WebPExpress\State;
 // When an update requires a migration, the number should be increased
 define('WEBPEXPRESS_MIGRATION_VERSION', '6');
 
-//update_option('webp-express-migration-version', '5');
-
 if (WEBPEXPRESS_MIGRATION_VERSION != get_option('webp-express-migration-version', 0)) {
     // run migration logic
     include __DIR__ . '/migrate/migrate.php';
 }
 
-// include __DIR__ . '/migrate/migrate3.php';   // test-running a migration
+// uncomment next line to test-run a migration
+// include __DIR__ . '/migrate/migrate6.php';
 
 // uncomment next line to debug an error during activation
 //include __DIR__ . "/debug.php";
