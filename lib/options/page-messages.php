@@ -89,3 +89,18 @@ if (
         );
     }
 }
+
+$ht = FileHelper::loadFile(Paths::getIndexDirAbs() . '/.htaccess');
+if ($ht !== false) {
+    $posWe = strpos($ht, '# BEGIN WebP Express');
+    $posWo = strpos($ht, '# BEGIN WordPress');
+    if (($posWe !== false) && ($posWo !== false) && ($posWe > $posWo)) {
+        Messenger::printMessage(
+            'warning',
+            'Problem detected. ' .
+                'In order for the "Convert non-existing webp-files upon request" functionality to work, you need to either:<br>' .
+                '- Move the WebP Express rules above the Wordpress rules in the .htaccess file located in your root dir<br>' .
+                '- Grant the webserver permission to your wp-content dir, so it can create its rules there instead.'
+        );
+    }
+}
