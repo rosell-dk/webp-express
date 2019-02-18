@@ -2,9 +2,9 @@
 use \WebPExpress\State;
 
 // When an update requires a migration, the number should be increased
-define('WEBPEXPRESS_MIGRATION_VERSION', '5');
+define('WEBPEXPRESS_MIGRATION_VERSION', '6');
 
-//update_option('webp-express-migration-version', '4');
+//update_option('webp-express-migration-version', '5');
 
 if (WEBPEXPRESS_MIGRATION_VERSION != get_option('webp-express-migration-version', 0)) {
     // run migration logic

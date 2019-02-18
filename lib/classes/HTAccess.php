@@ -125,6 +125,33 @@ class HTAccess
 
 
         /* Build rules */
+
+        /* When .htaccess is placed in root (index), the rules needs to be confined only to work in
+           content folder (if uploads folder is moved, perhaps also that)
+           Rules needs to start with ie "^/?(wp-content/.+)" rather than "^/?(.+)"
+           In the case that upload folder is in root too, rules needs to apply to both.
+           We do it like this: "^/?((?:wp-content|uploads)/.+)"   (using non capturing group)
+        */
+
+        $rewriteRuleStart = '^/?(.+)';
+        if ($htaccessDir == 'index') {
+            // Get relative path between index dir and wp-content dir / uploads
+            // Because we want to restrict the rule so it doesn't work on wp-admin, but only those two.
+
+            $wpContentRel = PathHelper::getRelDir(Paths::getIndexDirAbs(), Paths::getContentDirAbs());
+            $uploadsRel = PathHelper::getRelDir(Paths::getIndexDirAbs(), Paths::getUploadDirAbs());
+
+            //$rules .= '# rel: ' . $uploadsRel . "\n";
+            if (strpos($wpContentRel, '.') !== 0) {
+
+                if (strpos($uploadsRel, $wpContentRel) === 0) {
+                    $rewriteRuleStart = '^/?(' . $wpContentRel . '/.+)';
+                } else {
+                    $rewriteRuleStart = '^/?((?:' . $wpContentRel . '|' . $uploadsRel . '/.+)';
+                }
+            }
+        }
+
         $rules = '';
 
 
@@ -178,10 +205,11 @@ class HTAccess
 
                 if ($config['destination-extension'] == 'append') {
                     $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp -f\n";
-                    $rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.$2.webp [T=image/webp,E=EXISTING:1,L]\n\n";
+                    $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ $1.$2.webp [T=image/webp,E=EXISTING:1,L]\n\n";
                 } else {
                     $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp -f\n";
-                    $rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1,L]\n\n";
+                    $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1,L]\n\n";
+                    //$rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1,L]\n\n";
                 }
             }
 
@@ -189,7 +217,8 @@ class HTAccess
             $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp -f\n";
-            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
+            $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
+            //$rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
 
             $rules .= $ccRules;
 
@@ -227,7 +256,7 @@ class HTAccess
 
             $rules .= "  # Pass REQUEST_FILENAME to webp-realizer.php in request header\n";
             $rules .= $basicConditionsRealizer;
-            $rules .= "  RewriteRule ^(.*)\.(webp)$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
+            $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
                 "  <IfModule mod_headers.c>\n" .
                 "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
                 "  </IfModule>\n\n";
@@ -235,7 +264,7 @@ class HTAccess
             $rules .= "  # WebP Realizer: Redirect non-existing webp images to webp-realizer.php, which will locate corresponding jpg/png, convert it, and deliver the webp (if possible) \n";
             $rules .= $basicConditionsRealizer;
 
-            $rules .= "  RewriteRule ^(.*)\.(webp)$ " .
+            $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ " .
                 "/" . Paths::getWebPRealizerUrlPath() .
                 ($passSourceInQSRealizer ? "?xdestination=x%{SCRIPT_FILENAME}&" : "?") .
                 "wp-content=" . Paths::getContentDirRel() .
@@ -297,13 +326,14 @@ class HTAccess
             // Add "NE" flag?
             // https://github.com/rosell-dk/webp-convert/issues/95
             // (and try testing spaces in directory paths)
-            $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " .
+
+            // TODO: When $rewriteRuleStart is empty, we don't need the .*, do we? - test
+            $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ " .
                 "/" . Paths::getWodUrlPath() .
                 ($passSourceInQS ? "?xsource=x%{SCRIPT_FILENAME}&" : "?") .
                 "wp-content=" . Paths::getContentDirRel() .
                 ($config['forward-query-string'] ? '&%1' : '') .
                 " [NC,L]\n";        // E=WOD:1
-
 
             $rules .= "\n  <IfModule mod_headers.c>\n";
             $rules .= "    <IfModule mod_setenvif.c>\n";
@@ -504,7 +534,20 @@ class HTAccess
             if ($content === false) {
                 return null;
             }
-            return (strpos($content, '# Redirect images to webp-on-demand.php') != false);
+
+            $pos1 = strpos($content, '# BEGIN WebP Express');
+            if ($pos1 === false) {
+                return false;
+            }
+            $pos2 = strrpos($content, '# END WebP Express');
+            if ($pos2 === false) {
+                return false;
+            }
+
+            $weRules = substr($content, $pos1, $pos2 - $pos1);
+
+            return (strpos($weRules, '<IfModule mod_rewrite.c>') !== false);
+
         } else {
             // the .htaccess isn't even there. So there are no rules.
             return false;
@@ -572,7 +615,8 @@ class HTAccess
         if ($success) {
             State::setState('htaccess-rules-saved-at-some-point', true);
 
-            $containsRules = (strpos(implode('',$rules), '# Redirect images to webp-on-demand.php') != false);
+            //$containsRules = (strpos(implode('',$rules), '# Redirect images to webp-on-demand.php') != false);
+            $containsRules = (strpos(implode('',$rules), '<IfModule mod_rewrite.c>') !== false);
 
             $dir = FileHelper::dirName($filename);
             $whichDir = self::whichHTAccessDirIsThis($dir);
