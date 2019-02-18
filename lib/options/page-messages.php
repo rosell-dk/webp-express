@@ -77,10 +77,10 @@ if (Config::isConfigFileThere()) {
     }
 }
 
-if (
-    HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getIndexDirAbs() . '/.htaccess') &&
-    HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getContentDirAbs() . '/.htaccess')
-) {
+$haveRulesInIndexDir = HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getIndexDirAbs() . '/.htaccess');
+$haveRulesInContentDir = HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getContentDirAbs() . '/.htaccess');
+
+if ($haveRulesInIndexDir && $haveRulesInContentDir) {
     if (!HTAccess::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false)) {
         Messenger::printMessage(
             'warning',
@@ -95,12 +95,16 @@ if ($ht !== false) {
     $posWe = strpos($ht, '# BEGIN WebP Express');
     $posWo = strpos($ht, '# BEGIN WordPress');
     if (($posWe !== false) && ($posWo !== false) && ($posWe > $posWo)) {
-        Messenger::printMessage(
-            'warning',
-            'Problem detected. ' .
-                'In order for the "Convert non-existing webp-files upon request" functionality to work, you need to either:<br>' .
-                '- Move the WebP Express rules above the Wordpress rules in the .htaccess file located in your root dir<br>' .
-                '- Grant the webserver permission to your wp-content dir, so it can create its rules there instead.'
-        );
+
+        $haveRulesInIndexDir = HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getIndexDirAbs() . '/.htaccess');
+        if ($haveRulesInIndexDir) {
+            Messenger::printMessage(
+                'warning',
+                'Problem detected. ' .
+                    'In order for the "Convert non-existing webp-files upon request" functionality to work, you need to either:<br>' .
+                    '- Move the WebP Express rules above the Wordpress rules in the .htaccess file located in your root dir<br>' .
+                    '- Grant the webserver permission to your wp-content dir, so it can create its rules there instead.'
+            );            
+        }
     }
 }
