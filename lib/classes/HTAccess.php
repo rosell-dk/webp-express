@@ -474,50 +474,34 @@ class HTAccess
     /**
      *  Must be parsed ie "wp-content", "index", etc. Not real dirs
      */
-    public static function addToActiveHTAccessDirsArray($whichDir)
+    public static function addToActiveHTAccessDirsArray($dirId)
     {
         $activeHtaccessDirs = State::getState('active-htaccess-dirs', []);
-        if (!in_array($whichDir, $activeHtaccessDirs)) {
-            $activeHtaccessDirs[] = $whichDir;
+        if (!in_array($dirId, $activeHtaccessDirs)) {
+            $activeHtaccessDirs[] = $dirId;
             State::setState('active-htaccess-dirs', array_values($activeHtaccessDirs));
         }
     }
 
-    public static function removeFromActiveHTAccessDirsArray($whichDir)
+    public static function removeFromActiveHTAccessDirsArray($dirId)
     {
         $activeHtaccessDirs = State::getState('active-htaccess-dirs', []);
-        if (in_array($whichDir, $activeHtaccessDirs)) {
-            $activeHtaccessDirs = array_diff($activeHtaccessDirs, [$whichDir]);
+        if (in_array($dirId, $activeHtaccessDirs)) {
+            $activeHtaccessDirs = array_diff($activeHtaccessDirs, [$dirId]);
             State::setState('active-htaccess-dirs', array_values($activeHtaccessDirs));
         }
     }
 
-    public static function isInActiveHTAccessDirsArray($whichDir)
+    public static function isInActiveHTAccessDirsArray($dirId)
     {
         $activeHtaccessDirs = State::getState('active-htaccess-dirs', []);
-        return (in_array($whichDir, $activeHtaccessDirs));
-    }
-
-    public static function whichHTAccessDirIsThis($dir) {
-        switch ($dir) {
-            case Paths::getContentDirAbs():
-                return 'wp-content';
-            case Paths::getIndexDirAbs():
-                return 'index';
-            case Paths::getHomeDirAbs():
-                return 'home';
-            case Paths::getPluginDirAbs():
-                return 'plugins';
-            case Paths::getUploadDirAbs():
-                return 'uploads';
-        }
-        return '';
+        return (in_array($dirId, $activeHtaccessDirs));
     }
 
     public static function hasRecordOfSavingHTAccessToDir($dir) {
-        $whichDir = self::whichHTAccessDirIsThis($dir);
-        if ($whichDir != '') {
-            return self::isInActiveHTAccessDirsArray($whichDir);
+        $dirId = Paths::getAbsDirId($dir);
+        if ($dirId !== false) {
+            return self::isInActiveHTAccessDirsArray($dirId);
         }
         return false;
     }
@@ -619,12 +603,12 @@ class HTAccess
             $containsRules = (strpos(implode('',$rules), '<IfModule mod_rewrite.c>') !== false);
 
             $dir = FileHelper::dirName($filename);
-            $whichDir = self::whichHTAccessDirIsThis($dir);
-            if ($whichDir != '') {
+            $dirId = Paths::getAbsDirId($dir);
+            if ($dirId !== false) {
                 if ($containsRules) {
-                    self::addToActiveHTAccessDirsArray($whichDir);
+                    self::addToActiveHTAccessDirsArray($dirId);
                 } else {
-                    self::removeFromActiveHTAccessDirsArray($whichDir);
+                    self::removeFromActiveHTAccessDirsArray($dirId);
                 }
             }
         }

@@ -277,6 +277,38 @@ APACHE
         return untrailingslashit(WEBPEXPRESS_PLUGIN_DIR);
     }
 
+    public static function getAbsDirId($absDir) {
+        switch ($absDir) {
+            case self::getContentDirAbs():
+                return 'wp-content';
+            case self::getIndexDirAbs():
+                return 'index';
+            case self::getHomeDirAbs():
+                return 'home';
+            case self::getPluginDirAbs():
+                return 'plugins';
+            case self::getUploadDirAbs():
+                return 'uploads';
+        }
+        return false;
+    }
+
+    public static function getAbsDirById($dirId) {
+        switch ($dirId) {
+            case 'wp-content':
+                return self::getContentDirAbs();
+            case 'index':
+                return self::getIndexDirAbs();
+            case 'home':
+                return self::getHomeDirAbs();
+            case 'plugins':
+                return self::getPluginDirAbs();
+            case 'uploads':
+                return self::getUploadDirAbs();
+        }
+        return false;
+    }
+
 
     // ------------------------------------
     // ---------    Url paths    ----------
