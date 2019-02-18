@@ -555,11 +555,12 @@ In a webp-enabled browser, the HTML may look like this: `<img src="image.webp">`
 ### Does it work with lazy loaded images?
 No plugins/frameworks has yet been discovered, which does not work with *WebP Express*.
 
-The most common way of lazy-loading is by setting a *data-src* attribute on the image and let javascript use that value for setten the *src* attribute. That method works, as the image request, seen from the server side, is indistinguishable from any other image request. It could however be that some obscure lazy load implementation would load the image with an XHR request. In that case, the *Accept* header will not contain 'image/webp', but '*/*', and a jpeg will be served, even though the browser supports webp.
+The most common way of lazy-loading is by setting a *data-src* attribute on the image and let javascript use that value for setting the *src* attribute. That method works, as the image request, seen from the server side, is indistinguishable from any other image request. It could however be that some obscure lazy load implementation would load the image with an XHR request. In that case, the *Accept* header will not contain 'image/webp', but '*/*', and a jpeg will be served, even though the browser supports webp.
 
 The following lazy load plugins/frameworks has been tested and works with *WebP Express*:
 - [BJ Lazy Load](https://da.wordpress.org/plugins/bj-lazy-load/)
 - [Owl Carousel 2](https://owlcarousel2.github.io/OwlCarousel2/)
+- [Lazy Load by WP Rocket](https://wordpress.org/plugins/rocket-lazy-load/)
 
 I have only tested the above in *Varied image responses* mode, but it should also work in *CDN friendly* mode. Both *Alter HTML* options have been designed to work with standard lazy load attributes.
 
