@@ -15,6 +15,21 @@ use \WebPExpress\HTAccess;
 include_once __DIR__ . '/../classes/Paths.php';
 use \WebPExpress\Paths;
 
+/**
+ *  Fix records - if possible
+ */
+function webpexpress_migrate6_fixHtaccessRecordsForDir($dirId) {
+    $haveRules = HTAccess::haveWeRulesInThisHTAccess(Paths::getAbsDirById($dirId) . '/.htaccess');
+
+    // PS: $haveRules may be null, meaning "maybe"
+    if ($haveRules === true) {
+        HTAccess::addToActiveHTAccessDirsArray($dirId);
+    }
+    if ($haveRules === false) {
+        HTAccess::removeFromActiveHTAccessDirsArray($dirId);
+    }
+}
+
 function webpexpress_migrate6() {
 
     // Regenerate .htaccess file if placed in root (so rewrites does not apply in wp-admin area)
@@ -37,6 +52,21 @@ function webpexpress_migrate6() {
                 );
             }
         }
+    }
+
+    // The records about which .htaccess files that contains rules were not correct.
+    // Correct them if possible (haveWeRulesInThisHTAccess() may return null, if we cannot determine)
+    // https://github.com/rosell-dk/webp-express/issues/169
+
+    $dirsToFix = [
+        'index',
+        'home',
+        'wp-content',
+        'plugins',
+        'uploads'
+    ];
+    foreach ($dirsToFix as $dirId) {
+        webpexpress_migrate6_fixHtaccessRecordsForDir($dirId);
     }
 
     update_option('webp-express-migration-version', '6');
