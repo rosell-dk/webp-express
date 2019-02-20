@@ -10,7 +10,7 @@ if (Multisite::isNetworkActivated()) {
     		'WebP Express', // Text to be displayed in the menu.
     		'manage_network_options', // Capability
     		'webp_express_settings_page', // slug
-    		'webp_express_settings_page_content2' // Callback function which displays the page
+    		'webp_express_settings_page_content' // Callback function which displays the page
     	);
     });
 } else {
@@ -48,20 +48,3 @@ function webp_express_admin_init() {
 }
 
 add_action( 'admin_init', 'webp_express_admin_init');
-
-
-include_once __DIR__ . '/../classes/Config.php';
-
-// -- multisite
-
-function webp_express_settings_page_content2()
-{
-    /*
-    if ( is_plugin_active_for_network( 'webp-express/webp-express.php' ) ) {
-        echo 'network activated, yes';
-    }
-    $config = Config::getConfigForOptionsPage();
-    echo '<pre>' . print_r($config) . '</pre>';
-*/
-    include __DIR__ . '/page.php';
-}
