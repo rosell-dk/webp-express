@@ -67,7 +67,7 @@ add_filter('plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), functio
 add_filter('network_admin_plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), function ( $links ) {
     $mylinks = array(
         '<a href="' . network_admin_url('settings.php?page=webp_express_settings_page') . '">Settings</a>',
-        '<a href="https://ko-fi.com/rosell" target="_blank">Provide coffee for the developer</a>',
+        '<a href="https://ko-fi.com/rosell" target="_blank">donate?</a>',
     );
     return array_merge($links, $mylinks);
 });
