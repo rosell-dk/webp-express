@@ -15,6 +15,8 @@ use \WebPExpress\HTAccess;
 include_once __DIR__ . '/../classes/Paths.php';
 use \WebPExpress\Paths;
 
+use \WebPExpress\Option;
+
 /**
  *  Fix records - if possible
  */
@@ -69,7 +71,7 @@ function webpexpress_migrate6() {
         webpexpress_migrate6_fixHtaccessRecordsForDir($dirId);
     }
 
-    update_option('webp-express-migration-version', '6');
+    Option::updateOption('webp-express-migration-version', '6');
 }
 
 webpexpress_migrate6();

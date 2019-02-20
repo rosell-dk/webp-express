@@ -1,7 +1,6 @@
 <?php
 // Metadata
 // --------------------
-//$maxQuality = get_option('webp_express_max_quality');
 $metadata = $config['metadata'];
 
 echo '<tr><th scope="row">Metadata';

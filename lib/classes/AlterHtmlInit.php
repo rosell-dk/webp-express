@@ -5,6 +5,8 @@ namespace WebPExpress;
 include_once "AlterHtmlHelper.php";
 use AlterHtmlHelper;
 
+use \WebPExpress\Option;
+
 class AlterHtmlInit
 {
     public static $options = null;
@@ -27,7 +29,7 @@ class AlterHtmlInit
             return $content;
         }
 
-        if (get_option('webp-express-alter-html-replacement') == 'picture') {
+        if (Option::getOption('webp-express-alter-html-replacement') == 'picture') {
             if(function_exists('is_amp_endpoint') && is_amp_endpoint()) {
                 //for AMP pages the <picture> tag is not allowed
                 return $content;
@@ -35,7 +37,7 @@ class AlterHtmlInit
         }
 
         if (!isset(self::$options)) {
-            self::$options = json_decode(get_option('webp-express-alter-html-options', null), true);
+            self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
             //AlterHtmlHelper::$options = self::$options;
         }
 
@@ -43,7 +45,7 @@ class AlterHtmlInit
             return $content;
         }
 
-        if (get_option('webp-express-alter-html-replacement') == 'picture') {
+        if (Option::getOption('webp-express-alter-html-replacement') == 'picture') {
             require_once __DIR__ . "/../../vendor/autoload.php";
             require_once __DIR__ . '/AlterHtmlHelper.php';
             require_once __DIR__ . '/AlterHtmlPicture.php';
@@ -76,11 +78,11 @@ class AlterHtmlInit
 
     public static function setHooks() {
 
-        if (get_option('webp-express-alter-html-replacement') == 'picture') {
+        if (Option::getOption('webp-express-alter-html-replacement') == 'picture') {
 //            add_action( 'wp_head', '\\WebPExpress\\AlterHtmlInit::addPictureJs');
         }
 
-        if (get_option('webp-express-alter-html-hooks', 'ob') == 'ob') {
+        if (Option::getOption('webp-express-alter-html-hooks', 'ob') == 'ob') {
             /* TODO:
                Which hook should we use, and should we make it optional?
                - Cache enabler uses 'template_redirect'

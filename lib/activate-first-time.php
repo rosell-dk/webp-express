@@ -31,8 +31,8 @@ if (PlatformInfo::isMicrosoftIis()) {
 
 
 if ( is_multisite() ) {
-    Messenger::addMessage('error', 'You are on multisite. It is not supported yet. BUT IT IS ON THE ROADMAP! Stay tuned! The plugin has been <i>deactivated</i> again!');
-    Actions::procastinate('deactivate');
+    Messenger::addMessage('warning', 'You are on multisite. Multisite support is in beta');
+//    Actions::procastinate('deactivate');
     return;
 }
 

@@ -2,6 +2,8 @@
 
 namespace WebPExpress;
 
+use \WebPExpress\Option;
+
 /**
  *   Store state in db
  *   We are using update_option WITHOUT autoloading.
@@ -9,12 +11,13 @@ namespace WebPExpress;
  *   For such things, use update_option / get_option directly
  */
 
+
 class State
 {
 
     public static function getStateObj() {
         // TODO: cache
-        $json = get_option('webp-express-state', '[]');
+        $json = Option::getOption('webp-express-state', '[]');
         return json_decode($json, true);
     }
 
@@ -37,6 +40,6 @@ class State
         $json = json_encode($currentStateObj, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
         // Store in db. No autoloading.
-        update_option('webp-express-state', $json, false);
+        Option::updateOption('webp-express-state', $json, false);
     }
 }

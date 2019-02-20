@@ -15,6 +15,9 @@ use \WebPExpress\HTAccess;
 include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
 
+include_once __DIR__ . '/../classes/Multisite.php';
+use \WebPExpress\Multisite;
+
 include_once __DIR__ . '/../classes/Paths.php';
 use \WebPExpress\Paths;
 
@@ -27,12 +30,13 @@ use \WebPExpress\State;
 include_once __DIR__ . '/../classes/TestRun.php';
 use \WebPExpress\TestRun;
 
+
 if (!current_user_can('manage_options')) {
     wp_die('You do not have sufficient permissions to access this page.');
 }
 ?>
 <div class="wrap">
-    <h2>WebP Express Settings</h2>
+    <h2>WebP Express Settings<?php echo Multisite::isNetworkActivated() ? ' (network)' : ''; ?></h2>
 
 <?php
 
@@ -64,7 +68,6 @@ function printAutoQualityOptionForConverter($converterId) {
     </div>
 <?php
 }
-//update_option('webp-express-migration-version', '1');
 
 $canDetectQuality = TestRun::isLocalQualityDetectionWorking();
 $testResult = TestRun::getConverterStatus();
@@ -98,9 +101,11 @@ $webpexpress_settings_nonce = wp_create_nonce('webpexpress_settings_nonce');
 <?php
 //echo get_theme_root_uri();
 
-include_once __DIR__ . '/../classes/AlterHtmlHelper.php';
+//include_once __DIR__ . '/../classes/AlterHtmlHelper.php';
+//$actionUrl = Multisite::isNetworkActivated() ? network_admin_url( 'admin-post.php' ) : admin_url( 'admin-post.php' );
+$actionUrl = admin_url('admin-post.php');
 
-echo '<form id="webpexpress_settings" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="post" >';
+echo '<form id="webpexpress_settings" action="' . esc_url($actionUrl) . '" method="post" >';
 ?>
     <input type="hidden" name="action" value="webpexpress_settings_submit">
     <input type="hidden" name="webpexpress_settings_nonce" value="<?php echo $webpexpress_settings_nonce ?>" />

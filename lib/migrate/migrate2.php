@@ -11,6 +11,8 @@ use \WebPExpress\Messenger;
 include_once __DIR__ . '/../classes/TestRun.php';
 use \WebPExpress\TestRun;
 
+use \WebPExpress\Option;
+
 /* helper. Remove dir recursively. No warnings - fails silently
    Set $removeTheDirItself to false if you want to empty the dir
 */
@@ -68,4 +70,4 @@ Messenger::addMessage(
 );
 
 
-update_option('webp-express-migration-version', '2');
+Option::updateOption('webp-express-migration-version', '2');

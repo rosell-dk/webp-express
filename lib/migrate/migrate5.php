@@ -12,6 +12,8 @@ use \WebPExpress\Messenger;
 include_once __DIR__ . '/../classes/CacheMover.php';
 use \WebPExpress\CacheMover;
 
+use \WebPExpress\Option;
+
 function webpexpress_migrate5() {
 
     // Regenerate configuration file and wod-options.json.
@@ -41,7 +43,7 @@ function webpexpress_migrate5() {
         );
 
         // PSST: When creating new migration files, remember to update WEBPEXPRESS_MIGRATION_VERSION in admin.php
-        update_option('webp-express-migration-version', '5');
+        Option::updateOption('webp-express-migration-version', '5');
 
     } else {
         Messenger::addMessage(

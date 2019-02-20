@@ -6,6 +6,7 @@
 include_once __DIR__ . '/classes/Paths.php';
 use \WebPExpress\Paths;
 
+use \WebPExpress\Option;
 
 /* helper. Remove dir recursively. No warnings - fails silently */
 function webpexpress_rrmdir($dir) {
@@ -32,7 +33,7 @@ $optionsToDelete = [
     'webp-express-migration-version'
 ];
 foreach ($optionsToDelete as $i => $optionName) {
-    delete_option($optionName);
+    Option::deleteOption($optionName);
 }
 
 // remove content dir (config plus images)

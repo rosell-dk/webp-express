@@ -9,6 +9,7 @@ use \WebPExpress\Config;
 include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
 
+use \WebPExpress\Option;
 
 function webpexpress_migrate4() {
     $config = Config::loadConfig();
@@ -61,7 +62,7 @@ function webpexpress_migrate4() {
     }
 
     // PSST: When creating new migration files, remember to update WEBPEXPRESS_MIGRATION_VERSION in admin.php
-    update_option('webp-express-migration-version', '4');
+    Option::updateOption('webp-express-migration-version', '4');
 
 }
 

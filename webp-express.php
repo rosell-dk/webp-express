@@ -7,6 +7,7 @@
  * Author: Bjørn Rosell
  * Author URI: https://www.bitwise-it.dk
  * License: GPL2
+ * Network: true
  */
 
 /*
@@ -15,6 +16,17 @@ Note: Perhaps create a plugin page on my website?, ie https://www.bitwise-it.dk/
 
 define('WEBPEXPRESS_PLUGIN', __FILE__);
 define('WEBPEXPRESS_PLUGIN_DIR', __DIR__);
+
+use \WebPExpress\Option;
+
+spl_autoload_register('webpexpress_autoload');
+function webpexpress_autoload($class) {
+    //echo $class . "\n<br>";
+    if (strpos($class, 'WebPExpress\\') === 0) {
+        //echo WEBPEXPRESS_PLUGIN_DIR . '/lib/classes/' . substr($class, 12) . '.php' . "\n<br><br>";
+        require_once WEBPEXPRESS_PLUGIN_DIR . '/lib/classes/' . substr($class, 12) . '.php';
+    }
+}
 
 if (is_admin()) {
     include __DIR__ . '/lib/admin.php';
@@ -36,7 +48,8 @@ function webp_express_process_post() {
 }
 add_action( 'init', 'webp_express_process_post' );
 
-if (get_option('webp-express-alter-html', false)) {
+
+if (Option::getOption('webp-express-alter-html', false)) {
     require_once __DIR__ . '/lib/classes/AlterHtmlInit.php';
     \WebPExpress\AlterHtmlInit::setHooks();
 }

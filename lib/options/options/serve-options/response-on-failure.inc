@@ -5,7 +5,6 @@ echo '<tr><th scope="row">Response on failure';
 echo helpIcon('Determines what to serve in case the image conversion should fail.');
 echo '</th><td>';
 
-//$fail = get_option('webp_express_failure_response');
 $fail = $config['fail'];
 echo '<select name="fail">';
 echo '<option value="original"' . ($fail == 'original' ? ' selected' : '') . '>Original image</option>';

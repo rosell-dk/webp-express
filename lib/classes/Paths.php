@@ -8,6 +8,8 @@ use \WebPExpress\PathHelper;
 include_once "FileHelper.php";
 use \WebPExpress\FileHelper;
 
+use \WebPExpress\Multisite;
+
 class Paths
 {
 
@@ -433,18 +435,17 @@ APACHE
         ];
     }
 
-    /* Get complete url to admin (no trailing slash) */
-    public static function getAdminUrl()
-    {
-        if (!function_exists('get_admin_url')) {
-            require_once ABSPATH . 'wp-includes/link-template.php';
-        }
-        return untrailingslashit(get_admin_url());
-    }
-
     public static function getSettingsUrl()
     {
-        return self::getAdminUrl() . '/' . 'options-general.php?page=webp_express_settings_page';
+        if (!function_exists('admin_url')) {
+            require_once ABSPATH . 'wp-includes/link-template.php';
+        }
+        if (Multisite::isNetworkActivated()) {
+            // network_admin_url is also defined in link-template.php.
+            return network_admin_url('settings.php?page=webp_express_settings_page');
+        } else {
+            return admin_url('options-general.php?page=webp_express_settings_page');
+        }
     }
 
 }

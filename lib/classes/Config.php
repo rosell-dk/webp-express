@@ -23,6 +23,8 @@ use \WebPExpress\State;
 include_once "TestRun.php";
 use \WebPExpress\TestRun;
 
+use \WebPExpress\Option;
+
 class Config
 {
 
@@ -372,11 +374,11 @@ class Config
     {
         $config = self::fix($config, false);
 
-        update_option('webp-express-alter-html', $config['alter-html']['enabled'], true);
-        update_option('webp-express-alter-html-hooks', $config['alter-html']['hooks'], true);
-        update_option('webp-express-alter-html-replacement', $config['alter-html']['replacement'], true);
+        Option::updateOption('webp-express-alter-html', $config['alter-html']['enabled'], true);
+        Option::updateOption('webp-express-alter-html-hooks', $config['alter-html']['hooks'], true);
+        Option::updateOption('webp-express-alter-html-replacement', $config['alter-html']['replacement'], true);
 
-        //update_option('webp-express-alter-html', $config['alter-html']['enabled'], true);
+        //Option::updateOption('webp-express-alter-html', $config['alter-html']['enabled'], true);
 
         $obj = $config['alter-html'];
         unset($obj['enabled']);
@@ -394,7 +396,7 @@ class Config
         ];
         $obj['image-types'] = $config['image-types'];   // 0=none,1=jpg, 2=png, 3=both
 
-        update_option(
+        Option::updateOption(
             'webp-express-alter-html-options',
             json_encode($obj, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK),
             true

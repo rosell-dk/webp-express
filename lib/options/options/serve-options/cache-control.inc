@@ -1,6 +1,5 @@
 <?php
 
-//$maxQuality = get_option('webp_express_max_quality');
 $cacheControl = $config['cache-control'];
 $cacheControlCustom = $config['cache-control-custom'];
 $cacheControlMaxAge = $config['cache-control-max-age'];
@@ -21,19 +20,6 @@ $cacheControlPublic = $config['cache-control-public'];
             <option value="no-header" <?php if ($cacheControl == 'no-header') echo ' selected' ?>>Do not set</option>
             <option value="set" <?php if ($cacheControl == 'set') echo ' selected' ?>>Set</option>
             <option value="custom" <?php if ($cacheControl == 'custom') echo ' selected' ?>>Custom</option>
-            <?php
-            /*
-                echo '<option value="no-header"' . ($cacheControl == 'no-header' ? ' selected' : '') . '>Do not set Cache-Control header</option>';
-                echo '<option value="one-second"' . ($cacheControl == 'one-second' ? ' selected' : '') . '>One second</option>';
-                echo '<option value="one-minute"' . ($cacheControl == 'one-minute' ? ' selected' : '') . '>One minute</option>';
-                echo '<option value="one-hour"' . ($cacheControl == 'one-hour' ? ' selected' : '') . '>One hour</option>';
-                echo '<option value="one-day"' . ($cacheControl == 'one-day' ? ' selected' : '') . '>One day</option>';
-                echo '<option value="one-week"' . ($cacheControl == 'one-week' ? ' selected' : '') . '>One week</option>';
-                echo '<option value="one-month"' . ($cacheControl == 'one-month' ? ' selected' : '') . '>One month</option>';
-                echo '<option value="one-year"' . ($cacheControl == 'one-year' ? ' selected' : '') . '>One year</option>';
-                echo '<option value="custom"' . ($cacheControl == 'custom' ? ' selected' : '') . '>Custom Cache-Control header</option>';
-                */
-            ?>
         </select>
         <div id="cache_control_custom_div" style="display:inline-block;">
             <input type="text" id="cache_control_custom" name="cache-control-custom" value="<?php echo $cacheControlCustom ?>">

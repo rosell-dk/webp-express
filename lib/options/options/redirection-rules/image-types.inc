@@ -24,7 +24,6 @@ echo '</th><td>';
 // 2: PNG's
 // Converting only jpegs is thus "1"
 // Converting both jpegs and pngs is (1+2) = 3
-//$imageTypes = get_option('webp_express_image_types_to_convert');
 $imageTypes = $config['image-types'];
 
 echo '<select name="image-types">';

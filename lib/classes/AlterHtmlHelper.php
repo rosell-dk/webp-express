@@ -10,6 +10,10 @@ use \WebPExpress\Paths;
 include_once "PathHelper.php";
 use \WebPExpress\PathHelper;
 
+use \WebPExpress\Multisite;
+
+use \WebPExpress\Option;
+
 class AlterHtmlHelper
 {
 
@@ -144,6 +148,7 @@ class AlterHtmlHelper
      */
     private static function getWebPUrlInBase($sourceUrl, $baseUrl, $baseDir)
     {
+        //error_log('getWebPUrlInBase:' . $sourceUrl . ':' . $baseUrl . ':' . $baseDir);
 
         $srcPathRel = self::getRelUrlPath($sourceUrl, $baseUrl);
 
@@ -205,7 +210,7 @@ class AlterHtmlHelper
     public static function getWebPUrl($sourceUrl, $returnValueOnFail)
     {
         if (!isset(self::$options)) {
-            self::$options = json_decode(get_option('webp-express-alter-html-options', null), true);
+            self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
         }
 
 
@@ -239,6 +244,10 @@ class AlterHtmlHelper
         }
 
         foreach (self::$options['bases'] as $id => list($baseDir, $baseUrl)) {
+            if (Multisite::isMultisite() && ($id == 'uploads')) {
+                $baseUrl = Paths::getUploadUrl();
+                $baseDir = Paths::getUploadDirAbs();
+            }
 
             $result = self::getWebPUrlInBase($sourceUrl, $baseUrl, $baseDir);
             if ($result !== false) {

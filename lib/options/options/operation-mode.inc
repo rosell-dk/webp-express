@@ -39,7 +39,7 @@ $operationMode = $config['operation-mode'];
                 <li>Better HIT ratio on CDNs, if the CDN had to be configured to vary on the whole Accept header.</li>
                 <li>If a user downloads an image, it will not have wrong file extension</li>
             </ol>
-            PS: This mode also works great with <a target="_blank" href="https://wordpress.org/plugins/cache-enabler/">Cache Enabler</a>. Instructions are found in the FAQ.
+            PS: This mode also works great with <a target="_blank" href="https://da.wordpress.org/plugins/cache-enabler/">Cache Enabler</a>. Instructions are found in the FAQ.
         </p>
         <p>
             PPS: Images refererenced from external CSS or added dynamically with javascript will not be served as webp in this mode.
