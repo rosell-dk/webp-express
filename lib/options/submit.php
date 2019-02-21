@@ -59,8 +59,8 @@ if ($_POST['operation-mode'] != 'no-varied-responses') {
 }
 
 
-// Set options that are available in all operation modes, except the "just-redirect" mode
-if ($_POST['operation-mode'] != 'just-redirect') {
+// Set options that are available in all operation modes, except the "no-conversion" mode
+if ($_POST['operation-mode'] != 'no-conversion') {
 
     $config['enable-redirection-to-webp-realizer'] = isset($_POST['enable-redirection-to-webp-realizer']);
 

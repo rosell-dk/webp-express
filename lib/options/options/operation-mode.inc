@@ -14,7 +14,7 @@ $operationMode = $config['operation-mode'];
 <select name="change-operation-mode" id="change_operation_mode">
     <option value="varied-responses"<?php if ($operationMode == 'varied-responses') echo ' selected'?>>Varied image responses</option>
     <option value="no-varied-responses"<?php if ($operationMode == 'no-varied-responses') echo ' selected'?>>CDN friendly</option>
-    <option value="just-redirect"<?php if ($operationMode == 'just-redirect') echo ' selected'?>>Just redirect</option>
+    <option value="no-conversion"<?php if ($operationMode == 'no-conversion') echo ' selected'?>>No conversion</option>
     <option value="tweaked"<?php if ($operationMode == 'tweaked') echo ' selected'?>>Tweaked</option>
 </select></h3>
 
@@ -50,11 +50,11 @@ $operationMode = $config['operation-mode'];
     <i>A couple of options are available for automatically triggering webp conversion.</i>
 </div></p>
 <?php endif; ?>
-<?php if ($config['operation-mode'] == 'just-redirect') : ?>
+<?php if ($config['operation-mode'] == 'no-conversion') : ?>
 <p>
     <div>
-        <i>In "just redirect" mode, WebP Express is used just for redirecting jpeg and pngs to existing webp images in the same folder.<br>
-        This mode can for example be used in combination with Optimus HQ.</i>
+        <i>The "No conversion" mode is for scenarios where you are using another plugin for converting images and just want
+            to use WebP Express for redirection and/or altering HTML.</i>
     </div>
 </p>
 <?php endif; ?>

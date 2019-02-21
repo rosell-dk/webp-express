@@ -9,7 +9,7 @@ switch ($config['operation-mode']) {
     case 'no-varied-responses':
         echo 'Image types to convert';
         break;
-    case 'just-redirect':
+    case 'no-conversion':
         echo 'Image types to redirect';
         break;
     case 'tweaked':

@@ -154,7 +154,7 @@ class Config
                 'fail' => 'original',
                 'success-response' => 'original',
             ]);
-        } elseif ($config['operation-mode'] == 'just-redirect') {
+        } elseif ($config['operation-mode'] == 'no-conversion') {
 
             // TODO: Go through these...
 

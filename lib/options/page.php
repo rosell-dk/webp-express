@@ -194,15 +194,15 @@ if ($config['operation-mode'] != 'tweaked') {
 }
 
 include_once 'options/redirection-rules/redirection-rules.inc';
-if ($config['operation-mode'] != 'just-redirect') {
+if ($config['operation-mode'] != 'no-conversion') {
     include_once 'options/conversion-options/conversion-options.inc';
 }
-if ($config['operation-mode'] == 'just-redirect') {
+if ($config['operation-mode'] == 'no-conversion') {
     include_once 'options/conversion-options/destination-extension.inc';
 }
 include_once 'options/serve-options/serve-options.inc';
 
-if ($config['operation-mode'] != 'just-redirect') {
+if ($config['operation-mode'] != 'no-conversion') {
     include_once 'options/alter-html/alter-html.inc';
 }
 
@@ -218,7 +218,7 @@ if ($config['operation-mode'] == 'varied-responses') {
 }
 
 
-if ($config['operation-mode'] != 'just-redirect') {
+if ($config['operation-mode'] != 'no-conversion') {
     include_once 'options/web-service-options/web-service-options.inc';
 }
 

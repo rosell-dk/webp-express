@@ -24,7 +24,7 @@ wp_enqueue_script('daspopup');
 
 $config = Config::getConfigForOptionsPage();
 
-if (!(isset($config['operation-mode']) &&  $config['operation-mode'] == 'just-redirect')) {
+if (!(isset($config['operation-mode']) &&  $config['operation-mode'] == 'no-conversion')) {
 
     // Remove empty options arrays.
     // These cause trouble in json because they are encoded as [] rather than {}

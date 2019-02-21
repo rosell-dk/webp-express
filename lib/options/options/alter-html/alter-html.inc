@@ -12,7 +12,7 @@
 <?php
 else:
 
-    if ($config['operation-mode'] != 'just-redirect') {
+    if ($config['operation-mode'] != 'no-conversion') {
         include_once 'alter-html-options.inc';
     }
 endif;
