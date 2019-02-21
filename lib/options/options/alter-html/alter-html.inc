@@ -12,8 +12,8 @@
 <?php
 else:
 
-    if ($config['operation-mode'] != 'no-conversion') {
+    //if ($config['operation-mode'] != 'no-conversion') {
         include_once 'alter-html-options.inc';
-    }
+    //}
 endif;
 ?>

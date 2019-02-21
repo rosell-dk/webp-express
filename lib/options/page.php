@@ -146,8 +146,8 @@ function webpexpress_selectBoxOptions($selected, $options) {
     }
 }
 
-function webpexpress_radioButtons($optionName, $selected, $options, $helpTexts = []) {
-    echo '<ul style="margin-left: 20px; margin-top: 5px">';
+function webpexpress_radioButtons($optionName, $selected, $options, $helpTexts = [], $style='margin-left: 20px; margin-top: 5px') {
+    echo '<ul style="' . $style . '">';
     foreach ($options as $optionValue => $text) {
         $id = str_replace('-', '_', $optionName . '_' . $optionValue);
         echo '<li>';
@@ -193,32 +193,33 @@ if ($config['operation-mode'] != 'tweaked') {
     echo '<table class="form-table"><tbody>';
 }
 
-include_once 'options/redirection-rules/redirection-rules.inc';
-if ($config['operation-mode'] != 'no-conversion') {
-    include_once 'options/conversion-options/conversion-options.inc';
-}
 if ($config['operation-mode'] == 'no-conversion') {
     include_once 'options/conversion-options/destination-extension.inc';
-}
-include_once 'options/serve-options/serve-options.inc';
+    include_once 'options/redirection-rules/image-types.inc';
+    include_once 'options/redirection-rules/redirection-rules.inc';
 
-if ($config['operation-mode'] != 'no-conversion') {
+    // Cache control header
+    //include_once 'options/serve-options/serve-options.inc';
+
     include_once 'options/alter-html/alter-html.inc';
-}
+} else {
+    include_once 'options/redirection-rules/redirection-rules.inc';
+    include_once 'options/conversion-options/conversion-options.inc';
+    include_once 'options/conversion-options/destination-extension.inc';
+    include_once 'options/serve-options/serve-options.inc';
+    include_once 'options/alter-html/alter-html.inc';
 
-if ($config['operation-mode'] == 'no-varied-responses') {
-    include_once 'options/redirection-rules/enable-redirection-to-webp-realizer.inc';
+    if ($config['operation-mode'] == 'no-varied-responses') {
+        include_once 'options/redirection-rules/enable-redirection-to-webp-realizer.inc';
 
-    // ps: we call it "auto convert", when in this mode
-    include_once 'options/redirection-rules/enable-redirection-to-converter.inc';
-}
+        // ps: we call it "auto convert", when in this mode
+        include_once 'options/redirection-rules/enable-redirection-to-converter.inc';
+    }
 
-if ($config['operation-mode'] == 'varied-responses') {
-    include_once 'options/redirection-rules/enable-redirection-to-webp-realizer.inc';
-}
+    if ($config['operation-mode'] == 'varied-responses') {
+        include_once 'options/redirection-rules/enable-redirection-to-webp-realizer.inc';
+    }
 
-
-if ($config['operation-mode'] != 'no-conversion') {
     include_once 'options/web-service-options/web-service-options.inc';
 }
 

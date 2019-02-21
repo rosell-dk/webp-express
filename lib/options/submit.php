@@ -58,6 +58,20 @@ if ($_POST['operation-mode'] != 'no-varied-responses') {
     }
 }
 
+// Set options that are available in ALL operation modes
+
+// Alter HTML
+$config['alter-html'] = [];
+$config['alter-html']['enabled'] = isset($_POST['alter-html-enabled']);
+if ($_POST['alter-html-replacement'] == 'url') {
+    $config['alter-html']['only-for-webp-enabled-browsers'] = isset($_POST['alter-html-only-for-webp-enabled-browsers']);
+} else {
+    $config['alter-html']['only-for-webp-enabled-browsers'] = false;
+}
+$config['alter-html']['only-for-webps-that-exists'] = (!isset($_POST['alter-html-for-webps-that-has-yet-to-exist']));
+$config['alter-html']['replacement'] = $_POST['alter-html-replacement'];
+$config['alter-html']['hooks'] = $_POST['alter-html-hooks'];
+
 
 // Set options that are available in all operation modes, except the "no-conversion" mode
 if ($_POST['operation-mode'] != 'no-conversion') {
@@ -142,21 +156,8 @@ if ($_POST['operation-mode'] != 'no-conversion') {
             }
         }
     }
-
-    // Alter HTML
-
-    $config['alter-html'] = [];
-    $config['alter-html']['enabled'] = isset($_POST['alter-html-enabled']);
-    if ($_POST['alter-html-replacement'] == 'url') {
-        $config['alter-html']['only-for-webp-enabled-browsers'] = isset($_POST['alter-html-only-for-webp-enabled-browsers']);
-    } else {
-        $config['alter-html']['only-for-webp-enabled-browsers'] = false;
-    }
-    $config['alter-html']['only-for-webps-that-exists'] = (!isset($_POST['alter-html-for-webps-that-has-yet-to-exist']));
-    $config['alter-html']['replacement'] = $_POST['alter-html-replacement'];
-    $config['alter-html']['hooks'] = $_POST['alter-html-hooks'];
-
 }
+
 
 switch ($_POST['operation-mode']) {
     case 'varied-responses':
@@ -171,6 +172,12 @@ switch ($_POST['operation-mode']) {
             'destination-folder' => $_POST['destination-folder'],
             'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
             'enable-redirection-to-converter' => isset($_POST['enable-redirection-to-converter']),  // PS: its called "autoconvert" in this mode
+        ]);
+        break;
+    case 'no-conversion':
+        $config = array_merge($config, [
+            'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
+            'destination-extension' => $_POST['destination-extension'],
         ]);
         break;
     case 'tweaked':

@@ -53,8 +53,9 @@ $operationMode = $config['operation-mode'];
 <?php if ($config['operation-mode'] == 'no-conversion') : ?>
 <p>
     <div>
-        <i>The "No conversion" mode is for scenarios where you are using another plugin for converting images and just want
-            to use WebP Express for redirection and/or altering HTML.</i>
+        <i>The "No conversion" mode is for scenarios where you are using another plugin for converting images.
+        Perhaps the other plugin doesn't have the redirection or alter HTML feature, or perhaps it doesn't do it as well
+        as WebP Express does.<br>Btw: The two methods below works great in tandem.</i>
     </div>
 </p>
 <?php endif; ?>

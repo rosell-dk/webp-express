@@ -7,12 +7,16 @@ $cacheControlPublic = $config['cache-control-public'];
 ?>
 
 <tr>
-    <th scope="row">Cache-Control header <?php echo helpIcon(
-        '<p>Controls the cache-control header on successful conversion and direct redirection to converted ' .
-        'image in .htaccess. In case of convert failure, headers will be sent to prevent caching.</p>' .
-        '<p>PS: In order to set <i>stale-while-revalidate</i> and <i>stale-if-error directives<i>, you must ' .
-        'currently choose "Custom". <a target="_blank" href="https://www.fastly.com/blog/stale-while-revalidate-stale-if-error-available-today">It is a good idea to set these</a>.' .
-        '</p>');
+    <th scope="row">Cache-Control header <?php
+    if ($config['operation-mode'] == 'no-conversion') {
+        echo helpIcon('<p>Optionally set cache-control header for the internally redirected images (recommended!)</p>');
+    } else {
+        echo helpIcon('<p>Controls the cache-control header on successful conversion and direct redirection to converted ' .
+            'image in .htaccess. In case of convert failure, headers will be sent to prevent caching.</p>' .
+            '<p>PS: In order to set <i>stale-while-revalidate</i> and <i>stale-if-error directives<i>, you must ' .
+            'currently choose "Custom". <a target="_blank" href="https://www.fastly.com/blog/stale-while-revalidate-stale-if-error-available-today">It is a good idea to set these</a>.' .
+            '</p>');
+    }
     ?>
     </th>
     <td>

@@ -20,12 +20,12 @@
 }*/
 
 @media (min-width: 782px) {
-    #webpexpress_settings .form-table th {
+    #webpexpress_settings .form-table > tbody > tr > th {
         padding-top: 5px;
         padding-bottom: 5px;
         width: 200px;
     }
-    #webpexpress_settings .form-table td {
+    #webpexpress_settings .form-table > tbody > tr > td {
         padding-top: 1px;
         padding-bottom: 5px;
     }
@@ -430,4 +430,20 @@
 
 #alter_html_options_div > div {
     margin-top: 15px;
+}
+
+.form-table table th {
+    font-weight: unset;
+    padding: 5px 0px;
+    width: auto;
+}
+
+.form-table table td {
+    padding: 0 10px;
+    width: auto;
+}
+
+
+.form-table td input[type=checkbox] {
+    margin-top: 6px;
 }

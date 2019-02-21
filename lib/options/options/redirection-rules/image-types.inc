@@ -10,13 +10,19 @@ switch ($config['operation-mode']) {
         echo 'Image types to convert';
         break;
     case 'no-conversion':
-        echo 'Image types to redirect';
+        echo 'Image types to work on';
         break;
     case 'tweaked':
         echo 'Image types to send to the converter';
         break;
 }
-echo helpIcon('<p>Beware that the Gd conversion method cannot handle transparency for PNGs. PNG conversions havent been tested much yet. Please report any problems with PNG images <a target="_blank" href="https://github.com/rosell-dk/webp-convert/issues/42">here</a></p><p>The term "send" means an internal redirect on the server (not to be confused with an external redirect, such as a 301 or 302 response)</p>');
+if ($config['operation-mode'] == 'no-conversion') {
+    echo helpIcon('<p>Select which types of images you would like to redirect and/or have altered in the HTML</p>');
+
+} else {
+    echo helpIcon('<p>Beware that the Gd conversion method cannot handle transparency for PNGs. PNG conversions havent been tested much yet. Please report any problems with PNG images <a target="_blank" href="https://github.com/rosell-dk/webp-convert/issues/42">here</a></p><p>The term "send" means an internal redirect on the server (not to be confused with an external redirect, such as a 301 or 302 response)</p>');
+
+}
 echo '</th><td>';
 
 // bitmask
