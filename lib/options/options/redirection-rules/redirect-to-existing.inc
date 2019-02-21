@@ -17,9 +17,9 @@
         <?php
         if ($config['operation-mode'] == 'no-conversion') {
             // Cache control header
-            echo '<table style="margin-top: 10px">';
+            echo '<div id="cache_control_div"><table style="margin-top: 10px">';
             include_once __DIR__ . '/../serve-options/cache-control.inc';
-            echo '</table>';
+            echo '</table></div>';
         }
         ?>
     </td>
