@@ -47,10 +47,10 @@ function getSource($allowInQS, $allowInHeader) {
     }
 
     if ($allowInQS) {
-        if (isset($_GET['source'])) {
-            return $_GET['source'];     // No url decoding needed as $_GET is already decoded
-        } elseif (isset($_GET['xsource'])) {
-            return substr($_GET['xsource'], 1);
+        if (isset($_GET['xsource'])) {
+            return substr($_GET['xsource'], 1);         // No url decoding needed as $_GET is already decoded
+        } elseif (isset($_GET['source'])) {
+            return $_GET['source'];
         }
     }
 
