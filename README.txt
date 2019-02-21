@@ -37,6 +37,10 @@ The plugin builds on [WebPConvert](https://github.com/rosell-dk/webp-convert) an
 - Less bandwidth consumption - makes a huge difference in the parts of the world where the internet is slow and costly (you know, ~80% of the world population lives under these circumstances).
 - Currently ~73% of all traffic, and ~79% of mobile browsing traffic are done with browsers supporting webp. With Mozilla and Microsoft [finally on board](https://medium.com/@richard_90141/webp-image-support-an-8-year-saga-7aa2bedb8d02), these numbers are bound to increase. Check current numbers on [caniuse.com](https://caniuse.com/webp)).
 
+### Recent news
+Feb 2019: Multisite is now supported (0.12.0)
+Jan 2019: Plugin can now alter HTML (0.11.0)
+
 == Installation ==
 
 1. Upload the plugin files to the `/wp-content/plugins/webp-express` directory, or install the plugin through the WordPress plugins screen directly.
@@ -87,13 +91,9 @@ The redirect rules created in *.htaccess* are pointing to a PHP script. If you h
 *Note:*
 Do not simply remove the plugin without deactivating it first. Deactivation takes care of removing the rules in the *.htaccess* file. With the rules there, but converter gone, your Google Chrome visitors will not see any jpeg images.
 
-*Note:*
-The plugin has not been tested in multisite configurations. It's on the roadmap...
-
 == Limitations ==
 
 * The plugin does not work on Microsoft IIS server, nor in WAMP
-* The plugin has not been tested with multisite installation (it is on the roadmap!).
 
 == Supporting WebP Express ==
 Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue wasting time on this plugin:
@@ -562,7 +562,7 @@ I have only tested the above in *Varied image responses* mode, but it should als
 = When is feature X coming? / Roadmap =
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
 
-Here are my current plans ahead: The 0.12 release will allow webp for all browsers! - using [this wonderful javascript library](https://webpjs.appspot.com/). The 0.13 release will probably be multisite support, as this has been requested by many. 0.14 might be adding some diagnose tool – this should release some time spend in the forum. 0.54 could be focused on PNG. 0.16 might be displaying rules for NGINX. 0.17 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.18 might be a file manager-like interface for inspecting generated webp files. 0.19 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
+Here are my current plans ahead: 0.13 might be bulk conversion and addition of a diagnose tool – this should release some time spend in the forum. 0.14 could be focused on PNG. 0.15 might be displaying rules for NGINX. 0.16 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.17 might be a file manager-like interface for inspecting generated webp files. 0.18 might be an effort to allow webp for all browsers using [this javascript library](http://libwebpjs.hohenlimburg.org/v0.6.0/). Unfortunately, the javascript librare does not (currently) support srcset attributes, which is why I moved this item down the priority list. We need srcset to be supported for the feature to be useful. 0.19 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
