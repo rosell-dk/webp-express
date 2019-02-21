@@ -54,6 +54,14 @@ function getDestination($allowInQS, $allowInHeader) {
         }
     }
 
+    if ($allowInQS) {
+        if (isset($_GET['xdestination'])) {
+            return substr($_GET['xdestination'], 1);         // No url decoding needed as $_GET is already decoded
+        } elseif (isset($_GET['destination'])) {
+            return $_GET['destination'];     
+        }
+    }
+
     // Last resort is to use $_SERVER['REQUEST_URI'], well knowing that it does not give the
     // correct result in all setups (ie "folder method 1")
     $requestUriNoQS = explode('?', $_SERVER['REQUEST_URI'])[0];
