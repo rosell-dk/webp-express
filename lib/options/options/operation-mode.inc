@@ -13,7 +13,7 @@ $operationMode = $config['operation-mode'];
 <input type="hidden" name="operation-mode" id="operation_mode" value="<?php echo $operationMode ?>">
 <select name="change-operation-mode" id="change_operation_mode">
     <option value="varied-responses"<?php if ($operationMode == 'varied-responses') echo ' selected'?>>Varied image responses</option>
-    <option value="no-varied-responses"<?php if ($operationMode == 'no-varied-responses') echo ' selected'?>>CDN friendly</option>
+    <option value="cdn-friendly"<?php if ($operationMode == 'cdn-friendly') echo ' selected'?>>CDN friendly</option>
     <option value="no-conversion"<?php if ($operationMode == 'no-conversion') echo ' selected'?>>No conversion</option>
     <option value="tweaked"<?php if ($operationMode == 'tweaked') echo ' selected'?>>Tweaked</option>
 </select></h3>
@@ -27,7 +27,7 @@ $operationMode = $config['operation-mode'];
     </i>
 </div></p>
 <?php endif; ?>
-<?php if ($config['operation-mode'] == 'no-varied-responses') : ?>
+<?php if ($config['operation-mode'] == 'cdn-friendly') : ?>
 <p><div class="p">
     <i>In "CDN friendly" mode, a jpeg is always served as a jpeg.
         Instead of varying the image response, WebP Express alters the HTML for webp usage.</i>

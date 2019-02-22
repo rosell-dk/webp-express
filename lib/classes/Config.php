@@ -145,7 +145,7 @@ class Config
                 'fail' => 'original',
                 'success-response' => 'converted',
             ]);
-        } elseif ($config['operation-mode'] == 'no-varied-responses') {
+        } elseif ($config['operation-mode'] == 'cdn-friendly') {
             $config = array_merge($config, [
                 'only-redirect-to-converter-for-webp-enabled-browsers' => false,
                 'only-redirect-to-converter-on-cache-miss' => true,

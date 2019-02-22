@@ -28,7 +28,7 @@
             'Note that if you choose "Set", it will be a problem if you ie both have a logo.jpg and a logo.png in the same folder. ' .
             'If you are using WebP Express together with <a target="blank" href="https://wordpress.org/plugins/cache-enabler/">Cache enabler</a> ' .
             'or <a target="_blank" href="https://wordpress.org/plugins/shortpixel-image-optimiser/">Shortpixel</a>, set this option to Set"</p>' .
-            (($config['operation-mode'] == 'no-varied-responses') ? '<p>In this mode, the webp files will be stored in the same folder as the originals, except for images that are not inside the uploads folder (these are stored in wp-content/webp-express/webp-images/doc-root).</p>' : '') .
+            (($config['operation-mode'] == 'cdn-friendly') ? '<p>In this mode, the webp files will be stored in the same folder as the originals, except for images that are not inside the uploads folder (these are stored in wp-content/webp-express/webp-images/doc-root).</p>' : '') .
             '<p>Changing this option will cause existing webp images to be renamed (only those in the upload folder, and only those that has a ' .
             'corresponding source image)</p>'
         );

@@ -6,7 +6,7 @@ switch ($config['operation-mode']) {
     case 'varied-responses':
         echo 'Image types to work on';
         break;
-    case 'no-varied-responses':
+    case 'cdn-friendly':
         echo 'Image types to convert';
         break;
     case 'no-conversion':

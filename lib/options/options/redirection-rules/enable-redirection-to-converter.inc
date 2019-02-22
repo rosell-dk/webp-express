@@ -1,6 +1,6 @@
 <tr>
     <th scope="row">
-        <?php if ($config['operation-mode'] == 'no-varied-responses'): ?>
+        <?php if ($config['operation-mode'] == 'cdn-friendly'): ?>
             Convert non-existing webp-files upon request to original image  <span style="color:darkorange">(almost obsolete)<?php
                 echo helpIcon(
                     //'<p><em>The auto-convertion works this way: When an image is requested, a rule in the .htaccess detects if that image has been converted. If not, the request is redirected to the converter, which creates the webp and returns <em>the original</em> image</em></p>

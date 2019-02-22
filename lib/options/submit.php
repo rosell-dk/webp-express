@@ -40,7 +40,7 @@ $config = array_merge($config, [
 ]);
 
 // Set options that are available in all operation modes, except the "CDN friendly" mode
-if ($_POST['operation-mode'] != 'no-varied-responses') {
+if ($_POST['operation-mode'] != 'cdn-friendly') {
 
     $cacheControl = sanitize_text_field($_POST['cache-control']);
     $config['cache-control'] = $cacheControl;
@@ -173,7 +173,7 @@ switch ($_POST['operation-mode']) {
             'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
         ]);
         break;
-    case 'no-varied-responses':
+    case 'cdn-friendly':
         $config = array_merge($config, [
             'destination-folder' => $_POST['destination-folder'],
             'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),

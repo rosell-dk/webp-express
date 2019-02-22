@@ -234,7 +234,7 @@ if ($config['operation-mode'] == 'no-conversion') {
     include_once 'options/serve-options/serve-options.inc';
     include_once 'options/alter-html/alter-html.inc';
 
-    if ($config['operation-mode'] == 'no-varied-responses') {
+    if ($config['operation-mode'] == 'cdn-friendly') {
         include_once 'options/redirection-rules/enable-redirection-to-webp-realizer.inc';
 
         // ps: we call it "auto convert", when in this mode

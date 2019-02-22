@@ -11,6 +11,10 @@ function webpexpress_migrate7() {
     if ($config['operation-mode'] == 'just-redirect') {
         $config['operation-mode'] = 'no-conversion';
     }
+    if ($config['operation-mode'] == 'no-varied-responses') {
+        $config['operation-mode'] = 'cdn-friendly';
+    }
+
 
     if (Config::saveConfigurationFileAndWodOptions($config)) {
 
@@ -24,13 +28,13 @@ function webpexpress_migrate7() {
                 Messenger::addMessage(
                     'info',
                     'In WebP Express 0.12, the <i>Alter HTML</i> option is no longer in beta. ' .
-                        'You should consider to <a href="' . Paths::getSettingsUrl() . '">activate it</a>. It works great in <i>Varied Image Responses</i> mode too'
+                        'You should consider to go and <a href="' . Paths::getSettingsUrl() . '">activate it</a>. It works great in <i>Varied Image Responses</i> mode too'
                 );
             } else {
                 Messenger::addMessage(
                     'info',
                     'In WebP Express 0.12, Alter HTML is no longer in beta. ' .
-                        'Now would be a good time to <a href="' . Paths::getSettingsUrl() . '">activate it</a> it!'
+                        'Now would be a good time to <a href="' . Paths::getSettingsUrl() . '">go and activate it!</a>'
                 );
             }
         }

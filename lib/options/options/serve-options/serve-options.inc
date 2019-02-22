@@ -14,7 +14,7 @@
 </fieldset>
 <?php
 else:
-    if ($config['operation-mode'] != 'no-varied-responses') {
+    if ($config['operation-mode'] != 'cdn-friendly') {
         include_once 'cache-control.inc';
     }
 endif;
