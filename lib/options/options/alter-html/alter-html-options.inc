@@ -60,8 +60,7 @@
                         'Only do the replacements in webp enabled browsers',
                         'If you enable this option, the replacements will only be made, when the request is from ' .
                             'a browser that supports webp. Note that this will not play well with plugins that caches ' .
-                            'the page. Instead of enabling this option, you should consider using the Cache Enabler plugin, ' .
-                            'which does the same, but with page caching.'
+                            'the page. To overcome that, you can use the Cache Enabler plugin, '
                     );
                     ?>
                 </div>

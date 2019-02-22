@@ -498,3 +498,40 @@ fieldset.block div.p {
     visibility: hidden;
     position: absolute;
 }
+
+.form-table h4 {
+    margin-bottom: 0;
+    text-decoration: underline;
+}
+
+table.designed {
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+table.designed th {
+    font-weight: bold;
+    background-color: #fff;
+}
+table.designed td,
+table.designed th {
+    text-align: left;
+    padding: 7px 14px;
+    border: 1px solid #333;
+    vertical-align: top;
+    font-size: 12px;
+}
+table.designed tr:nth-child(odd) > td {
+    background-color: #eee;
+}
+table.designed tr:nth-child(even) > td {
+    background-color: #ddd;
+}
+table.designed th:first-child {
+    border-left-width: 0;
+}
+table.designed tr:first-child > th {
+    border-top-width: 0;
+}
+table.designed tr:first-child > th:last-child {
+    border-right-width: 0;
+}
