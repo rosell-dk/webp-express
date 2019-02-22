@@ -68,13 +68,19 @@ if ($_POST['alter-html-replacement'] == 'url') {
 } else {
     $config['alter-html']['only-for-webp-enabled-browsers'] = false;
 }
-$config['alter-html']['only-for-webps-that-exists'] = (!isset($_POST['alter-html-for-webps-that-has-yet-to-exist']));
+if ($_POST['operation-mode'] != 'no-conversion') {
+    $config['alter-html']['only-for-webps-that-exists'] = (!isset($_POST['alter-html-for-webps-that-has-yet-to-exist']));
+} else {
+    $config['alter-html']['only-for-webps-that-exists'] = true;
+}
+
 $config['alter-html']['replacement'] = $_POST['alter-html-replacement'];
 $config['alter-html']['hooks'] = $_POST['alter-html-hooks'];
 
 
 // Set options that are available in all operation modes, except the "no-conversion" mode
 if ($_POST['operation-mode'] != 'no-conversion') {
+
 
     $config['enable-redirection-to-webp-realizer'] = isset($_POST['enable-redirection-to-webp-realizer']);
 

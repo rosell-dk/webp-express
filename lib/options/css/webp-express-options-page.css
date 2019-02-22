@@ -447,3 +447,54 @@
 .form-table td input[type=checkbox] {
     margin-top: 6px;
 }
+
+.form-table h2 {
+    /*font-size: 1.6em;*/
+    text-transform: uppercase;
+    color: #222;
+}
+.form-table th[colspan='2'] {
+    font-weight: normal;
+    font-size: 14px;
+}
+.form-table th.header-section h2 {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+.form-table th.header-section h2 + p {
+    margin-top: 10px;
+}
+.form-table th.header-section p,
+.form-table th.header-section h2,
+fieldset.block p,
+fieldset.block div.p {
+    max-width: 750px;
+}
+
+.toggler.effect-slider {
+    overflow-y: hidden;
+    transition: all 0.3s ease-in-out;
+    /*transition: all 0.5s cubic-bezier(0, 1, 0.5, 1);*/
+}
+.toggler.effect-slider.closed {
+    transition: all 0.5s cubic-bezier(0, 1, 0.5, 1);
+    max-height: 10px !important;
+}
+
+.toggler.effect-opacity.closed {
+    opacity: 0.5;
+    pointer-events: none;
+    font-weight: 300 !important;
+}
+.form-table .toggler.effect-opacity.closed th {
+    font-weight: 400 !important;
+}
+
+.toggler.effect-visibility {
+    /*position: static;
+    visibility: inherit;*/
+}
+.toggler.effect-visibility.closed {
+    visibility: hidden;
+    position: absolute;
+}

@@ -12,9 +12,11 @@
             '</style>' .
             '<table id="plugin-conventions"><tbody>' .
             '<tr><th>Plugin</td><th>Convention</th></tr>' .
-            '<tr><td><a target="blank" href="https://wordpress.org/plugins/cache-enabler/">Cache enabler</a></td><td>Replaces extension</td></tr>' .
+            //'<tr><td><a target="blank" href="https://wordpress.org/plugins/cache-enabler/">Cache enabler</a></td><td>Replaces extension</td></tr>' .
             '<tr><td><a target="_blank" href="https://wordpress.org/plugins/shortpixel-image-optimiser/">Shortpixel</a></td><td>Replaces extension</td></tr>' .
             '<tr><td><a target="_blank" href="https://wordpress.org/plugins/ewww-image-optimizer/">Ewww</a></td><td>Appends extension</td></tr>' .
+            '<tr><td><a target="_blank" href="https://wordpress.org/plugins/optimus/">Optimus</a></td><td>TODO...</td></tr>' .
+            // todo:
             '</tbody></table>'
         );
     } else {
@@ -45,7 +47,7 @@
             ], 'margin-left: 0px; margin-top: 5px');
 
         } else {
-            echo '<select name="destination-extension">';
+            echo '<select name="destination-extension" id="destination_extension">';
             webpexpress_selectBoxOptions($config['destination-extension'], [
                 'append' => 'Append ".webp"',
                 'set' => 'Set to ".webp"',

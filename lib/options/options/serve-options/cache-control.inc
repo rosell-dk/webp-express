@@ -6,7 +6,7 @@ $cacheControlMaxAge = $config['cache-control-max-age'];
 $cacheControlPublic = $config['cache-control-public'];
 ?>
 
-<tr>
+<tr id="cache_control_div">
     <th scope="row">Cache-Control header <?php
     if ($config['operation-mode'] == 'no-conversion') {
         echo helpIcon('<p>Optionally set cache-control header for the internally redirected images (recommended!)</p>');

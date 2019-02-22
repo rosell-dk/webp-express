@@ -1,8 +1,8 @@
 <tr>
-    <th scope="row">Alter HTML? <span style="color:darkorange">(beta)</span><?php echo helpIcon(
+    <th scope="row">Alter HTML?</span><?php echo helpIcon(
         '<p>Alter HTML to either use picture tag syntax for pointing to webp versions or point directly to webps.</p>' .
-        '<p>The feature is new in 0.11.0. It is marked as beta because of that, but it has been tested on many setups and with ' .
-        'many test cases, so it should be quite stable.</p>' .
+        '<p>Pro picture tag syntax: The browser selects the webp if it supports it.</p>' .
+        '<p>Pro image urls: Also works on inline styles</p>' .
         (($config['operation-mode'] == 'varied-responses') ?
             '<p>You do not need to enable this in <i>Varied image responses</i> operation mode, but enabling it has some benefits: ' .
             'Caching is improved if you are on a CDN as the webp images that are requested directly does not need to be keyed by the Accept header. ' .
@@ -18,6 +18,10 @@
             value="true"
             type="checkbox"
         >
+    </td>
+  </tr>
+  <tr>
+      <th scope="row" colspan=2>
         <div id="alter_html_options_div">
             <div>
                 <label>What to replace:</label>
@@ -62,26 +66,24 @@
                     ?>
                 </div>
             </div>
-            <div>
-                <div style="margin-left: 11px">
-                    <?php
-                    webpexpress_checkbox(
-                        'alter-html-for-webps-that-has-yet-to-exist',
-                        (!$config['alter-html']['only-for-webps-that-exists']),
-                        'Reference webps that hasn\'t been converted yet',
-                        'If you enable this option, there will be references to webp files that doesnt exist yet. ' .
-                            'And that will be ok! - Just make sure to enable the option to convert missing webp files ' .
-                            'upon request'
-                    );
-                    ?>
-                </div>
-            </div>
+            <?php
+            if ($config['operation-mode'] != 'no-conversion') {
+                echo '<div><div style="margin-left: 11px">';
+                webpexpress_checkbox(
+                    'alter-html-for-webps-that-has-yet-to-exist',
+                    'Reference webps that hasn\'t been converted yet',
+                    'If you enable this option, there will be references to webp files that doesnt exist yet. ' .
+                        'And that will be ok! - Just make sure to enable the option to convert missing webp files ' .
+                        'upon request'
+                );
+                echo '</div></div>';
+            }
+            ?>
             <div>
                 <label>Where to replace: <?php echo helpIcon(
                     '<p></p>',
                     'no-margin-left set-margin-right');
                 ?></label>
-
                 <?php
                 webpexpress_radioButtons('alter-html-hooks', $config['alter-html']['hooks'], [
                     'content-hooks' => 'Use content filtering hooks (the_content, the_excerpt, etc)',
@@ -94,5 +96,5 @@
 
         </div>
 
-    </td>
+    </th>
 </tr>

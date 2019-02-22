@@ -194,12 +194,37 @@ if ($config['operation-mode'] != 'tweaked') {
 }
 
 if ($config['operation-mode'] == 'no-conversion') {
+
+    // General
+    echo '<tr><th colspan=2>';
+    echo '<h2>General</h2>';
+    echo '</th></tr>';
     include_once 'options/conversion-options/destination-extension.inc';
     include_once 'options/redirection-rules/image-types.inc';
-    include_once 'options/redirection-rules/redirection-rules.inc';
 
-    // Cache control header
-    //include_once 'options/serve-options/serve-options.inc';
+    // Redirection
+    echo '<tr><th colspan=2 class="header-section">';
+    echo '<h2>Redirecting jpeg/png to webp (varied image response)</h2>';
+    echo '<p>Enabling this adds rules to the <i>.htaccess</i> that internally redirects jpg/pngs to webp ';
+    echo 'and sets the <i>Vary:Accept</i> header. ';
+    echo '<i>Beware that special attention is needed if you are using a CDN.</i></p>';
+    echo '</th></tr>';
+    include_once 'options/redirection-rules/redirection-rules.inc';
+    include_once 'options/serve-options/cache-control.inc';
+
+    // Html altering
+    echo '<tr><th colspan=2 class="header-section">';
+    echo '<h2>Html altering</h2>';
+    echo '<p>Enabling this alters the HTML code such that webp images are served to browsers that supports webp. ';
+    echo 'There are two distinct methods. Using picture tags works great with page caching but only replaces ';
+    echo 'images found in &lt;img&gt; tags. Replacing image URLs works on more images ';
+    echo '&ndash;including inline styles and lazy load attributes set ';
+    echo 'on &lt;div&gt; or &lt;li&gt; tags &ndash; but page caching can only be achieved by also using the Cache Enabler ';
+    echo 'plugin (Cache Enabler works without WebP Express, but the HTML altering have ';
+    echo '<a target="_blank" href="https://regexr.com/46isf">problems and limitations</a>, so ';
+    echo 'I recommend using WebP Express for the altering of image URLs and Cache Enabler for the page caching)';
+    echo '</p>';
+    echo '</th></tr>';
 
     include_once 'options/alter-html/alter-html.inc';
 } else {

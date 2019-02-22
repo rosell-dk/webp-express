@@ -19,7 +19,7 @@ $operationMode = $config['operation-mode'];
 </select></h3>
 
 <?php if ($config['operation-mode'] == 'varied-responses') : ?>
-<p><div>
+<p><div class="p">
     <i>In the "Varied image responses" mode, WebP Express creates redirection rules for images, such that a request for a jpeg will
         result in a webp &ndash; but only if the request comes from a webp-enabled browser.
         If a webp already exists, it is served immediately. Otherwise it is converted and then served.
@@ -28,7 +28,7 @@ $operationMode = $config['operation-mode'];
 </div></p>
 <?php endif; ?>
 <?php if ($config['operation-mode'] == 'no-varied-responses') : ?>
-<p><div>
+<p><div class="p">
     <i>In "CDN friendly" mode, a jpeg is always served as a jpeg.
         Instead of varying the image response, WebP Express alters the HTML for webp usage.</i>
     <div class="help">?<div class="popup">
@@ -52,10 +52,10 @@ $operationMode = $config['operation-mode'];
 <?php endif; ?>
 <?php if ($config['operation-mode'] == 'no-conversion') : ?>
 <p>
-    <div>
+    <div class="p">
         <i>The "No conversion" mode is for scenarios where you are using another plugin for converting images.
         Perhaps the other plugin doesn't have the redirection or alter HTML feature, or perhaps it doesn't do it as well
-        as WebP Express does.<br>Btw: The two methods below works great in tandem.</i>
+        as WebP Express does. PS: The two methods below works great in tandem.</i>
     </div>
 </p>
 <?php endif; ?>
