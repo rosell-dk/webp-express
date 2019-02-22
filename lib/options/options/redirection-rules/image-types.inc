@@ -3,7 +3,7 @@
 // ------------
 echo '<tr><th scope="row">';
 switch ($config['operation-mode']) {
-    case 'varied-responses':
+    case 'varied-image-responses':
         echo 'Image types to work on';
         break;
     case 'cdn-friendly':

@@ -665,11 +665,25 @@ class HTAccess
 
     public static function testLinks($config) {
         if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
-            if ($config['image-types'] != 0) {
-                $webpExpressRoot = Paths::getPluginUrlPath();
-                return '<br>' .
-                    '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug&time=' . time() . '" target="_blank">Convert test image (show debug)</a><br>' .
-                    '<a href="/' . $webpExpressRoot . '/test/test.jpg?' . time() . '" target="_blank">Convert test image</a><br>';
+            if ($config['operation-mode'] != 'no-conversion') {
+                if ($config['image-types'] != 0) {
+                    $webpExpressRoot = Paths::getPluginUrlPath();
+                    if ($config['enable-redirection-to-converter']) {
+                        $links = '<br>';
+                        $links .= '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug&time=' . time() . '" target="_blank">Convert test image (show debug)</a><br>';
+                        $links .= '<a href="/' . $webpExpressRoot . '/test/test.jpg?' . time() . '" target="_blank">Convert test image</a><br>';
+                    }
+                    // TODO: webp-realizer test links (to missing webp)
+                    if ($config['enable-redirection-to-webp-realizer']) {
+                    }
+
+                    // TODO: test link for testing redirection to existing
+                    if ($config['redirect-to-existing-in-htaccess']) {
+
+                    }
+
+                    return $links;
+                }
             }
         }
         return '';

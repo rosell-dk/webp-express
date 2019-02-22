@@ -325,7 +325,7 @@ if (!$result['saved-both-config']) {
 
             Messenger::addMessage(
                 'success',
-                'Configuration saved. Rewrite rules were saved to your <i>.htaccess</i> in your <i>' . $mainResult . '</i> folder' .
+                'Configuration saved.<br>Rewrite rules were saved to your <i>.htaccess</i> in your <i>' . $mainResult . '</i> folder' .
                     (Paths::isWPContentDirMoved() ? ' (which you moved, btw)' : '') .
                     ($savedToPluginsToo ? ' as well as in your <i>plugins</i> folder' : '') .
                     ((Paths::isWPContentDirMoved() && $savedToPluginsToo) ? ' (you moved that as well!)' : '.') .
