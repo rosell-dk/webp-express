@@ -103,7 +103,7 @@ class Config
                 'enabled' => false,
                 'replacement' => 'picture',          // "picture" or "url"
                 'hooks' => 'ob',             // "content-hooks" or "ob"
-                'only-for-webp-enabled-browsers' => false,     // If true, there will be two HTML versions of each page
+                'only-for-webp-enabled-browsers' => true,     // If true, there will be two HTML versions of each page
                 'only-for-webps-that-exists' => false,
             ],
 
