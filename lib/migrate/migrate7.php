@@ -14,6 +14,9 @@ function webpexpress_migrate7() {
     if ($config['operation-mode'] == 'no-varied-responses') {
         $config['operation-mode'] = 'cdn-friendly';
     }
+    if ($config['operation-mode'] == 'varied-responses') {
+        $config['operation-mode'] = 'varied-image-responses';
+    }
 
 
     if (Config::saveConfigurationFileAndWodOptions($config)) {

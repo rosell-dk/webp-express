@@ -69,7 +69,7 @@ class Config
 
         return [
 
-            'operation-mode' => 'varied-responses',
+            'operation-mode' => 'varied-image-responses',
 
             // redirection rules
             'enable-redirection-to-converter' => true,
@@ -132,10 +132,10 @@ class Config
     public static function applyOperationMode($config)
     {
         if (!isset($config['operation-mode'])) {
-            $config['operation-mode'] = 'varied-responses';
+            $config['operation-mode'] = 'varied-image-responses';
         }
 
-        if ($config['operation-mode'] == 'varied-responses') {
+        if ($config['operation-mode'] == 'varied-image-responses') {
             $config = array_merge($config, [
                 'enable-redirection-to-converter' => true,
                 'only-redirect-to-converter-for-webp-enabled-browsers' => true,

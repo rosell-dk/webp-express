@@ -3,7 +3,7 @@
         '<p>Alter HTML to either use picture tag syntax for pointing to webp versions or point directly to webps.</p>' .
         '<p>Pro picture tag syntax: The browser selects the webp if it supports it.</p>' .
         '<p>Pro image urls: Also works on inline styles</p>' .
-        (($config['operation-mode'] == 'varied-responses') ?
+        (($config['operation-mode'] == 'varied-image-responses') ?
             '<p>You do not need to enable this in <i>Varied image responses</i> operation mode, but enabling it has some benefits: ' .
             'Caching is improved if you are on a CDN as the webp images that are requested directly does not need to be keyed by the Accept header. ' .
             'Also, when a user downloads an image, it will have the correct extension.</p>' : '')

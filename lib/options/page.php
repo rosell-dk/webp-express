@@ -241,7 +241,7 @@ if ($config['operation-mode'] == 'no-conversion') {
         include_once 'options/redirection-rules/enable-redirection-to-converter.inc';
     }
 
-    if ($config['operation-mode'] == 'varied-responses') {
+    if ($config['operation-mode'] == 'varied-image-responses') {
         include_once 'options/redirection-rules/enable-redirection-to-webp-realizer.inc';
     }
 

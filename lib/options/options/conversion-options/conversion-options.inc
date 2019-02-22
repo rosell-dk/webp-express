@@ -20,7 +20,7 @@ else:
     include_once 'metadata.inc';
     include_once 'converters.inc';
 
-    if (($config['operation-mode'] == 'varied-responses') || ($config['operation-mode'] == 'cdn-friendly')) {
+    if (($config['operation-mode'] == 'varied-image-responses') || ($config['operation-mode'] == 'cdn-friendly')) {
         include_once 'destination-folder.inc';
     }
     include_once 'destination-extension.inc';

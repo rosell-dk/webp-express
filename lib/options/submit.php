@@ -166,7 +166,7 @@ if ($_POST['operation-mode'] != 'no-conversion') {
 
 
 switch ($_POST['operation-mode']) {
-    case 'varied-responses':
+    case 'varied-image-responses':
         $config = array_merge($config, [
             'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
             'destination-folder' => $_POST['destination-folder'],
