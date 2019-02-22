@@ -224,6 +224,7 @@ if ($config['operation-mode'] == 'no-conversion') {
     echo '<a target="_blank" href="https://regexr.com/46isf">problems and limitations</a>, so ';
     echo 'I recommend using WebP Express for the altering of image URLs and Cache Enabler for the page caching)';
     echo '</p>';
+    echo '<p>Note: The altering only happens for images that are converted and which exists in the same folder as the source with the extension selected in the GENERAL section.</p>';
     echo '</th></tr>';
 
     include_once 'options/alter-html/alter-html.inc';
