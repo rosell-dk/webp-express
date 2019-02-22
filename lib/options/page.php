@@ -220,7 +220,8 @@ if ($config['operation-mode'] == 'no-conversion') {
         Enabling this alters the HTML code such that webp images are served to browsers that supports webp.
         It is recommended to enable this even when the redirection is also enabled, so redirection is only used for
         those images that cannot be replaced in HTML. Two reasons for that. Firstly, to avoid visitors downloads images with
-        wrong extensions. Secondly, the webp images are cached more efficiently because we do not add a Vary:Accept header to them.
+        wrong extensions. Secondly, the webp images that are referenced directly are cached more efficiently than those which
+        are a result of a varied response. Adding a <i>Vary:Accept</i> header has a cost.
     </p>
     <p>
         Two distinct methods for altering HTML are supported. Here is a comparison chart:
