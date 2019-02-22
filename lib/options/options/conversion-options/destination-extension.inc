@@ -15,7 +15,7 @@
             //'<tr><td><a target="blank" href="https://wordpress.org/plugins/cache-enabler/">Cache enabler</a></td><td>Replaces extension</td></tr>' .
             '<tr><td><a target="_blank" href="https://wordpress.org/plugins/shortpixel-image-optimiser/">Shortpixel</a></td><td>Replaces extension</td></tr>' .
             '<tr><td><a target="_blank" href="https://wordpress.org/plugins/ewww-image-optimizer/">Ewww</a></td><td>Appends extension</td></tr>' .
-            '<tr><td><a target="_blank" href="https://wordpress.org/plugins/optimus/">Optimus</a></td><td>TODO...</td></tr>' .
+            '<tr><td><a target="_blank" href="https://optimus.io/en/">Optimus HQ</a></td><td>Replaces extension</td></tr>' .
             // todo:
             '</tbody></table>'
         );

@@ -328,6 +328,7 @@ location ~* ^/wp-content/.*\.webp$ {
 Discussion on this topic [here](https://wordpress.org/support/topic/nginx-rewrite-rules-4/)
 And here: https://github.com/rosell-dk/webp-express/issues/166
 
+Here are rules if you need to replace the file extension with ".webp" rather than appending ".webp" to it: https://www.keycdn.com/support/optimus/configuration-to-deliver-webp
 
 ### I am on a WAMP stack
 It has been reported that WebP Express *almost* works on WAMP stack (Windows, Apache, MySQL, PHP). I'd love to debug this, but do not own a Windows server or access to one... Can you help?
