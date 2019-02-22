@@ -234,9 +234,15 @@ if ($config['operation-mode'] == 'no-conversion') {
         <tr>
             <th>How it works</th>
             <td>
-                It replaces &lt;img&gt; tags with  &lt;picture&gt; tags, adding two source elements - one for the original image(s), and one
-                for the webp image(s). We are using <a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this library</a>.
-                You can visit it for more information.
+                <p>
+                    It replaces &lt;img&gt; tags with  &lt;picture&gt; tags, adding two &lt;source&gt; tags - one for the original image(s), and one
+                    for the webp image(s).
+                    Browsers that supports webp picks the &lt;source&gt; tag with <i>type</i> attribute set to "image/webp".
+                </p>
+                <p>
+                    We are using <a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this library</a>.
+                    You can visit it for more information.
+                </p>
             </td>
             <td>
                 It replaces any image url it can find.
@@ -248,19 +254,22 @@ if ($config['operation-mode'] == 'no-conversion') {
             <th>Page caching</th>
             <td>Works great with page caching, because all browsers are served the same HTML</td>
             <td>
-                Because the HTML varies with the webp-capability of the browser, page caching is tricky.
-                However, it can be achieved with the wonderful <i>Cache Enabler</i> plugin.<br><br>
-                <span style="font-size:10px">Note: Cache Enabler works without WebP Express, but the HTML altering have
-                <a target="_blank" href="https://regexr.com/46isf">problems and limitations</a>, so the recommended setup
-                is using WebP Express for the HTML altering of image URLs and <i>Cache Enabler</i> for the page caching.
-                WebP Express does the replacing before Cache Enabler, so no special action is needed in order to do that.
-                </span>
+                <p>
+                    As the HTML varies with the webp-capability of the browser, page caching is tricky.
+                    However, it can be achieved with the wonderful <i>Cache Enabler</i> plugin, which maintains two cached versions of each page.<br><br>
+                    <span style="font-size:10px">
+                        Note: Cache Enabler works without WebP Express, but the HTML altering have
+                        <a target="_blank" href="https://regexr.com/46isf">problems and limitations</a>, so the recommended setup
+                        is using WebP Express for the HTML altering of image URLs and <i>Cache Enabler</i> for the page caching.
+                        WebP Express does the replacing before Cache Enabler, so no special action is needed in order to do that.
+                    </span>
+                </p>
             </td>
         </tr>
         <tr>
-            <th>Styling and javascript</th>
+            <th><nobr>Styling and javascript</nobr></th>
             <td>May break because of changed HTML structure</td>
-            <td>Works just fine</td>
+            <td>No problems</td>
         </tr>
         <tr>
             <th>Comprehensiveness</th>
