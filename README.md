@@ -564,10 +564,13 @@ The following lazy load plugins/frameworks has been tested and works with *WebP 
 I have only tested the above in *Varied image responses* mode, but it should also work in *CDN friendly* mode. Both *Alter HTML* options have been designed to work with standard lazy load attributes.
 
 ### Can I make an exceptions for some images?
-There are cases where you need to serve a jpeg or png.
+There can be instances where you actually need to serve a jpeg or png. For example if you are demonstrating how a jpeg looks using some compression settings. It is possible to bypass both the redirection and the HTML altering for certain images. Here is how:
 
-To bypass the *redirection*, you can add the following in the `.htaccess` where *WebP Express* has placed its rules. This is usually in the `wp-content` folder.
-The rules needs to be added *above* the rules inserted by *WebP Express*.
+*Alter HTML*
+Alter HTML is programmed not to substitute image URLs with query strings (better safe than sorry). You can exploit that and simply add ie ?original to the image URLs in question.
+
+*Redirection*
+To bypass the *redirection*, you can add the following in the `.htaccess` where *WebP Express* has placed its rules (this is usually in the `wp-content` folder). The rules needs to be added *above* the rules inserted by *WebP Express*.
 
 ```
 RewriteCond %{QUERY_STRING} original
@@ -583,9 +586,6 @@ RewriteRule ^uploads/2019/02/example-of-jpg-compressed-to-80\.jpg - [L]
 RewriteRule ^uploads/2019/02/image2\.jpg - [L]
 RewriteRule . - [L]
 ```
-
-There is currently no way to bypass the HTML altering for certain images.
-
 If you got any further questions, look at, or comment on [this topic](https://wordpress.org/support/topic/can-i-make-an-exception-for-specific-post-image/)
 
 ### When is feature X coming? / Roadmap
