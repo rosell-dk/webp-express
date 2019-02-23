@@ -445,7 +445,7 @@ To make *WebP Express* work on a free Cloudflare account, you have the following
 
 2. You can set up another CDN (on another provider), which you just use for handling the images. You need to configure that CDN to forward the *Accept header*. You also need to install a Wordpress plugin that points images to that CDN.
 
-3. You can switch operation mode to "Just convert" and use either Cache Enabler or Shortpixel to modify the HTML. See the follwoning FAQ items
+3. You can switch operation mode to "CDN friendly" and use HTML altering.
 
 ### WebP Express / ShortPixel setup
 Here is a recipe for using WebP Express together with ShortPixel, such that WebP Express generates the webp's, and ShortPixel only is used to create `<picture>` tags, when it detects a webp image in the same folder as an original.
@@ -560,6 +560,31 @@ The following lazy load plugins/frameworks has been tested and works with *WebP 
 - [Lazy Load by WP Rocket](https://wordpress.org/plugins/rocket-lazy-load/)
 
 I have only tested the above in *Varied image responses* mode, but it should also work in *CDN friendly* mode. Both *Alter HTML* options have been designed to work with standard lazy load attributes.
+
+= Can I make an exceptions for some images? =
+There are cases where you need to serve a jpeg or png.
+
+To bypass the *redirection*, you can add the following in the `.htaccess` where *WebP Express* has placed its rules. This is usually in the `wp-content` folder.
+The rules needs to be added *above* the rules inserted by *WebP Express*.
+
+`
+RewriteCond %{QUERY_STRING} original
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule . - [L]
+`
+With those rules in place, you can add "?original" to the URLs of those images that you want to keep serving as jpg / png.
+
+Alternatively, you can specify the filenames individually in the `.htaccess`:
+
+`
+RewriteRule ^uploads/2019/02/example-of-jpg-compressed-to-80\.jpg - [L]
+RewriteRule ^uploads/2019/02/image2\.jpg - [L]
+RewriteRule . - [L]
+`
+
+There is currently no way to bypass the HTML altering for certain images.
+
+If you got any further questions, look at, or comment on [this topic](https://wordpress.org/support/topic/can-i-make-an-exception-for-specific-post-image/)
 
 = When is feature X coming? / Roadmap =
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
