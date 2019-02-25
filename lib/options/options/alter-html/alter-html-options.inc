@@ -130,6 +130,7 @@
                 echo '<div><div style="margin-left: 11px">';
                 webpexpress_checkbox(
                     'alter-html-for-webps-that-has-yet-to-exist',
+                    (!$config['alter-html']['only-for-webps-that-exists']),
                     'Reference webps that hasn\'t been converted yet',
                     'If you enable this option, there will be references to webp files that doesnt exist yet. ' .
                         'And that will be ok! - Just make sure to enable the option to convert missing webp files ' .
@@ -138,7 +139,7 @@
                 echo '</div></div>';
             }
             ?>
-            <div>
+            <div style="margin-top: 20px">
                 <label>Where to replace: <?php echo helpIcon(
                     '<p></p>',
                     'no-margin-left set-margin-right');
