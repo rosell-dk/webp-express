@@ -19,10 +19,10 @@ class Option
     public static function updateOption($optionName, $value, $autoload = null)
     {
         if (Multisite::isNetworkActivated()) {
-            error_log('update option (network):' . $optionName . ':' . $value);
+            //error_log('update option (network):' . $optionName . ':' . $value);
             return update_site_option($optionName, $value);
         } else {
-            error_log('update option:' . $optionName . ':' . $value);
+            //error_log('update option:' . $optionName . ':' . $value);
             return update_option($optionName, $value, $autoload);
         }
     }
