@@ -25,8 +25,8 @@
                 case 'tweaked':
                     include_once 'enable-redirection-to-converter.inc';
                     include_once 'only-redirect-to-converter-for-webp-enabled-browsers.inc';
-                    include_once 'do-not-pass-source-path-in-query-string.inc';
                     include_once 'only-redirect-to-converter-on-cache-miss.inc';
+                    include_once 'do-not-pass-source-path-in-query-string.inc';
                     include_once 'redirect-to-existing.inc';
                     include_once 'enable-redirection-to-webp-realizer.inc';
                     break;
