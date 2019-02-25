@@ -76,10 +76,11 @@ class Config
             'image-types' => 1,
             'only-redirect-to-converter-on-cache-miss' => false,
             'only-redirect-to-converter-for-webp-enabled-browsers' => true,
-            'do-not-pass-source-in-query-string' => false,
+            'do-not-pass-source-in-query-string' => false,      // In 0.13 we can remove this. migration7.php depends on it
             'redirect-to-existing-in-htaccess' => true,
             'forward-query-string' => false,
             'enable-redirection-to-webp-realizer' => true,
+            'method-for-passing-source' => 'request-header',
 
             // conversion options
             'converters' => [],
@@ -194,11 +195,14 @@ class Config
         if (!isset($config['web-service'])) {
             $config['web-service'] = [];
         }
+        if (!is_array($config['web-service']['whitelist'])) {
+            $config['web-service']['whitelist'] = [];
+        }
         if (($config['cache-control'] == 'set') && ($config['cache-control-max-age'] == '')) {
             $config['cache-control-max-age'] = 'one-week';
         }
 
-        if ($config['converters'] == null) {
+        if (!is_array($config['converters'])) {
             $config['converters'] = [];
         }
 
@@ -254,6 +258,7 @@ class Config
                 $config['converters'] = array_merge($resultPart1, $resultPart2);
             }
         }
+
 
         return $config;
     }

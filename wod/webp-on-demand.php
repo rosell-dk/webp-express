@@ -46,6 +46,15 @@ function getSource($allowInQS, $allowInHeader) {
         }
     }
 
+    // TODO:
+    // Perhaps it is ok to always allow query string.
+    // After all, we have tested environment and header.
+    // But the question is if we should also test request uri first?
+    // I guess like this:
+    // - If query string is selected, use that method first
+    // - Otherwise use that method last - even after trying request uri
+
+    // the other Either Nginx or if 'method-for-passing-source' is set to
     if ($allowInQS) {
         if (isset($_GET['xsource'])) {
             return substr($_GET['xsource'], 1);         // No url decoding needed as $_GET is already decoded
@@ -82,7 +91,7 @@ $configFilename = $webExpressContentDirAbs . '/config/wod-options.json';
 
 $options = loadConfig($configFilename);
 
-$allowInQS = !(isset($options['do-not-pass-source-in-query-string']) && $options['do-not-pass-source-in-query-string']);
+$allowInQS = true;      // TODO: Think about this.
 $allowInHeader = true;  // todo: implement setting
 $source = getSource($allowInQS, $allowInHeader);
 //$source = getSource(false, false);

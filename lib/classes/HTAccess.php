@@ -23,11 +23,15 @@ class HTAccess
         // So, in order to not have to use isset() all over the place, set to values
         // that results in same behaviour as before the option was introduced.
         // Beware that this may not be same as the default value in the UI (but it is generally)
+
+        // TODO: can we use the new fix method instead?
+        
         $defaults = [
             'enable-redirection-to-converter' => true,
             'forward-query-string' => true,
             'image-types' => 1,
             'do-not-pass-source-in-query-string' => false,
+            'method-for-passing-source' => 'request-header',
             'redirect-to-existing-in-htaccess' => false,
             'only-redirect-to-converter-on-cache-miss' => false,
             'destination-folder' => 'separate',
@@ -186,7 +190,8 @@ class HTAccess
                 break;
         }
 
-        $passSourceInQS = !($config['do-not-pass-source-in-query-string']);
+        $passFullSourceInQS = ($config['method-for-passing-source'] == 'querystring-full-path');
+        $setEnvVar = (($config['method-for-passing-source'] == 'request-header') || ($config['method-for-passing-source'] == 'environment-variable'));
 
         // TODO: Is it possible to handle when wp-content is outside document root?
 
@@ -224,6 +229,23 @@ class HTAccess
 
         }
 
+        if ($config['method-for-passing-source'] == 'request-header') {
+            if (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer'])) {
+
+                if ($config['enable-redirection-to-webp-realizer']) {
+                    $rules .= "  # Pass REQUEST_FILENAME to webp-realizer.php " . ($config['enable-redirection-to-converter'] ? '/ webp-on-demand.php ' : '') . "in request header\n";
+                } elseif ($config['enable-redirection-to-converter']) {
+                    $rules .= "  # Pass REQUEST_FILENAME to webp-on-demand.php in request header\n";
+                }
+                //$rules .= $basicConditions;
+                //$rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
+                $rules .= "  <IfModule mod_headers.c>\n" .
+                    "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
+                    "  </IfModule>\n\n";
+
+            }
+        }
+
         if ($config['enable-redirection-to-webp-realizer']) {
             /*
             # Pass REQUEST_FILENAME to PHP in request header
@@ -239,7 +261,7 @@ class HTAccess
             RewriteCond %{DOCUMENT_ROOT}/wordpress/uploads-moved/$1 -f
             RewriteRule ^(.*)\.(webp)$ /plugins-moved/webp-express/wod/webp-realizer.php?wp-content=wp-content-moved [NC,L]
             */
-            $passSourceInQSRealizer = $passSourceInQS;
+            $passFullSourceInQSRealizer = $passFullSourceInQS;
 
             $basicConditionsRealizer = '';
             $basicConditionsRealizer .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
@@ -253,22 +275,14 @@ class HTAccess
                 //$basicConditionsRealizer .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
             }
 
-
-            $rules .= "  # Pass REQUEST_FILENAME to webp-realizer.php in request header\n";
-            $rules .= $basicConditionsRealizer;
-            $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
-                "  <IfModule mod_headers.c>\n" .
-                "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
-                "  </IfModule>\n\n";
-
             $rules .= "  # WebP Realizer: Redirect non-existing webp images to webp-realizer.php, which will locate corresponding jpg/png, convert it, and deliver the webp (if possible) \n";
             $rules .= $basicConditionsRealizer;
 
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ " .
                 "/" . Paths::getWebPRealizerUrlPath() .
-                ($passSourceInQSRealizer ? "?xdestination=x%{SCRIPT_FILENAME}&" : "?") .
+                ($passFullSourceInQSRealizer ? "?xdestination=x%{SCRIPT_FILENAME}&" : "?") .
                 "wp-content=" . Paths::getContentDirRel() .
-                " [NC,L]\n\n";        // E=WOD:1
+                " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME}' . ','): '') . "NC,L]\n\n";        // E=WOD:1
 
             if (!$config['redirect-to-existing-in-htaccess']) {
                 $rules .= $ccRules;
@@ -291,16 +305,6 @@ class HTAccess
                 } else {
                     $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
                 }
-            }
-
-
-            if (!$passSourceInQS) {
-                $rules .= "  # Pass REQUEST_FILENAME to webp-on-demand.php in request header\n";
-                $rules .= $basicConditions;
-                $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
-                    "  <IfModule mod_headers.c>\n" .
-                    "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
-                    "  </IfModule>\n\n";
             }
 
             $rules .= "  # Redirect images to webp-on-demand.php ";
@@ -327,13 +331,14 @@ class HTAccess
             // https://github.com/rosell-dk/webp-convert/issues/95
             // (and try testing spaces in directory paths)
 
+
             // TODO: When $rewriteRuleStart is empty, we don't need the .*, do we? - test
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ " .
                 "/" . Paths::getWodUrlPath() .
-                ($passSourceInQS ? "?xsource=x%{SCRIPT_FILENAME}&" : "?") .
+                ($passFullSourceInQS ? "?xsource=x%{SCRIPT_FILENAME}&" : "?") .
                 "wp-content=" . Paths::getContentDirRel() .
                 ($config['forward-query-string'] ? '&%1' : '') .
-                " [NC,L]\n";        // E=WOD:1
+                " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME}' . ','): '') . "NC,L]\n";        // E=WOD:1
 
             $rules .= "\n  <IfModule mod_headers.c>\n";
             $rules .= "    <IfModule mod_setenvif.c>\n";
@@ -430,7 +435,7 @@ class HTAccess
         $propsToCompare = [
             'forward-query-string' => true,
             'image-types' => 1,
-            'do-not-pass-source-in-query-string' => false,
+            'method-for-passing-source' => 'request-header',
             'redirect-to-existing-in-htaccess' => false,
             'only-redirect-to-converter-on-cache-miss' => false,
             'success-response' => 'converted',
@@ -509,7 +514,7 @@ class HTAccess
 
     /**
      *  Sneak peak into .htaccess to see if we have rules in it
-     *  This may not be possible.
+     *  This may not be possible (it requires read permission)
      *  Return true, false, or null if we just can't tell
      */
     public static function haveWeRulesInThisHTAccess($filename) {
@@ -549,6 +554,7 @@ class HTAccess
             // We were not allowed to sneak-peak.
             // Well, good thing that we stored successful .htaccess write locations ;)
             // If we recorded a successful write, then we assume there are still rules there
+            // If we did not, we assume there are no rules there
             $dir = FileHelper::dirName($filename);
             return self::hasRecordOfSavingHTAccessToDir($dir);
         }
@@ -744,6 +750,8 @@ class HTAccess
             }
         } else {
             $mainResult = 'wp-content';
+            // TODO: Change to something like "The rules are placed in the .htaccess file in your wp-content dir."
+            //       BUT! - current text is searched for in page-messages.php
             HTAccess::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false);
         }
 

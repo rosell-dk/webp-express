@@ -84,6 +84,7 @@ if ($_POST['operation-mode'] != 'no-conversion') {
 
     $config['enable-redirection-to-webp-realizer'] = isset($_POST['enable-redirection-to-webp-realizer']);
 
+    $config['method-for-passing-source'] = sanitize_text_field($_POST['method-for-passing-source']);
 
     // Metadata
     // --------

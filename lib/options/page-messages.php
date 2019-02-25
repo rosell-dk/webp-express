@@ -81,6 +81,8 @@ $haveRulesInIndexDir = HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getIn
 $haveRulesInContentDir = HTAccess::haveWeRulesInThisHTAccessBestGuess(Paths::getContentDirAbs() . '/.htaccess');
 
 if ($haveRulesInIndexDir && $haveRulesInContentDir) {
+    // TODO: Use new method for determining if htaccess contains rules.
+    // (either haveWeRulesInThisHTAccessBestGuess($filename) or haveWeRulesInThisHTAccess($filename))
     if (!HTAccess::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false)) {
         Messenger::printMessage(
             'warning',
