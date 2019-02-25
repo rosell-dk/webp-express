@@ -8,14 +8,18 @@ use \WebPExpress\Config;
 
 $version = '0.12.0-beta1-g';
 
-function webp_express_add_inline_script($id, $script, $position) {
-    if (function_exists('wp_add_inline_script')) {
-        // wp_add_inline_script is available from Wordpress 4.5
-        wp_add_inline_script($id, $script, $position);
-    } else {
-        echo '<script>' . $script . '</script>';
+
+if (!function_exists('webp_express_add_inline_script')) {
+    function webp_express_add_inline_script($id, $script, $position) {
+        if (function_exists('wp_add_inline_script')) {
+            // wp_add_inline_script is available from Wordpress 4.5
+            wp_add_inline_script($id, $script, $position);
+        } else {
+            echo '<script>' . $script . '</script>';
+        }
     }
 }
+
 wp_register_script('sortable', plugins_url('js/sortable.min.js', __FILE__), [], '1.9.0');
 wp_enqueue_script('sortable');
 
