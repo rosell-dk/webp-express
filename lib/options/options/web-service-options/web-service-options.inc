@@ -1,5 +1,4 @@
-<?php if ($config['operation-mode'] == 'tweaked') : ?>
-    <fieldset class="block">
+<fieldset class="block">
     <h3>Web service</h3>
     <table class="form-table">
         <tbody>
@@ -9,8 +8,3 @@
         </tbody>
     </table>
 </fieldset>
-<?php
-else:
-    include_once 'web-service.inc';
-endif;
-?>

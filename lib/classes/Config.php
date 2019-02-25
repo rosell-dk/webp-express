@@ -153,6 +153,7 @@ class Config
                 'redirect-to-existing-in-htaccess' => false,
                 'fail' => 'original',
                 'success-response' => 'original',
+                // cache-control => 'no-header' (we do not need this, as it is not important what it is set to in cdn-friendly mode, and we dont the value to be lost when switching operation mode)
             ]);
         } elseif ($config['operation-mode'] == 'no-conversion') {
 

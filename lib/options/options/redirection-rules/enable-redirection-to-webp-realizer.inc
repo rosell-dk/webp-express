@@ -1,9 +1,10 @@
 <tr>
     <th scope="row">
-        Convert non-existing webp-files upon request <span style="color:darkorange">(beta)</span>
+        Redirect requests for non-existing webp-files to converter</span>
         <?php echo helpIcon(
-            '<p>Have ie. "image.jpg.webp" automatically generated from "image.jpg" the first time the webp is requested.</p>' .
-            '<p>This works the following way:' .
+            '<p>Have ie. "image.jpg.webp" automatically generated from "image.jpg" the first time the webp is requested. ' .
+            'This way you can reference webps before they actually exists.</p>' .
+            '<p>The feature works the following way:' .
             '<ol>' .
             '<li>WebP adds rules in the <i>.htaccess</i> that redirects requests for non-existing webp files to <i>webp-realizer.php</i></li>' .
             '<li><i>webp-realizer.php</i> looks for a corresponding jpg/png. If found, it is converted and saved, so the webp will be directly available the next time it is requested &ndash; and it tells the browser to fetch the same URL again (302 redirect to same location). In case no corresponding jpg/png is found, a 404 is returned</li>' .

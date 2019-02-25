@@ -5,7 +5,6 @@
     <table class="form-table">
         <tbody>
             <?php
-            include_once 'cache-control.inc';
             include_once 'response-on-failure.inc';
             include_once 'response-on-success.inc';
             ?>
@@ -13,9 +12,5 @@
     </table>
 </fieldset>
 <?php
-else:
-    if ($config['operation-mode'] != 'cdn-friendly') {
-        include_once 'cache-control.inc';
-    }
 endif;
 ?>

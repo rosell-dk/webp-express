@@ -187,120 +187,53 @@ function webpexpress_checkbox($optionName, $checked, $label, $helpText = '') {
 }
 
 include_once 'options/operation-mode.inc';
+include_once 'options/general/general.inc';
+
+
+/*
+idea:
+
+$options = [
+    'tweaked' => [
+        'general' => [
+            'image-types',
+            'destination-folder',
+            'destination-extension',
+            'cache-control'
+        ]
+    ],
+    ...
+];
+*/
+
 
 if ($config['operation-mode'] != 'tweaked') {
-    echo '<fieldset class="block">';
-    echo '<table class="form-table"><tbody>';
+//    echo '<fieldset class="block">';
+//    echo '<table class="form-table"><tbody>';
 }
 
 if ($config['operation-mode'] == 'no-conversion') {
 
     // General
+    /*
     echo '<tr><th colspan=2>';
     echo '<h2>General</h2>';
     echo '</th></tr>';
     include_once 'options/conversion-options/destination-extension.inc';
-    include_once 'options/redirection-rules/image-types.inc';
-
-    // Redirection
-    echo '<tr><th colspan=2 class="header-section">';
-    echo '<h2>Redirecting jpeg/png to webp (varied image response)</h2>';
-    echo '<p>Enabling this adds rules to the <i>.htaccess</i> which internally redirects jpg/pngs to webp ';
-    echo 'and sets the <i>Vary:Accept</i> header. ';
-    echo '<i>Beware that special attention is needed if you are using a CDN.</i></p>';
-    echo '</th></tr>';
-    include_once 'options/redirection-rules/redirection-rules.inc';
-    include_once 'options/serve-options/cache-control.inc';
-
-    // Html altering
-    ?>
-    <tr><th colspan=2 class="header-section">
-    <h2>Html altering</h2>
-    <p>
-        Enabling this alters the HTML code such that webp images are served to browsers that supports webp.
-        It is recommended to enable this even when the redirection is also enabled, so redirection is only used for
-        those images that cannot be replaced in HTML. Two reasons for that. Firstly, to avoid visitors downloads images with
-        wrong extensions. Secondly, the webp images that are referenced directly are cached more efficiently than those which
-        are a result of a varied response. Adding a <i>Vary:Accept</i> header has a cost.
-    </p>
-    <p>
-        Two distinct methods for altering HTML are supported. Here is a comparison chart:
-    </p>
-    <table class="designed">
-        <tr>
-            <th></th>
-            <th>Method 1: Replacing &lt;img&gt; tags with &lt;picture&gt; tags</th>
-            <th>Method 2: Replacing image URLs</th>
-        </tr>
-        <tr>
-            <th>How it works</th>
-            <td>
-                <p>
-                    It replaces &lt;img&gt; tags with  &lt;picture&gt; tags, adding two &lt;source&gt; tags - one for the original image(s), and one
-                    for the webp image(s).
-                    Browsers that supports webp picks the &lt;source&gt; tag with <i>type</i> attribute set to "image/webp".
-                </p>
-                <p>
-                    We are using <a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this library</a>.
-                    You can visit it for more information.
-                </p>
-            </td>
-            <td>
-                It replaces any image url it can find.
-                We are using <a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this library</a>.
-                You can visit it for more information.
-            </td>
-        </tr>
-        <tr>
-            <th>Page caching</th>
-            <td>Works great with page caching, because all browsers are served the same HTML</td>
-            <td>
-                <p>
-                    As the HTML varies with the webp-capability of the browser, page caching is tricky.
-                    However, it can be achieved with the wonderful <i>Cache Enabler</i> plugin, which maintains two cached versions of each page.<br><br>
-                    <span style="font-size:10px">
-                        Note: Cache Enabler works without WebP Express, but the HTML altering have
-                        <a target="_blank" href="https://regexr.com/46isf">problems and limitations</a>, so the recommended setup
-                        is using WebP Express for the HTML altering of image URLs and <i>Cache Enabler</i> for the page caching.
-                        WebP Express does the replacing before Cache Enabler, so no special action is needed in order to do that.
-                    </span>
-                </p>
-            </td>
-        </tr>
-        <tr>
-            <th><nobr>Styling and javascript</nobr></th>
-            <td>May break because of changed HTML structure</td>
-            <td>No problems</td>
-        </tr>
-        <tr>
-            <th>Comprehensiveness</th>
-            <td>Only replaces &lt;img&gt; tags - other images are untouched</td>
-            <td>Very comprehensive. Replaces images in inline styles, image urls in lazy load attributes set in &lt;div&gt; or &lt;li&gt; tags, etc.</td>
-        </tr>
-    </table>
-    <?php
-    /*
-    echo 'Replacing &lt;img&gt; tags with &lt;picture&gt; tags works great with page caching, ';
-    echo 'because all browsers are served the same HTML. However beware that styling and javascript may break because of the changed HTML structure. ';
-    echo 'The other method replaces all image URLs it can find. As the structure is left intact, this method will not break styling or javascript. ';
-    echo 'Also, isnt as limited in scope. It not only replaces image urls found in &ndash;including inline styles and lazy load attributes set ';
-    echo 'on &lt;div&gt; or &lt;li&gt; tags &ndash; but page caching can only be achieved by also using the Cache Enabler ';
-    echo 'plugin (Cache Enabler works without WebP Express, but the HTML altering have ';
-    echo '<a target="_blank" href="https://regexr.com/46isf">problems and limitations</a>, so ';
-    echo 'I recommend using WebP Express for the altering of image URLs and Cache Enabler for the page caching)';
-    echo '</p>';
+    include_once 'options/general/image-types.inc';
     */
-    echo '<p>Note: The altering only happens for images that are converted and which exists in the same folder as the source with the extension selected in the GENERAL section.</p>';
-    echo '</th></tr>';
 
+    include_once 'options/redirection-rules/redirection-rules.inc';
     include_once 'options/alter-html/alter-html.inc';
 } else {
     include_once 'options/redirection-rules/redirection-rules.inc';
     include_once 'options/conversion-options/conversion-options.inc';
-    include_once 'options/conversion-options/destination-extension.inc';
+    //include_once 'options/conversion-options/destination-extension.inc';
     include_once 'options/serve-options/serve-options.inc';
+
     include_once 'options/alter-html/alter-html.inc';
 
+/*
     if ($config['operation-mode'] == 'cdn-friendly') {
         include_once 'options/redirection-rules/enable-redirection-to-webp-realizer.inc';
 
@@ -311,13 +244,14 @@ if ($config['operation-mode'] == 'no-conversion') {
     if ($config['operation-mode'] == 'varied-image-responses') {
         include_once 'options/redirection-rules/enable-redirection-to-webp-realizer.inc';
     }
+    */
 
     include_once 'options/web-service-options/web-service-options.inc';
 }
 
 if ($config['operation-mode'] != 'tweaked') {
-    echo '</tbody></table>';
-    echo '</fieldset>';
+//    echo '</tbody></table>';
+//    echo '</fieldset>';
 }
 
 ?>

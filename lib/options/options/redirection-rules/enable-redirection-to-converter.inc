@@ -1,9 +1,9 @@
 <tr>
     <th scope="row">
         <?php if ($config['operation-mode'] == 'cdn-friendly'): ?>
-            Convert non-existing webp-files upon request to original image  <span style="color:darkorange">(almost obsolete)<?php
+            Redirect requests for jpg/png to converter, but only when there is no webp, and serve the original<?php
                 echo helpIcon(
-                    //'<p><em>The auto-convertion works this way: When an image is requested, a rule in the .htaccess detects if that image has been converted. If not, the request is redirected to the converter, which creates the webp and returns <em>the original</em> image</em></p>
+                    //'<p><em>The auto-conversion works this way: When an image is requested, a rule in the .htaccess detects if that image has been converted. If not, the request is redirected to the converter, which creates the webp and returns <em>the original</em> image</em></p>
                     '<p>This works the following way:' .
                     '<ol>' .
                     '<li>WebP adds rules in the <i>.htaccess</i> that redirects requests for jpg/png images to the converter, <i>when no corresponding webp image is found</i></li>' .
@@ -14,7 +14,7 @@
                     'the rule will not trigger because it now detects a corresponding webp</p>' .
                     '<p>Note: After the introduction of the <i>Convert non-existing webp-files upon request?</i> option, ' .
                     'you probably will not need this option. There are however rare cases, where it could be useful. ' .
-                    '<b>From the next release on on, this option will only be available in the <i>Tweaked</i> operation mode</b></p>'
+                    '</p>'
                 ); ?>
         <?php else: ?>
             Enable redirection to converter?<?php echo helpIcon('This will add rules in the .htaccess that redirects images (jpg/png) to the script'); ?>

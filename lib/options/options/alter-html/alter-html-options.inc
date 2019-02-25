@@ -23,6 +23,66 @@
   <tr>
       <th scope="row" colspan=2>
         <div id="alter_html_options_div">
+            <div id="alter_html_comparison_chart">
+                <p>
+                    Two distinct methods for altering HTML are supported. Here is a comparison chart:
+                </p>
+                <table class="designed">
+                    <tr>
+                        <th></th>
+                        <th>Method 1: Replacing &lt;img&gt; tags with &lt;picture&gt; tags</th>
+                        <th>Method 2: Replacing image URLs</th>
+                    </tr>
+                    <tr>
+                        <th>How it works</th>
+                        <td>
+                            <p>
+                                It replaces &lt;img&gt; tags with  &lt;picture&gt; tags, adding two &lt;source&gt; tags - one for the original image(s), and one
+                                for the webp image(s).
+                                Browsers that supports webp picks the &lt;source&gt; tag with <i>type</i> attribute set to "image/webp".
+                            </p>
+                            <p>
+                                We are using <a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this library</a>.
+                                You can visit it for more information.
+                            </p>
+                        </td>
+                        <td>
+                            It replaces any image url it can find.
+                            We are using <a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this library</a>.
+                            You can visit it for more information.
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Page caching</th>
+                        <td>Works great with page caching, because all browsers are served the same HTML</td>
+                        <td>
+                            <p>
+                                As the HTML varies with the webp-capability of the browser, page caching is tricky.
+                                However, it can be achieved with the wonderful <i>Cache Enabler</i> plugin, which maintains two cached versions of each page.<br><br>
+                                <span style="font-size:10px">
+                                    Note: Cache Enabler works without WebP Express, but the HTML altering have
+                                    <a target="_blank" href="https://regexr.com/46isf">problems and limitations</a>, so the recommended setup
+                                    is using WebP Express for the HTML altering of image URLs and <i>Cache Enabler</i> for the page caching.
+                                    WebP Express does the replacing before Cache Enabler, so no special action is needed in order to do that.
+                                </span>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><nobr>Styling and javascript</nobr></th>
+                        <td>May break because of changed HTML structure</td>
+                        <td>No problems</td>
+                    </tr>
+                    <tr>
+                        <th>Comprehensiveness</th>
+                        <td>Only replaces &lt;img&gt; tags - other images are untouched</td>
+                        <td>Very comprehensive. Replaces images in inline styles, image urls in lazy load attributes set in &lt;div&gt; or &lt;li&gt; tags, etc.</td>
+                    </tr>
+                </table>
+                <p>
+                    Note: The altering only happens for images that are converted and which exists in the same folder as the source with the extension selected in the GENERAL section.
+                </p>
+            </div>
             <div>
                 <label>What to replace:</label>
                 <?php
