@@ -102,10 +102,10 @@
                         'the webp <i>rather than</i> the original. Handles src, srcset, common lazy-load attributes and even ' .
                         'inline styles</p>' .
                         '<p>Note that you will have to do something for the browsers that does not support webp. ' .
-                        'For example, you can enable the <i>Only do the replacements in webp enabled browsers</i> option, which ' .
+                        'And that something is in most cases to enable the <i>Only do the replacements in webp enabled browsers</i> option, which ' .
                         'will show up when you enable this option. ' .
-                        'Or you can add the <a href="https://webpjs.appspot.com/">webpjs</a> javascript library. ' .
-                        'In the next release, you will be able to add the webjs library with this plugin. ' .
+                        'Or you can experiment with javascript solutions. There is for example the <a href="https://webpjs.appspot.com/">webpjs</a> javascript library. ' .
+                        'But it does not support srcset, which is a showstopper. There are other libraries out there. ' .
                         '<p>PS: This replace functionality is handled by ' .
                         '<a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this external library</a>' .
                         ', created for the purpose.</p>',
