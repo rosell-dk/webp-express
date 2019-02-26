@@ -23,10 +23,11 @@
   <tr>
       <th scope="row" colspan=2>
         <div id="alter_html_options_div">
-            <div id="alter_html_comparison_chart">
-                <p>
-                    Two distinct methods for altering HTML are supported. Here is a comparison chart:
-                </p>
+            <p>
+                Two distinct methods for altering HTML are supported. <a id="show_alterhtml_chart_btn" href="javascript:updateAlterHTMLChartVisibility(true);">View comparison chart</a>
+                <input type="hidden" name="ui-show-alter-html-chart" id="ui_show_alter_html_chart" value="<?php echo 'false'; ?>">
+            </p>
+            <div id="alter_html_comparison_chart" name="alter-html-comparison-chart" class="toggler effect-slider">
                 <table class="designed">
                     <tr>
                         <th></th>
@@ -83,6 +84,7 @@
                     Note: The altering only happens for images that are converted and which exists in the same folder as the source with the extension selected in the GENERAL section.
                 </p>
             </div>
+            <a id="hide_alterhtml_chart_btn" href="javascript:updateAlterHTMLChartVisibility(false);">Hide comparison chart</a>
             <div>
                 <label>What to replace:</label>
                 <?php

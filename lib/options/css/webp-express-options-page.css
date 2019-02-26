@@ -545,6 +545,11 @@ table.designed tr:first-child > th {
 table.designed tr > *:last-child {
     border-right-width: 0;
 }
+
+#hide_alterhtml_chart_btn {
+    margin-bottom: 20px;
+}
+
 /*table.designed tr:last-child > * {
     border-bottom-width: 0;
 }*/

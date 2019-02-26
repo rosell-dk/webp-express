@@ -13,9 +13,15 @@
         Their job is to trigger webp conversion <i>without</i> producing varied responses.
         On most systems you need only to activate the first option. The second option can be used if the first one fails on your system.
     </p>
+    <?php elseif ($config['operation-mode'] == 'varied-image-responses') : ?>
+    <h3>Redirection rules</h3>
+    <div><i>The options here affects the rules created in the .htaccess.<br>
+        Note: The option for enabling/disabling redirects to the converter is not available in this operation mode, as
+        that redirection is part of what defines this mode.
+        <?php echo helpIcon('Note: The general options also affects the rules.'); ?></i></div>
     <?php else : ?>
     <h3>Redirection rules</h3>
-    <div><i>The options here affects the rules created in the .htaccess. <?php echo helpIcon('And so does some other options. If "Redirect directly to converted image" is set, the "Destination folder" and "File Extension" and "Caching" options will be used'); ?></i></div>
+    <div><i>The options here affects the rules created in the .htaccess. <?php echo helpIcon('Note: The general options also affects the rules.'); ?></i></div>
     <?php endif; ?>
 
     <table class="form-table">

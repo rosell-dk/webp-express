@@ -1,13 +1,12 @@
 
 <tr>
-    <th scope="row">Method for passing filename <?php
+    <th scope="row">Method for passing filename <span style="color:green">(new in 0.12)</span><?php
         echo helpIcon('<p>' .
             'Passing the the filename of a requested image from the <i>.htaccess</i> to the converter scripts can be done in different ways. ' .
-            'Some works on some systems but not others. Some opens up for conversion of to be started by other parties, others dont. ' .
-            'Some generates a lot of stuff in the .htaccess, making it harder to read, and the site a tiny bit slower than otherwise. Others generates no extra stuff.' .
-            'So choose wisely. <table><tbody>' .
+            'Some works on some systems, some on others.' .
+            '<table class="designed"><tbody>' .
             '<tr><th>Method</th><th>Description</th></tr>' .
-            '<tr><td><i>1. Do not pass...</i></td><td>Very clean and works on most standard setups.</td></tr>' .
+            '<tr><td><i>1. Do not pass...</i></td><td>Very clean (nothing is added to the .htaccess). It works on most standard setups.</td></tr>' .
             '<tr><td><i>2. Passing through an environment variable</i></td><td>Only adds minimally to the .htaccess. Falls back to #1 if the pass fails, and thus works on more systems than #1</td></tr>' .
             '<tr><td><i>3. Passing through a request header</i></td><td>Adds a bit more to the .htaccess. Falls back on #2 if the pass fails, and thus works on more systems than #2</td></tr>' .
             '<tr><td><i>4. Passing full path through query string (full path)</i></td><td>If even #3 fails, try this one. Note however that it may be subject to firewall blocking.</td></tr>' .
