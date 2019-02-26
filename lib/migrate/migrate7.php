@@ -23,6 +23,11 @@ function webpexpress_migrate7() {
         $config['method-for-passing-source'] = 'querystring-full-path';
     }
 
+    // Migrate some configurations to the new "No conversion" mode
+    if ((!$config['enable-redirection-to-webp-realizer']) && (!$config['enable-redirection-to-converter']) && ($config['destination-folder'] == 'mingled') && ($config['operation-mode'] == 'cdn-friendly') && (!($config['web-service']['enabled']))) {
+        $config['operation-mode'] = 'no-conversion';
+    }
+
     // In next migration, we can remove do-not-pass-source-in-query-string
     // unset($config['do-not-pass-source-in-query-string']);
     // and also do: grep -r 'do-not-pass' .
@@ -45,13 +50,21 @@ function webpexpress_migrate7() {
         // Display announcement. But only show while it is fresh news (we don't want this to show when one is upgrading from 0.11 to 0.14 or something)
         // - the next release with a migration in it will not show the announcement
         if (WEBPEXPRESS_MIGRATION_VERSION == 7) {
-            $msg .= '<br><br>Btw: This release is multisite compliant!';
+            $msg .= '<br><br>Btw: From this release and onward, WebP Express is <i>multisite compliant</i>.';
         }
 
         Messenger::addMessage(
             'info',
             $msg
         );
+
+        if ($config['operation-mode'] == 'no-conversion') {
+            Messenger::addMessage(
+                'info',
+                'WebP Express introduces a new operation mode: "No conversion". ' .
+                    'Your configuration has been migrated to this mode, because your previous settings matched that mode (nothing where set up to trigger a conversion).'
+            );
+        }
 
         // PSST: When creating new migration files, remember to update WEBPEXPRESS_MIGRATION_VERSION in admin.php
         Option::updateOption('webp-express-migration-version', '7');

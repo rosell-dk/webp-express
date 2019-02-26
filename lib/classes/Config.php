@@ -141,7 +141,7 @@ class Config
                 'enable-redirection-to-converter' => true,
                 'only-redirect-to-converter-for-webp-enabled-browsers' => true,
                 'only-redirect-to-converter-on-cache-miss' => false,
-                'do-not-pass-source-in-query-string' => true,
+                'do-not-pass-source-in-query-string' => true,       // Will be removed in 0.13
                 //'redirect-to-existing-in-htaccess' => true,
                 'fail' => 'original',
                 'success-response' => 'converted',
@@ -150,7 +150,7 @@ class Config
             $config = array_merge($config, [
                 'only-redirect-to-converter-for-webp-enabled-browsers' => false,
                 'only-redirect-to-converter-on-cache-miss' => true,
-                'do-not-pass-source-in-query-string' => true,
+                'do-not-pass-source-in-query-string' => true,       // Will be removed in 0.13
                 'redirect-to-existing-in-htaccess' => false,
                 'fail' => 'original',
                 'success-response' => 'original',
@@ -165,7 +165,9 @@ class Config
                 'destination-folder' => 'mingled',
                 'enable-redirection-to-webp-realizer' => false,
             ]);
-            $config['alter-html']['only-for-webps-that-exists'] = true;
+            //$config['alter-html']['only-for-webps-that-exists'] = true;
+            $config['web-service']['enabled'] = false;
+
         }
 
         return $config;
@@ -193,7 +195,9 @@ class Config
         $config = self::applyOperationMode($config);
 
         if (!isset($config['web-service'])) {
-            $config['web-service'] = [];
+            $config['web-service'] = [
+                'enabled' => false
+            ];
         }
         if (!is_array($config['web-service']['whitelist'])) {
             $config['web-service']['whitelist'] = [];
