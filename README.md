@@ -105,7 +105,7 @@ Do not simply remove the plugin without deactivating it first. Deactivation take
 
 ## Limitations
 
-* The plugin does not work on Microsoft IIS server, nor in WAMP
+* The plugin has not been tested by the developer on Microsoft IIS server. [Some however reports that it works](https://wordpress.org/support/topic/iis-and-webp-works/)
 
 ## Frequently Asked Questions
 

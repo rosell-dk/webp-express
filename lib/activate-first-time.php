@@ -22,10 +22,11 @@ use \WebPExpress\State;
 // -------------------------------
 
 if (PlatformInfo::isMicrosoftIis()) {
-    Messenger::addMessage('error', 'You are on Microsof IIS server. The plugin does not work on IIS (yet). The plugin has been <i>deactivated</i> again!');
-    Actions::procastinate('deactivate');
-
-    // Well, that was it.
+    Messenger::addMessage(
+        'warning',
+        'You are on Microsoft IIS server. The developer of WebP Express has no money for Microsoft products, so no testing have been done on IIS. Use at own risk. If you are on WAMP, things might work. Without Apache, you will need to create redirect rules yourself.'
+    );
+    // Actions::procastinate('deactivate');
     return;
 }
 

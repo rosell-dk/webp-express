@@ -93,7 +93,7 @@ Do not simply remove the plugin without deactivating it first. Deactivation take
 
 == Limitations ==
 
-* The plugin does not work on Microsoft IIS server, nor in WAMP
+* The plugin has not been tested by the developer on Microsoft IIS server. [Some however reports that it works](https://wordpress.org/support/topic/iis-and-webp-works/)
 
 == Supporting WebP Express ==
 Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue wasting time on this plugin:
