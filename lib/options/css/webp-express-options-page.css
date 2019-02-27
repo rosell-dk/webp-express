@@ -553,3 +553,8 @@ table.designed tr > *:last-child {
 /*table.designed tr:last-child > * {
     border-bottom-width: 0;
 }*/
+
+ul.with-bullets {
+    padding-left: 20px;
+    list-style: unset;
+}

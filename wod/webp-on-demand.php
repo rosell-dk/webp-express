@@ -30,7 +30,55 @@ function loadConfig($configFilename) {
     return json_decode($json, true);
 }
 
-function getSource($allowInQS, $allowInHeader) {
+function exitWithError($msg) {
+    header('X-WebP-Express-Error: ' . $msg, true);
+    echo $msg;
+    exit;
+
+}
+function getSource() {
+    global $options;
+    global $docRoot;
+
+    if ($options['method-for-passing-source'] == 'querystring-full-path') {
+        if (isset($_GET['xsource'])) {
+            return substr($_GET['xsource'], 1);         // No url decoding needed as $_GET is already decoded
+        } elseif (isset($_GET['source'])) {
+            return $_GET['source'];
+        } else {
+            exitWithError('Method for passing filename was set to querystring (full path), but neither "source" or "xsource" params are in the querystring)');
+        }
+    }
+
+    if ($options['method-for-passing-source'] == 'querystring-relative-path') {
+        $srcRel = '';
+        if (isset($_GET['xsource-rel'])) {
+            $srcRel = substr($_GET['xsource-rel'], 1);
+        } elseif (isset($_GET['source-rel'])) {
+            $srcRel = $_GET['source-rel'];
+        } else {
+            exitWithError('Method for passing filename was set to querystring (full path), but neither "source-rel" or "xsource-rel" params are in the querystring)');
+        }
+
+        if (isset($_GET['source-rel-filter'])) {
+            if ($_GET['source-rel-filter'] == 'discard-parts-before-wp-content') {
+                $wp_content = isset($_GET['wp-content']) ? $_GET['wp-content'] : 'wp-content';
+                $wp_content = '2018';
+                $parts = explode('/', $srcRel);
+                foreach($parts as $index => $part) {
+                    if($part !== $wp_content) {
+                        unset($parts[$index]);
+                    } else {
+                        break;
+                    }
+                }
+                $srcRel = implode('/', $parts);
+            }
+        }
+        return $docRoot . '/' . $srcRel;
+    }
+
+
     //echo '<pre>' . print_r($_SERVER, true) . '</pre>'; exit;
 
     // First check if it is in an environment variable - thats the safest way
@@ -40,46 +88,30 @@ function getSource($allowInQS, $allowInHeader) {
         }
     }
 
-    if ($allowInHeader) {
+    if ($options['method-for-passing-source'] == 'request-header') {
         if (isset($_SERVER['HTTP_REQFN'])) {
             return $_SERVER['HTTP_REQFN'];
-        }
-    }
-
-    // TODO:
-    // Perhaps it is ok to always allow query string.
-    // After all, we have tested environment and header.
-    // But the question is if we should also test request uri first?
-    // I guess like this:
-    // - If query string is selected, use that method first
-    // - Otherwise use that method last - even after trying request uri
-
-    // the other Either Nginx or if 'method-for-passing-source' is set to
-    if ($allowInQS) {
-        if (isset($_GET['xsource'])) {
-            return substr($_GET['xsource'], 1);         // No url decoding needed as $_GET is already decoded
-        } elseif (isset($_GET['source'])) {
-            return $_GET['source'];
         }
     }
 
     // Last resort is to use $_SERVER['REQUEST_URI'], well knowing that it does not give the
     // correct result in all setups (ie "folder method 1")
     $requestUriNoQS = explode('?', $_SERVER['REQUEST_URI'])[0];
-    $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
+    //$docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
     $source = $docRoot . urldecode($requestUriNoQS);
     if (file_exists($source)) {
         return $source;
     }
 
-    header('X-WebP-Express-Error: None of the available methods for locating source file works', true);
-    echo 'None of the available methods for locating source file works!';
+    exitWithError('Could not locate source file. Try another method (in the Redirection Rules section in WebP settings)');
+
+    /*
     if (!$allowInHeader) {
         echo '<br>Have you tried allowing source to be passed as a request header?';
     }
     if (!$allowInQS) {
         echo '<br>Have you tried allowing source to be passed in querystring?';
-    }
+    }*/
     exit;
 }
 
@@ -91,9 +123,7 @@ $configFilename = $webExpressContentDirAbs . '/config/wod-options.json';
 
 $options = loadConfig($configFilename);
 
-$allowInQS = true;      // TODO: Think about this.
-$allowInHeader = true;  // todo: implement setting
-$source = getSource($allowInQS, $allowInHeader);
+$source = getSource();
 //$source = getSource(false, false);
 
 //echo $source; exit;

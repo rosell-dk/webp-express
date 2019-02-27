@@ -25,7 +25,7 @@ class HTAccess
         // Beware that this may not be same as the default value in the UI (but it is generally)
 
         // TODO: can we use the new fix method instead?
-        
+
         $defaults = [
             'enable-redirection-to-converter' => true,
             'forward-query-string' => true,
@@ -191,6 +191,7 @@ class HTAccess
         }
 
         $passFullSourceInQS = ($config['method-for-passing-source'] == 'querystring-full-path');
+        $passRelativeSourceInQS = ($config['method-for-passing-source'] == 'querystring-relative-path');
         $setEnvVar = (($config['method-for-passing-source'] == 'request-header') || ($config['method-for-passing-source'] == 'environment-variable'));
 
         // TODO: Is it possible to handle when wp-content is outside document root?
@@ -331,13 +332,21 @@ class HTAccess
             // https://github.com/rosell-dk/webp-convert/issues/95
             // (and try testing spaces in directory paths)
 
+            $params = [];
+            if ($passFullSourceInQS) {
+                $params[] = 'xsource=x%{SCRIPT_FILENAME}';
+            } elseif ($passRelativeSourceInQS) {
+                $params[] = 'xsource-rel=x' . $htaccessDirRel . '/$1.$2';
+            }
+            $params[] = "wp-content=" . Paths::getContentDirRel();
+            if ($config['forward-query-string']) {
+                $params[] = '%1';
+            }
 
             // TODO: When $rewriteRuleStart is empty, we don't need the .*, do we? - test
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ " .
                 "/" . Paths::getWodUrlPath() .
-                ($passFullSourceInQS ? "?xsource=x%{SCRIPT_FILENAME}&" : "?") .
-                "wp-content=" . Paths::getContentDirRel() .
-                ($config['forward-query-string'] ? '&%1' : '') .
+                "?" . implode('&', $params) .
                 " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME}' . ','): '') . "NC,L]\n";        // E=WOD:1
 
             $rules .= "\n  <IfModule mod_headers.c>\n";
