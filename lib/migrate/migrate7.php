@@ -28,6 +28,12 @@ function webpexpress_migrate7() {
         $config['operation-mode'] = 'no-conversion';
     }
 
+    // The ones who had disabled "do-not-pass-source-in-query-string", must have done it because they wanted to
+    // pass through querystring. - So set the new "method" option to that
+    if (!$config['do-not-pass-source-in-query-string']) {
+        $config['method-for-passing-source'] = 'querystring-full-path';
+    }
+
     // In next migration, we can remove do-not-pass-source-in-query-string
     // unset($config['do-not-pass-source-in-query-string']);
     // and also do: grep -r 'do-not-pass' .
