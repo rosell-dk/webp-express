@@ -15,6 +15,12 @@ error_reporting(E_ALL);
 use \WebPConvert\WebPConvert;
 use \WebPConvert\ServeExistingOrHandOver;
 
+function exitWithError($msg) {
+    header('X-WebP-Express-Error: ' . $msg, true);
+    echo $msg;
+    exit;
+}
+
 function loadConfig($configFilename) {
     if (!file_exists($configFilename)) {
         header('X-WebP-Express-Error: Configuration file not found!', true);
@@ -30,12 +36,6 @@ function loadConfig($configFilename) {
     return json_decode($json, true);
 }
 
-function exitWithError($msg) {
-    header('X-WebP-Express-Error: ' . $msg, true);
-    echo $msg;
-    exit;
-
-}
 function getSource() {
     global $options;
     global $docRoot;
@@ -63,7 +63,6 @@ function getSource() {
         if (isset($_GET['source-rel-filter'])) {
             if ($_GET['source-rel-filter'] == 'discard-parts-before-wp-content') {
                 $wp_content = isset($_GET['wp-content']) ? $_GET['wp-content'] : 'wp-content';
-                $wp_content = '2018';
                 $parts = explode('/', $srcRel);
                 foreach($parts as $index => $part) {
                     if($part !== $wp_content) {
