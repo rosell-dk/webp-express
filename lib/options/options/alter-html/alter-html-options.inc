@@ -63,7 +63,7 @@
                                 However, it can be achieved with the wonderful <i>Cache Enabler</i> plugin, which maintains two cached versions of each page.<br><br>
                                 <span style="font-size:10px">
                                     Note: Cache Enabler works without WebP Express, but the HTML altering have
-                                    <a target="_blank" href="https://regexr.com/46isf">problems and limitations</a>, so the recommended setup
+                                    <a target="_blank" href="https://github.com/keycdn/cache-enabler/issues/51">problems and limitations</a>, so the recommended setup
                                     is using WebP Express for the HTML altering of image URLs and <i>Cache Enabler</i> for the page caching.
                                     WebP Express does the replacing before Cache Enabler, so no special action is needed in order to do that.
                                 </span>
