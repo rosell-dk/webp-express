@@ -364,26 +364,32 @@ class HTAccess
                 "?" . implode('&', $params) .
                 " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME}' . ','): '') . "NC,L]\n";        // E=WOD:1
 
-            $rules .= "\n  <IfModule mod_headers.c>\n";
+            $rules .= "\n";
+        }
+
+        $addVary = ($config['enable-redirection-to-converter'] && ($config['success-response'] == 'converted')) || ($config['redirect-to-existing-in-htaccess']);
+
+        if ($addVary) {
+            $rules .= "  <IfModule mod_headers.c>\n";
             $rules .= "    <IfModule mod_setenvif.c>\n";
 
-            if (($config['success-response'] == 'converted') || ($config['redirect-to-existing-in-htaccess'])) {
-                $rules .= "      # Set Vary:Accept header for the image types handled by WebP Express.\n" .
-                "      # The purpose is to make CDN aware that the response varies with the Accept header, so it should not just use the URL as cache key, but also the Accept header. \n" .
+            $rules .= "      # Set Vary:Accept header for the image types handled by WebP Express.\n" .
+                "      # The purpose is to make proxies and CDNs aware that the response varies with the Accept header. \n" .
                 "      SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
                 "      Header append \"Vary\" \"Accept\" env=ADDVARY\n\n";
-            }
 
-            $rules .= "      # Set X-WebP-Express header for diagnose purposes\n" .
+            if ($config['redirect-to-existing-in-htaccess']) {
+                $rules .= "      # Set X-WebP-Express header for diagnose purposes\n" .
                     "      # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
                     "      # So, the next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
                     "      SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
                     //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
                     //"  # Set the debug header\n" .
-                    "      Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING\n" .
+                    "      Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING\n";
                     //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
-                    "    </IfModule>\n" .
-                    "  </IfModule>\n\n";
+            }
+            $rules .= "    </IfModule>\n" .
+            "  </IfModule>\n\n";
         }
         $rules .="</IfModule>\n";
 
