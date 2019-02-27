@@ -154,6 +154,8 @@ It is possible to make WebP Express work on NGINX, but it requires manually inse
 
 There are two different approaches to achieve the redirections. One based on *rewrite* and one based on *try_files*. As *try_files* performs best, I shall recommend that.
 
+For multisite on NGINX, read [here](https://github.com/rosell-dk/webp-express/issues/8)
+
 **method 1 (try_files)**
 
 Lets take this step by step.
