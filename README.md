@@ -597,6 +597,11 @@ Here are my current plans ahead: 0.13 might be bulk conversion and addition of a
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.12.0
+- Multisite support (!)
+- A new operation mode: "No conversion", if you do not want to use WebP Express for converting. Replaces the old "Just redirect" mode
+- The method by which the filename is passed to the script is now configurable. The "do not pass source in query string" option has been removed
+
 ## Changes in 0.11.0
 - Alter HTML to point to webp files (choose between picture tags or simply altering all image urls)
 - Convert non-existing webp-files upon request (means you can reference the converted webp files before they are actually converted!)

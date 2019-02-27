@@ -603,6 +603,11 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 1. WebP Express settings
 
 == Changelog ==
+= 0.12.0 =
+* Multisite support (!)
+* A new operation mode: "No conversion", if you do not want to use WebP Express for converting. Replaces the old "Just redirect" mode
+* The method by which the filename is passed to the script is now configurable. The "do not pass source in query string" option has been removed
+
 = 0.11.3 =
 * Fixed bug: Alter HTML caused media library not to display images on some systems. Alter HTML is now disabled in admin mode.
 * Alter HTML (picture tags) could produce the source tags with "src" attribute. But source tags inside picture tags must use "srcset" attribute. Fixed.
@@ -710,6 +715,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.12.0 =
+Multisite support and a new operation mode
 
 = 0.11.3 =
 Fixed several bugs. You should update :)
