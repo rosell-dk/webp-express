@@ -58,7 +58,7 @@ class AlterHtmlInit
         }
     }
 
-    public static function addPictureJs()
+    public static function addPictureFillJs()
     {
         // Don't do anything with the RSS feed.
         // - and no need for PictureJs in the admin
@@ -69,7 +69,7 @@ class AlterHtmlInit
            . 'if(!window.HTMLPictureElement && document.addEventListener) {'
                 . 'window.addEventListener("DOMContentLoaded", function() {'
                     . 'var s = document.createElement("script");'
-                    . 's.src = "' . plugins_url('/js/picturefill.min.js', __FILE__) . '";'
+                    . 's.src = "' . plugins_url('/js/picturefill.min.js', WEBPEXPRESS_PLUGIN) . '";'
                     . 'document.body.appendChild(s);'
                 . '});'
             . '}'
@@ -79,7 +79,7 @@ class AlterHtmlInit
     public static function setHooks() {
 
         if (Option::getOption('webp-express-alter-html-replacement') == 'picture') {
-//            add_action( 'wp_head', '\\WebPExpress\\AlterHtmlInit::addPictureJs');
+            add_action( 'wp_head', '\\WebPExpress\\AlterHtmlInit::addPictureFillJs');
         }
 
         if (Option::getOption('webp-express-alter-html-hooks', 'ob') == 'ob') {
