@@ -41,6 +41,7 @@
                                 It replaces &lt;img&gt; tags with  &lt;picture&gt; tags, adding two &lt;source&gt; tags - one for the original image(s), and one
                                 for the webp image(s).
                                 Browsers that supports webp picks the &lt;source&gt; tag with <i>type</i> attribute set to "image/webp".
+                                A small javascript is added which dynamically loads picturefill.js on browsers that doesn't support the picture tag.
                             </p>
                             <p>
                                 We are using <a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this library</a>.
@@ -94,8 +95,9 @@
                 ], [
                     'picture' => '<p>"Picture tag" replaces &lt;img&gt tags with &lt;picture&gt; tags and adds the webp as an extra source. ' .
                         'This effectively points webp-enabled browsers to the webp variant and other browsers to ' .
-                        'the original image. It also adds a script that dynamically loads picturefill.js in browsers ' .
-                        'that doesnt support the picture tag.</p>' .
+                        'the original image. It also adds a script that dynamically loads ' .
+                        '<a href="https://github.com/scottjehl/picturefill" target="_blank">picturefill.js</a> ' .
+                        'in browsers that does not support the picture tag (support is currently <a href="https://caniuse.com/#feat=picture" target="_blank">~88%</a>).</p>' .
                         '<p><em>Beware that this structural change may affect styling!</em></p>' .
                         '<p>PS: This functionality is handled by ' .
                         '<a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this external library</a>' .
