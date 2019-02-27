@@ -26,23 +26,22 @@ if (PlatformInfo::isMicrosoftIis()) {
         'warning',
         'You are on Microsoft IIS server. The developer of WebP Express has no money for Microsoft products, so no testing have been done on IIS. Use at own risk. If you are on WAMP, things might work. Without Apache, you will need to create redirect rules yourself.'
     );
-    // Actions::procastinate('deactivate');
-    return;
 }
 
 
 if ( is_multisite() ) {
-    Messenger::addMessage('warning', 'Multisite functionality in WebP Express has just been added with current release (0.12.0). While it has been tested on several setups, there might be a bug or two yet to be found.');
-//    Actions::procastinate('deactivate');
+    Messenger::addMessage(
+        'warning',
+        'Multisite functionality in WebP Express has just been added with current release (0.12.0). ' .
+        'While it has been tested on several setups, there might be a bug or two yet to be found.'
+    );
 }
 
 if (!version_compare(PHP_VERSION, '5.5.0', '>=')) {
-    //$msg = sprintf(__( 'You are on a very old version of PHP (%s). WebP Express may not work as intended.', 'webp-express' ), phpversion());
     Messenger::addMessage(
         'warning',
         'You are on a very old version of PHP. WebP Express may not work correctly. Your PHP version:' . phpversion()
     );
-    return;
 }
 
 // Next issue warnings, if any
