@@ -31,7 +31,7 @@
                 'environment-variable' => 'Pass through environment variable',
                 'request-header' => 'Pass through request header',
                 'querystring-full-path' => 'Pass through query string (full path)',
-                'querystring-relative-path' => 'Pass through query string (relative path from wp-content to image)',
+                'querystring-relative-path' => 'Pass through query string (relative path)',
             ]);
             ?>
         </select>

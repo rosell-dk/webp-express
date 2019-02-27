@@ -10,10 +10,16 @@ error_reporting(E_ALL);
 //require 'webp-on-demand-1.inc';
 //require '../vendor/autoload.php';
 
-//print_r($_GET); exit;
+// print_r($_GET); exit;
 
 use \WebPConvert\WebPConvert;
 use \WebPConvert\ServeExistingOrHandOver;
+
+function exitWithError($msg) {
+    header('X-WebP-Express-Error: ' . $msg, true);
+    echo $msg;
+    exit;
+}
 
 function loadConfig($configFilename) {
     if (!file_exists($configFilename)) {
@@ -39,7 +45,47 @@ function getDestinationRealPath($dest) {
     }
 }
 
-function getDestination($allowInQS, $allowInHeader) {
+function getDestination() {
+    global $options;
+    global $docRoot;
+
+    if ($options['method-for-passing-source'] == 'querystring-full-path') {
+        if (isset($_GET['xdestination'])) {
+            return substr($_GET['xdestination'], 1);         // No url decoding needed as $_GET is already decoded
+        } elseif (isset($_GET['destination'])) {
+            return $_GET['destination'];
+        } else {
+            exitWithError('Method for passing filename was set to querystring (full path), but neither "destination" or "xdestination" params are in the querystring)');
+        }
+    }
+
+    if ($options['method-for-passing-source'] == 'querystring-relative-path') {
+        $srcRel = '';
+        if (isset($_GET['xdestination-rel'])) {
+            $srcRel = substr($_GET['xdestination-rel'], 1);
+        } elseif (isset($_GET['destination-rel'])) {
+            $srcRel = $_GET['destination-rel'];
+        } else {
+            exitWithError('Method for passing filename was set to querystring (full path), but neither "destination-rel" or "xdestination-rel" params are in the querystring)');
+        }
+
+        if (isset($_GET['destination-rel-filter'])) {
+            if ($_GET['destination-rel-filter'] == 'discard-parts-before-wp-content') {
+                $wp_content = isset($_GET['wp-content']) ? $_GET['wp-content'] : 'wp-content';
+                $parts = explode('/', $srcRel);
+                foreach($parts as $index => $part) {
+                    if($part !== $wp_content) {
+                        unset($parts[$index]);
+                    } else {
+                        break;
+                    }
+                }
+                $srcRel = implode('/', $parts);
+            }
+        }
+        return $docRoot . '/' . $srcRel;
+    }
+
     // First check if it is in an environment variable - thats the safest way
     foreach ($_SERVER as $key => $item) {
         if (substr($key, -14) == 'REDIRECT_REQFN') {
@@ -47,18 +93,10 @@ function getDestination($allowInQS, $allowInHeader) {
         }
     }
 
-    if ($allowInHeader) {
+    if ($options['method-for-passing-source'] == 'request-header') {
         if (isset($_SERVER['HTTP_REQFN'])) {
             //echo 'dest:' . $_SERVER['HTTP_REQFN'];
             return getDestinationRealPath($_SERVER['HTTP_REQFN']);
-        }
-    }
-
-    if ($allowInQS) {
-        if (isset($_GET['xdestination'])) {
-            return substr($_GET['xdestination'], 1);         // No url decoding needed as $_GET is already decoded
-        } elseif (isset($_GET['destination'])) {
-            return $_GET['destination'];
         }
     }
 
@@ -78,9 +116,7 @@ $configFilename = $webExpressContentDirAbs . '/config/wod-options.json';
 
 $options = loadConfig($configFilename);
 
-$allowInQS = true;  // TODO: Think about this.
-$allowInHeader = true;  // todo: implement setting
-$destination = getDestination($allowInQS, $allowInHeader);
+$destination = getDestination();
 //$destination = getDestination(false, false);
 
 //echo $destination; exit;

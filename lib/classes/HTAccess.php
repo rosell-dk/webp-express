@@ -262,7 +262,6 @@ class HTAccess
             RewriteCond %{DOCUMENT_ROOT}/wordpress/uploads-moved/$1 -f
             RewriteRule ^(.*)\.(webp)$ /plugins-moved/webp-express/wod/webp-realizer.php?wp-content=wp-content-moved [NC,L]
             */
-            $passFullSourceInQSRealizer = $passFullSourceInQS;
 
             $basicConditionsRealizer = '';
             $basicConditionsRealizer .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
@@ -279,11 +278,27 @@ class HTAccess
             $rules .= "  # WebP Realizer: Redirect non-existing webp images to webp-realizer.php, which will locate corresponding jpg/png, convert it, and deliver the webp (if possible) \n";
             $rules .= $basicConditionsRealizer;
 
+            /*
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ " .
                 "/" . Paths::getWebPRealizerUrlPath() .
-                ($passFullSourceInQSRealizer ? "?xdestination=x%{SCRIPT_FILENAME}&" : "?") .
+                ($passFullSourceInQS ? "?xdestination=x%{SCRIPT_FILENAME}&" : "?") .
                 "wp-content=" . Paths::getContentDirRel() .
                 " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME}' . ','): '') . "NC,L]\n\n";        // E=WOD:1
+            */
+            $params = [];
+            if ($passFullSourceInQS) {
+                $params[] = 'xdestination=x%{SCRIPT_FILENAME}';
+            } elseif ($passRelativeSourceInQS) {
+                $params[] = 'xdestination-rel=x' . $htaccessDirRel . '/$1.$2';
+            }
+            $params[] = "wp-content=" . Paths::getContentDirRel();
+
+            // TODO: When $rewriteRuleStart is empty, we don't need the .*, do we? - test
+            $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ " .
+                "/" . Paths::getWebPRealizerUrlPath() .
+                "?" . implode('&', $params) .
+                " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME}' . ','): '') . "NC,L]\n\n";        // E=WOD:1
+
 
             if (!$config['redirect-to-existing-in-htaccess']) {
                 $rules .= $ccRules;
