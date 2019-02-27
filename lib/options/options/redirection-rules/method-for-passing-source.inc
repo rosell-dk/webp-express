@@ -10,7 +10,7 @@
             '<tr><td><i>2. Passing through an environment variable</i></td><td>Only adds minimally to the .htaccess. Falls back to #1 if the pass fails, and thus works on more systems than #1</td></tr>' .
             '<tr><td><i>3. Passing through a request header</i></td><td>Adds a bit more to the .htaccess. Falls back on #2 if the pass fails, and thus works on more systems than #2</td></tr>' .
             '<tr><td><i>4. Passing full path through query string (full path)</i></td><td>If even #3 fails, try this one. Note however that it may be subject to firewall blocking.</td></tr>' .
-            '<tr><td><i>5. Passing full path through query string (relative path)</i></td><td>If you are subject to firewall blocking, try this one. Relative paths does not look as suspecious as full paths. This option is however in beta</td></tr>' .
+            '<tr><td><i>5. Passing full path through query string (relative path)</i></td><td>If you are subject to firewall blocking, try this one. Relative paths does not look as suspecious as full paths. Note that this functionality is new in 0.12.0 and perhaps not as steady as #4</td></tr>' .
             '</tbody></table></p>' .
             '<p><b>Note:</b> The receiving script will not accept through query string unless it is choosen here. If you are on NGINX, <i>make sure to select the query string method you are using</i></p>' .
             '<p>To test if a method works: <ul class="with-bullets">' .
