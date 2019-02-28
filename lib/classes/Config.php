@@ -202,6 +202,11 @@ class Config
         if (!is_array($config['web-service']['whitelist'])) {
             $config['web-service']['whitelist'] = [];
         }
+        // remove whitelist entries without required fields (label, ip)
+        $config['web-service']['whitelist'] = array_filter($config['web-service']['whitelist'], function($var) {
+            return (isset($var['label']) && (isset($var['ip'])));
+        });
+
         if (($config['cache-control'] == 'set') && ($config['cache-control-max-age'] == '')) {
             $config['cache-control-max-age'] = 'one-week';
         }
