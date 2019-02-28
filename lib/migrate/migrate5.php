@@ -22,7 +22,7 @@ function webpexpress_migrate5() {
     // By regenerating wod-options.json, we ensure that the new "paths" option is there, which is required in "mingled" mode for
     // determining if an image resides in the uploads folder or not.
 
-    $config = Config::loadConfigAndFix();
+    $config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
     if ($config['operation-mode'] == 'just-convert') {
         $config['operation-mode'] = 'no-varied-responses';
     }

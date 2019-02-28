@@ -7,7 +7,7 @@ use \WebPExpress\Messenger;
 
 function webpexpress_migrate7() {
 
-    $config = Config::loadConfigAndFix();
+    $config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
     if ($config['operation-mode'] == 'just-redirect') {
         $config['operation-mode'] = 'no-conversion';
     }

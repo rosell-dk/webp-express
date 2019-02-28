@@ -28,7 +28,7 @@ function webpexpress_migrate6() {
     // Regenerate .htaccess file if placed in root (so rewrites does not apply in wp-admin area)
     if (HTAccess::isInActiveHTAccessDirsArray('index')) {
         if (Config::isConfigFileThere()) {
-            $config = Config::loadConfigAndFix();
+            $config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
 
             $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'index');
             $success = (HTAccess::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', $rules, true));

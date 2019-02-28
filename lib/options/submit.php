@@ -26,7 +26,7 @@ function webp_express_sanitize_quality_field($text) {
     return max(0, min($q, 100));
 }
 
-$config = Config::loadConfigAndFix();
+$config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
 $oldConfig = $config;
 
 // Set options that are available in all operation modes
