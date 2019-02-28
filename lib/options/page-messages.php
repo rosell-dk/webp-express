@@ -16,11 +16,18 @@ if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }
 
-if (PlatformInfo::definitelyNotGotModRewrite()) {
-    Messenger::printMessage(
-        'error',
-        "Rewriting isn't enabled on your server. WebP Express cannot work without it. Tell your host or system administrator to enable the 'mod_rewrite' module. If you are on a shared host, chances are that mod_rewrite can be turned on in your control panel."
-    );
+if (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer'])) {
+    if (PlatformInfo::definitelyNotGotModRewrite()) {
+        Messenger::printMessage(
+            'error',
+            "Rewriting isn't enabled on your server. ' .
+            'Currently, the only way to make WebP Express generate webp files is with rewriting. '
+            'If you got the webp files through other means, you can use CDN friendly mode and disable the rewrites. ' .
+            'Or perhaps you want to enable rewriting? Tell your host or system administrator to enable the 'mod_rewrite' module. ' .
+            'If you are on a shared host, chances are that mod_rewrite can be turned on in your control panel."
+        );
+    }
+
 }
 /*
 if (Config::isConfigFileThereAndOk() ) { // && PlatformInfo::definitelyGotModEnv()
