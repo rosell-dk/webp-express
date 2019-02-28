@@ -150,11 +150,30 @@ function webpexpress_selectBoxOptions($selected, $options) {
     }
 }
 
+function webpexpress_radioButton($optionName, $optionValue, $label, $selectedValue, $helpText = null) {
+    $id = str_replace('-', '_', $optionName . '_' . $optionValue);
+    echo '<input type="radio" id="' . $id . '"';
+    if ($optionValue == $selectedValue) {
+        echo ' checked="checked"';
+    }
+    echo ' name="' . $optionName . '" value="' . $optionValue . '" style="margin-right: 10px">';
+    echo '<label for="' . $id . '">';
+    echo $label;
+    if (!is_null($helpText)) {
+        echo helpIcon($helpText);
+    }
+    echo '</label>';
+}
+
 function webpexpress_radioButtons($optionName, $selected, $options, $helpTexts = [], $style='margin-left: 20px; margin-top: 5px') {
     echo '<ul style="' . $style . '">';
-    foreach ($options as $optionValue => $text) {
+    foreach ($options as $optionValue => $label) {
         $id = str_replace('-', '_', $optionName . '_' . $optionValue);
         echo '<li>';
+
+        webpexpress_radioButton($optionName, $optionValue, $label, $selected, isset($helpTexts[$optionValue]) ? $helpTexts[$optionValue] : null);
+
+        /*
         echo '<input type="radio" id="' . $id . '"';
         if ($optionValue == $selected) {
             echo ' checked="checked"';
@@ -166,6 +185,7 @@ function webpexpress_radioButtons($optionName, $selected, $options, $helpTexts =
             echo helpIcon($helpTexts[$optionValue]);
         }
         echo '</label>';
+        */
         echo '</li>';
     }
     echo '</ul>';

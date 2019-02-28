@@ -41,7 +41,7 @@
                                 It replaces &lt;img&gt; tags with  &lt;picture&gt; tags, adding two &lt;source&gt; tags - one for the original image(s), and one
                                 for the webp image(s).
                                 Browsers that supports webp picks the &lt;source&gt; tag with <i>type</i> attribute set to "image/webp".
-                                A small javascript is added which dynamically loads picturefill.js on browsers that doesn't support the picture tag.
+                                A small javascript can be optionally added for dynamically loading picturefill.js on browsers that doesn't support the picture tag.
                             </p>
                             <p>
                                 We are using <a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this library</a>.
@@ -88,21 +88,44 @@
             <a id="hide_alterhtml_chart_btn" href="javascript:updateAlterHTMLChartVisibility(false);">Hide comparison chart</a>
             <div>
                 <label>What to replace:</label>
+                <ul style="margin-left: 20px; margin-top: 5px"><li>
                 <?php
-                webpexpress_radioButtons('alter-html-replacement', $config['alter-html']['replacement'], [
-                    'picture' => 'Replace &lt;img&gt; tags with &lt;picture&gt; tags, adding the webp to srcset.',
-                    'url' => 'Replace image URLs',
-                ], [
-                    'picture' => '<p>"Picture tag" replaces &lt;img&gt tags with &lt;picture&gt; tags and adds the webp as an extra source. ' .
+                webpexpress_radioButton(
+                  'alter-html-replacement', 
+                  'picture', 
+                  'Replace &lt;img&gt; tags with &lt;picture&gt; tags, adding the webp to srcset.',
+                  $config['alter-html']['replacement'], 
+                  '<p>"Picture tag" replaces &lt;img&gt tags with &lt;picture&gt; tags and adds the webp as an extra source. ' .
                         'This effectively points webp-enabled browsers to the webp variant and other browsers to ' .
-                        'the original image. It also adds a script that dynamically loads ' .
-                        '<a href="https://github.com/scottjehl/picturefill" target="_blank">picturefill.js</a> ' .
-                        'in browsers that does not support the picture tag (support is currently <a href="https://caniuse.com/#feat=picture" target="_blank">~88%</a>).</p>' .
+                        'the original image.</p>' .
                         '<p><em>Beware that this structural change may affect styling!</em></p>' .
                         '<p>PS: This functionality is handled by ' .
                         '<a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this external library</a>' .
-                        ' (I have pushed the code to an external library so it can be used by other projects besides this plugin)</p>',
-                    'url' => '<p>"Image URLs" replaces the image URLs to point to ' .
+                        ' (I have pushed the code to an external library so it can be used by other projects besides this plugin)</p>'
+                );
+                ?>
+                </li>
+                <li><div id="alter_html_picture_options_div" style="margin-left:18px; margin-bottom: 13px;">
+                    <?php
+                    webpexpress_checkbox(
+                        'alter-html-add-picturefill-js',
+                        $config['alter-html']['alter-html-add-picturefill-js'],
+                        'Dynamically load picturefill.js on older browsers',
+                        'If you enable this option, a small script will be added which detects if picture tags are supported and loads ' .
+                        '<a href="https://github.com/scottjehl/picturefill" target="_blank">picturefill.js</a> if not. ' .
+                        'It is recommended to activate this option, unless your theme or another plugin adds such a script. ' .
+                        'Picture tag support is currently <a href="https://caniuse.com/#feat=picture" target="_blank">~88%</a>'
+                    );
+                    ?>
+                </div></li>
+                <li>
+                <?php
+                webpexpress_radioButton(
+                  'alter-html-replacement', 
+                  'url', 
+                  'Replace image URLs',
+                  $config['alter-html']['replacement'], 
+                  '<p>"Image URLs" replaces the image URLs to point to ' .
                         'the webp <i>rather than</i> the original. Handles src, srcset, common lazy-load attributes and even ' .
                         'inline styles</p>' .
                         '<p>Note that you will have to do something for the browsers that does not support webp. ' .
@@ -112,11 +135,11 @@
                         'But it does not support srcset, which is a showstopper. There are other libraries out there. ' .
                         '<p>PS: This replace functionality is handled by ' .
                         '<a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this external library</a>' .
-                        ', created for the purpose.</p>',
-                ]
+                        ', created for the purpose.</p>'
                 );
                 ?>
-                <div id="alter_html_url_options_div" style="margin-left:39px; margin-top: -5px;">
+                </li>
+                <li><div id="alter_html_url_options_div" style="margin-left:18px; margin-bottom: 13px;">
                     <?php
                     webpexpress_checkbox(
                         'alter-html-only-for-webp-enabled-browsers',
@@ -127,7 +150,9 @@
                             'the page. To overcome that, you can use the Cache Enabler plugin, '
                     );
                     ?>
-                </div>
+                </div></li>
+                </ul>
+
             </div>
             <?php
             if ($config['operation-mode'] != 'no-conversion') {

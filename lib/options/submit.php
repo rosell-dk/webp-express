@@ -68,6 +68,9 @@ if ($_POST['alter-html-replacement'] == 'url') {
 } else {
     $config['alter-html']['only-for-webp-enabled-browsers'] = false;
 }
+if ($_POST['alter-html-replacement'] == 'picture') {
+    $config['alter-html']['alter-html-add-picturefill-js'] = isset($_POST['alter-html-add-picturefill-js']);
+}
 if ($_POST['operation-mode'] != 'no-conversion') {
     $config['alter-html']['only-for-webps-that-exists'] = (!isset($_POST['alter-html-for-webps-that-has-yet-to-exist']));
 } else {

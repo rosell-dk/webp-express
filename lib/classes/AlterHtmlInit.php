@@ -78,7 +78,7 @@ class AlterHtmlInit
 
     public static function setHooks() {
 
-        if (Option::getOption('webp-express-alter-html-replacement') == 'picture') {
+        if (Option::getOption('webp-express-alter-html-add-picturefill-js')) {
             add_action( 'wp_head', '\\WebPExpress\\AlterHtmlInit::addPictureFillJs');
         }
 
