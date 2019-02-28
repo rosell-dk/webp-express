@@ -10,7 +10,7 @@
     <h2><i>.htaccess</i> rules for webp generation</h2>
     <p>
         The following redirect rules will not produce varied image responses.
-        Their job is to trigger webp conversion <i>without</i> producing varied responses.
+        Their job is simply to trigger webp conversion. Note that this is achieved <i>without</i> producing varied responses.
         On most systems you need only to activate the first option. The second option can be used if the first one fails on your system.
     </p>
     <?php elseif ($config['operation-mode'] == 'varied-image-responses') : ?>
