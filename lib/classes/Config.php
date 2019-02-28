@@ -607,4 +607,14 @@ class Config
             ];
         }
     }
+
+    public static function getConverterByName($config, $converterName)
+    {
+        foreach ($config['converters'] as $i => $converter) {
+            if ($converter['converter'] == $converterName) {
+                return $converter;
+            }
+        }
+    }
+
 }

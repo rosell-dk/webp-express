@@ -73,6 +73,10 @@ $canDetectQuality = TestRun::isLocalQualityDetectionWorking();
 $testResult = TestRun::getConverterStatus();
 $config = Config::getConfigForOptionsPage();
 
+//State::setState('last-ewww-optimize-attempt', 0);
+//State::setState('last-ewww-optimize', 0);
+\WebPExpress\KeepEwwwSubscriptionAlive::keepAliveIfItIsTime($config);
+
 if (!$testResult) {
     Messenger::printMessage(
         'error',

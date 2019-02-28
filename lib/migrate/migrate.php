@@ -3,7 +3,6 @@
 include_once __DIR__ . '/../classes/State.php';
 use \WebPExpress\State;
 
-use \WebPConvert\Converters\Ewww;
 use \WebPExpress\Messenger;
 use \WebPExpress\Config;
 use \WebPExpress\Option;
@@ -47,30 +46,4 @@ if (!(State::getState('configured', false))) {
     }
 }
 
-
-function webpexpress_keepEwwwSubscriptionAlive() {
-    include_once __DIR__ . '/../../vendor/autoload.php';
-    include_once __DIR__ . '/../classes/Messenger.php';
-    include_once __DIR__ . '/../classes/Config.php';
-
-    $config = Config::loadConfigAndFix(false);
-    foreach ($config['converters'] as $i => $converter) {
-        if (
-            ($converter['converter'] == 'ewww') &&
-            (!(isset($converter['deactivated'])) || (!$converter['deactivated'])) &&
-            (isset($converter['options']['key'])))
-        {
-            $ewwwConvertResult = Ewww::keepSubscriptionAlive(__DIR__ . '/../../test/very-small.jpg', $converter['options']['key']);
-
-            if ($ewwwConvertResult === true) {
-                Messenger::addMessage(
-                    'info',
-                    'Successfully optimized regular jpg with <i>ewww</i> converter in order to keep the subscription alive'
-                );
-            }
-        }
-    }
-}
-
-// create
-webpexpress_keepEwwwSubscriptionAlive();
+//KeepEwwwSubscriptionAlive::keepAliveIfItIsTime($config);
