@@ -62,18 +62,22 @@ function getSource() {
 
         if (isset($_GET['source-rel-filter'])) {
             if ($_GET['source-rel-filter'] == 'discard-parts-before-wp-content') {
-                $wp_content = isset($_GET['wp-content']) ? $_GET['wp-content'] : 'wp-content';
                 $parts = explode('/', $srcRel);
-                foreach($parts as $index => $part) {
-                    if($part !== $wp_content) {
-                        unset($parts[$index]);
-                    } else {
-                        break;
+                $wp_content = isset($_GET['wp-content']) ? $_GET['wp-content'] : 'wp-content';
+
+                if (in_array($wp_content, $parts)) {
+                    foreach($parts as $index => $part) {
+                        if($part !== $wp_content) {
+                            unset($parts[$index]);
+                        } else {
+                            break;
+                        }
                     }
+                    $srcRel = implode('/', $parts);
                 }
-                $srcRel = implode('/', $parts);
             }
         }
+
         return $docRoot . '/' . $srcRel;
     }
 
