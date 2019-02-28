@@ -247,7 +247,7 @@ Insert the following in the `server` context:
 # WebP Express rules
 # --------------------
 if ($http_accept ~* "webp"){
-  rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?wp-content=wp-content break;
+  rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content break;
 }
 # ------------------- (WebP Express rules ends here)
 ```
