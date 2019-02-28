@@ -16,19 +16,37 @@ if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }
 
-if (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer'])) {
+$anyRedirectionEnabled = (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer']));
+if ($anyRedirectionEnabled) {
     if (PlatformInfo::definitelyNotGotModRewrite()) {
         Messenger::printMessage(
             'error',
             "Rewriting isn't enabled on your server. ' .
-            'Currently, the only way to make WebP Express generate webp files is with rewriting. '
-            'If you got the webp files through other means, you can use CDN friendly mode and disable the rewrites. ' .
-            'Or perhaps you want to enable rewriting? Tell your host or system administrator to enable the 'mod_rewrite' module. ' .
-            'If you are on a shared host, chances are that mod_rewrite can be turned on in your control panel."
+                'Currently, the only way to make WebP Express generate webp files is with rewriting. '
+                'If you got the webp files through other means, you can use CDN friendly mode and disable the rewrites. ' .
+                'Or perhaps you want to enable rewriting? Tell your host or system administrator to enable the 'mod_rewrite' module. ' .
+                'If you are on a shared host, chances are that mod_rewrite can be turned on in your control panel."
         );
     }
-
 }
+
+if (($config['operation-mode'] == 'cdn-friendly') && !$config['alter-html']['enabled']) {
+    Messenger::printMessage(
+        'warning',
+            'You are in CDN friendly mode but have not enabled Alter HTML. ' .
+                'This is usually a misconfiguration because in this mode, the only way to get webp files is by referencing them in the HTML.'
+    );
+}
+
+if (($config['operation-mode'] == 'cdn-friendly') && !$anyRedirectionEnabled) {
+    Messenger::printMessage(
+        'warning',
+            'You are in CDN friendly mode but have not enabled any of the redirects. ' .
+                'At least one of the redirects is required for triggering WebP generation.'
+    );
+}
+
+
 /*
 if (Config::isConfigFileThereAndOk() ) { // && PlatformInfo::definitelyGotModEnv()
     if (!isset($_SERVER['HTACCESS'])) {
