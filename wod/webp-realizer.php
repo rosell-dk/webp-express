@@ -21,6 +21,11 @@ function exitWithError($msg) {
     exit;
 }
 
+if (preg_match('#webp-realizer.php#', $_SERVER['REQUEST_URI'])) {
+    exitWithError('Direct access is not allowed');
+    exit;
+}
+
 function loadConfig($configFilename) {
     if (!file_exists($configFilename)) {
         header('X-WebP-Express-Error: Configuration file not found!', true);
