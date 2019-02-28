@@ -16,7 +16,9 @@ if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }
 
-$anyRedirectionEnabled = (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer']));
+$anyRedirectionToConverterEnabled = (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer']));
+$anyRedirectionEnabled = ($anyRedirectionToConverterEnabled || $config['redirect-to-existing-in-htaccess']);
+
 if ($anyRedirectionEnabled) {
     if (PlatformInfo::definitelyNotGotModRewrite()) {
         Messenger::printMessage(
@@ -38,10 +40,10 @@ if (($config['operation-mode'] == 'cdn-friendly') && !$config['alter-html']['ena
     );
 }
 
-if (($config['operation-mode'] == 'cdn-friendly') && !$anyRedirectionEnabled) {
+if (($config['operation-mode'] == 'cdn-friendly') && !$anyRedirectionToConverterEnabled) {
     Messenger::printMessage(
         'warning',
-            'You are in CDN friendly mode but have not enabled any of the redirects. ' .
+            'You are in CDN friendly mode but have not enabled any of the redirects to the converter. ' .
                 'At least one of the redirects is required for triggering WebP generation.'
     );
 }
