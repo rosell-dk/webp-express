@@ -1,0 +1,13 @@
+
+
+
+
+<IfModule mod_rewrite.c>
+
+    # Testing if we can pass environment variable from .htaccess to script in a RewriteRule
+    # We pass document root, because that can easily be checked by the script
+
+    RewriteEngine On
+    RewriteRule ^test\.php$ - [E=PASSTHROUGHENV:%{DOCUMENT_ROOT},L]
+
+</IfModule>

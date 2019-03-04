@@ -26,6 +26,25 @@ if (preg_match('#webp-on-demand.php#', $_SERVER['REQUEST_URI'])) {
     exit;
 }
 
+/**
+ *  Get environment variable set with mod_rewrite module
+ *  Return false if the environment variable isn't found
+ */
+function getEnvPassedInRewriteRule($envName) {
+    // Envirenment variables passed through the REWRITE module have "REWRITE_" as a prefix (in Apache, not Litespeed, if I recall correctly)
+    //  Multiple iterations causes multiple REWRITE_ prefixes, and we get many environment variables set.
+    // Multiple iterations causes multiple REWRITE_ prefixes, and we get many environment variables set.
+    // We simply look for an environment variable that ends with what we are looking for.
+    // (so make sure to make it unique)
+    $len = strlen($envName);
+    foreach ($_SERVER as $key => $item) {
+        if (substr($key, -$len) == $envName) {
+            return $item;
+        }
+    }
+    return false;
+}
+
 function loadConfig($configFilename) {
     if (!file_exists($configFilename)) {
         header('X-WebP-Express-Error: Configuration file not found!', true);
@@ -45,26 +64,42 @@ function getSource() {
     global $options;
     global $docRoot;
 
-    if ($options['method-for-passing-source'] == 'querystring-full-path') {
-        if (isset($_GET['xsource'])) {
-            return substr($_GET['xsource'], 1);         // No url decoding needed as $_GET is already decoded
-        } elseif (isset($_GET['source'])) {
-            return $_GET['source'];
-        } else {
-            exitWithError('Method for passing filename was set to querystring (full path), but neither "source" or "xsource" params are in the querystring)');
+    // First check if it is in an environment variable - thats the safest way
+    $source = getEnvPassedInRewriteRule('REQFN');
+    if ($source !== false) {
+        return $source;
+    }
+
+    // Then header
+    if (isset($options['base-htaccess-on-these-capability-tests'])) {
+        $capTests = $options['base-htaccess-on-these-capability-tests'];
+        $passThroughHeaderDefinitelyUnavailable = ($capTests['passThroughHeaderWorking'] === false);
+        $passThrougEnvVarDefinitelyAvailable =($capTests['passThroughEnvWorking'] === true);
+    } else {
+        $passThroughHeaderDefinitelyUnavailable = false;
+        $passThrougEnvVarDefinitelyAvailable = false;
+    }
+    if ((!$passThrougEnvVarDefinitelyAvailable) && (!$passThroughHeaderDefinitelyUnavailable)) {
+        if (isset($_SERVER['HTTP_REQFN'])) {
+            return $_SERVER['HTTP_REQFN'];
         }
     }
 
-    if ($options['method-for-passing-source'] == 'querystring-relative-path') {
-        $srcRel = '';
-        if (isset($_GET['xsource-rel'])) {
-            $srcRel = substr($_GET['xsource-rel'], 1);
-        } elseif (isset($_GET['source-rel'])) {
-            $srcRel = $_GET['source-rel'];
-        } else {
-            exitWithError('Method for passing filename was set to querystring (full path), but neither "source-rel" or "xsource-rel" params are in the querystring)');
-        }
+    // Then querystring (full path)
+    if (isset($_GET['xsource'])) {
+        return substr($_GET['xsource'], 1);         // No url decoding needed as $_GET is already decoded
+    } elseif (isset($_GET['source'])) {
+        return $_GET['source'];
+    }
 
+    // Then querystring (relative path)
+    $srcRel = '';
+    if (isset($_GET['xsource-rel'])) {
+        $srcRel = substr($_GET['xsource-rel'], 1);
+    } elseif (isset($_GET['source-rel'])) {
+        $srcRel = $_GET['source-rel'];
+    }
+    if ($srcRel != '') {
         if (isset($_GET['source-rel-filter'])) {
             if ($_GET['source-rel-filter'] == 'discard-parts-before-wp-content') {
                 $parts = explode('/', $srcRel);
@@ -82,24 +117,7 @@ function getSource() {
                 }
             }
         }
-
         return $docRoot . '/' . $srcRel;
-    }
-
-
-    //echo '<pre>' . print_r($_SERVER, true) . '</pre>'; exit;
-
-    // First check if it is in an environment variable - thats the safest way
-    foreach ($_SERVER as $key => $item) {
-        if (substr($key, -14) == 'REDIRECT_REQFN') {
-            return $item;
-        }
-    }
-
-    if ($options['method-for-passing-source'] == 'request-header') {
-        if (isset($_SERVER['HTTP_REQFN'])) {
-            return $_SERVER['HTTP_REQFN'];
-        }
     }
 
     // Last resort is to use $_SERVER['REQUEST_URI'], well knowing that it does not give the
@@ -111,25 +129,29 @@ function getSource() {
         return $source;
     }
 
-    exitWithError('Could not locate source file. Try another method (in the Redirection Rules section in WebP settings)');
+    // No luck whatsoever!
+    exitWithError('webp-on-demand.php was not passed any filename to convert');
+}
 
-    /*
-    if (!$allowInHeader) {
-        echo '<br>Have you tried allowing source to be passed as a request header?';
+function getWpContentRel() {
+    // Passed in env variable?
+    $wpContentDirRel = getEnvPassedInRewriteRule('WPCONTENT');
+    if ($wpContentDirRel !== false) {
+        return $wpContentDirRel;
     }
-    if (!$allowInQS) {
-        echo '<br>Have you tried allowing source to be passed in querystring?';
-    }*/
-    exit;
+
+    // Passed in QS?
+    if (isset($_GET['wp-content'])) {
+        return $_GET['wp-content'];
+    }
+
+    // In case above fails, fall back to standard location
+    return 'wp-content';
 }
 
 $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
-$wpContentDirRel = (isset($_GET['wp-content']) ? $_GET['wp-content'] : 'wp-content');
-$webExpressContentDirRel = $wpContentDirRel . '/webp-express';
-$webExpressContentDirAbs = $docRoot . '/' . $webExpressContentDirRel;
-$configFilename = $webExpressContentDirAbs . '/config/wod-options.json';
-
-$options = loadConfig($configFilename);
+$webExpressContentDirAbs = $docRoot . '/' . getWpContentRel() . '/webp-express';
+$options = loadConfig($webExpressContentDirAbs . '/config/wod-options.json');
 
 $source = getSource();
 //$source = getSource(false, false);

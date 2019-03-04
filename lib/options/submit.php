@@ -15,6 +15,9 @@ use \WebPExpress\Messenger;
 include_once __DIR__ . '/../classes/Paths.php';
 use \WebPExpress\Paths;
 
+use \WebPExpress\CapabilityTest;
+
+
 // https://premium.wpmudev.org/blog/handling-form-submissions/
 // checkout https://codex.wordpress.org/Function_Reference/sanitize_meta
 
@@ -86,8 +89,6 @@ if ($_POST['operation-mode'] != 'no-conversion') {
 
 
     $config['enable-redirection-to-webp-realizer'] = isset($_POST['enable-redirection-to-webp-realizer']);
-
-    $config['method-for-passing-source'] = sanitize_text_field($_POST['method-for-passing-source']);
 
     // Metadata
     // --------
@@ -210,6 +211,12 @@ if ($_POST['operation-mode'] != $_POST['change-operation-mode']) {
     $config['operation-mode'] = $_POST['change-operation-mode'];
     $config = Config::applyOperationMode($config);
 }
+
+// If we are going to save .htaccess, run and store capability tests first (we should only store results when .htaccess is updated as well)
+if (isset($_POST['force']) || HTAccess::doesRewriteRulesNeedUpdate($config)) {
+    Config::runAndStoreCapabilityTests($config);
+}
+
 
 // SAVE!
 // -----

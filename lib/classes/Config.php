@@ -80,7 +80,6 @@ class Config
             'redirect-to-existing-in-htaccess' => true,
             'forward-query-string' => false,
             'enable-redirection-to-webp-realizer' => true,
-            'method-for-passing-source' => 'request-header',
 
             // conversion options
             'converters' => [],
@@ -271,6 +270,16 @@ class Config
 
 
         return $config;
+    }
+
+
+    public static function runAndStoreCapabilityTests(&$config)
+    {
+        $config['base-htaccess-on-these-capability-tests'] = [
+            'passThroughHeaderWorking' => CapabilityTest::passThroughHeaderWorking(),
+            'passThroughEnvWorking' => CapabilityTest::passThroughEnvWorking(),
+            'modHeaderWorking' => CapabilityTest::modHeaderWorking(),
+        ];
     }
 
     /**
@@ -572,6 +581,7 @@ class Config
      */
     public static function saveConfigurationAndHTAccess($config, $forceRuleUpdating = false)
     {
+
         // Important to do this check before saving config, because the method
         // compares against existing config.
 

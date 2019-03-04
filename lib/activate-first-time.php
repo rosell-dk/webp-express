@@ -3,6 +3,9 @@
 include_once __DIR__ . '/classes/Actions.php';
 use \WebPExpress\Actions;
 
+include_once __DIR__ . '/classes/CapabilityTest.php';
+use \WebPExpress\CapabilityTest;
+
 include_once __DIR__ . '/classes/Config.php';
 use \WebPExpress\Config;
 
@@ -17,6 +20,7 @@ use \WebPExpress\PlatformInfo;
 
 include_once __DIR__ . '/classes/State.php';
 use \WebPExpress\State;
+
 
 // First check basic requirements.
 // -------------------------------
@@ -65,3 +69,6 @@ Messenger::addMessage(
     'WebP Express was installed successfully. To start using it, you must ' .
         '<a href="' . Paths::getSettingsUrl() . '">configure it here</a>.'
 );
+
+// While not neccessary, lets get those tests copied right away. Some servers are a bit slow to pick up on changes in the filesystem
+CapabilityTest::copyCapabilityTestsToWpContent();

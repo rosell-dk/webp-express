@@ -3,7 +3,9 @@
 namespace WebPExpress;
 
 use \WebPExpress\Config;
+use \WebPExpress\HTAccess;
 use \WebPExpress\Messenger;
+use \WebPExpress\CapabilityTest;
 
 function webpexpress_migrate7() {
 
@@ -17,21 +19,13 @@ function webpexpress_migrate7() {
     if ($config['operation-mode'] == 'varied-responses') {
         $config['operation-mode'] = 'varied-image-responses';
     }
-    if ($config['do-not-pass-source-in-query-string']) {
-        $config['method-for-passing-source'] = 'request-header';
-    } else {
-        $config['method-for-passing-source'] = 'querystring-full-path';
+    if (isset($config['do-not-pass-source-in-query-string'])) {
+        unset($config['do-not-pass-source-in-query-string']);
     }
 
     // Migrate some configurations to the new "No conversion" mode
     if ((!$config['enable-redirection-to-webp-realizer']) && (!$config['enable-redirection-to-converter']) && ($config['destination-folder'] == 'mingled') && ($config['operation-mode'] == 'cdn-friendly') && (!($config['web-service']['enabled']))) {
         $config['operation-mode'] = 'no-conversion';
-    }
-
-    // The ones who had disabled "do-not-pass-source-in-query-string", must have done it because they wanted to
-    // pass through querystring. - So set the new "method" option to that
-    if (!$config['do-not-pass-source-in-query-string']) {
-        $config['method-for-passing-source'] = 'querystring-full-path';
     }
 
     // In next migration, we can remove do-not-pass-source-in-query-string
@@ -41,6 +35,12 @@ function webpexpress_migrate7() {
     if (Config::saveConfigurationFileAndWodOptions($config)) {
 
         $msg = 'Successfully migrated <i>WebP Express</i> options for 0.12. ';
+        // The webp realizer rules where errornous, so recreate rules, if neccessary. (see issue #195)
+
+        if (($config['enable-redirection-to-webp-realizer']) && ($config['destination-folder'] != 'mingled')) {
+            HTAccess::saveRules($config);
+            $msg .= 'Also fixed <a target="_blank" href="https://github.com/rosell-dk/webp-express/issues/195">buggy</a> <i>.htaccess</i> rules. ';
+        }
 
         if (!$config['alter-html']['enabled']) {
             if ($config['operation-mode'] == 'varied-responses') {
@@ -75,6 +75,8 @@ function webpexpress_migrate7() {
         // PSST: When creating new migration files, remember to update WEBPEXPRESS_MIGRATION_VERSION in admin.php
         Option::updateOption('webp-express-migration-version', '7');
 
+
+        CapabilityTest::copyCapabilityTestsToWpContent();
 
         // Not completely sure if this could fail miserably, so commented out.
         // We should probably do it in upcoming migrations

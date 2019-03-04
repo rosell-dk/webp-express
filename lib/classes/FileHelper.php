@@ -255,4 +255,46 @@ class FileHelper
         }
     }
 
+
+    /**
+     *  Copy dir and all its files.
+     *  Existing files are overwritten.
+     *
+     *  @return $success
+     */
+    public static function cpdir($sourceDir, $destinationDir)
+    {
+        if (!@is_dir($sourceDir)) {
+            return false;
+        }
+        if (!@file_exists($destinationDir)) {
+            if (!@mkdir($destinationDir)) {
+                return false;
+            }
+        }
+
+        $fileIterator = new \FilesystemIterator($sourceDir);
+        $success = true;
+
+        while ($fileIterator->valid()) {
+            $filename = $fileIterator->getFilename();
+
+            if (($filename != ".") && ($filename != "..")) {
+                //$filePerm = FileHelper::filePermWithFallback($filename, 0777);
+
+                if (@is_dir($sourceDir . "/" . $filename)) {
+                    if (!self::cpdir($sourceDir . "/" . $filename, $destinationDir . "/" . $filename)) {
+                        $success = false;
+                    }
+                } else {
+                    // its a file.
+                    if (!copy($sourceDir . "/" . $filename, $destinationDir . "/" . $filename)) {
+                        $success = false;
+                    }
+                }
+            }
+            $fileIterator->next();
+        }
+        return $success;
+    }
 }

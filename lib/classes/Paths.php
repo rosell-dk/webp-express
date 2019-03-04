@@ -254,7 +254,7 @@ APACHE
 
     public static function getPluginDirAbs()
     {
-        return untrailingslashit(WP_PLUGIN_DIR);
+        return self::getAbsDir(WP_PLUGIN_DIR);
     }
 
     public static function getPluginDirRel()
@@ -276,7 +276,7 @@ APACHE
 
     public static function getWebPExpressPluginDirAbs()
     {
-        return untrailingslashit(WEBPEXPRESS_PLUGIN_DIR);
+        return self::getAbsDir(WEBPEXPRESS_PLUGIN_DIR);
     }
 
     public static function getAbsDirId($absDir) {
@@ -381,7 +381,7 @@ APACHE
 
 
     /**
-     *  Get Url to plugin (this is in fact an incomplete URL, you need to append ie '/webp-on-demand.php' to get a full URL)
+     *  Get Url to WebP Express plugin (this is in fact an incomplete URL, you need to append ie '/webp-on-demand.php' to get a full URL)
      */
     public static function getPluginUrl()
     {

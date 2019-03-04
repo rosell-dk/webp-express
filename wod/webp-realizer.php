@@ -10,8 +10,6 @@ error_reporting(E_ALL);
 //require 'webp-on-demand-1.inc';
 //require '../vendor/autoload.php';
 
-// print_r($_GET); exit;
-
 use \WebPConvert\WebPConvert;
 use \WebPConvert\ServeExistingOrHandOver;
 
@@ -24,6 +22,25 @@ function exitWithError($msg) {
 if (preg_match('#webp-realizer.php#', $_SERVER['REQUEST_URI'])) {
     exitWithError('Direct access is not allowed');
     exit;
+}
+
+/**
+ *  Get environment variable set with mod_rewrite module
+ *  Return false if the environment variable isn't found
+ */
+function getEnvPassedInRewriteRule($envName) {
+    // Envirenment variables passed through the REWRITE module have "REWRITE_" as a prefix (in Apache, not Litespeed, if I recall correctly)
+    //  Multiple iterations causes multiple REWRITE_ prefixes, and we get many environment variables set.
+    // Multiple iterations causes multiple REWRITE_ prefixes, and we get many environment variables set.
+    // We simply look for an environment variable that ends with what we are looking for.
+    // (so make sure to make it unique)
+    $len = strlen($envName);
+    foreach ($_SERVER as $key => $item) {
+        if (substr($key, -$len) == $envName) {
+            return $item;
+        }
+    }
+    return false;
 }
 
 function loadConfig($configFilename) {
@@ -41,6 +58,7 @@ function loadConfig($configFilename) {
     return json_decode($json, true);
 }
 
+/*
 function getDestinationRealPath($dest) {
     //echo $_SERVER["DOCUMENT_ROOT"] . '<br>' . $dest . '<br>';
     if (strpos($dest, $_SERVER["DOCUMENT_ROOT"]) === 0) {
@@ -48,61 +66,51 @@ function getDestinationRealPath($dest) {
     } else {
         return $dest;
     }
-}
+}*/
 
 function getDestination() {
     global $options;
     global $docRoot;
 
-    if ($options['method-for-passing-source'] == 'querystring-full-path') {
-        if (isset($_GET['xdestination'])) {
-            return substr($_GET['xdestination'], 1);         // No url decoding needed as $_GET is already decoded
-        } elseif (isset($_GET['destination'])) {
-            return $_GET['destination'];
-        } else {
-            exitWithError('Method for passing filename was set to querystring (full path), but neither "destination" or "xdestination" params are in the querystring)');
-        }
+    // First check if it is in an environment variable - thats the safest way
+    $destinationRel = getEnvPassedInRewriteRule('DESTINATIONREL');
+    if ($destinationRel !== false) {
+        return $docRoot . '/' . $destinationRel;
     }
 
-    if ($options['method-for-passing-source'] == 'querystring-relative-path') {
-        $srcRel = '';
-        if (isset($_GET['xdestination-rel'])) {
-            $srcRel = substr($_GET['xdestination-rel'], 1);
-        } elseif (isset($_GET['destination-rel'])) {
-            $srcRel = $_GET['destination-rel'];
-        } else {
-            exitWithError('Method for passing filename was set to querystring (full path), but neither "destination-rel" or "xdestination-rel" params are in the querystring)');
-        }
+    // Next, check querystring (full path)
+    if (isset($_GET['xdestination'])) {
+        return substr($_GET['xdestination'], 1);         // No url decoding needed as $_GET is already decoded
+    } elseif (isset($_GET['destination'])) {
+        return $_GET['destination'];
+    }
 
-        if (isset($_GET['destination-rel-filter'])) {
-            if ($_GET['destination-rel-filter'] == 'discard-parts-before-wp-content') {
+    // Next, check querystring (relative path)
+    $destinationRel = '';
+    if (isset($_GET['xdestination-rel'])) {
+        $destinationRel = substr($_GET['xdestination-rel'], 1);
+    } elseif (isset($_GET['destination-rel'])) {
+        $destinationRel = $_GET['destination-rel'];
+    }
+    if ($destinationRel != '') {
+        if (isset($_GET['source-rel-filter'])) {
+            if ($_GET['source-rel-filter'] == 'discard-parts-before-wp-content') {
+                $parts = explode('/', $destinationRel);
                 $wp_content = isset($_GET['wp-content']) ? $_GET['wp-content'] : 'wp-content';
-                $parts = explode('/', $srcRel);
-                foreach($parts as $index => $part) {
-                    if($part !== $wp_content) {
-                        unset($parts[$index]);
-                    } else {
-                        break;
+
+                if (in_array($wp_content, $parts)) {
+                    foreach($parts as $index => $part) {
+                        if($part !== $wp_content) {
+                            unset($parts[$index]);
+                        } else {
+                            break;
+                        }
                     }
+                    $destinationRel = implode('/', $parts);
                 }
-                $srcRel = implode('/', $parts);
             }
         }
-        return $docRoot . '/' . $srcRel;
-    }
-
-    // First check if it is in an environment variable - thats the safest way
-    foreach ($_SERVER as $key => $item) {
-        if (substr($key, -14) == 'REDIRECT_REQFN') {
-            return getDestinationRealPath($item);
-        }
-    }
-
-    if ($options['method-for-passing-source'] == 'request-header') {
-        if (isset($_SERVER['HTTP_REQFN'])) {
-            //echo 'dest:' . $_SERVER['HTTP_REQFN'];
-            return getDestinationRealPath($_SERVER['HTTP_REQFN']);
-        }
+        return $docRoot . '/' . $destinationRel;
     }
 
     // Last resort is to use $_SERVER['REQUEST_URI'], well knowing that it does not give the
@@ -113,18 +121,30 @@ function getDestination() {
     return $dest;
 }
 
-$docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
-$wpContentDirRel = (isset($_GET['wp-content']) ? $_GET['wp-content'] : 'wp-content');
-$webExpressContentDirRel = $wpContentDirRel . '/webp-express';
-$webExpressContentDirAbs = $docRoot . '/' . $webExpressContentDirRel;
-$configFilename = $webExpressContentDirAbs . '/config/wod-options.json';
+function getWpContentRel() {
+    // Passed in env variable?
+    $wpContentDirRel = getEnvPassedInRewriteRule('WPCONTENT');
+    if ($wpContentDirRel !== false) {
+        return $wpContentDirRel;
+    }
 
-$options = loadConfig($configFilename);
+    // Passed in QS?
+    if (isset($_GET['wp-content'])) {
+        return $_GET['wp-content'];
+    }
+
+    // In case above fails, fall back to standard location
+    return 'wp-content';
+}
+
+$docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
+$webExpressContentDirAbs = $docRoot . '/' . getWpContentRel() . '/webp-express';
+$options = loadConfig($webExpressContentDirAbs . '/config/wod-options.json');
 
 $destination = getDestination();
-//$destination = getDestination(false, false);
 
-//echo $destination; exit;
+//echo 'destination: ' . $destination; exit;
+
 
 // Try to find source in same folder.
 // Return false on failure

@@ -29,7 +29,6 @@
             <?php
             switch ($config['operation-mode']) {
                 case 'tweaked':
-                    include_once 'method-for-passing-source.inc';
                     include_once 'enable-redirection-to-converter.inc';
                     include_once 'only-redirect-to-converter-for-webp-enabled-browsers.inc';
                     include_once 'only-redirect-to-converter-on-cache-miss.inc';
@@ -44,14 +43,12 @@
                     break;
                 case 'cdn-friendly':
                     //include_once 'redirect-to-existing.inc';
-                    include_once 'method-for-passing-source.inc';
                     include_once 'enable-redirection-to-webp-realizer.inc';
 
                     // ps: we call it "auto convert", when in this mode
                     include_once 'enable-redirection-to-converter.inc';
                     break;
                 case 'varied-image-responses':
-                    include_once 'method-for-passing-source.inc';
                     include_once 'redirect-to-existing.inc';
                     include_once 'enable-redirection-to-webp-realizer.inc';
                     break;

@@ -31,7 +31,6 @@ class HTAccess
             'forward-query-string' => true,
             'image-types' => 1,
             'do-not-pass-source-in-query-string' => false,
-            'method-for-passing-source' => 'request-header',
             'redirect-to-existing-in-htaccess' => false,
             'only-redirect-to-converter-on-cache-miss' => false,
             'destination-folder' => 'separate',
@@ -43,6 +42,29 @@ class HTAccess
         if ((!$config['enable-redirection-to-converter']) && (!$config['redirect-to-existing-in-htaccess']) && (!$config['enable-redirection-to-webp-realizer'])) {
             return '# WebP Express does not need to write any rules (it has not been set up to redirect to converter, nor to existing webp, and the "convert non-existing webp-files upon request" option has not been enabled)';
         }
+
+        if (isset($config['base-htaccess-on-these-capability-tests'])) {
+            $capTests = $config['base-htaccess-on-these-capability-tests'];
+            $modHeaderDefinitelyUnavailable = ($capTests['modHeaderWorking'] === false);
+            $passThroughHeaderDefinitelyUnavailable = ($capTests['passThroughHeaderWorking'] === false);
+            $passThroughHeaderDefinitelyAavailable = ($capTests['passThroughHeaderWorking'] === true);
+            $passThrougEnvVarDefinitelyUnavailable = ($capTests['passThroughEnvWorking'] === false);
+            $passThrougEnvVarDefinitelyAvailable =($capTests['passThroughEnvWorking'] === true);
+        } else {
+            $modHeaderDefinitelyUnavailable = false;
+            $passThroughHeaderDefinitelyUnavailable = false;
+            $passThroughHeaderDefinitelyAavailable = false;
+            $passThrougEnvVarDefinitelyUnavailable = false;
+            $passThrougEnvVarDefinitelyAvailable = false;
+        }
+
+        $setEnvVar = !$passThrougEnvVarDefinitelyUnavailable;
+        $passFullFilePathInQS = false;
+        $passRelativeFilePathInQS = !($passThrougEnvVarDefinitelyAvailable || $passThroughHeaderDefinitelyAavailable);
+        $passFullFilePathInQSRealizer = false;
+        $passRelativeFilePathInQSRealizer = $passRelativeFilePathInQS;
+
+
 
         /* Calculate $fileExt */
         $imageTypes = $config['image-types'];
@@ -82,48 +104,54 @@ class HTAccess
             $ccRules .= "  </IfModule>\n\n";
 
             // Fall back to mod_expires if mod_headers is unavailable
-            $cacheControl = $config['cache-control'];
-            if ($cacheControl == 'custom') {
-                $expires = '';
 
-                // Do not add Expire header if private is set
-                // - because then the user don't want caching in proxies / CDNs.
-                //   the Expires header doesn't differentiate between private/public
-                if (!(preg_match('/private/', $config['cache-control-custom']))) {
-                    if (preg_match('/max-age=(\d+)/', $config['cache-control-custom'], $matches)) {
-                        if (isset($matches[1])) {
-                            $expires = $matches[1] . ' seconds';
+
+
+            if ($modHeaderDefinitelyUnavailable) {
+                $cacheControl = $config['cache-control'];
+
+                if ($cacheControl == 'custom') {
+                    $expires = '';
+
+                    // Do not add Expire header if private is set
+                    // - because then the user don't want caching in proxies / CDNs.
+                    //   the Expires header doesn't differentiate between private/public
+                    if (!(preg_match('/private/', $config['cache-control-custom']))) {
+                        if (preg_match('/max-age=(\d+)/', $config['cache-control-custom'], $matches)) {
+                            if (isset($matches[1])) {
+                                $expires = $matches[1] . ' seconds';
+                            }
                         }
+                    }
+
+                } elseif ($cacheControl == 'no-header') {
+                    $expires = '';
+                } elseif ($cacheControl == 'set') {
+                    if ($config['cache-control-public']) {
+                        $cacheControlOptions = [
+                            'no-header' => '',
+                            'one-second' => '1 seconds',
+                            'one-minute' => '1 minutes',
+                            'one-hour' => '1 hours',
+                            'one-day' => '1 days',
+                            'one-week' => '1 weeks',
+                            'one-month' => '1 months',
+                            'one-year' => '1 years',
+                        ];
+                        $expires = $cacheControlOptions[$config['cache-control-max-age']];
                     }
                 }
 
-            } elseif ($cacheControl == 'no-header') {
-                $expires = '';
-            } elseif ($cacheControl == 'set') {
-                if ($config['cache-control-public']) {
-                    $cacheControlOptions = [
-                        'no-header' => '',
-                        'one-second' => '1 seconds',
-                        'one-minute' => '1 minutes',
-                        'one-hour' => '1 hours',
-                        'one-day' => '1 days',
-                        'one-week' => '1 weeks',
-                        'one-month' => '1 months',
-                        'one-year' => '1 years',
-                    ];
-                    $expires = $cacheControlOptions[$config['cache-control-max-age']];
+                if ($expires != '') {
+                    // in case mod_headers is missing, try mod_expires
+                    $ccRules .= "  # Fall back to mod_expires if mod_headers is unavailable\n";
+                    $ccRules .= "  <IfModule !mod_headers.c>\n";
+                    $ccRules .= "    <IfModule mod_expires.c>\n";
+                    $ccRules .= "      ExpiresActive On\n";
+                    $ccRules .= "      ExpiresByType image/webp \"access plus " . $expires . "\"\n";
+                    $ccRules .= "    </IfModule>\n";
+                    $ccRules .= "  </IfModule>\n\n";
                 }
-            }
-
-            if ($expires != '') {
-                // in case mod_headers is missing, try mod_expires
-                $ccRules .= "  # Fall back to mod_expires if mod_headers is unavailable\n";
-                $ccRules .= "  <IfModule !mod_headers.c>\n";
-                $ccRules .= "    <IfModule mod_expires.c>\n";
-                $ccRules .= "      ExpiresActive On\n";
-                $ccRules .= "      ExpiresByType image/webp \"access plus " . $expires . "\"\n";
-                $ccRules .= "    </IfModule>\n";
-                $ccRules .= "  </IfModule>\n\n";
             }
         }
 
@@ -190,9 +218,6 @@ class HTAccess
                 break;
         }
 
-        $passFullSourceInQS = ($config['method-for-passing-source'] == 'querystring-full-path');
-        $passRelativeSourceInQS = ($config['method-for-passing-source'] == 'querystring-relative-path');
-        $setEnvVar = (($config['method-for-passing-source'] == 'request-header') || ($config['method-for-passing-source'] == 'environment-variable'));
 
         // TODO: Is it possible to handle when wp-content is outside document root?
 
@@ -230,20 +255,20 @@ class HTAccess
 
         }
 
-        if ($config['method-for-passing-source'] == 'request-header') {
-            if (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer'])) {
-
-                if ($config['enable-redirection-to-webp-realizer']) {
-                    $rules .= "  # Pass REQUEST_FILENAME to webp-realizer.php " . ($config['enable-redirection-to-converter'] ? '/ webp-on-demand.php ' : '') . "in request header\n";
-                } elseif ($config['enable-redirection-to-converter']) {
-                    $rules .= "  # Pass REQUEST_FILENAME to webp-on-demand.php in request header\n";
-                }
+        // Do not add header magic if passing through env is definitely working
+        // Do not add either, if we definitily know it isn't working
+        if ((!$passThrougEnvVarDefinitelyAvailable) && (!$passThroughHeaderDefinitelyUnavailable)) {
+            if ($config['enable-redirection-to-converter']) {
+                $rules .= "  # Pass REQUEST_FILENAME to webp-on-demand.php in request header\n";
                 //$rules .= $basicConditions;
                 //$rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
                 $rules .= "  <IfModule mod_headers.c>\n" .
                     "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
                     "  </IfModule>\n\n";
 
+            }
+            if ($config['enable-redirection-to-webp-realizer']) {
+                // We haven't implemented a clever way to pass through header for webp-realizer yet
             }
         }
 
@@ -281,23 +306,25 @@ class HTAccess
             /*
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ " .
                 "/" . Paths::getWebPRealizerUrlPath() .
-                ($passFullSourceInQS ? "?xdestination=x%{SCRIPT_FILENAME}&" : "?") .
+                ($passFullFilePathInQS ? "?xdestination=x%{SCRIPT_FILENAME}&" : "?") .
                 "wp-content=" . Paths::getContentDirRel() .
                 " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME}' . ','): '') . "NC,L]\n\n";        // E=WOD:1
             */
             $params = [];
-            if ($passFullSourceInQS) {
+            if ($passFullFilePathInQSRealizer) {
                 $params[] = 'xdestination=x%{SCRIPT_FILENAME}';
-            } elseif ($passRelativeSourceInQS) {
+            } elseif ($passRelativeFilePathInQSRealizer) {
                 $params[] = 'xdestination-rel=x' . $htaccessDirRel . '/$1.$2';
             }
-            $params[] = "wp-content=" . Paths::getContentDirRel();
+            if (!$passThrougEnvVarDefinitelyAvailable) {
+                $params[] = "wp-content=" . Paths::getContentDirRel();
+            }
 
             // TODO: When $rewriteRuleStart is empty, we don't need the .*, do we? - test
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ " .
                 "/" . Paths::getWebPRealizerUrlPath() .
-                "?" . implode('&', $params) .
-                " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME}' . ','): '') . "NC,L]\n\n";        // E=WOD:1
+                ((count($params) > 0) ?  "?" . implode('&', $params) : '') .
+                " [" . ($setEnvVar ? ('E=DESTINATIONREL:' . $htaccessDirRel . '/$0' . ','): '') . (!$passThrougEnvVarDefinitelyUnavailable ? 'E=WPCONTENT:' . Paths::getContentDirRel() . ',' : '') . "NC,L]\n\n";        // E=WOD:1
 
 
             if (!$config['redirect-to-existing-in-htaccess']) {
@@ -348,12 +375,14 @@ class HTAccess
             // (and try testing spaces in directory paths)
 
             $params = [];
-            if ($passFullSourceInQS) {
+            if ($passFullFilePathInQS) {
                 $params[] = 'xsource=x%{SCRIPT_FILENAME}';
-            } elseif ($passRelativeSourceInQS) {
+            } elseif ($passRelativeFilePathInQS) {
                 $params[] = 'xsource-rel=x' . $htaccessDirRel . '/$1.$2';
             }
-            $params[] = "wp-content=" . Paths::getContentDirRel();
+            if (!$passThrougEnvVarDefinitelyAvailable) {
+                $params[] = "wp-content=" . Paths::getContentDirRel();
+            }
             if ($config['forward-query-string']) {
                 $params[] = '%1';
             }
@@ -362,7 +391,7 @@ class HTAccess
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ " .
                 "/" . Paths::getWodUrlPath() .
                 "?" . implode('&', $params) .
-                " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME}' . ','): '') . "NC,L]\n";        // E=WOD:1
+                " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME},'): '') . (!$passThrougEnvVarDefinitelyUnavailable ? 'E=WPCONTENT:' . Paths::getContentDirRel() . ',' : '') . "NC,L]\n";        // E=WOD:1
 
             $rules .= "\n";
         }
@@ -465,7 +494,6 @@ class HTAccess
         $propsToCompare = [
             'forward-query-string' => true,
             'image-types' => 1,
-            'method-for-passing-source' => 'request-header',
             'redirect-to-existing-in-htaccess' => false,
             'only-redirect-to-converter-on-cache-miss' => false,
             'success-response' => 'converted',

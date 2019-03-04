@@ -62,10 +62,12 @@
                                 As the HTML varies with the webp-capability of the browser, page caching is tricky.
                                 However, it can be achieved with the wonderful <i>Cache Enabler</i> plugin, which maintains two cached versions of each page.<br><br>
                                 <span style="font-size:10px">
-                                    Note: Cache Enabler works without WebP Express, but the HTML altering have
-                                    <a target="_blank" href="https://github.com/keycdn/cache-enabler/issues/51">problems and limitations</a>, so the recommended setup
-                                    is using WebP Express for the HTML altering of image URLs and <i>Cache Enabler</i> for the page caching.
-                                    WebP Express does the replacing before Cache Enabler, so no special action is needed in order to do that.
+                                    Note: <i>Cache Enabler</i> also has HTML altering, but their implementation has <a target="_blank" href="https://github.com/keycdn/cache-enabler/issues/51">limitations</a>.
+                                    It for example doesn't replace background images in inline styles and it does not look for all common lazy load attributes. It also has some problems in edge cases.
+                                    For this reason, I recommend activating HTML altering in WebP Express, even when <i>Cache Enabler</i> is used.
+                                    By doing that, both plugins will have a go at it (WebP Express comes first).
+                                    At least it will take care of the limitations in <i>Cache Enabler</i>.
+                                    It does however not cure the edge cases where Cache Enabler replaces things it should not.
                                 </span>
                             </p>
                         </td>
@@ -91,10 +93,10 @@
                 <ul style="margin-left: 20px; margin-top: 5px"><li>
                 <?php
                 webpexpress_radioButton(
-                  'alter-html-replacement', 
-                  'picture', 
+                  'alter-html-replacement',
+                  'picture',
                   'Replace &lt;img&gt; tags with &lt;picture&gt; tags, adding the webp to srcset.',
-                  $config['alter-html']['replacement'], 
+                  $config['alter-html']['replacement'],
                   '<p>"Picture tag" replaces &lt;img&gt tags with &lt;picture&gt; tags and adds the webp as an extra source. ' .
                         'This effectively points webp-enabled browsers to the webp variant and other browsers to ' .
                         'the original image.</p>' .
@@ -121,10 +123,10 @@
                 <li>
                 <?php
                 webpexpress_radioButton(
-                  'alter-html-replacement', 
-                  'url', 
+                  'alter-html-replacement',
+                  'url',
                   'Replace image URLs',
-                  $config['alter-html']['replacement'], 
+                  $config['alter-html']['replacement'],
                   '<p>"Image URLs" replaces the image URLs to point to ' .
                         'the webp <i>rather than</i> the original. Handles src, srcset, common lazy-load attributes and even ' .
                         'inline styles</p>' .

@@ -7,7 +7,7 @@ use \WebPExpress\State;
 use \WebPExpress\Messenger;
 use \WebPExpress\PlatformInfo;
 use \WebPExpress\FileHelper;
-
+use \WebPExpress\CapabilityTest;
 //include __DIR__ . "/page-welcome.php";
 
 //echo 'display errors:' . ini_get('display_errors');
@@ -15,6 +15,24 @@ use \WebPExpress\FileHelper;
 if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }
+
+
+/*
+if (CapabilityTest::modRewriteWorking()) {
+    echo 'mod rewrite works. that is nice';
+}*/
+
+/*if (CapabilityTest::modHeaderWorking() === true) {
+    //echo 'nice!';
+}*/
+/*
+if (CapabilityTest::copyCapabilityTestsToWpContent()) {
+    echo 'copy ok!';
+} else {
+    echo 'copy failed!';
+}*/
+
+
 
 $anyRedirectionToConverterEnabled = (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer']));
 $anyRedirectionEnabled = ($anyRedirectionToConverterEnabled || $config['redirect-to-existing-in-htaccess']);
