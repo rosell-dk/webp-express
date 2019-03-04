@@ -165,7 +165,7 @@ class Config
                 'destination-folder' => 'mingled',
                 'enable-redirection-to-webp-realizer' => false,
             ]);
-            //$config['alter-html']['only-for-webps-that-exists'] = true;
+            $config['alter-html']['only-for-webps-that-exists'] = true;
             $config['web-service']['enabled'] = false;
 
         }
