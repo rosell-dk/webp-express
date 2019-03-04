@@ -501,6 +501,8 @@ class HTAccess
             'cache-control-custom' => 'public, max-age:3600',
             'cache-control-max-age' => 'one-week',
             'cache-control-public' => true,
+            'enable-redirection-to-webp-realizer' => false,
+            'enable-redirection-to-converter' => true
         ];
 
         if (isset($newConfig['redirect-to-existing-in-htaccess']) && $newConfig['redirect-to-existing-in-htaccess']) {
