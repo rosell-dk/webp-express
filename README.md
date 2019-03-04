@@ -600,7 +600,11 @@ If you wish to affect priorities, it is certainly possible. You can try to argue
 ## Changes in 0.12.0
 - Multisite support (!)
 - A new operation mode: "No conversion", if you do not want to use WebP Express for converting. Replaces the old "Just redirect" mode
-- The method by which the filename is passed to the script is now configurable. The "do not pass source in query string" option has been removed
+- Added capability testing of .htaccess. The .htaccess rules are now tailored to the capabilities on the system. For example, on some platforms the filename of a requested image is passed to the converter script through the query string, but on platforms that supports passing it through an environment variable, that method is used instead
+- Picturefill.js is now optional (alter html, picture tag)
+- A great bunch more!
+
+For more info, see the closed issues on the 0.12.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/12?closed=1
 
 ## Changes in 0.11.0
 - Alter HTML to point to webp files (choose between picture tags or simply altering all image urls)

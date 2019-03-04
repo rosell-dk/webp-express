@@ -605,11 +605,15 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 = 0.12.0 =
+*(released 4 mar 2019)*
 * Multisite support (!)
 * A new operation mode: "No conversion", if you do not want to use WebP Express for converting. Replaces the old "Just redirect" mode
-* The method by which the filename is passed to the script is now configurable. The "do not pass source in query string" option has been removed
+* Added capability testing of .htaccess. The .htaccess rules are now tailored to the capabilities on the system. For example, on some platforms the filename of a requested image is passed to the converter script through the query string, but on platforms that supports passing it through an environment variable, that method is used instead
+* Picturefill.js is now optional (alter html, picture tag)
+* A great bunch more!
 
 = 0.11.3 =
+*(released 18 feb 2019)*
 * Fixed bug: Alter HTML caused media library not to display images on some systems. Alter HTML is now disabled in admin mode.
 * Alter HTML (picture tags) could produce the source tags with "src" attribute. But source tags inside picture tags must use "srcset" attribute. Fixed.
 * Alter HTML (image urls): srcsets containing "x" descriptors wasn't handled (ie, srcset="image.jpg 1x")
@@ -618,19 +622,23 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 * Fixed bug: The code that determined if WebP Express had placed rules in a .htaccess failed in "CDN friendly" mode. The effect was that these rules was not cleaned up upon plugin deactivation
 
 = 0.11.2 =
+*(released 14 feb 2019)*
 * Fixed bug which caused Alter HTML to fail miserably on some setups
 * AlterHTML now also looks for lazy load attributes in DIV and LI tags.
 
 = 0.11.1 =
+*(released 6 feb 2019)*
 * Fixed bug which caused the new "Convert non-existing webp-files upon request" not to work on all setups
 
 = 0.11.0 =
+*(released 6 feb 2019)*
 * Alter HTML to point to webp files (choose between picture tags or simply altering all image urls)
 * Convert non-existing webp-files upon request (means you can reference the converted webp files before they are actually converted!)
 
 For more info, see the closed issues on the 0.11.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/14?closed=1
 
 = 0.10.0 =
+*(released 7 jan 2019)*
 * Introduced "Operation modes" in order to keep setting screens simple but still allow tweaking
 * WebP Express can now be used in conjunction with Cache Enabler and ShortPixel
 * Cache-Control header is now added in *.htaccess*, when redirecting directly to existing webp
@@ -650,9 +658,11 @@ For more info, see the closed issues on the 0.10.0 milestone on the github repos
 For more info, see the closed issues on the 0.9.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.9.0
 
 = 0.8.1 =
+*(released 11 dec 2018)*
 * Fixed javascript bug
 
 = 0.8.0 =
+*(released 11 dec 2018)*
 * New conversion method, which calls imagick binary directly. This will make WebP express work out of the box on more systems
 * Made sure not to trigger LFI warning i Wordfence (to activate, click the force .htaccess button)
 * Imagick can now be configured to set quality to auto on systems where the auto option isn't generally available
@@ -663,17 +673,21 @@ For more info, see the closed issues on the 0.9.0 milestone on the github reposi
 For more info, see the closed issues on the 0.8.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.8.0
 
 = 0.7.2 =
+*(released 21 nov 2018)*
 Fixed a critical bug which generated an error message which caused corrupt images. It was not the bug itself, but the error message it generated, that caused the images to be corrupted. It only happened when debugging was enabled in php.ini
 
 = 0.7.1 =
+*(released 9 nov 2018)*
 Fixed minor "bug". The Api version combobox in Remote WebP Express converter was showing on new sites, but I only want it to show when old api is being used.
 
 = 0.7.0 =
+*(released 9 nov 2018)*
 This version added option to provide conversion service to other sites!
 
 For more info, see the closed issues on the 0.7.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.7.0
 
 = 0.6.0 =
+*(released 4 okt 2018)*
 This version added option for setting caching header, fixed a serious issue with *Imagick*, added a new converter, *Gmagick*, added a great deal of options to *Cwebp* and generally improved the interface.
 
 * Added option for caching
@@ -691,6 +705,7 @@ This version added option for setting caching header, fixed a serious issue with
 For more info, see the closed issues on the 0.6.0 milestone on our github repository: https://github.com/rosell-dk/webp-express/issues?q=is%3Aclosed+milestone%3A0.6.0
 
 = 0.5.0 =
+*(released 14 sep 2018)*
 This version works on many more setups than the previous. Also uses less resources and handles when images are changed.
 
 * Configuration is now stored in a separate configuration file instead of storing directly in the *.htaccess* file and passing it on via query string. When updating, these settings are migrated automatically.
