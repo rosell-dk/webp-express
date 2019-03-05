@@ -604,13 +604,16 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 1. WebP Express settings
 
 == Changelog ==
+
 = 0.12.0 =
-*(released 4 mar 2019)*
+*(released 5 mar 2019)*
 * Multisite support (!)
 * A new operation mode: "No conversion", if you do not want to use WebP Express for converting. Replaces the old "Just redirect" mode
 * Added capability testing of .htaccess. The .htaccess rules are now tailored to the capabilities on the system. For example, on some platforms the filename of a requested image is passed to the converter script through the query string, but on platforms that supports passing it through an environment variable, that method is used instead
 * Picturefill.js is now optional (alter html, picture tag)
 * A great bunch more!
+
+For more info, see the closed issues on the 0.12.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/12?closed=1
 
 = 0.11.3 =
 *(released 18 feb 2019)*
