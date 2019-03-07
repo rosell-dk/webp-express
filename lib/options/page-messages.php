@@ -50,12 +50,40 @@ if ($anyRedirectionEnabled) {
     }
 }
 
-if (($config['operation-mode'] == 'cdn-friendly') && !$config['alter-html']['enabled']) {
+$cacheEnablerActivated = in_array('cache-enabler/cache-enabler.php', get_option('active_plugins', []));
+if ($cacheEnablerActivated) {
+    $cacheEnablerSettings = get_option('cache-enabler', []);
+    $webpEnabled = (isset($cacheEnablerSettings['webp']) && $cacheEnablerSettings['webp']);
+}
+
+if ($cacheEnablerActivated && !$webpEnabled) {
     Messenger::printMessage(
         'warning',
-            'You are in CDN friendly mode but have not enabled Alter HTML. ' .
-                'This is usually a misconfiguration because in this mode, the only way to get webp files is by referencing them in the HTML.'
+            'You are using Cache Enabler, but have not enabled the webp option, so Cache Enabler is not operating with a separate cache for webp-enabled browsers.'
     );
+}
+
+if (($config['operation-mode'] == 'cdn-friendly') && !$config['alter-html']['enabled']) {
+    //echo print_r(get_option('cache-enabler'), true);
+
+
+    if ($cacheEnablerActivated) {
+        if ($webpEnabled) {
+            Messenger::printMessage(
+                'info',
+                    'You should consider enabling Alter HTML. This is not neccessary, as you have <i>Cache Enabler</i> enabled, which alters HTML. ' .
+                    'However, it is a good idea because currently <i>Cache Enabler</i> does not replace as many URLs as WebP Express (ie background images in inline styles)'
+            );
+        }
+
+    } else {
+        Messenger::printMessage(
+            'warning',
+                'You are in CDN friendly mode but have not enabled Alter HTML (and you are not using Cache Enabler either). ' .
+                    'This is usually a misconfiguration because in this mode, the only way to get webp files is by referencing them in the HTML.'
+        );
+
+    }
 }
 
 if (!$anyRedirectionToConverterEnabled && ($config['operation-mode'] == 'cdn-friendly')) {
