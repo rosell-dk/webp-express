@@ -21,10 +21,18 @@ function exitWithError($msg) {
     exit;
 }
 
-if (preg_match('#webp-on-demand.php#', $_SERVER['REQUEST_URI'])) {
-    exitWithError('Direct access is not allowed');
-    exit;
+//echo $_SERVER["SERVER_SOFTWARE"]; exit;
+//stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') !== false
+
+// Protect against directly accessing webp-on-demand.php
+// Only protect on Apache. We know for sure that the method is not reliable on nginx. We have not tested on litespeed yet, so we dare not.
+if (stripos($_SERVER["SERVER_SOFTWARE"], 'apache') !== false) {
+    if (strpos($_SERVER['REQUEST_URI'], 'webp-on-demand.php') !== false) {
+        exitWithError('It seems you are visiting this file (plugins/webp-express/wod/webp-on-demand.php) directly. We do not allow this.');
+        exit;
+    }
 }
+
 
 /**
  *  Get environment variable set with mod_rewrite module
