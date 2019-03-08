@@ -1,3 +1,7 @@
+= 0.12.2 =
+*(released 8 mar 2019)*
+* Fixed bug: On some nginx configurations, the newly added protection against directly calling the converter scripts were triggering also when it should not.
+
 = 0.12.1 =
 *(released 7 mar 2019)*
 * Fixed bug: Alter HTML crashed when HTML was larger than 600kb and "image urls" where selected

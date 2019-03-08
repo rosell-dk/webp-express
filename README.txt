@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.1
-Stable tag: 0.12.1
+Stable tag: 0.12.2
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -605,6 +605,10 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.12.2 =
+*(released 8 mar 2019)*
+* Fixed bug: On some nginx configurations, the newly added protection against directly calling the converter scripts were triggering also when it should not.
+
 = 0.12.1 =
 *(released 7 mar 2019)*
 * Fixed bug: Alter HTML crashed when HTML was larger than 600kb and "image urls" where selected
@@ -738,6 +742,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.12.2 =
+* Fixed bug: On some nginx configurations, the newly added protection against directly calling the converter scripts were triggering also when it should not.
 
 = 0.12.1 =
 Fixed bug: Alter HTML crashed when HTML was larger than 600kb and "image urls" where selected
