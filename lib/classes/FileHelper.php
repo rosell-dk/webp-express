@@ -73,6 +73,9 @@ class FileHelper
     }
 
     public static function chmod_r($dir, $dirPerm = null, $filePerm = null, $uid = null, $gid = null, $regexFileMatchPattern = null, $regexDirMatchPattern = null) {
+        if (!@file_exists($dir) || (!@is_dir($dir))) {            
+            return;
+        }
         $fileIterator = new \FilesystemIterator($dir);
 
         while ($fileIterator->valid()) {

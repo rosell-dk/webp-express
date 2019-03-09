@@ -78,6 +78,7 @@ class CacheMover
         echo 'ext:' . $fromExt . ' => ' . $toExt . '<br>';
         echo '</pre>';*/
 
+        //error_log('move to:' . $toDir . ' ( ' . (file_exists($toDir) ? 'exists' : 'does not exist ') . ')');
 
         $result = self::moveRecursively($fromDir, $toDir, $srcDir, $fromExt, $toExt);
         self::chmodFixSubDirs($toDir, ($newConfig['destination-folder'] == 'separate'));
@@ -95,7 +96,8 @@ class CacheMover
             return [0, 0];
         }
         if (!@file_exists($toDir)) {
-            if (!@mkdir($toDir)) {
+            // Note: 0777 is default. Default umask is 0022, so the default result is 0755
+            if (!@mkdir($toDir, 0777, true)) {
                 return [0, 0];
             }
         }
