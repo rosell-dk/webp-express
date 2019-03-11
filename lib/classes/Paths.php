@@ -117,7 +117,8 @@ class Paths
         return false;
     }
 
-    // ------------ WP Content Dir -------------
+    // ------------ Content Dir (the "WP" content dir) -------------
+
     public static function getContentDirAbs()
     {
         return self::getAbsDir(WP_CONTENT_DIR);
@@ -138,7 +139,7 @@ class Paths
     }
 
 
-    // ------------ Content Dir -------------
+    // ------------ WebPExpress Content Dir -------------
     // (the "webp-express" directory inside wp-content)
 
     public static function getWebPExpressContentDirAbs()
