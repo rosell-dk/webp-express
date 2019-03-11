@@ -6,7 +6,7 @@ use \WebPExpress\Paths;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$version = '0.12.2';
+$version = '0.13.0-beta-c';
 
 
 if (!function_exists('webp_express_add_inline_script')) {
@@ -28,7 +28,9 @@ wp_enqueue_script('daspopup');
 
 $config = Config::getConfigForOptionsPage();
 
-if (!(isset($config['operation-mode']) &&  $config['operation-mode'] == 'no-conversion')) {
+
+// Add converter, bulk convert and whitelist script, EXCEPT for "no conversion" mode
+if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conversion'))) {
 
     // Remove empty options arrays.
     // These cause trouble in json because they are encoded as [] rather than {}
@@ -45,11 +47,14 @@ if (!(isset($config['operation-mode']) &&  $config['operation-mode'] == 'no-conv
     webp_express_add_inline_script('converters', 'window.converters = ' . json_encode($config['converters']) . ';', 'before');
     wp_enqueue_script('converters');
 
-
     // Whitelist
     wp_register_script('whitelist', plugins_url('js/whitelist.js', __FILE__), ['daspopup'], $version);
     webp_express_add_inline_script('whitelist', 'window.whitelist = ' . json_encode($config['web-service']['whitelist']) . ';', 'before');
     wp_enqueue_script('whitelist');
+
+    // bulk convert
+    wp_register_script('bulkconvert', plugins_url('js/bulk-convert.js', __FILE__), [], $version);
+    wp_enqueue_script('bulkconvert');
 
 }
 
