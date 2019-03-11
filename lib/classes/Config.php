@@ -71,9 +71,17 @@ class Config
 
             'operation-mode' => 'varied-image-responses',
 
+            // general
+            'image-types' => 1,
+            'destination-folder' => 'separate',
+            'destination-extension' => 'append',
+            'cache-control' => 'no-header',     /* can be "no-header", "set" or "custom" */
+            'cache-control-custom' => 'public, max-age:86400, stale-while-revalidate=604800, stale-if-error=604800',
+            'cache-control-max-age' => 'one-week',
+            'cache-control-public' => false,
+
             // redirection rules
             'enable-redirection-to-converter' => true,
-            'image-types' => 1,
             'only-redirect-to-converter-on-cache-miss' => false,
             'only-redirect-to-converter-for-webp-enabled-browsers' => true,
             'do-not-pass-source-in-query-string' => false,      // In 0.13 we can remove this. migration7.php depends on it
@@ -87,14 +95,8 @@ class Config
             'max-quality' => 80,
             'quality-specific' => 70,
             'metadata' => 'none',
-            'destination-folder' => 'separate',
-            'destination-extension' => 'append',
 
             // serve options
-            'cache-control' => 'no-header',     /* can be "no-header", "set" or "custom" */
-            'cache-control-custom' => 'public, max-age:86400, stale-while-revalidate=604800, stale-if-error=604800',
-            'cache-control-max-age' => 'one-week',
-            'cache-control-public' => false,
             'fail' => 'original',
             'success-response' => 'converted',
 
@@ -369,7 +371,7 @@ class Config
                         unset($converter['error']);
                     }
                 }
-            }            
+            }
         }
 
         self::$configForOptionsPage = $config;  // cache the result
