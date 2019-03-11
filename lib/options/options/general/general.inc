@@ -10,7 +10,9 @@
                 include_once 'destination-folder.inc';
             }
             include_once 'destination-extension.inc';
-            
+
+            // TODO:
+            // Perhaps also show cache control in cdn-friendly mode?
             if (($config['operation-mode'] == 'tweaked') || ($config['operation-mode'] == 'varied-image-responses')) {
                 include_once 'cache-control.inc';
             }
