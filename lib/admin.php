@@ -49,7 +49,7 @@ function webp_express_uninstall() {
 register_uninstall_hook(WEBPEXPRESS_PLUGIN, 'webp_express_uninstall');
 
 // Add settings link on the plugins page
-add_filter('plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), function ( $links ) {
+add_filter('plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), function ($links) {
     if (Multisite::isNetworkActivated()) {
         $mylinks= [
             '<a href="https://ko-fi.com/rosell" target="_blank">donate?</a>',
@@ -64,10 +64,17 @@ add_filter('plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), functio
     return array_merge($links, $mylinks);
 });
 
-add_filter('network_admin_plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), function ( $links ) {
+add_filter('network_admin_plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), function ($links) {
     $mylinks = array(
         '<a href="' . network_admin_url('settings.php?page=webp_express_settings_page') . '">Settings</a>',
         '<a href="https://ko-fi.com/rosell" target="_blank">donate?</a>',
     );
     return array_merge($links, $mylinks);
 });
+
+// Bulk Convert ajax actions
+add_action( 'wp_ajax_list_unconverted_files', '\WebPExpress\BulkConvert::processAjaxListUnconvertedFiles');
+add_action( 'wp_ajax_convert_file', '\WebPExpress\BulkConvert::processAjaxConvertFile');
+
+// TODO:
+// The above code for adding hooks for bulk convert is quite elegant. Use same method for other hooks.

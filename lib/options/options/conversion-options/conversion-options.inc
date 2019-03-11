@@ -10,4 +10,9 @@
             ?>
         </tbody>
     </table>
+    <button onclick="openBulkConvertPopup()" class="button button-secondary" type="button">Bulk Convert</button>
+    <div id="bulkconvertpopup" style="display:none;">
+        <div id="bulkconvertcontent"></div>
+    </div>
+
 </fieldset>
