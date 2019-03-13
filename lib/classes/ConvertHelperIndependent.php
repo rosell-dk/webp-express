@@ -6,11 +6,11 @@ It is used by webp-on-demand.php, which does not register an auto loader. It is 
 */
 namespace WebPExpress;
 
-use WebPConvert\WebPConvert;
-use WebPConvert\Loggers\BufferLogger;
+use \WebPConvert\WebPConvert;
+use \WebPConvert\Loggers\BufferLogger;
 
 
-class ConvertHelper
+class ConvertHelperIndependent
 {
 
     public static function storeMingledOrNot($source, $destinationFolder, $uploadDirAbs)

@@ -73,8 +73,14 @@ add_filter('network_admin_plugin_action_links_' . plugin_basename(WEBPEXPRESS_PL
 });
 
 // Bulk Convert ajax actions
-add_action( 'wp_ajax_list_unconverted_files', '\WebPExpress\BulkConvert::processAjaxListUnconvertedFiles');
-add_action( 'wp_ajax_convert_file', '\WebPExpress\BulkConvert::processAjaxConvertFile');
+add_action( 'wp_ajax_list_unconverted_files', array('\WebPExpress\BulkConvert', 'processAjaxListUnconvertedFiles'));
+add_action( 'wp_ajax_convert_file', array('\WebPExpress\BulkConvert', 'processAjaxConvertFile'));
 
 // TODO:
 // The above code for adding hooks for bulk convert is quite elegant. Use same method for other hooks.
+
+// Filters for processing upload hooks
+add_filter('wp_handle_upload', array('\WebPExpress\HandleUploadHooks', 'handleUpload'), 10, 2);
+add_filter('image_make_intermediate_size', array('\WebPExpress\HandleUploadHooks', 'handleMakeIntermediateSize'), 10, 1);
+
+//add_filter( 'image_make_intermediate_size', array( $admin, 'make_thumbnails' ), 10, 1 );

@@ -2,7 +2,7 @@
 
 namespace WebPExpress;
 
-use \WebPExpress\ConvertHelper;
+use \WebPExpress\ConvertHelperIndependent;
 use \WebPExpress\Paths;
 
 class BulkConvert
@@ -70,7 +70,7 @@ class BulkConvert
             $listOptions['root'] = $group['root'];
             /*
             No use, because if uploads is in wp-content, the cache root will be different for the files in uploads (if mingled)
-            $group['cache-root'] = ConvertHelper::getDestinationFolder(
+            $group['cache-root'] = ConvertHelperIndependent::getDestinationFolder(
                 $group['root'],
                 $listOptions['destination-folder'],
                 $listOptions['ext'],
@@ -78,7 +78,7 @@ class BulkConvert
                 $listOptions['uploadDirAbs']
             );*/
             $group['files'] = self::getListRecursively('.', $listOptions);
-            //'cache-root' => ConvertHelper::getDestinationFolder()
+            //'cache-root' => ConvertHelperIndependent::getDestinationFolder()
         }
 
 
@@ -130,7 +130,7 @@ class BulkConvert
 
                         if (($filter['only-converted']) || ($filter['only-unconverted'])) {
                             //$cacheDir = $listOptions['cache-root'] . '/' . $relDir;
-                            $destination = ConvertHelper::getDestination(
+                            $destination = ConvertHelperIndependent::getDestination(
                                 $dir . "/" . $filename,
                                 $listOptions['destination-folder'],
                                 $listOptions['ext'],
@@ -173,7 +173,7 @@ class BulkConvert
         $config = Config::loadConfigAndFix();
         $options = Config::generateWodOptionsFromConfigObj($config);
 
-        $destination = ConvertHelper::getDestination(
+        $destination = ConvertHelperIndependent::getDestination(
             $source,
             $options['destination-folder'],
             $options['destination-extension'],
@@ -181,7 +181,7 @@ class BulkConvert
             Paths::getUploadDirAbs()
         );
 
-        return ConvertHelper::convert($source, $destination, $options);
+        return ConvertHelperIndependent::convert($source, $destination, $options);
     }
 
 
@@ -195,7 +195,7 @@ class BulkConvert
 
     public static function processAjaxConvertFile()
     {
-        $result = self::convertFile($_POST['filename']);
+        $result = Convert::convertFile($_POST['filename']);
 
         echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
         wp_die();
