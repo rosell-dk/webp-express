@@ -1,35 +1,15 @@
 <?php
 
-include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
-
-include_once __DIR__ . '/../classes/ConvertersHelper.php';
 use \WebPExpress\ConvertersHelper;
-
-include_once __DIR__ . '/../classes/FileHelper.php';
 use \WebPExpress\FileHelper;
-
-include_once __DIR__ . '/../classes/HTAccess.php';
 use \WebPExpress\HTAccess;
-
-include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
-
-include_once __DIR__ . '/../classes/Multisite.php';
 use \WebPExpress\Multisite;
-
-include_once __DIR__ . '/../classes/Paths.php';
 use \WebPExpress\Paths;
-
-include_once __DIR__ . '/../classes/PlatformInfo.php';
 use \WebPExpress\PlatformInfo;
-
-include_once __DIR__ . '/../classes/State.php';
 use \WebPExpress\State;
-
-include_once __DIR__ . '/../classes/TestRun.php';
 use \WebPExpress\TestRun;
-
 
 if (!current_user_can('manage_options')) {
     wp_die('You do not have sufficient permissions to access this page.');
