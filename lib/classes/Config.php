@@ -95,6 +95,7 @@ class Config
             'max-quality' => 80,
             'quality-specific' => 70,
             'metadata' => 'none',
+            'convert-on-upload' => true,
 
             // serve options
             'fail' => 'original',
@@ -535,6 +536,7 @@ class Config
         unset($options['only-redirect-to-converter-for-webp-enabled-browsers']);
         unset($options['only-redirect-to-converter-on-cache-miss']);
         unset($options['enable-redirection-to-webp-realizer']);
+        unset($options['convert-on-upload']);
 
 
         //unset($options['']);

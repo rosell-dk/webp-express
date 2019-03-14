@@ -39,13 +39,19 @@ class HandleUploadHooks
 
     /**
      *  Convert if:
+     *  - Option has been enabled
      *  - The mime type is one of the ones the user has activated (in config)
-     *  - TODO: Option has been enabled
      */
     private static function convertIf($filename)
     {
-        if (!isset($config)) {
-            $config = Config::loadConfigAndFix();
+        if (!isset(self::$config)) {
+            self::$config = Config::loadConfigAndFix();
+        }
+
+        $config = &self::$config;
+
+        if (!$config['convert-on-upload']) {
+            return;
         }
 
         //$mimeType = getimagesize($filename)['mime'];

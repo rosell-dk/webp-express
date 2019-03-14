@@ -7,6 +7,7 @@
             include_once 'quality.inc';
             include_once 'metadata.inc';
             include_once 'converters.inc';
+            include_once 'convert-on-upload.inc';
             ?>
         </tbody>
     </table>

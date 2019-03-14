@@ -107,6 +107,8 @@ if ($_POST['operation-mode'] != 'no-conversion') {
         $config['quality-specific'] = webp_express_sanitize_quality_field($_POST['quality-specific']);
     }
 
+    $config['convert-on-upload'] = isset($_POST['convert-on-upload']);
+
     // Web Service
     // -------------
 
