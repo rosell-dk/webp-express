@@ -105,7 +105,7 @@ Do not simply remove the plugin without deactivating it first. Deactivation take
 
 ## Limitations
 
-* The plugin has not been tested by the developer on Microsoft IIS server. [Some however reports that it works](https://wordpress.org/support/topic/iis-and-webp-works/)
+* The plugin [should now work on Microsoft IIS server](https://github.com/rosell-dk/webp-express/pull/213), but it has not been tested thoroughly.
 
 ## Frequently Asked Questions
 
@@ -332,8 +332,8 @@ And here: https://github.com/rosell-dk/webp-express/issues/166
 
 Here are rules if you need to replace the file extension with ".webp" rather than appending ".webp" to it: https://www.keycdn.com/support/optimus/configuration-to-deliver-webp
 
-### I am on a WAMP stack
-It has been reported that WebP Express *almost* works on WAMP stack (Windows, Apache, MySQL, PHP). I'd love to debug this, but do not own a Windows server or access to one... Can you help?
+### I am on a Windows server
+Good news! It should work now, thanks to a guy that calls himself lwxbr. At least on XAMPP 7.3.1, Windows 10. https://github.com/rosell-dk/webp-express/pull/213.
 
 ### I am using Jetpack
 If you install Jetpack and enable the "Speed up image load times" then Jetpack will alter the HTML such that images are pointed to their CDN.
@@ -596,6 +596,12 @@ No schedule. I move forward as time allows. I currently spend a lot of time answ
 Here are my current plans ahead: 0.13 might be bulk conversion and addition of a diagnose tool – this should release some time spend in the forum. 0.14 could be focused on PNG. 0.15 might be displaying rules for NGINX. 0.16 might be supporting Save-Data header (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.17 might be a file manager-like interface for inspecting generated webp files. 0.18 might be an effort to allow webp for all browsers using [this javascript library](http://libwebpjs.hohenlimburg.org/v0.6.0/). Unfortunately, the javascript librare does not (currently) support srcset attributes, which is why I moved this item down the priority list. We need srcset to be supported for the feature to be useful. 0.19 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
+
+## Changes in 0.13.0
+- Bulk Conversion
+- Fixed problems with Gd converter and PNG
+- Optinally auto convert upon media upload
+- Windows fix (thanks, lwxbr!)
 
 ## Changes in 0.12.0
 - Multisite support (!)

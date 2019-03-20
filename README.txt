@@ -93,7 +93,7 @@ Do not simply remove the plugin without deactivating it first. Deactivation take
 
 == Limitations ==
 
-* The plugin has not been tested by the developer on Microsoft IIS server. [Some however reports that it works](https://wordpress.org/support/topic/iis-and-webp-works/)
+* The plugin [should now work on Microsoft IIS server](https://github.com/rosell-dk/webp-express/pull/213), but it has not been tested thoroughly.
 
 == Supporting WebP Express ==
 Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue wasting time on this plugin:
@@ -333,9 +333,8 @@ And here: https://github.com/rosell-dk/webp-express/issues/166
 
 Here are rules if you need to replace the file extension with ".webp" rather than appending ".webp" to it: https://www.keycdn.com/support/optimus/configuration-to-deliver-webp
 
-
-= I am on a WAMP stack =
-It has been reported that WebP Express *almost* works on WAMP stack. I'd love to debug this, but do not own a Windows server or access to one... Can you help?
+= I am on a Windows server =
+Good news! It should work now, thanks to a guy that calls himself lwxbr. At least on XAMPP 7.3.1, Windows 10. https://github.com/rosell-dk/webp-express/pull/213.
 
 = I am using Jetpack =
 If you install Jetpack and enable the "Speed up image load times" then Jetpack will alter the HTML such that images are pointed to their CDN.
@@ -605,6 +604,13 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.13.0 =
+*(not released yet. Expected release: 22 mar 2019)*
+* Bulk Conversion
+* Fixed problems with Gd converter and PNG
+* Optinally auto convert upon media upload
+* Windows fix (thanks, lwxbr!)
+
 = 0.12.2 =
 *(released 8 mar 2019)*
 * Fixed bug: On some nginx configurations, the newly added protection against directly calling the converter scripts were triggering also when it should not.
@@ -742,6 +748,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.13.0 =
+* Bulk Conversion, fixed problem with Gd converter and PNGs and more...
 
 = 0.12.2 =
 * Fixed bug: On some nginx configurations, the newly added protection against directly calling the converter scripts were triggering also when it should not.
