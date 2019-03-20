@@ -8,6 +8,7 @@ namespace WebPExpress;
 
 use \WebPConvert\WebPConvert;
 use \WebPConvert\Loggers\BufferLogger;
+use \WebPExpress\FileHelper;
 
 
 class ConvertHelperIndependent
@@ -68,7 +69,7 @@ class ConvertHelperIndependent
 
             // Check if source is residing inside document root.
             // (it is, if path starts with document root + '/')
-            if (substr($source, 0, strlen($docRoot) + 1) === $docRoot . '/') {
+            if ( FileHelper::sourceIsInsideDocRoot($source, $docRoot) ) {
 
                 // We store relative to document root.
                 // "Eat" the left part off the source parameter which contains the document root.

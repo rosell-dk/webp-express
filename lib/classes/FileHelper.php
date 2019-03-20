@@ -311,5 +311,16 @@ class FileHelper
     public static function isWindows(){
         return (boolean) preg_match('/^win/i', PHP_OS);
     }
+
+    public static function normalizeSeparator($path, $newSeparator = DIRECTORY_SEPARATOR){
+        return preg_replace("#[\\\/]+#", $newSeparator, $path);
+    }
     
+    public static function sourceIsInsideDocRoot($source, $docRoot){
+
+        $normalizedSource = realpath($source);
+        $normalizedDocRoot = realpath($docRoot);
+
+        return strpos($normalizedSource, $normalizedDocRoot) === 0;  //substr($source, 0, strlen($docRoot) + 1) === str_replace("\\", '/', $docRoot) . '/';
+    }
 }
