@@ -312,15 +312,29 @@ class FileHelper
         return (boolean) preg_match('/^win/i', PHP_OS);
     }
 
+
+     /**
+     *  Normalize separators of directory paths
+     *  
+     *
+     *  @return $normalized_path
+     */
     public static function normalizeSeparator($path, $newSeparator = DIRECTORY_SEPARATOR){
         return preg_replace("#[\\\/]+#", $newSeparator, $path);
     }
-    
+
+
+    /**
+     *  Verify if Source is inside in Document Root
+     *  
+     *
+     *  @return true if windows; false if not.
+     */    
     public static function sourceIsInsideDocRoot($source, $docRoot){
 
         $normalizedSource = realpath($source);
         $normalizedDocRoot = realpath($docRoot);
 
-        return strpos($normalizedSource, $normalizedDocRoot) === 0;  //substr($source, 0, strlen($docRoot) + 1) === str_replace("\\", '/', $docRoot) . '/';
+        return strpos($normalizedSource, $normalizedDocRoot) === 0;
     }
 }
