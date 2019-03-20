@@ -14,7 +14,7 @@ class Convert
     public static function convertFile($source, $config = null)
     {
         if (is_null($config)) {
-            $config = Config::loadConfigAndFix();            
+            $config = Config::loadConfigAndFix();
         }
         $options = Config::generateWodOptionsFromConfigObj($config);
 
@@ -26,7 +26,15 @@ class Convert
             Paths::getUploadDirAbs()
         );
 
-        return ConvertHelperIndependent::convert($source, $destination, $options);
+        $result = ConvertHelperIndependent::convert($source, $destination, $options);
+
+        //$result['destination'] = $destination;
+        if ($result['success']) {
+            $result['filesize-original'] = @filesize($source);
+            $result['filesize-webp'] = @filesize($destination);
+        }
+        return $result;
+
     }
 
 }

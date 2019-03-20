@@ -168,6 +168,7 @@ class BulkConvert
         return $results;
     }
 
+/*
     public static function convertFile($source)
     {
         $config = Config::loadConfigAndFix();
@@ -180,10 +181,16 @@ class BulkConvert
             Paths::getWebPExpressContentDirAbs(),
             Paths::getUploadDirAbs()
         );
+        $result = ConvertHelperIndependent::convert($source, $destination, $options);
 
-        return ConvertHelperIndependent::convert($source, $destination, $options);
+        //$result['destination'] = $destination;
+        if ($result['success']) {
+            $result['filesize-original'] = @filesize($source);
+            $result['filesize-webp'] = @filesize($destination);
+        }
+        return $result;
     }
-
+*/
 
     public static function processAjaxListUnconvertedFiles()
     {
