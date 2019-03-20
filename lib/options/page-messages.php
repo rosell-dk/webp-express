@@ -8,9 +8,11 @@ use \WebPExpress\Messenger;
 use \WebPExpress\PlatformInfo;
 use \WebPExpress\FileHelper;
 use \WebPExpress\CapabilityTest;
-//include __DIR__ . "/page-welcome.php";
 
-//echo 'display errors:' . ini_get('display_errors');
+//use \WebPExpress\BulkConvert;
+//echo '<pre>' . print_r(BulkConvert::getList($config), true) . "</pre>";
+//echo '<pre>' . print_r(BulkConvert::convertFile('/var/www/webp-express-tests/we0/wordpress/uploads-moved/space in name.jpg'), true) . "</pre>";
+
 
 if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";

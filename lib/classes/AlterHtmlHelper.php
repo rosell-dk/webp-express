@@ -4,14 +4,9 @@ namespace WebPExpress;
 
 //use AlterHtmlInit;
 
-include_once "Paths.php";
 use \WebPExpress\Paths;
-
-include_once "PathHelper.php";
 use \WebPExpress\PathHelper;
-
 use \WebPExpress\Multisite;
-
 use \WebPExpress\Option;
 
 class AlterHtmlHelper
