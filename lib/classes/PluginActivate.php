@@ -79,7 +79,9 @@ class PluginActivate
         if (PlatformInfo::isMicrosoftIis()) {
             Messenger::addMessage(
                 'warning',
-                'You are on Microsoft IIS server. The developer of WebP Express has no money for Microsoft products, so no testing have been done on IIS. Use at own risk. If you are on WAMP, things might work. Without Apache, you will need to create redirect rules yourself.'
+                'You are on Microsoft IIS server. ' .
+                    'WebP Express <a href="https://github.com/rosell-dk/webp-express/pull/213">should work on Windows now</a>, but it has not been tested thoroughly.'
+
             );
         }
 
@@ -87,7 +89,7 @@ class PluginActivate
         if ( is_multisite() ) {
             Messenger::addMessage(
                 'warning',
-                'Multisite functionality in WebP Express has just been added with current release (0.12.0). ' .
+                'Multisite functionality in still new in WebP Express (it was added in release 0.12.0). ' .
                 'While it has been tested on several setups, there might be a bug or two yet to be found.'
             );
         }
