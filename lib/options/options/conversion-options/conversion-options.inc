@@ -8,12 +8,8 @@
             include_once 'metadata.inc';
             include_once 'converters.inc';
             include_once 'convert-on-upload.inc';
+            include_once 'bulk-convert.inc';
             ?>
         </tbody>
     </table>
-    <button onclick="openBulkConvertPopup()" class="button button-secondary" type="button">Bulk Convert</button>
-    <div id="bulkconvertpopup" style="display:none;">
-        <div id="bulkconvertcontent"></div>
-    </div>
-
 </fieldset>

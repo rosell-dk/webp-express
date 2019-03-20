@@ -6,7 +6,7 @@ use \WebPExpress\Paths;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$version = '0.13.0-beta-c';
+$version = '0.13.0-beta-e';
 
 
 if (!function_exists('webp_express_add_inline_script')) {
@@ -55,6 +55,10 @@ if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conv
     // bulk convert
     wp_register_script('bulkconvert', plugins_url('js/bulk-convert.js', __FILE__), [], $version);
     wp_enqueue_script('bulkconvert');
+
+    // purge cache
+    wp_register_script('purgecache', plugins_url('js/purge-cache.js', __FILE__), [], $version);
+    wp_enqueue_script('purgecache');
 
 }
 

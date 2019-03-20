@@ -14,26 +14,23 @@
 Note: Perhaps create a plugin page on my website?, ie https://www.bitwise-it.dk/software/wordpress/webp-express
 */
 
+use \WebPExpress\AdminInit;
+use \WebPExpress\Option;
+
 define('WEBPEXPRESS_PLUGIN', __FILE__);
 define('WEBPEXPRESS_PLUGIN_DIR', __DIR__);
 
-use \WebPExpress\Option;
-
+// Autoloading rules!
 spl_autoload_register('webpexpress_autoload');
 function webpexpress_autoload($class) {
-    //echo $class . "\n<br>";
     if (strpos($class, 'WebPExpress\\') === 0) {
-        //echo WEBPEXPRESS_PLUGIN_DIR . '/lib/classes/' . substr($class, 12) . '.php' . "\n<br><br>";
         require_once WEBPEXPRESS_PLUGIN_DIR . '/lib/classes/' . substr($class, 12) . '.php';
     }
 }
 
 if (is_admin()) {
-    include __DIR__ . '/lib/admin.php';
+    \WebPExpress\AdminInit::init();
 }
-
-//add_action( 'wp_ajax_foobar', 'my_ajax_foobar_handler' );
-
 
 function webp_express_process_post() {
     // strip query string
@@ -42,12 +39,10 @@ function webp_express_process_post() {
     if (!preg_match('/webp-express-web-service$/', $requestUriNoQS)) {
         return;
     }
-    //include __DIR__ . '/lib/wpc.php';
     include __DIR__ . '/web-service/wpc.php';
     die();
 }
 add_action( 'init', 'webp_express_process_post' );
-
 
 if (Option::getOption('webp-express-alter-html', false)) {
     require_once __DIR__ . '/lib/classes/AlterHtmlInit.php';

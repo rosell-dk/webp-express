@@ -168,6 +168,7 @@ class BulkConvert
         return $results;
     }
 
+/*
     public static function convertFile($source)
     {
         $config = Config::loadConfigAndFix();
@@ -180,10 +181,16 @@ class BulkConvert
             Paths::getWebPExpressContentDirAbs(),
             Paths::getUploadDirAbs()
         );
+        $result = ConvertHelperIndependent::convert($source, $destination, $options);
 
-        return ConvertHelperIndependent::convert($source, $destination, $options);
+        //$result['destination'] = $destination;
+        if ($result['success']) {
+            $result['filesize-original'] = @filesize($source);
+            $result['filesize-webp'] = @filesize($destination);
+        }
+        return $result;
     }
-
+*/
 
     public static function processAjaxListUnconvertedFiles()
     {
@@ -195,9 +202,12 @@ class BulkConvert
 
     public static function processAjaxConvertFile()
     {
-        $result = Convert::convertFile($_POST['filename']);
+        $filename = $_POST['filename'];
+
+        $result = Convert::convertFile($filename);
 
         echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
         wp_die();
     }
+
 }

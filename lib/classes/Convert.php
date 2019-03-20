@@ -11,22 +11,50 @@ use \WebPExpress\ConvertHelperIndependent;
 class Convert
 {
 
-    public static function convertFile($source, $config = null)
+    public static function getDestination($source, &$config = null)
     {
         if (is_null($config)) {
-            $config = Config::loadConfigAndFix();            
+            $config = Config::loadConfigAndFix();
         }
-        $options = Config::generateWodOptionsFromConfigObj($config);
-
-        $destination = ConvertHelperIndependent::getDestination(
+        return ConvertHelperIndependent::getDestination(
             $source,
-            $options['destination-folder'],
-            $options['destination-extension'],
+            $config['destination-folder'],
+            $config['destination-extension'],
             Paths::getWebPExpressContentDirAbs(),
             Paths::getUploadDirAbs()
         );
+    }
 
-        return ConvertHelperIndependent::convert($source, $destination, $options);
+    public static function convertFile($source, $config = null)
+    {
+        if (is_null($config)) {
+            $config = Config::loadConfigAndFix();
+        }
+        $options = Config::generateWodOptionsFromConfigObj($config);
+
+        $destination = self::getDestination($source, $config);
+
+        $result = ConvertHelperIndependent::convert($source, $destination, $options);
+
+        //$result['destination'] = $destination;
+        if ($result['success']) {
+            $result['filesize-original'] = @filesize($source);
+            $result['filesize-webp'] = @filesize($destination);
+        }
+        return $result;
+    }
+
+    public static function findSource($destination, &$config = null)
+    {
+        if (is_null($config)) {
+            $config = Config::loadConfigAndFix();
+        }
+        return ConvertHelperIndependent::findSource(
+            $destination,
+            $config['destination-folder'],
+            $config['destination-extension'],
+            Paths::getWebPExpressContentDirAbs()
+        );
     }
 
 }

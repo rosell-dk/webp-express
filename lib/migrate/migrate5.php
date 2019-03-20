@@ -2,16 +2,9 @@
 
 namespace WebPExpress;
 
-
-include_once __DIR__ . '/../classes/Config.php';
-use \WebPExpress\Config;
-
-include_once __DIR__ . '/../classes/Messenger.php';
-use \WebPExpress\Messenger;
-
-include_once __DIR__ . '/../classes/CacheMover.php';
 use \WebPExpress\CacheMover;
-
+use \WebPExpress\Config;
+use \WebPExpress\Messenger;
 use \WebPExpress\Option;
 
 function webpexpress_migrate5() {

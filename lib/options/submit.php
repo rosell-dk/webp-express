@@ -1,22 +1,11 @@
 <?php
 
-include_once __DIR__ . '/../classes/CacheMover.php';
 use \WebPExpress\CacheMover;
-
-include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
-
-include_once __DIR__ . '/../classes/HTAccess.php';
 use \WebPExpress\HTAccess;
-
-include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
-
-include_once __DIR__ . '/../classes/Paths.php';
 use \WebPExpress\Paths;
-
 use \WebPExpress\CapabilityTest;
-
 
 // https://premium.wpmudev.org/blog/handling-form-submissions/
 // checkout https://codex.wordpress.org/Function_Reference/sanitize_meta

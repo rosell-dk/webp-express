@@ -14,6 +14,7 @@ use \WebPExpress\TestRun;
 if (!current_user_can('manage_options')) {
     wp_die('You do not have sufficient permissions to access this page.');
 }
+
 ?>
 <div class="wrap">
     <h2>WebP Express Settings<?php echo Multisite::isNetworkActivated() ? ' (network)' : ''; ?></h2>
