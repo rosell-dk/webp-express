@@ -53,6 +53,9 @@ class ConvertHelperIndependent
         }
     }*/
 
+    /**
+     *  Get destination from source (and some configurations)
+     */
     public static function getDestination($source, $destinationFolder, $destinationExt, $webExpressContentDirAbs, $uploadDirAbs)
     {
         if (self::storeMingledOrNot($source, $destinationFolder, $uploadDirAbs)) {
@@ -83,6 +86,79 @@ class ConvertHelperIndependent
         }
     }
 
+    /**
+     *  Find source corresponding to destination, separate
+     *  We can rely on destinationExt being "append" for separate
+     *  Returns false if not found. Otherwise returns path to source
+     */
+    private static function findSourceSeparate($destination, $webExpressContentDirAbs)
+    {
+        $imageRoot = $webExpressContentDirAbs . '/webp-images';
+
+        // Check if destination is residing inside "doc-root" folder
+        if (strpos($destination, $imageRoot . '/doc-root/') === 0) {
+
+            $imageRoot .= '/doc-root';
+            // "Eat" the left part off the $destination parameter. $destination is for example:
+            // "/var/www/webp-express-tests/we0/wp-content-moved/webp-express/webp-images/doc-root/wordpress/uploads-moved/2018/12/tegning5-300x265.jpg.webp"
+            // We also eat the slash (+1)
+            $sourceRel = substr($destination, strlen($imageRoot) + 1);
+
+            $source = $docRoot . '/' . $sourceRel;
+            $source =  preg_replace('/\\.(webp)$/', '', $source);
+        } else {
+            $imageRoot .= '/abs';
+            $sourceRel = substr($destination, strlen($imageRoot) + 1);
+            $source = $sourceRel;
+            $source =  preg_replace('/\\.(webp)$/', '', $source);
+        }
+        if (!@file_exists($source)) {
+            return false;
+        }
+        return $source;
+    }
+
+    /**
+     *  Find source corresponding to destination (mingled)
+     *  Returns false if not found. Otherwise returns path to source
+     */
+    private static function findSourceMingled($destination, $destinationExt)
+    {
+        global $options;
+        global $destination;
+        if ($destinationExt == 'append') {
+            $source =  preg_replace('/\\.(webp)$/', '', $destination);
+        } else {
+            $source =  preg_replace('/\\.webp$/', '.jpg', $destination);
+            if (!@file_exists($source)) {
+                $source =  preg_replace('/\\.webp$/', '.jpeg', $destination);
+            }
+            if (!@file_exists($source)) {
+                $source =  preg_replace('/\\.webp$/', '.png', $destination);
+            }
+        }
+        if (!@file_exists($source)) {
+            return false;
+        }
+        return $source;
+    }
+
+    /**
+     *  Get source from destination (and some configurations)
+     *  Returns false if not found. Otherwise returns path to source
+     */
+    public static function findSource($destination, $destinationFolder, $destinationExt, $webExpressContentDirAbs)
+    {
+        if ($destinationFolder == 'mingled') {
+            $result = self::findSourceMingled($destination, $destinationExt);
+            if ($result === false) {
+                $result = self::findSourceSeparate($destination, $webExpressContentDirAbs);
+            }
+            return $result;
+        } else {
+            return self::findSourceSeparate($destination, $webExpressContentDirAbs);
+        }
+    }
 
     public static function convert($source, $destination, $options) {
         include_once __DIR__ . '/../../vendor/autoload.php';

@@ -52,6 +52,11 @@ class AdminInit
     public static function addHooks()
     {
 
+        // Plugin activation, deactivation and uninstall
+        register_activation_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginActivate', 'activate'));
+        register_deactivation_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginDeactivate', 'deactivate'));
+        register_uninstall_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginUninstall', 'uninstall'));
+
         // Hooks related to options page
         if (Multisite::isNetworkActivated()) {
             add_action("network_admin_menu", array('\WebPExpress\AdminUi', 'networAdminMenuHook'));
@@ -60,11 +65,6 @@ class AdminInit
         }
         add_action("admin_post_webpexpress_settings_submit", array('\WebPExpress\OptionsPageHooks', 'submitHandler'));
         add_action("admin_init", array('\WebPExpress\AdminInit', 'adminInitHandler'));
-
-
-        register_activation_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginActivate', 'activate'));
-        register_deactivation_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginDeactivate', 'deactivate'));
-        register_uninstall_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginUninstall', 'uninstall'));
 
         // Print pending messages, if any
         if (Option::getOption('webp-express-messages-pending')) {
@@ -77,11 +77,12 @@ class AdminInit
         // Add settings link in multisite
         add_filter('network_admin_plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), array('\WebPExpress\AdminUi', 'networkPluginActionLinksFilter'), 10, 2);
 
-        // Bulk Convert ajax actions
+        // Ajax actions
         add_action('wp_ajax_list_unconverted_files', array('\WebPExpress\BulkConvert', 'processAjaxListUnconvertedFiles'));
         add_action('wp_ajax_convert_file', array('\WebPExpress\BulkConvert', 'processAjaxConvertFile'));
+        add_action('wp_ajax_webpexpress_purge_cache', array('\WebPExpress\CachePurge', 'processAjaxPurgeCache'));
 
-        // Filters for processing upload hooks
+        // Filters for processing upload hooks (in order to convert images upon upload)
         add_filter('wp_handle_upload', array('\WebPExpress\HandleUploadHooks', 'handleUpload'), 10, 2);
         add_filter('image_make_intermediate_size', array('\WebPExpress\HandleUploadHooks', 'handleMakeIntermediateSize'), 10, 1);
 

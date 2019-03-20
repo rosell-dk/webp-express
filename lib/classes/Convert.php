@@ -11,6 +11,20 @@ use \WebPExpress\ConvertHelperIndependent;
 class Convert
 {
 
+    public static function getDestination($source, &$config = null)
+    {
+        if (is_null($config)) {
+            $config = Config::loadConfigAndFix();
+        }
+        return ConvertHelperIndependent::getDestination(
+            $source,
+            $config['destination-folder'],
+            $config['destination-extension'],
+            Paths::getWebPExpressContentDirAbs(),
+            Paths::getUploadDirAbs()
+        );
+    }
+
     public static function convertFile($source, $config = null)
     {
         if (is_null($config)) {
@@ -18,13 +32,7 @@ class Convert
         }
         $options = Config::generateWodOptionsFromConfigObj($config);
 
-        $destination = ConvertHelperIndependent::getDestination(
-            $source,
-            $options['destination-folder'],
-            $options['destination-extension'],
-            Paths::getWebPExpressContentDirAbs(),
-            Paths::getUploadDirAbs()
-        );
+        $destination = self::getDestination($source, $config);
 
         $result = ConvertHelperIndependent::convert($source, $destination, $options);
 
@@ -34,7 +42,19 @@ class Convert
             $result['filesize-webp'] = @filesize($destination);
         }
         return $result;
+    }
 
+    public static function findSource($destination, &$config = null)
+    {
+        if (is_null($config)) {
+            $config = Config::loadConfigAndFix();
+        }
+        return ConvertHelperIndependent::findSource(
+            $destination,
+            $config['destination-folder'],
+            $config['destination-extension'],
+            Paths::getWebPExpressContentDirAbs()
+        );
     }
 
 }

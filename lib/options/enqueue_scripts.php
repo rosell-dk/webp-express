@@ -56,6 +56,10 @@ if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conv
     wp_register_script('bulkconvert', plugins_url('js/bulk-convert.js', __FILE__), [], $version);
     wp_enqueue_script('bulkconvert');
 
+    // purge cache
+    wp_register_script('purgecache', plugins_url('js/purge-cache.js', __FILE__), [], $version);
+    wp_enqueue_script('purgecache');
+
 }
 
 //wp_register_script('api_keys', plugins_url('js/api-keys.js', __FILE__), ['daspopup'], '0.7.0-dev8');
