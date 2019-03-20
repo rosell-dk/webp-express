@@ -152,7 +152,7 @@ class FileHelper
         if (!@file_exists($dirName)) {
             return false;
         }
-        if (@is_writable($dirName) && @is_executable($dirName)) {
+        if (@is_writable($dirName) && @is_executable($dirName) || self::isWindows() ) {
             return true;
         }
 
@@ -299,5 +299,42 @@ class FileHelper
             $fileIterator->next();
         }
         return $success;
+    }
+
+
+    /**
+     *  Verify if OS is Windows
+     *  
+     *
+     *  @return true if windows; false if not.
+     */
+    public static function isWindows(){
+        return (boolean) preg_match('/^win/i', PHP_OS);
+    }
+
+
+     /**
+     *  Normalize separators of directory paths
+     *  
+     *
+     *  @return $normalized_path
+     */
+    public static function normalizeSeparator($path, $newSeparator = DIRECTORY_SEPARATOR){
+        return preg_replace("#[\\\/]+#", $newSeparator, $path);
+    }
+
+
+    /**
+     *  Verify if Source is inside in Document Root
+     *  
+     *
+     *  @return true if windows; false if not.
+     */    
+    public static function sourceIsInsideDocRoot($source, $docRoot){
+
+        $normalizedSource = realpath($source);
+        $normalizedDocRoot = realpath($docRoot);
+
+        return strpos($normalizedSource, $normalizedDocRoot) === 0;
     }
 }

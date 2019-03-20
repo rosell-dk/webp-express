@@ -15,6 +15,10 @@ error_reporting(E_ALL);
 use \WebPConvert\WebPConvert;
 use \WebPConvert\ServeExistingOrHandOver;
 
+
+include_once "../lib/classes/FileHelper.php";
+use \WebPExpress\FileHelper;
+
 function exitWithError($msg) {
     header('X-WebP-Express-Error: ' . $msg, true);
     echo $msg;
@@ -214,10 +218,10 @@ if (storeMingled($options)) {
 } else {
 
     $imageRoot = $webExpressContentDirAbs . '/webp-images';
-
+    
     // Check if source is residing inside document root.
     // (it is, if path starts with document root + '/')
-    if (substr($source, 0, strlen($docRoot) + 1) === $docRoot . '/') {
+    if ( FileHelper::sourceIsInsideDocRoot($source, $docRoot) ) {
 
         // We store relative to document root.
         // "Eat" the left part off the source parameter which contains the document root.
