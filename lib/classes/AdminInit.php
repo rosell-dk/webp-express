@@ -30,7 +30,7 @@ class AdminInit
     public static function runMigrationIfNeeded()
     {
         // When an update requires a migration, the number should be increased
-        define('WEBPEXPRESS_MIGRATION_VERSION', '7');
+        define('WEBPEXPRESS_MIGRATION_VERSION', '8');
 
         if (WEBPEXPRESS_MIGRATION_VERSION != Option::getOption('webp-express-migration-version', 0)) {
             // run migration logic
@@ -38,7 +38,7 @@ class AdminInit
         }
 
         // uncomment next line to test-run a migration
-        //include __DIR__ . '/migrate/migrate7.php';
+        //include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate8.php';
     }
 
     public static function adminInitHandler()
