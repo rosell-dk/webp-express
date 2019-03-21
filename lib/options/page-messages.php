@@ -88,6 +88,7 @@ if (($config['operation-mode'] == 'cdn-friendly') && !$config['alter-html']['ena
     }
 }
 
+/*
 if (!$anyRedirectionToConverterEnabled && ($config['operation-mode'] == 'cdn-friendly')) {
     // this can not happen in varied image responses. it is ok in no-conversion, and also tweaked, because one could wish to tweak the no-conversion mode
     Messenger::printMessage(
@@ -95,7 +96,7 @@ if (!$anyRedirectionToConverterEnabled && ($config['operation-mode'] == 'cdn-fri
             'You have not enabled any of the redirects to the converter. ' .
                 'At least one of the redirects is required for triggering WebP generation.'
     );
-}
+}*/
 
 if ($config['alter-html']['enabled'] && !$config['alter-html']['only-for-webps-that-exists'] && !$config['enable-redirection-to-webp-realizer']) {
     Messenger::printMessage(
