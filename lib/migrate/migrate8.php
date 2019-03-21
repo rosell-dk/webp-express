@@ -33,8 +33,9 @@ function webpexpress_migrate8() {
 
                     Messenger::addMessage(
                         'info',
-                        'Notice from WebP Express: You have been using <i>Gd</i> to convert PNGs. ' .
-                            'However, due to a bug, in some cases transparency was lost in the webp.' .
+                        'Service notice from WebP Express:<br>' .
+                            'You have been using <i>Gd</i> to convert PNGs. ' .
+                            'However, due to a bug, in some cases transparency was lost in the webp. ' .
                             'It is recommended that you delete and reconvert all PNGs. ' .
                             'There are new buttons for doing just that on the ' .
                             '<a href="' . Paths::getSettingsUrl() . '">settings screen</a> (look below the conversion methods).'
@@ -44,7 +45,8 @@ function webpexpress_migrate8() {
 
                     Messenger::addMessage(
                         'info',
-                        'Service notice from WebP Express: You have configured <i>Gd</i> to skip converting PNGs. ' .
+                        'Service notice from WebP Express:<br>' .
+                        'You have configured <i>Gd</i> to skip converting PNGs. ' .
                             'However, the <i>Gd</i> conversion method has been fixed and is doing ok now!'
                     );
 
