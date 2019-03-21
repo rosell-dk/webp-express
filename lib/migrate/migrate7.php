@@ -2,10 +2,11 @@
 
 namespace WebPExpress;
 
+use \WebPExpress\CapabilityTest;
 use \WebPExpress\Config;
 use \WebPExpress\HTAccess;
 use \WebPExpress\Messenger;
-use \WebPExpress\CapabilityTest;
+use \WebPExpress\Option;
 
 function webpexpress_migrate7() {
 
