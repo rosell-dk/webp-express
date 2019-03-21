@@ -2,16 +2,9 @@
 
 namespace WebPExpress;
 
-include_once "Config.php";
 use \WebPExpress\Config;
-
-include_once "FileHelper.php";
 use \WebPExpress\FileHelper;
-
-include_once "Paths.php";
 use \WebPExpress\Paths;
-
-include_once "State.php";
 use \WebPExpress\State;
 
 class HTAccess

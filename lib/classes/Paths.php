@@ -2,13 +2,9 @@
 
 namespace WebPExpress;
 
-include_once "PathHelper.php";
-use \WebPExpress\PathHelper;
-
-include_once "FileHelper.php";
 use \WebPExpress\FileHelper;
-
 use \WebPExpress\Multisite;
+use \WebPExpress\PathHelper;
 
 class Paths
 {

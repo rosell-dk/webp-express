@@ -2,10 +2,8 @@
 
 namespace WebPExpress;
 
-include_once "Paths.php";
-use \WebPExpress\Paths;
-
 use \WebPExpress\AlterHtmlInit;
+use \WebPExpress\Paths;
 
 /**
  * Class AlterHtmlImageUrls - convert image urls to webp

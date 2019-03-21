@@ -2,27 +2,13 @@
 
 namespace WebPExpress;
 
-include_once "ConvertersHelper.php";
 use \WebPExpress\ConvertersHelper;
-
-include_once "FileHelper.php";
 use \WebPExpress\FileHelper;
-
-include_once "HTAccess.php";
 use \WebPExpress\HTAccess;
-
-include_once "Messenger.php";
 use \WebPExpress\Messenger;
-
-include_once "Paths.php";
 use \WebPExpress\Paths;
-
-include_once "State.php";
 use \WebPExpress\State;
-
-include_once "TestRun.php";
 use \WebPExpress\TestRun;
-
 use \WebPExpress\Option;
 
 class Config

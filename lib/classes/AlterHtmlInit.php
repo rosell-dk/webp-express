@@ -2,7 +2,6 @@
 
 namespace WebPExpress;
 
-include_once "AlterHtmlHelper.php";
 use AlterHtmlHelper;
 
 use \WebPExpress\Option;

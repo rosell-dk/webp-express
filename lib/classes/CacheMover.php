@@ -2,10 +2,7 @@
 
 namespace WebPExpress;
 
-include_once "FileHelper.php";
 use \WebPExpress\FileHelper;
-
-include_once "Paths.php";
 use \WebPExpress\Paths;
 
 class CacheMover

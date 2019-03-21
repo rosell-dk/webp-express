@@ -2,10 +2,8 @@
 
 namespace WebPExpress;
 
-include_once "State.php";
-use \WebPExpress\State;
-
 use \WebPExpress\Option;
+use \WebPExpress\State;
 
 /**
  *
