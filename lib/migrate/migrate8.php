@@ -43,6 +43,21 @@ function webpexpress_migrate8() {
             }
         }
     }
+
+    if (WEBPEXPRESS_MIGRATION_VERSION == '8') {
+        Messenger::addMessage(
+            'info',
+            'New in WebP Express 0.13.0:' .
+                '<ul style="list-style-type:disc; list-style-position: inside">' .
+                '<li>Bulk Conversion</li>' .
+                '<li>New option to automatically convert images upon upload</li>' .
+                '<li>Better support on Windows servers</li>' .
+                '<li>- <a href="https://github.com/rosell-dk/webp-express/milestone/16?closed=1" target="_blank">and more</a></li>' .
+                '</ul>'
+        );
+
+    }
+
     Option::updateOption('webp-express-migration-version', '8');
 
     // Find out if Gd is the first active and working converter.
