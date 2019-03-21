@@ -1,12 +1,9 @@
 <?php
 
-include_once __DIR__ . '/../classes/State.php';
-use \WebPExpress\State;
-
-use \WebPExpress\Messenger;
 use \WebPExpress\Config;
+use \WebPExpress\Messenger;
 use \WebPExpress\Option;
-
+use \WebPExpress\State;
 
 /*
 In 0.4.0, we had a 'webp-express-configured' option.
@@ -27,7 +24,6 @@ if (!Option::getOption('webp-express-configured', false)) {
     }
 }
 
-
 if (!(State::getState('configured', false))) {
     // Options has never has been saved, so no migration is needed.
     // We can set migrate-version to current
@@ -42,7 +38,6 @@ if (!(State::getState('configured', false))) {
             // newer migrations to run, until the problem with that migration is fixed.
             include __DIR__ . '/migrate' . ($x + 1) . '.php';
         }
-
     }
 }
 
