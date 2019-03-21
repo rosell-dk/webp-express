@@ -14,6 +14,9 @@
                 <div id="bulkconvertcontent"></div>
             </div>
             <button onclick="openDeleteConvertedFilesPopup()" class="button button-secondary" type="button">Delete converted files</button>
+            <div id="purgecachepopup" style="display:none;">
+                <div id="purgecachecontent"></div>
+            </div>
         </div>
     </td>
 </tr>
