@@ -1,5 +1,5 @@
 = 0.13.0 =
-*(not released yet. Expected release: 22 mar 2019)*
+*(released: 21 mar 2019)*
 * Bulk Conversion
 * Fixed problems with Gd converter and PNG
 * Optinally auto convert upon media upload

@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.1
-Stable tag: 0.12.2
+Stable tag: 0.13.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -605,7 +605,7 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 == Changelog ==
 
 = 0.13.0 =
-*(not released yet. Expected release: 22 mar 2019)*
+*(released: 21 mar 2019)*
 * Bulk Conversion
 * Fixed problems with Gd converter and PNG
 * Optinally auto convert upon media upload

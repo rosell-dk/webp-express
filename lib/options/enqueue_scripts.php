@@ -6,7 +6,7 @@ use \WebPExpress\Paths;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$version = '0.13.0-beta-m';
+$version = '0.13.0';
 
 
 if (!function_exists('webp_express_add_inline_script')) {
