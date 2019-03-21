@@ -727,6 +727,7 @@ class HTAccess
             if ($config['operation-mode'] != 'no-conversion') {
                 if ($config['image-types'] != 0) {
                     $webpExpressRoot = Paths::getPluginUrlPath();
+                    $links = '';
                     if ($config['enable-redirection-to-converter']) {
                         $links = '<br>';
                         $links .= '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug&time=' . time() . '" target="_blank">Convert test image (show debug)</a><br>';
