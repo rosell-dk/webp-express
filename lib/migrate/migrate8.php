@@ -26,6 +26,7 @@ function webpexpress_migrate8() {
         }
         if (isset($firstActiveAndWorking)) {
             if (isset($firstActiveAndWorking['converter']) && $firstActiveAndWorking['converter'] == 'gd') {
+
                 // First working converter is Gd.
                 if (isset($firstActiveAndWorking['options']) && $firstActiveAndWorking['options']['skip-pngs'] === false) {
                     // And it is set up to convert PNG's
@@ -38,6 +39,15 @@ function webpexpress_migrate8() {
                             'There are new buttons for doing just that on the ' .
                             '<a href="' . Paths::getSettingsUrl() . '">settings screen</a> (look below the conversion methods).'
                     );
+
+                } else {
+
+                    Messenger::addMessage(
+                        'info',
+                        'Service notice from WebP Express: You have configured <i>Gd</i> to skip converting PNGs. ' .
+                            'However, the <i>Gd</i> conversion method has been fixed and is doing ok now!'
+                    );
+
 
                 }
             }
