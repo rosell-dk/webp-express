@@ -40,6 +40,7 @@ class HandleUploadHooks
     /**
      *  Convert if:
      *  - Option has been enabled
+     *  - We are not in "No conversion" mode
      *  - The mime type is one of the ones the user has activated (in config)
      */
     private static function convertIf($filename)
@@ -51,6 +52,9 @@ class HandleUploadHooks
         $config = &self::$config;
 
         if (!$config['convert-on-upload']) {
+            return;
+        }
+        if ($config['operation-mode'] == 'no-conversion') {
             return;
         }
 
@@ -80,11 +84,6 @@ class HandleUploadHooks
      */
     public static function handleUpload($filearray, $overrides, $ignore = false)
     {
-
-        /*\WebPExpress\Messenger::printMessage(
-            'error',
-            'looksy!'
-        );*/
         $filename = $filearray['file'];
         self::convertIf($filename);
 
