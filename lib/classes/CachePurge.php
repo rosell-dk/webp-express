@@ -144,7 +144,7 @@ class CachePurge
     public static function processAjaxPurgeCache()
     {
 
-        $onlyPng = $_POST['only-png'];
+        $onlyPng = ($_POST['only-png'] == 'true');
 
         $config = Config::loadConfigAndFix();
         $result = self::purge($config, $onlyPng);
