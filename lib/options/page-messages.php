@@ -82,7 +82,7 @@ if (($config['operation-mode'] == 'cdn-friendly') && !$config['alter-html']['ena
         Messenger::printMessage(
             'warning',
                 'You are in CDN friendly mode but have not enabled Alter HTML (and you are not using Cache Enabler either). ' .
-                    'This is usually a misconfiguration because in this mode, the only way to get webp files is by referencing them in the HTML.'
+                    'This is usually a misconfiguration because in this mode, the only way to get webp files delivered is by referencing them in the HTML.'
         );
 
     }
