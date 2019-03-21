@@ -611,6 +611,8 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 * Optinally auto convert upon media upload
 * Windows fix (thanks, lwxbr!)
 
+For more info, see the closed issues on the 0.13.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/16?closed=1
+
 = 0.12.2 =
 *(released 8 mar 2019)*
 * Fixed bug: On some nginx configurations, the newly added protection against directly calling the converter scripts were triggering also when it should not.
