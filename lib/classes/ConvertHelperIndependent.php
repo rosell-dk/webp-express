@@ -24,7 +24,20 @@ class ConvertHelperIndependent
         // - because the mingled option only applies to upload folder, the rest is stored in separate cache folder
         // So, return true, if $source is located in upload folder
         return (strpos($source, $uploadDirAbs) === 0);
+    }
 
+    /**
+     *  Verify if source is inside in document root
+     *  Note: This function relies on the existence of both.
+     *
+     *  @return true if windows; false if not.
+     */
+    public static function sourceIsInsideDocRoot($source, $docRoot){
+
+        $normalizedSource = realpath($source);
+        $normalizedDocRoot = realpath($docRoot);
+
+        return strpos($normalizedSource, $normalizedDocRoot) === 0;
     }
 
     /*
@@ -72,7 +85,7 @@ class ConvertHelperIndependent
 
             // Check if source is residing inside document root.
             // (it is, if path starts with document root + '/')
-            if ( FileHelper::sourceIsInsideDocRoot($source, $docRoot) ) {
+            if (self::sourceIsInsideDocRoot($source, $docRoot) ) {
 
                 // We store relative to document root.
                 // "Eat" the left part off the source parameter which contains the document root.
@@ -97,6 +110,9 @@ class ConvertHelperIndependent
         $imageRoot = $webExpressContentDirAbs . '/webp-images';
 
         // Check if destination is residing inside "doc-root" folder
+        // TODO: This does not work on Windows yet.
+        // NOTE: WE CANNOT DO AS WITH sourceIsInsideDocRoot, because it relies on realpath, which only translates EXISTING paths.
+        //       $destination does not exist yet, when this method is called from webp-realizer.php
         if (strpos($destination, $imageRoot . '/doc-root/') === 0) {
 
             $imageRoot .= '/doc-root';

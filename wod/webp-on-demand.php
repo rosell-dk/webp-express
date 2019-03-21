@@ -15,9 +15,8 @@ error_reporting(E_ALL);
 use \WebPConvert\WebPConvert;
 use \WebPConvert\ServeExistingOrHandOver;
 
-
-include_once "../lib/classes/FileHelper.php";
-use \WebPExpress\FileHelper;
+include_once "../lib/classes/ConvertHelperIndependent.php";
+use \WebPExpress\ConvertHelperIndependent;
 
 function exitWithError($msg) {
     header('X-WebP-Express-Error: ' . $msg, true);
@@ -176,68 +175,13 @@ if (!file_exists($source)) {
     exit;
 }
 
-// Determine if we should store mingled or not
-function storeMingled() {
-    global $options;
-    global $source;
-    global $docRoot;
-
-    $destinationOptionSetToMingled = (isset($options['destination-folder']) && ($options['destination-folder'] == 'mingled'));
-    if (!$destinationOptionSetToMingled) {
-        return false;
-    }
-
-    // Option is set for mingled.
-    // But we will only store "mingled", for images in upload folder
-
-    if (!isset($options['paths']['uploadDirRel'])) {
-        // Hm, we dont know the upload dir, as the configuration hasn't been regenerated.
-        // This should not happen because configuration file is saved upon migration to 0.11
-        // So we can do this wild guess:
-        return preg_match('/\\/uploads\\//', $source);
-    }
-
-    $uploadDirAbs = $docRoot . '/' . $options['paths']['uploadDirRel'];
-    if (strpos($source, $uploadDirAbs) === 0) {
-        // We are in upload folder
-        return true;
-    }
-    return false;
-}
-
-
-// Calculate $destination
-// ----------------------
-
-if (storeMingled($options)) {
-    if (isset($options['destination-extension']) && ($options['destination-extension'] == 'append')) {
-        $destination = $source . '.webp';
-    } else {
-        $destination = preg_replace('/\\.(jpe?g|png)$/', '', $source) . '.webp';
-    }
-} else {
-
-    $imageRoot = $webExpressContentDirAbs . '/webp-images';
-    
-    // Check if source is residing inside document root.
-    // (it is, if path starts with document root + '/')
-    if ( FileHelper::sourceIsInsideDocRoot($source, $docRoot) ) {
-
-        // We store relative to document root.
-        // "Eat" the left part off the source parameter which contains the document root.
-        // and also eat the slash (+1)
-        $sourceRel = substr($source, strlen($docRoot) + 1);
-        $destination = $imageRoot . '/doc-root/' . $sourceRel . '.webp';
-    } else {
-        // Source file is residing outside document root.
-        // we must add complete path to structure
-        $destination = $imageRoot . '/abs' . $source . '.webp';
-    }
-}
-
-
-
-
+$destination = ConvertHelperIndependent::getDestination(
+    $source,
+    $options['destination-folder'],
+    $options['destination-extension'],
+    $webExpressContentDirAbs,
+    $docRoot . '/' . $options['paths']['uploadDirRel']
+);
 
 //echo $destination; exit;
 

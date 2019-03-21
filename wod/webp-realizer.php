@@ -13,6 +13,9 @@ error_reporting(E_ALL);
 use \WebPConvert\WebPConvert;
 use \WebPConvert\ServeExistingOrHandOver;
 
+include_once "../lib/classes/ConvertHelperIndependent.php";
+use \WebPExpress\ConvertHelperIndependent;
+
 function exitWithError($msg) {
     header('X-WebP-Express-Error: ' . $msg, true);
     echo $msg;
@@ -149,72 +152,12 @@ $destination = getDestination();
 
 //echo 'destination: ' . $destination; exit;
 
-
-// Try to find source in same folder.
-// Return false on failure
-function findSourceMingled() {
-    global $options;
-    global $destination;
-    if (isset($options['destination-extension']) && ($options['destination-extension'] == 'append')) {
-        $source =  preg_replace('/\\.(webp)$/', '', $destination);
-    } else {
-        $source =  preg_replace('/\\.webp$/', '.jpg', $destination);
-        if (!@file_exists($source)) {
-            $source =  preg_replace('/\\.webp$/', '.jpeg', $destination);
-        }
-        if (!@file_exists($source)) {
-            $source =  preg_replace('/\\.webp$/', '.png', $destination);
-        }
-    }
-    if (!@file_exists($source)) {
-        return false;
-    }
-    return $source;
-}
-
-function findSourceSeparate() {
-    global $options;
-    global $destination;
-    global $webExpressContentDirAbs;
-    global $docRoot;
-
-    $imageRoot = $webExpressContentDirAbs . '/webp-images';
-
-    // Check if destination is residing inside "doc-root" folder
-    if (strpos($destination, $imageRoot . '/doc-root/') === 0) {
-
-        $imageRoot .= '/doc-root';
-        // "Eat" the left part off the $destination parameter. $destination is for example:
-        // "/var/www/webp-express-tests/we0/wp-content-moved/webp-express/webp-images/doc-root/wordpress/uploads-moved/2018/12/tegning5-300x265.jpg.webp"
-        // We also eat the slash (+1)
-        $sourceRel = substr($destination, strlen($imageRoot) + 1);
-
-        $source = $docRoot . '/' . $sourceRel;
-        $source =  preg_replace('/\\.(webp)$/', '', $source);
-    } else {
-        $imageRoot .= '/abs';
-        $sourceRel = substr($destination, strlen($imageRoot) + 1);
-        $source = $sourceRel;
-        $source =  preg_replace('/\\.(webp)$/', '', $source);
-    }
-
-    if (!@file_exists($source)) {
-        return false;
-    }
-    return $source;
-}
-
-
-$mingled = (isset($options['destination-folder']) && ($options['destination-folder'] == 'mingled'));
-
-if ($mingled) {
-    $source = findSourceMingled();
-    if ($source === false) {
-        $source = findSourceSeparate();
-    }
-} else {
-    $source = findSourceSeparate();
-}
+$source = ConvertHelperIndependent::findSource(
+    $destination,
+    $options['destination-folder'],
+    $options['destination-extension'],
+    $webExpressContentDirAbs
+);
 
 if ($source === false) {
     header('X-WebP-Express-Error: webp-realizer.php could not find an existing jpg or png that corresponds to the webp requested', true);
@@ -224,15 +167,6 @@ if ($source === false) {
     //echo '<p>webp-realizer.php could not find an existing jpg or png that corresponds to the webp requested!</p>';
     //echo 'destination requested:<br><i>' . $destination . '</i>';
 }
-
-
-
-
-//echo $destination; exit;
-
-
-//echo '<pre>' . print_r($options, true) . '</pre>';
-//exit;
 
 foreach ($options['converters'] as &$converter) {
     if (isset($converter['converter'])) {

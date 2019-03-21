@@ -73,7 +73,7 @@ class FileHelper
     }
 
     public static function chmod_r($dir, $dirPerm = null, $filePerm = null, $uid = null, $gid = null, $regexFileMatchPattern = null, $regexDirMatchPattern = null) {
-        if (!@file_exists($dir) || (!@is_dir($dir))) {            
+        if (!@file_exists($dir) || (!@is_dir($dir))) {
             return;
         }
         $fileIterator = new \FilesystemIterator($dir);
@@ -304,7 +304,7 @@ class FileHelper
 
     /**
      *  Verify if OS is Windows
-     *  
+     *
      *
      *  @return true if windows; false if not.
      */
@@ -315,7 +315,7 @@ class FileHelper
 
      /**
      *  Normalize separators of directory paths
-     *  
+     *
      *
      *  @return $normalized_path
      */
@@ -323,18 +323,4 @@ class FileHelper
         return preg_replace("#[\\\/]+#", $newSeparator, $path);
     }
 
-
-    /**
-     *  Verify if Source is inside in Document Root
-     *  
-     *
-     *  @return true if windows; false if not.
-     */    
-    public static function sourceIsInsideDocRoot($source, $docRoot){
-
-        $normalizedSource = realpath($source);
-        $normalizedDocRoot = realpath($docRoot);
-
-        return strpos($normalizedSource, $normalizedDocRoot) === 0;
-    }
 }
