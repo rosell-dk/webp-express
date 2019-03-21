@@ -2,20 +2,11 @@
 
 namespace WebPExpress;
 
-include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
-
-include_once __DIR__ . '/../classes/HTAccess.php';
 use \WebPExpress\HTAccess;
-
-include_once __DIR__ . '/../classes/Paths.php';
-use \WebPExpress\Paths;
-
-include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
-
 use \WebPExpress\Option;
-
+use \WebPExpress\Paths;
 
 // On successful migration:
 // Option::updateOption('webp-express-migration-version', '1', true);

@@ -2,16 +2,10 @@
 
 namespace WebPExpress;
 
-include_once __DIR__ . '/../classes/Paths.php';
-use \WebPExpress\Paths;
-
-include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
-
-include_once __DIR__ . '/../classes/TestRun.php';
-use \WebPExpress\TestRun;
-
 use \WebPExpress\Option;
+use \WebPExpress\Paths;
+use \WebPExpress\TestRun;
 
 /* helper. Remove dir recursively. No warnings - fails silently
    Set $removeTheDirItself to false if you want to empty the dir
