@@ -4,9 +4,9 @@
       <div>
           <label for="gd_skip_pngs">Skip PNGs</label>
           <input type="checkbox" id="gd_skip_pngs">
-          <br>Gd is not suited for converting PNGs into webp. &ndash;
-          The filesize is generally much larger than the original.
-          For this reason, the converter defaults to skip PNG's.
+          <br>
+          You can choose to skip PNG's for Gd (which means the next working and active converter in the stack will handle it, if there is any).
+          In our first implementation, Gd had problems with transparency. This is however solved now.          
       </div>
       <br>
       <?php webp_express_printUpdateButtons() ?>

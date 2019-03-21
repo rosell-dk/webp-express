@@ -5,7 +5,9 @@ namespace WebPExpress;
 class ConvertersHelper
 {
     public static $defaultConverters = [
-        ['converter' => 'gd', 'options' => ['skip-pngs' => true]],
+        ['converter' => 'gd', 'options' => [
+            'skip-pngs' => false
+        ]],
         ['converter' => 'cwebp', 'options' => [
             'use-nice' => true,
             'try-common-system-paths' => true,
