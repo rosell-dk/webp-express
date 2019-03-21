@@ -121,6 +121,7 @@ class ConvertHelperIndependent
             // We also eat the slash (+1)
             $sourceRel = substr($destination, strlen($imageRoot) + 1);
 
+            $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
             $source = $docRoot . '/' . $sourceRel;
             $source =  preg_replace('/\\.(webp)$/', '', $source);
         } else {
