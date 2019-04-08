@@ -59,15 +59,15 @@
                         <td>Works great with page caching, because all browsers are served the same HTML</td>
                         <td>
                             <p>
-                                As the HTML varies with the webp-capability of the browser, page caching is tricky.
-                                However, it can be achieved with the wonderful <i>Cache Enabler</i> plugin, which maintains two cached versions of each page.<br><br>
+                                <b>Does not work with page caching</b> &ndash; <i>unless</i> you are using the <i>Cache Enabler</i> plugin,
+                                which is able to maintain two cached versions of each page.<br><br>
                                 <span style="font-size:10px">
                                     Note: <i>Cache Enabler</i> also has HTML altering, but their implementation has <a target="_blank" href="https://github.com/keycdn/cache-enabler/issues/51">limitations</a>.
                                     It for example doesn't replace background images in inline styles and it does not look for all common lazy load attributes. It also has some problems in edge cases.
                                     For this reason, I recommend activating HTML altering in WebP Express, even when <i>Cache Enabler</i> is used.
                                     By doing that, both plugins will have a go at it (WebP Express comes first).
                                     At least it will take care of the limitations in <i>Cache Enabler</i>.
-                                    It does however not cure the edge cases where Cache Enabler replaces things it should not.
+                                    It does however not cure the edge cases where Cache Enabler replaces things it should not, or <a href="https://wordpress.org/support/topic/why-optimus-with-cache-enabler/">crashes</a>
                                 </span>
                             </p>
                         </td>
@@ -137,6 +137,7 @@
                   '<p>"Image URLs" replaces the image URLs to point to ' .
                         'the webp <i>rather than</i> the original. Handles src, srcset, common lazy-load attributes and even ' .
                         'inline styles</p>' .
+                        '<p><b>Does not work with page caching</b> &ndash; <i>unless</i> you are using the <i>Cache Enabler</i> plugin</p>' .
                         '<p>Note that you will have to do something for the browsers that does not support webp. ' .
                         'And that something is in most cases to enable the <i>Only do the replacements in webp enabled browsers</i> option, which ' .
                         'will show up when you enable this option. ' .
