@@ -74,7 +74,11 @@
                     </tr>
                     <tr>
                         <th><nobr>Styling and javascript</nobr></th>
-                        <td>May break because of changed HTML structure</td>
+                        <td>May break because of changed HTML structure.
+                            A selector such as "div > img" will no longer match the image because the immidiate parent is now "picture".
+                            However, a selector such as "div img" will still work.
+                            Luckily, the picture element is not meant to be styled - one still has to target the contained img element.
+                        </td>
                         <td>No problems</td>
                     </tr>
                     <tr>
@@ -100,7 +104,10 @@
                   '<p>"Picture tag" replaces &lt;img&gt tags with &lt;picture&gt; tags and adds the webp as an extra source. ' .
                         'This effectively points webp-enabled browsers to the webp variant and other browsers to ' .
                         'the original image.</p>' .
-                        '<p><em>Beware that this structural change may affect styling!</em></p>' .
+                        '<p><em>Beware that this structural change may break styling!</em><br>' .
+                        '(a selector such as "div > img" will no longer match the image because the immidiate parent is now "picture". However, ' .
+                        'a selector such as "div img" will still work)' .
+                        '</p>' .
                         '<p>PS: This functionality is handled by ' .
                         '<a target="_blank" href="https://github.com/rosell-dk/dom-util-for-webp">this external library</a>' .
                         ' (I have pushed the code to an external library so it can be used by other projects besides this plugin)</p>'
