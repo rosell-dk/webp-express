@@ -13,7 +13,7 @@ class AlterHtmlInit
     public static function startOutputBuffer()
     {
         if (!is_admin() || (function_exists("wp_doing_ajax") && wp_doing_ajax()) || (defined( 'DOING_AJAX' ) && DOING_AJAX)) {
-            // note: "self::alterHtml" did not work on hhvm (#226)
+            // note: "self::alterHtml" does for some reason not work on hhvm (#226)
             ob_start('\\WebPExpress\\AlterHtmlInit::alterHtml');
         }
     }
