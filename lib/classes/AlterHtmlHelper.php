@@ -89,6 +89,10 @@ class AlterHtmlHelper
      */
     public static function isImageUrlHere($imageUrl, $baseUrl, $baseDir)
     {
+        
+        if ( function_exists( 'get_rocket_option' ) && 0 < (int) get_rocket_option( 'cdn' ) ) {
+            $baseUrl  = get_rocket_cdn_url( $baseUrl, [ 'all', 'images' ] );
+        }
 
         $srcPathRel = self::getRelUrlPath($imageUrl, $baseUrl);
 
@@ -208,6 +212,16 @@ class AlterHtmlHelper
             self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
         }
 
+        if ( function_exists( 'get_rocket_option' ) && 0 < (int) get_rocket_option( 'cdn' ) ) {
+            self::$options['bases']['content'][1] = get_rocket_cdn_url( self::$options['bases']['content'][1], [
+                'all',
+                'images',
+            ] );
+            self::$options['bases']['uploads'][1] = get_rocket_cdn_url( self::$options['bases']['uploads'][1], [
+                'all',
+                'images',
+            ] );
+        }
 
         // Currently we do not handle relative urls - so we skip
         if (!preg_match('#^https?://#', $sourceUrl)) {
