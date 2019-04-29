@@ -165,7 +165,7 @@ location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
   }
   try_files
     /nonexisting-because-try-files-needs-fallback
-    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content
+    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content&$args
     ;
 }
 ```
@@ -207,7 +207,7 @@ location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
   }
   try_files
     $uri.webp
-    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content
+    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content&$args
     ;
 }
 # ------------------- (WebP Express rules ends here)
@@ -229,7 +229,7 @@ Simply add the following rules below the ones you added in step 2:
 location ~* ^/?wp-content/.*\.(png|jpe?g)\.webp$ {
     try_files
       $uri
-      /wp-content/plugins/webp-express/wod/webp-realizer.php?wp-content=wp-content
+      /wp-content/plugins/webp-express/wod/webp-realizer.php?wp-content=wp-content&$args
       ;
 }
 ```
