@@ -2,7 +2,7 @@
 
 namespace WebPExpress;
 
-include_once "State.php";
+use \WebPExpress\Option;
 use \WebPExpress\State;
 
 class Messenger
@@ -17,10 +17,17 @@ class Messenger
      *  $msg = sprintf(__( 'You are on a very old version of PHP (%s). WebP Express may not work as intended.', 'webp-express' ), phpversion());
      */
     public static function addMessage($level, $msg) {
+        //error_log('add message:' . $msg);
 
-        update_option('webp-express-messages-pending', true, true);  // We want this option to be autoloaded
-
+        Option::updateOption('webp-express-messages-pending', true, true);  // We want this option to be autoloaded
         $pendingMessages = State::getState('pendingMessages', []);
+
+        // Ensure we do not add a message that is already pending.
+        foreach ($pendingMessages as $i => $entry) {
+            if ($entry['message'] == $msg) {
+                return;
+            }
+        }
         $pendingMessages[] = ['level' => $level, 'message' => $msg];
         State::setState('pendingMessages', $pendingMessages);
     }
@@ -74,7 +81,6 @@ class Messenger
 
     public static function printPendingMessages() {
 
-
         $messages = State::getState('pendingMessages', []);
 
         foreach ($messages as $message) {
@@ -82,6 +88,6 @@ class Messenger
         }
 
         State::setState('pendingMessages', []);
-        update_option('webp-express-messages-pending', false, true);
+        Option::updateOption('webp-express-messages-pending', false, true);
     }
 }

@@ -1,38 +1,23 @@
 <?php
 
-include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
-
-include_once __DIR__ . '/../classes/ConvertersHelper.php';
 use \WebPExpress\ConvertersHelper;
-
-include_once __DIR__ . '/../classes/FileHelper.php';
 use \WebPExpress\FileHelper;
-
-include_once __DIR__ . '/../classes/HTAccess.php';
 use \WebPExpress\HTAccess;
-
-include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
-
-include_once __DIR__ . '/../classes/Paths.php';
+use \WebPExpress\Multisite;
 use \WebPExpress\Paths;
-
-include_once __DIR__ . '/../classes/PlatformInfo.php';
 use \WebPExpress\PlatformInfo;
-
-include_once __DIR__ . '/../classes/State.php';
 use \WebPExpress\State;
-
-include_once __DIR__ . '/../classes/TestRun.php';
 use \WebPExpress\TestRun;
 
 if (!current_user_can('manage_options')) {
     wp_die('You do not have sufficient permissions to access this page.');
 }
+
 ?>
 <div class="wrap">
-    <h2>WebP Express Settings</h2>
+    <h2>WebP Express Settings<?php echo Multisite::isNetworkActivated() ? ' (network)' : ''; ?></h2>
 
 <?php
 
@@ -42,8 +27,6 @@ function webpexpress_converterName($converterId) {
     }
     return $converterId;
 }
-
-$canDetectQuality = TestRun::isLocalQualityDetectionWorking();
 
 function printAutoQualityOptionForConverter($converterId) {
 ?>
@@ -66,15 +49,16 @@ function printAutoQualityOptionForConverter($converterId) {
     </div>
 <?php
 }
-//update_option('webp-express-migration-version', '1');
 
-// Test converters
+$canDetectQuality = TestRun::isLocalQualityDetectionWorking();
 $testResult = TestRun::getConverterStatus();
-$workingConverters = [];
-if ($testResult) {
-    $workingConverters = $testResult['workingConverters'];
-    //print_r($testResult);
-} else {
+$config = Config::getConfigForOptionsPage();
+
+//State::setState('last-ewww-optimize-attempt', 0);
+//State::setState('last-ewww-optimize', 0);
+\WebPExpress\KeepEwwwSubscriptionAlive::keepAliveIfItIsTime($config);
+
+if (!$testResult) {
     Messenger::printMessage(
         'error',
         'WebP Express cannot save a test conversion, because it does not have write ' .
@@ -92,177 +76,21 @@ foreach (Paths::getHTAccessDirs() as $dir) {
 }*/
 
 
-$defaultConfig = [
-    'cache-control' => 'no-header',
-    'cache-control-custom' => 'public, max-age:3600',
-    'converters' => [],
-    'fail' => 'original',
-    'forward-query-string' => true,
-    'image-types' => 1,
-    'quality-auto' => $canDetectQuality,
-    'max-quality' => 80,
-    'quality-specific' => 70,
-    'metadata' => 'none',
-    'do-not-pass-source-in-query-string' => false,
-    'redirect-to-existing-in-htaccess' => false,
-    'web-service' => [
-        'enabled' => false,
-        'whitelist' => [
-            /*[
-            'uid' => '',       // for internal purposes
-            'label' => '',     // ie website name. It is just for display
-            'ip' => '',        // restrict to these ips. * pattern is allowed.
-            'api-key' => '',   // Api key for the entry. Not neccessarily unique for the entry
-            //'quota' => 60
-            ]
-            */
-        ]
-
-    ]
-];
-
-$defaultConverters = ConvertersHelper::$defaultConverters;
-
-
-$config = Config::loadConfig();
-//echo '<pre>' . print_r($config, true) . '</pre>';
-if (!$config) {
-    $config = [];
-}
-//$config = [];
-
-$config = array_merge($defaultConfig, $config);
-if ($config['converters'] == null) {
-    $config['converters'] = [];
-}
-if (!isset($config['web-service'])) {
-    $config['web-service'] = [];
-}
-if (!isset($config['web-service']['whitelist'])) {
-    $config['web-service']['whitelist'] = [];
-}
-
-// Remove keys in whitelist (so they cannot easily be picked up by examining the html)
-foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
-    unset($whitelistEntry['api-key']);
-}
-
-// Remove keys from WPC converters
-foreach ($config['converters'] as &$converter) {
-    if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
-        if (isset($converter['options']['api-key'])) {
-            if ($converter['options']['api-key'] != '') {
-                $converter['options']['_api-key-non-empty'] = true;
-            }
-            unset($converter['options']['api-key']);
-        }
-    }
-}
-
-
-if (count($config['converters']) == 0) {
-    // This is first time visit!
-
-    if (count($workingConverters) == 0) {
-        // No converters are working
-        // Send ewww converter to top
-        $resultPart1 = [];
-        $resultPart2 = [];
-        foreach ($defaultConverters as $converter) {
-            $converterId = $converter['converter'];
-            if ($converterId == 'ewww') {
-                $resultPart1[] = $converter;
-            } else {
-                $resultPart2[] = $converter;
-            }
-        }
-        $config['converters'] = array_merge($resultPart1, $resultPart2);
-    } else {
-        // Send converters not working to the bottom
-        // - and also deactivate them..
-        $resultPart1 = [];
-        $resultPart2 = [];
-        foreach ($defaultConverters as $converter) {
-            $converterId = $converter['converter'];
-            if (in_array($converterId, $workingConverters)) {
-                $resultPart1[] = $converter;
-            } else {
-                $converter['deactivated'] = true;
-                $resultPart2[] = $converter;
-            }
-        }
-        $config['converters'] = array_merge($resultPart1, $resultPart2);
-    }
-
-    // $workingConverters
-    //echo '<pre>' . print_r($converters, true) . '</pre>';
-} else {
-    // not first time visit...
-    // merge missing converters in
-    $config['converters'] = ConvertersHelper::mergeConverters($config['converters'], ConvertersHelper::$defaultConverters);
-}
-
-
-// Set "working" and "error" properties
-if ($testResult) {
-    foreach ($config['converters'] as &$converter) {
-        $converterId = $converter['converter'];
-        $hasError = isset($testResult['errors'][$converterId]);
-        $working = !$hasError;
-        if (isset($converter['working']) && ($converter['working'] != $working)) {
-            if ($working) {
-                Messenger::printMessage(
-                    'info',
-                    'Hurray! - The <i>' . webpexpress_converterName($converterId) . '</i> conversion method is working now!'
-                );
-            } else {
-                Messenger::printMessage(
-                    'warning',
-                    'Sad news. The <i>' . webpexpress_converterName($converterId) . '</i> conversion method is not working anymore. What happened?'
-                );
-            }
-        }
-        $converter['working'] = $working;
-        if ($hasError) {
-            $error = $testResult['errors'][$converterId];
-            if ($converterId == 'wpc') {
-                if (preg_match('/Missing URL/', $error)) {
-                    $error = 'Not configured';
-                }
-                if ($error == 'No remote host has been set up') {
-                    $error = 'Not configured';
-                }
-
-                if (preg_match('/cloud service is not enabled/', $error)) {
-                    $error = 'The server is not enabled. Click the "Enable web service" on WebP Express settings on the site you are trying to connect to.';
-                }
-            }
-            $converter['error'] = $error;
-        } else {
-            unset($converter['error']);
-        }
-    }
-}
 //echo '<pre>' . print_r($config['converters'], true) . '</pre>';
 
 //echo 'Working converters:' . print_r($workingConverters, true) . '<br>';
 // Generate a custom nonce value.
 $webpexpress_settings_nonce = wp_create_nonce('webpexpress_settings_nonce');
 ?>
-<p><div>
-    <i>WebP Express takes care of serving autogenerated WebP images instead of jpeg/png to browsers that supports WebP.</i>
-    <div class="help">?<div class="popup"><ol>
-        <li>Some redirect rules set up in <i>.htaccess</i> redirects (unconverted) jpeg/png images to a PHP script for handling.</li>
-        <li>The PHP script reads the options and passes them to the <i><a target="_blank" href="https://github.com/rosell-dk/webp-convert/">WebP Convert</a></i> library for converting <i>and</i> serving.</li>
-        <li>If WebP Convert finds that the image already is converted, it will be served immediately (unless it is bigger than the original, or the original has been modified). Otherwise it will be converted and then served</li>
-    </ol></div></div>
-</div></p>
 
 <?php
+//echo get_theme_root_uri();
 
+//include_once __DIR__ . '/../classes/AlterHtmlHelper.php';
+//$actionUrl = Multisite::isNetworkActivated() ? network_admin_url( 'admin-post.php' ) : admin_url( 'admin-post.php' );
+$actionUrl = admin_url('admin-post.php');
 
-
-echo '<form id="webpexpress_settings" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="post" >';
+echo '<form id="webpexpress_settings" action="' . esc_url($actionUrl) . '" method="post" >';
 ?>
     <input type="hidden" name="action" value="webpexpress_settings_submit">
     <input type="hidden" name="webpexpress_settings_nonce" value="<?php echo $webpexpress_settings_nonce ?>" />
@@ -276,64 +104,161 @@ echo '<form id="webpexpress_settings" action="' . esc_url( admin_url( 'admin-pos
         </table>
     </fieldset>
 <?php
-
-function helpIcon($text) {
-    return '<div class="help">?<div class="popup">' . $text . '</div></div>';
+function helpIcon($text, $customClass = '') {
+    $className = '';
+    if (strlen($text) < 80) {
+        $className = 'narrow';
+    }
+    if (strlen($text) > 150) {
+        if (strlen($text) > 300) {
+            if (strlen($text) > 500) {
+                $className = 'widest';
+            } else {
+                $className = 'wider';
+            }
+        } else {
+            $className = 'wide';
+        }
+    }
+    return '<div class="help ' . $customClass . '">?<div class="popup ' . $className . '">' . $text . '</div></div>';
 }
+
+function webpexpress_selectBoxOptions($selected, $options) {
+    foreach ($options as $optionValue => $text) {
+        echo '<option value="' . $optionValue . '"' . ($optionValue == $selected ? ' selected' : '') . '>';
+        echo $text;
+        echo '</option>';
+    }
+}
+
+function webpexpress_radioButton($optionName, $optionValue, $label, $selectedValue, $helpText = null) {
+    $id = str_replace('-', '_', $optionName . '_' . $optionValue);
+    echo '<input type="radio" id="' . $id . '"';
+    if ($optionValue == $selectedValue) {
+        echo ' checked="checked"';
+    }
+    echo ' name="' . $optionName . '" value="' . $optionValue . '" style="margin-right: 10px">';
+    echo '<label for="' . $id . '">';
+    echo $label;
+    if (!is_null($helpText)) {
+        echo helpIcon($helpText);
+    }
+    echo '</label>';
+}
+
+function webpexpress_radioButtons($optionName, $selected, $options, $helpTexts = [], $style='margin-left: 20px; margin-top: 5px') {
+    echo '<ul style="' . $style . '">';
+    foreach ($options as $optionValue => $label) {
+        $id = str_replace('-', '_', $optionName . '_' . $optionValue);
+        echo '<li>';
+
+        webpexpress_radioButton($optionName, $optionValue, $label, $selected, isset($helpTexts[$optionValue]) ? $helpTexts[$optionValue] : null);
+
+        /*
+        echo '<input type="radio" id="' . $id . '"';
+        if ($optionValue == $selected) {
+            echo ' checked="checked"';
+        }
+        echo ' name="' . $optionName . '" value="' . $optionValue . '" style="margin-right: 10px">';
+        echo '<label for="' . $id . '">';
+        echo $text;
+        if (isset($helpTexts[$optionValue])) {
+            echo helpIcon($helpTexts[$optionValue]);
+        }
+        echo '</label>';
+        */
+        echo '</li>';
+    }
+    echo '</ul>';
+}
+
+function webpexpress_checkbox($optionName, $checked, $label, $helpText = '') {
+    $id = str_replace('-', '_', $optionName);
+    echo '<div style="margin:10px 0 0 10px;">';
+    echo '<input value="true" type="checkbox" style="margin-right: 10px" ';
+    echo 'name="' . $optionName . '"';
+    echo 'id="' . $id . '"';
+    if ($checked) {
+        echo ' checked="checked"';
+    }
+    echo '>';
+    echo '<label for="' . $id . '">';
+    echo $label . '</label>';
+    if ($helpText != '') {
+        echo helpIcon($helpText);
+    }
+    echo '</div>';
+
+}
+
+include_once 'options/operation-mode.inc';
+include_once 'options/general/general.inc';
+
+
+/*
+idea:
+
+$options = [
+    'tweaked' => [
+        'general' => [
+            'image-types',
+            'destination-folder',
+            'destination-extension',
+            'cache-control'
+        ]
+    ],
+    ...
+];
+*/
+
+
+if ($config['operation-mode'] != 'tweaked') {
+//    echo '<fieldset class="block">';
+//    echo '<table class="form-table"><tbody>';
+}
+
+if ($config['operation-mode'] == 'no-conversion') {
+
+    // General
+    /*
+    echo '<tr><th colspan=2>';
+    echo '<h2>General</h2>';
+    echo '</th></tr>';
+    include_once 'options/conversion-options/destination-extension.inc';
+    include_once 'options/general/image-types.inc';
+    */
+
+    include_once 'options/redirection-rules/redirection-rules.inc';
+    include_once 'options/alter-html/alter-html.inc';
+} else {
+    include_once 'options/redirection-rules/redirection-rules.inc';
+    include_once 'options/conversion-options/conversion-options.inc';
+    //include_once 'options/conversion-options/destination-extension.inc';
+    include_once 'options/serve-options/serve-options.inc';
+
+    include_once 'options/alter-html/alter-html.inc';
+
+/*
+    if ($config['operation-mode'] == 'cdn-friendly') {
+        include_once 'options/redirection-rules/enable-redirection-to-webp-realizer.inc';
+
+        // ps: we call it "auto convert", when in this mode
+        include_once 'options/redirection-rules/enable-redirection-to-converter.inc';
+    }
+
+    if ($config['operation-mode'] == 'varied-image-responses') {
+        include_once 'options/redirection-rules/enable-redirection-to-webp-realizer.inc';
+    }
+    */
+
+    include_once 'options/web-service-options/web-service-options.inc';
+}
+
+if ($config['operation-mode'] != 'tweaked') {
+//    echo '</tbody></table>';
+//    echo '</fieldset>';
+}
+
 ?>
-
-<p>
-
-
-
-<fieldset class="block">
-    <h3>Redirection rules</h3>
-    <p><i>The options here affects the rules created in the .htaccess.</i></p>
-    <table class="form-table">
-        <tbody>
-            <?php
-            include_once 'options/image-types.inc';
-            include_once 'options/redirect-to-existing.inc';
-            include_once 'options/do-not-pass-source-path-in-query-string.inc';
-            ?>
-        </tbody>
-    </table>
-</fieldset>
-<fieldset class="block">
-    <h3>Conversion options</h3>
-    <p><i>The options here affects the conversion process</i></p>
-    <table class="form-table">
-        <tbody>
-            <?php
-            include_once 'options/quality.inc';
-            include_once 'options/metadata.inc';
-            include_once 'options/converters.inc';
-            ?>
-        </tbody>
-    </table>
-</fieldset>
-<fieldset class="block">
-    <h3>Serve options</h3>
-    <p><i>The options here affects how the image is served after a successful / unsuccessful conversion</i></p>
-    <table class="form-table">
-        <tbody>
-            <?php
-            include_once 'options/cache-control.inc';
-            include_once 'options/response-on-failure.inc';
-            ?>
-        </tbody>
-    </table>
-</fieldset>
-<fieldset class="block">
-    <h3>Web service</h3>
-    <table class="form-table">
-        <tbody>
-            <?php
-            include_once 'options/web-service.inc';
-            ?>
-        </tbody>
-    </table>
-</fieldset>
-
 </form>
 </div>

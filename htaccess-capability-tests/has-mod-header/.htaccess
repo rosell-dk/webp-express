@@ -1,0 +1,3 @@
+<IfModule mod_headers.c>
+    RequestHeader set HEADERFORTEST "test"
+</IfModule>

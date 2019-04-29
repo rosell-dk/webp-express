@@ -9,7 +9,7 @@ use \WebPExpress\PlatformInfo;
 
 $indexDir = Paths::getIndexDirAbs();
 $homeDir = Paths::getHomeDirAbs();
-$wpContentDir = Paths::getWPContentDirAbs();
+$wpContentDir = Paths::getContentDirAbs();
 $pluginDir = Paths::getPluginDirAbs();
 $uploadDir = Paths::getUploadDirAbs();
 

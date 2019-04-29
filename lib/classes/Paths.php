@@ -2,30 +2,66 @@
 
 namespace WebPExpress;
 
-include_once "PathHelper.php";
-use \WebPExpress\PathHelper;
-
-include_once "FileHelper.php";
 use \WebPExpress\FileHelper;
+use \WebPExpress\Multisite;
+use \WebPExpress\PathHelper;
 
 class Paths
 {
 
     public static function createDirIfMissing($dir)
     {
-        if (!file_exists($dir)) {
-          wp_mkdir_p($dir);
+        if (!@file_exists($dir)) {
+            // We use the wp_mkdir_p, because it takes care of setting folder
+            // permissions to that of parent, and handles creating deep structures too
+            wp_mkdir_p($dir);
         }
         return file_exists($dir);
     }
 
     /**
-     *  Find out if $dir1 is inside - or equal to - $dir2
-     */
+    *  Find out if $dir1 is inside - or equal to - $dir2
+    */
     public static function isDirInsideDir($dir1, $dir2)
     {
         $rel = PathHelper::getRelDir($dir2, $dir1);
         return (substr($rel, 0, 3) != '../');
+    }
+
+    /**
+     *  Return relative dir - relative to realpath(document root)
+     */
+    public static function getRelDir($dir)
+    {
+        return PathHelper::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), $dir);
+    }
+
+
+    /**
+     *  Return absolute dir.
+     *  - realpath() is used to resolve soft links and resolve '../' and './'
+     *  - trailing dash is removed - we don't use that around here.
+     *
+     *  realpath() only works on existing dirs.
+     *  If realpath fails, PathHelper::canonicalize() will be used insead.
+     *  (this takes care of resolving '../' and './', but does NOT resolve soft links)
+     */
+    public static function getAbsDir($dir)
+    {
+        $result = realpath($dir);
+        if ($result === false) {
+            $dir = PathHelper::canonicalize($dir);
+        } else {
+            $dir = $result;
+        }
+        return rtrim($dir, '/');
+    }
+
+    // ------------ Document Root -------------
+
+    public static function getDocumentRootAbs()
+    {
+        return self::getAbsDir($_SERVER["DOCUMENT_ROOT"]);
     }
 
     // ------------ Home Dir -------------
@@ -35,12 +71,12 @@ class Paths
         if (!function_exists('get_home_path')) {
             require_once ABSPATH . 'wp-admin/includes/file.php';
         }
-        return rtrim(get_home_path(), '/');
+        return self::getAbsDir(get_home_path());
     }
 
     public static function getHomeDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getHomeDirAbs());
+        return self::getRelDir(self::getHomeDirAbs());
     }
 
     // ------------ Index Dir  -------------
@@ -48,12 +84,12 @@ class Paths
 
     public static function getIndexDirAbs()
     {
-        return rtrim(ABSPATH, '/');
+        return self::getAbsDir(ABSPATH);
     }
 
     public static function getIndexDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getIndexDirAbs());
+        return self::getRelDir(self::getIndexDirAbs());
     }
 
 
@@ -77,57 +113,55 @@ class Paths
         return false;
     }
 
-    // ------------ WP Content Dir -------------
-    public static function getWPContentDirAbs()
+    // ------------ Content Dir (the "WP" content dir) -------------
+
+    public static function getContentDirAbs()
     {
-        return rtrim(WP_CONTENT_DIR, '/');
+        return self::getAbsDir(WP_CONTENT_DIR);
     }
-    public static function getWPContentDirRel()
+    public static function getContentDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getWPContentDirAbs());
+        return self::getRelDir(self::getContentDirAbs());
     }
 
     public static function isWPContentDirMoved()
     {
-        return (self::getWPContentDirAbs() != (ABSPATH . 'wp-content'));
+        return (self::getContentDirAbs() != (ABSPATH . 'wp-content'));
     }
 
     public static function isWPContentDirMovedOutOfAbsPath()
     {
-        return !(self::isDirInsideDir(self::getWPContentDirAbs(), ABSPATH));
+        return !(self::isDirInsideDir(self::getContentDirAbs(), ABSPATH));
     }
 
 
-    // ------------ Content Dir -------------
+    // ------------ WebPExpress Content Dir -------------
     // (the "webp-express" directory inside wp-content)
 
-    public static function getContentDirAbs()
+    public static function getWebPExpressContentDirAbs()
     {
-        if (!defined(WP_CONTENT_DIR)) {
-
-        }
-        return rtrim(WP_CONTENT_DIR, '/') . '/webp-express';
+        return self::getContentDirAbs() . '/webp-express';
     }
 
-    public static function getContentDirRel()
+    public static function getWebPExpressContentDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getContentDirAbs());
+        return self::getRelDir(self::getWebPExpressContentDirAbs());
     }
 
     public static function createContentDirIfMissing()
     {
-        return self::createDirIfMissing(self::getContentDirAbs());
+        return self::createDirIfMissing(self::getWebPExpressContentDirAbs());
     }
 
     // ------------ Upload Dir -------------
     public static function getUploadDirAbs()
     {
         $upload_dir = wp_upload_dir(null, false);
-        return $upload_dir['basedir'];
+        return self::getAbsDir($upload_dir['basedir']);
     }
     public static function getUploadDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getUploadDirAbs());
+        return self::getRelDir(self::getUploadDirAbs());
     }
 
     /*
@@ -136,13 +170,13 @@ class Paths
         if ( defined( 'UPLOADS' ) ) {
             return ABSPATH . rtrim(UPLOADS, '/');
         } else {
-            return self::getWPContentDirAbs() . '/uploads';
+            return self::getContentDirAbs() . '/uploads';
         }
     }*/
 
     public static function isUploadDirMovedOutOfWPContentDir()
     {
-        return !(self::isDirInsideDir(self::getUploadDirAbs(), self::getWPContentDirAbs()));
+        return !(self::isDirInsideDir(self::getUploadDirAbs(), self::getContentDirAbs()));
     }
 
     public static function isUploadDirMovedOutOfAbsPath()
@@ -154,12 +188,12 @@ class Paths
 
     public static function getConfigDirAbs()
     {
-        return self::getContentDirAbs() . '/config';
+        return self::getWebPExpressContentDirAbs() . '/config';
     }
 
     public static function getConfigDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getConfigDirAbs());
+        return self::getRelDir(self::getConfigDirAbs());
     }
 
     public static function createConfigDirIfMissing()
@@ -200,12 +234,12 @@ APACHE
 
     public static function getCacheDirAbs()
     {
-        return self::getContentDirAbs() . '/webp-images';
+        return self::getWebPExpressContentDirAbs() . '/webp-images';
     }
 
     public static function getCacheDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getCacheDirAbs());
+        return self::getRelDir(self::getCacheDirAbs());
     }
 
     public static function createCacheDirIfMissing()
@@ -217,12 +251,12 @@ APACHE
 
     public static function getPluginDirAbs()
     {
-        return untrailingslashit(WP_PLUGIN_DIR);
+        return self::getAbsDir(WP_PLUGIN_DIR);
     }
 
     public static function getPluginDirRel()
     {
-        return PathHelper::getRelDir($_SERVER['DOCUMENT_ROOT'], self::getPluginDirAbs());
+        return self::getRelDir(self::getPluginDirAbs());
     }
 
     public static function isPluginDirMovedOutOfAbsPath()
@@ -232,14 +266,46 @@ APACHE
 
     public static function isPluginDirMovedOutOfWpContent()
     {
-        return !(self::isDirInsideDir(self::getPluginDirAbs(), self::getWPContentDirAbs()));
+        return !(self::isDirInsideDir(self::getPluginDirAbs(), self::getContentDirAbs()));
     }
 
     // ------------ WebP Express Plugin Dir -------------
 
     public static function getWebPExpressPluginDirAbs()
     {
-        return untrailingslashit(WEBPEXPRESS_PLUGIN_DIR);
+        return self::getAbsDir(WEBPEXPRESS_PLUGIN_DIR);
+    }
+
+    public static function getAbsDirId($absDir) {
+        switch ($absDir) {
+            case self::getContentDirAbs():
+                return 'wp-content';
+            case self::getIndexDirAbs():
+                return 'index';
+            case self::getHomeDirAbs():
+                return 'home';
+            case self::getPluginDirAbs():
+                return 'plugins';
+            case self::getUploadDirAbs():
+                return 'uploads';
+        }
+        return false;
+    }
+
+    public static function getAbsDirById($dirId) {
+        switch ($dirId) {
+            case 'wp-content':
+                return self::getContentDirAbs();
+            case 'index':
+                return self::getIndexDirAbs();
+            case 'home':
+                return self::getHomeDirAbs();
+            case 'plugins':
+                return self::getPluginDirAbs();
+            case 'uploads':
+                return self::getUploadDirAbs();
+        }
+        return false;
     }
 
 
@@ -286,8 +352,33 @@ APACHE
         return self::getUrlPathFromUrl(self::getHomeUrl());
     }
 
+
+    public static function getUploadUrl()
+    {
+        $uploadDir = wp_upload_dir(null, false);
+        return untrailingslashit($uploadDir['baseurl']);
+    }
+
+    public static function getUploadUrlPath()
+    {
+        return self::getUrlPathFromUrl(self::getUploadUrl());
+    }
+
+    public static function getContentUrl()
+    {
+        return untrailingslashit(content_url());
+    }
+
+    public static function getContentUrlPath()
+    {
+        return self::getUrlPathFromUrl(self::getContentUrl());
+    }
+
+
+
+
     /**
-     *  Get Url to plugin (this is in fact an incomplete URL, you need to append ie '/webp-on-demand.php' to get a full URL)
+     *  Get Url to WebP Express plugin (this is in fact an incomplete URL, you need to append ie '/webp-on-demand.php' to get a full URL)
      */
     public static function getPluginUrl()
     {
@@ -302,6 +393,11 @@ APACHE
     public static function getWodUrlPath()
     {
         return self::getPluginUrlPath() . '/wod/webp-on-demand.php';
+    }
+
+    public static function getWebPRealizerUrlPath()
+    {
+        return self::getPluginUrlPath() . '/wod/webp-realizer.php';
     }
 
     public static function getWebServiceUrl()
@@ -336,18 +432,17 @@ APACHE
         ];
     }
 
-    /* Get complete url to admin (no trailing slash) */
-    public static function getAdminUrl()
-    {
-        if (!function_exists('get_admin_url')) {
-            require_once ABSPATH . 'wp-includes/link-template.php';
-        }
-        return untrailingslashit(get_admin_url());
-    }
-
     public static function getSettingsUrl()
     {
-        return self::getAdminUrl() . '/' . 'options-general.php?page=webp_express_settings_page';
+        if (!function_exists('admin_url')) {
+            require_once ABSPATH . 'wp-includes/link-template.php';
+        }
+        if (Multisite::isNetworkActivated()) {
+            // network_admin_url is also defined in link-template.php.
+            return network_admin_url('settings.php?page=webp_express_settings_page');
+        } else {
+            return admin_url('options-general.php?page=webp_express_settings_page');
+        }
     }
 
 }

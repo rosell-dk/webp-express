@@ -2,13 +2,9 @@
 
 namespace WebPExpress;
 
-include_once __DIR__ . '/../classes/Paths.php';
-use \WebPExpress\Paths;
-
-include_once __DIR__ . '/../classes/Messenger.php';
 use \WebPExpress\Messenger;
-
-include_once __DIR__ . '/../classes/TestRun.php';
+use \WebPExpress\Option;
+use \WebPExpress\Paths;
 use \WebPExpress\TestRun;
 
 /* helper. Remove dir recursively. No warnings - fails silently
@@ -68,4 +64,4 @@ Messenger::addMessage(
 );
 
 
-update_option('webp-express-migration-version', '2');
+Option::updateOption('webp-express-migration-version', '2');

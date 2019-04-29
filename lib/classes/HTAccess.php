@@ -2,23 +2,63 @@
 
 namespace WebPExpress;
 
-include_once "Config.php";
 use \WebPExpress\Config;
-
-include_once "FileHelper.php";
 use \WebPExpress\FileHelper;
-
-include_once "Paths.php";
 use \WebPExpress\Paths;
-
-include_once "State.php";
 use \WebPExpress\State;
 
 class HTAccess
 {
-    // (called from this file only)
+    // (called from this file only. BUT our saveRules methods calls it, and it is called from several classes)
     public static function generateHTAccessRulesFromConfigObj($config, $htaccessDir = 'index')
     {
+        // Any option that is newer than ~v.0.2 may not be set yet.
+        // So, in order to not have to use isset() all over the place, set to values
+        // that results in same behaviour as before the option was introduced.
+        // Beware that this may not be same as the default value in the UI (but it is generally)
+
+        // TODO: can we use the new fix method instead?
+
+        $defaults = [
+            'enable-redirection-to-converter' => true,
+            'forward-query-string' => true,
+            'image-types' => 1,
+            'do-not-pass-source-in-query-string' => false,
+            'redirect-to-existing-in-htaccess' => false,
+            'only-redirect-to-converter-on-cache-miss' => false,
+            'destination-folder' => 'separate',
+            'destination-extension' => 'append',
+            'success-response' => 'converted',
+        ];
+        $config = array_merge($defaults, $config);
+
+        if ((!$config['enable-redirection-to-converter']) && (!$config['redirect-to-existing-in-htaccess']) && (!$config['enable-redirection-to-webp-realizer'])) {
+            return '# WebP Express does not need to write any rules (it has not been set up to redirect to converter, nor to existing webp, and the "convert non-existing webp-files upon request" option has not been enabled)';
+        }
+
+        if (isset($config['base-htaccess-on-these-capability-tests'])) {
+            $capTests = $config['base-htaccess-on-these-capability-tests'];
+            $modHeaderDefinitelyUnavailable = ($capTests['modHeaderWorking'] === false);
+            $passThroughHeaderDefinitelyUnavailable = ($capTests['passThroughHeaderWorking'] === false);
+            $passThroughHeaderDefinitelyAavailable = ($capTests['passThroughHeaderWorking'] === true);
+            $passThrougEnvVarDefinitelyUnavailable = ($capTests['passThroughEnvWorking'] === false);
+            $passThrougEnvVarDefinitelyAvailable =($capTests['passThroughEnvWorking'] === true);
+        } else {
+            $modHeaderDefinitelyUnavailable = false;
+            $passThroughHeaderDefinitelyUnavailable = false;
+            $passThroughHeaderDefinitelyAavailable = false;
+            $passThrougEnvVarDefinitelyUnavailable = false;
+            $passThrougEnvVarDefinitelyAvailable = false;
+        }
+
+        $setEnvVar = !$passThrougEnvVarDefinitelyUnavailable;
+        $passFullFilePathInQS = false;
+        $passRelativeFilePathInQS = !($passThrougEnvVarDefinitelyAvailable || $passThroughHeaderDefinitelyAavailable);
+        $passFullFilePathInQSRealizer = false;
+        $passRelativeFilePathInQSRealizer = $passRelativeFilePathInQS;
+
+
+
         /* Calculate $fileExt */
         $imageTypes = $config['image-types'];
         $fileExtensions = [];
@@ -31,105 +71,351 @@ class HTAccess
         $fileExt = implode('|', $fileExtensions);
 
         if ($imageTypes == 0) {
-            return '# WebP Express disabled (no image types have been choosen to be converted)';
+            return '# WebP Express disabled (no image types have been choosen to be converted/redirected)';
         }
 
+
+        // Build cache control rules
+        $ccRules = '';
+        $cacheControlHeader = Config::getCacheControlHeader($config);
+        if ($cacheControlHeader != '') {
+
+            if ($config['redirect-to-existing-in-htaccess']) {
+                $ccRules .= "  # Set Cache-Control header so these direct redirections also get the header set\n";
+                if ($config['enable-redirection-to-webp-realizer']) {
+                    $ccRules .= "  # (and also webp-realizer.php)\n";
+                }
+            } else {
+                if ($config['enable-redirection-to-webp-realizer']) {
+                    $ccRules .= "  # Set Cache-Control header for requests to webp images\n";
+                }
+            }
+            $ccRules .= "  <IfModule mod_headers.c>\n";
+            $ccRules .= "    <FilesMatch \"\.webp$\">\n";
+            $ccRules .= "      Header set Cache-Control \"" . $cacheControlHeader . "\"\n";
+            $ccRules .= "    </FilesMatch>\n";
+            $ccRules .= "  </IfModule>\n\n";
+
+            // Fall back to mod_expires if mod_headers is unavailable
+
+
+
+            if ($modHeaderDefinitelyUnavailable) {
+                $cacheControl = $config['cache-control'];
+
+                if ($cacheControl == 'custom') {
+                    $expires = '';
+
+                    // Do not add Expire header if private is set
+                    // - because then the user don't want caching in proxies / CDNs.
+                    //   the Expires header doesn't differentiate between private/public
+                    if (!(preg_match('/private/', $config['cache-control-custom']))) {
+                        if (preg_match('/max-age=(\d+)/', $config['cache-control-custom'], $matches)) {
+                            if (isset($matches[1])) {
+                                $expires = $matches[1] . ' seconds';
+                            }
+                        }
+                    }
+
+                } elseif ($cacheControl == 'no-header') {
+                    $expires = '';
+                } elseif ($cacheControl == 'set') {
+                    if ($config['cache-control-public']) {
+                        $cacheControlOptions = [
+                            'no-header' => '',
+                            'one-second' => '1 seconds',
+                            'one-minute' => '1 minutes',
+                            'one-hour' => '1 hours',
+                            'one-day' => '1 days',
+                            'one-week' => '1 weeks',
+                            'one-month' => '1 months',
+                            'one-year' => '1 years',
+                        ];
+                        $expires = $cacheControlOptions[$config['cache-control-max-age']];
+                    }
+                }
+
+                if ($expires != '') {
+                    // in case mod_headers is missing, try mod_expires
+                    $ccRules .= "  # Fall back to mod_expires if mod_headers is unavailable\n";
+                    $ccRules .= "  <IfModule !mod_headers.c>\n";
+                    $ccRules .= "    <IfModule mod_expires.c>\n";
+                    $ccRules .= "      ExpiresActive On\n";
+                    $ccRules .= "      ExpiresByType image/webp \"access plus " . $expires . "\"\n";
+                    $ccRules .= "    </IfModule>\n";
+                    $ccRules .= "  </IfModule>\n\n";
+                }
+            }
+        }
+
+
         /* Build rules */
+
+        /* When .htaccess is placed in root (index), the rules needs to be confined only to work in
+           content folder (if uploads folder is moved, perhaps also that)
+           Rules needs to start with ie "^/?(wp-content/.+)" rather than "^/?(.+)"
+           In the case that upload folder is in root too, rules needs to apply to both.
+           We do it like this: "^/?((?:wp-content|uploads)/.+)"   (using non capturing group)
+        */
+
+        $rewriteRuleStart = '^/?(.+)';
+        if ($htaccessDir == 'index') {
+            // Get relative path between index dir and wp-content dir / uploads
+            // Because we want to restrict the rule so it doesn't work on wp-admin, but only those two.
+
+            $wpContentRel = PathHelper::getRelDir(Paths::getIndexDirAbs(), Paths::getContentDirAbs());
+            $uploadsRel = PathHelper::getRelDir(Paths::getIndexDirAbs(), Paths::getUploadDirAbs());
+
+            //$rules .= '# rel: ' . $uploadsRel . "\n";
+            if (strpos($wpContentRel, '.') !== 0) {
+
+                if (strpos($uploadsRel, $wpContentRel) === 0) {
+                    $rewriteRuleStart = '^/?(' . $wpContentRel . '/.+)';
+                } else {
+                    $rewriteRuleStart = '^/?((?:' . $wpContentRel . '|' . $uploadsRel . '/.+)';
+                }
+            }
+        }
+
         $rules = '';
 
+
+        /*
         // The next line sets an environment variable.
         // On the options page, we verify if this is set to diagnose if "AllowOverride None" is presented in 'httpd.conf'
         //$rules .= "# The following SetEnv allows to diagnose if .htaccess files are turned off\n";
         //$rules .= "SetEnv HTACCESS on\n\n";
+        */
 
         $rules .= "<IfModule mod_rewrite.c>\n" .
         "  RewriteEngine On\n\n";
 
-        //$pathToExisting = Paths::getPathToExisting();
-        //$pathToExisting = Paths::getCacheDirRel() . '/doc-root/' . Paths::getHomeDirRel();
-        //$pathToExisting = Paths::getCacheDirRel() . '/doc-root/' . Paths::getPluginDirRel();
-        //$pathToExisting = Paths::getCacheDirRel() . '/doc-root/' . Paths::getPluginDirRel();
-        $pathToExisting = Paths::getCacheDirRel() . '/doc-root/';
+        $cacheDirRel = Paths::getCacheDirRel() . '/doc-root';
+
+        $htaccessDirRel = '';
         switch ($htaccessDir) {
             case 'index':
-                $pathToExisting .= Paths::getIndexDirRel();
+                $htaccessDirRel = Paths::getIndexDirRel();
                 break;
             case 'home':
-                $pathToExisting .= Paths::getHomeDirRel();
+                $htaccessDirRel = Paths::getHomeDirRel();
                 break;
             case 'plugin':
-                $pathToExisting .= Paths::getPluginDirRel();
+                $htaccessDirRel = Paths::getPluginDirRel();
                 break;
             case 'uploads':
-                $pathToExisting .= Paths::getUploadDirRel();
+                $htaccessDirRel = Paths::getUploadDirRel();
                 break;
             case 'wp-content':
-                $pathToExisting .= Paths::getWPContentDirRel();
+                $htaccessDirRel = Paths::getContentDirRel();
                 break;
         }
 
-        $passSourceInQS = (isset($config['do-not-pass-source-in-query-string']) && ($config['do-not-pass-source-in-query-string']));
-
-        $redirectToExisting = (isset($config['redirect-to-existing-in-htaccess']) && ($config['redirect-to-existing-in-htaccess']));
 
         // TODO: Is it possible to handle when wp-content is outside document root?
 
         // TODO: It seems $pathToExisting needs to be adjusted, depending on where the .htaccess is located
         // Ie, if plugin folder has been moved out of ABSPATH, we should ie set
         // $pathToExisting to 'doc-root/plugins-moved/'
-        // to get: RewriteRule ^\/?(.*)\.(jpe?g)$ /wp-content-moved/webp-express/webp-images/doc-root/plugins-moved/$1.$2.webp [NC,T=image/webp,QSD,E=WEBPACCEPT:1,E=EXISTING:1,L]
+        // to get: RewriteRule ^\/?(.*)\.(jpe?g)$ /wp-content-moved/webp-express/webp-images/doc-root/plugins-moved/$1.$2.webp [NC,T=image/webp,E=WEBPACCEPT:1,E=EXISTING:1,L]
 
         // https://stackoverflow.com/questions/34124819/mod-rewrite-set-custom-header-through-htaccess
-        if ($redirectToExisting) {
+        $mingled = ($config['destination-folder'] == 'mingled');
+
+        if ($config['redirect-to-existing-in-htaccess']) {
+            if ($mingled) {
+                $rules .= "  # Redirect to existing converted image in same dir (if browser supports webp)\n";
+                $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
+
+                if ($config['destination-extension'] == 'append') {
+                    $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp -f\n";
+                    $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ $1.$2.webp [T=image/webp,E=EXISTING:1,L]\n\n";
+                } else {
+                    $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp -f\n";
+                    $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1,L]\n\n";
+                    //$rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1,L]\n\n";
+                }
+            }
+
             $rules .= "  # Redirect to existing converted image in cache-dir (if browser supports webp)\n";
             $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
-            $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $pathToExisting . "/$1.$2.webp -f\n";
-            $rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $pathToExisting . "/$1.$2.webp [NC,T=image/webp,QSD,E=EXISTING:1,L]\n\n";
+            $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp -f\n";
+            $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
+            //$rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
+
+            $rules .= $ccRules;
+
         }
 
-        $rules .= "  # Redirect images to webp-on-demand.php (if browser supports webp)\n";
-        $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
-        $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
-        if ($config['forward-query-string']) {
-            $rules .= "  RewriteCond %{QUERY_STRING} (.*)\n";
+        // Do not add header magic if passing through env is definitely working
+        // Do not add either, if we definitily know it isn't working
+        if ((!$passThrougEnvVarDefinitelyAvailable) && (!$passThroughHeaderDefinitelyUnavailable)) {
+            if ($config['enable-redirection-to-converter']) {
+                $rules .= "  # Pass REQUEST_FILENAME to webp-on-demand.php in request header\n";
+                //$rules .= $basicConditions;
+                //$rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
+                $rules .= "  <IfModule mod_headers.c>\n" .
+                    "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
+                    "  </IfModule>\n\n";
+
+            }
+            if ($config['enable-redirection-to-webp-realizer']) {
+                // We haven't implemented a clever way to pass through header for webp-realizer yet
+            }
         }
 
-        // TODO:
-        // Add "NE" flag?
-        // https://github.com/rosell-dk/webp-convert/issues/95
-        // (and try testing spaces in directory paths)
-        $rules .= "  RewriteRule ^(.*)\.(" . $fileExt . ")$ " .
-            "/" . Paths::getWodUrlPath() .
-            ($passSourceInQS ? "?xsource=x%{SCRIPT_FILENAME}&" : "?") .
-            "wp-content=" . Paths::getWPContentDirRel() .
-            ($config['forward-query-string'] ? '&%1' : '') .
-            " [NC,L]\n";        // E=WOD:1
+        if ($config['enable-redirection-to-webp-realizer']) {
+            /*
+            # Pass REQUEST_FILENAME to PHP in request header
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{DOCUMENT_ROOT}/wordpress/uploads-moved/$1 -f
+            RewriteRule ^(.*)\.(webp)$ - [E=REQFN:%{REQUEST_FILENAME}]
+            <IfModule mod_headers.c>
+              RequestHeader set REQFN "%{REQFN}e" env=REQFN
+            </IfModule>
+
+            # WebP Realizer: Redirect non-existing webp images to converter when a corresponding jpeg/png is found
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{DOCUMENT_ROOT}/wordpress/uploads-moved/$1 -f
+            RewriteRule ^(.*)\.(webp)$ /plugins-moved/webp-express/wod/webp-realizer.php?wp-content=wp-content-moved [NC,L]
+            */
+
+            $basicConditionsRealizer = '';
+            $basicConditionsRealizer .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
+            if ($mingled) {
+                if ($config['destination-extension'] == 'append') {
+                    $basicConditionsRealizer .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1 -f\n";
+                } else {
+                    //$basicConditionsRealizer .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp !-f\n";
+                }
+            } else {
+                //$basicConditionsRealizer .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
+            }
+
+            $rules .= "  # WebP Realizer: Redirect non-existing webp images to webp-realizer.php, which will locate corresponding jpg/png, convert it, and deliver the webp (if possible) \n";
+            $rules .= $basicConditionsRealizer;
+
+            /*
+            $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ " .
+                "/" . Paths::getWebPRealizerUrlPath() .
+                ($passFullFilePathInQS ? "?xdestination=x%{SCRIPT_FILENAME}&" : "?") .
+                "wp-content=" . Paths::getContentDirRel() .
+                " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME}' . ','): '') . "NC,L]\n\n";        // E=WOD:1
+            */
+            $params = [];
+            if ($passFullFilePathInQSRealizer) {
+                $params[] = 'xdestination=x%{SCRIPT_FILENAME}';
+            } elseif ($passRelativeFilePathInQSRealizer) {
+                $params[] = 'xdestination-rel=x' . $htaccessDirRel . '/$1.$2';
+            }
+            if (!$passThrougEnvVarDefinitelyAvailable) {
+                $params[] = "wp-content=" . Paths::getContentDirRel();
+            }
+
+            // TODO: When $rewriteRuleStart is empty, we don't need the .*, do we? - test
+            $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ " .
+                "/" . Paths::getWebPRealizerUrlPath() .
+                ((count($params) > 0) ?  "?" . implode('&', $params) : '') .
+                " [" . ($setEnvVar ? ('E=DESTINATIONREL:' . $htaccessDirRel . '/$0' . ','): '') . (!$passThrougEnvVarDefinitelyUnavailable ? 'E=WPCONTENT:' . Paths::getContentDirRel() . ',' : '') . "NC,L]\n\n";        // E=WOD:1
 
 
-            // Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
-            $rules .="\n  <IfModule mod_headers.c>\n" .
-                "    # Set Vary:Accept header for the image types handled by WebP Express.\n" .
-                "    # The purpose is to make CDN cache both original images and converted images.\n" .
-                "    SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
-                "    Header append \"Vary\" \"Accept\" env=ADDVARY\n\n" .
-                "    # Set X-WebP-Express header for diagnose purposes\n" .
-                "    # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
-                "    # So, the next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
-                "    SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
-                //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
-                //"  # Set the debug header\n" .
-                "    Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING\n" .
-                //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
+            if (!$config['redirect-to-existing-in-htaccess']) {
+                $rules .= $ccRules;
+            }
+        }
+
+        if ($config['enable-redirection-to-converter']) {
+            $basicConditions = '';
+            if ($config['only-redirect-to-converter-for-webp-enabled-browsers']) {
+                $basicConditions = "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
+            }
+            $basicConditions .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
+            if ($config['only-redirect-to-converter-on-cache-miss']) {
+                if ($mingled) {
+                    if ($config['destination-extension'] == 'append') {
+                        $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
+                    } else {
+                        $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp !-f\n";
+                    }
+                } else {
+                    $basicConditions .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp !-f\n";
+                }
+            }
+
+            $rules .= "  # Redirect images to webp-on-demand.php ";
+            if ($config['only-redirect-to-converter-for-webp-enabled-browsers']) {
+                $rules .= "(if browser supports webp)\n";
+            } else {
+                $rules .= "(regardless whether browser supports webp or not!)\n";
+            }
+            if ($config['only-redirect-to-converter-on-cache-miss']) {
+                $rules .= "  # - but only, when no existing converted image is found\n";
+            }
+            $rules .= $basicConditions;
+
+            if ($config['forward-query-string']) {
+                $rules .= "  RewriteCond %{QUERY_STRING} (.*)\n";
+            }
+            /*
+            if ($config['forward-query-string']) {
+            }*/
+
+
+            // TODO:
+            // Add "NE" flag?
+            // https://github.com/rosell-dk/webp-convert/issues/95
+            // (and try testing spaces in directory paths)
+
+            $params = [];
+            if ($passFullFilePathInQS) {
+                $params[] = 'xsource=x%{SCRIPT_FILENAME}';
+            } elseif ($passRelativeFilePathInQS) {
+                $params[] = 'xsource-rel=x' . $htaccessDirRel . '/$1.$2';
+            }
+            if (!$passThrougEnvVarDefinitelyAvailable) {
+                $params[] = "wp-content=" . Paths::getContentDirRel();
+            }
+            if ($config['forward-query-string']) {
+                $params[] = '%1';
+            }
+
+            // TODO: When $rewriteRuleStart is empty, we don't need the .*, do we? - test
+            $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ " .
+                "/" . Paths::getWodUrlPath() .
+                "?" . implode('&', $params) .
+                " [" . ($setEnvVar ? ('E=REQFN:%{REQUEST_FILENAME},'): '') . (!$passThrougEnvVarDefinitelyUnavailable ? 'E=WPCONTENT:' . Paths::getContentDirRel() . ',' : '') . "NC,L]\n";        // E=WOD:1
+
+            $rules .= "\n";
+        }
+
+        $addVary = ($config['enable-redirection-to-converter'] && ($config['success-response'] == 'converted')) || ($config['redirect-to-existing-in-htaccess']);
+
+        if ($addVary) {
+            $rules .= "  <IfModule mod_headers.c>\n";
+            $rules .= "    <IfModule mod_setenvif.c>\n";
+
+            $rules .= "      # Set Vary:Accept header for the image types handled by WebP Express.\n" .
+                "      # The purpose is to make proxies and CDNs aware that the response varies with the Accept header. \n" .
+                "      SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
+                "      Header append \"Vary\" \"Accept\" env=ADDVARY\n\n";
+
+            if ($config['redirect-to-existing-in-htaccess']) {
+                $rules .= "      # Set X-WebP-Express header for diagnose purposes\n" .
+                    "      # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
+                    "      # So, the next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
+                    "      SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
+                    //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
+                    //"  # Set the debug header\n" .
+                    "      Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING\n";
+                    //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
+            }
+            $rules .= "    </IfModule>\n" .
             "  </IfModule>\n\n";
-
+        }
         $rules .="</IfModule>\n";
 
-
-
-
-
-        /*if ($redirectToExisting) {
+        /*if ($config['redirect-to-existing-in-htaccess']) {
             $rules .=
             "<IfModule mod_headers.c>\n" .
                 "  # Append Vary Accept header, when the rules above are redirecting to existing webp\n" .
@@ -146,8 +432,9 @@ class HTAccess
             "</IfModule>\n\n";
         }*/
 
-        $rules .= "AddType image/webp .webp\n";
-
+        $rules .= "<IfModule mod_mime.c>\n";
+        $rules .= "  AddType image/webp .webp\n";
+        $rules .= "</IfModule>\n";
         return $rules;
     }
 
@@ -198,40 +485,37 @@ class HTAccess
         }
 
         $propsToCompare = [
-            'forward-query-string',
-            'image-types',
-            'do-not-pass-source-in-query-string',
-            'redirect-to-existing-in-htaccess',
+            'forward-query-string' => true,
+            'image-types' => 1,
+            'redirect-to-existing-in-htaccess' => false,
+            'only-redirect-to-converter-on-cache-miss' => false,
+            'success-response' => 'converted',
+            'cache-control' => 'no-header',
+            'cache-control-custom' => 'public, max-age:3600',
+            'cache-control-max-age' => 'one-week',
+            'cache-control-public' => true,
+            'enable-redirection-to-webp-realizer' => false,
+            'enable-redirection-to-converter' => true
         ];
 
+        if (isset($newConfig['redirect-to-existing-in-htaccess']) && $newConfig['redirect-to-existing-in-htaccess']) {
+            $propsToCompare['destination-folder'] = 'separate';
+            $propsToCompare['destination-extension'] = 'append';
+        }
 
-        foreach ($propsToCompare as $prop) {
+        foreach ($propsToCompare as $prop => $behaviourBeforeIntroduced) {
             if (!isset($newConfig[$prop])) {
                 continue;
             }
             if (!isset($oldConfig[$prop])) {
-                if ($prop == 'do-not-pass-source-in-query-string') {
-
-                    // Do not trigger .htaccess update if the new value results
-                    // in same old behaviour (before this option was introduced)
-                    if ($newConfig[$prop] == false) {
-                        continue;
-                    } else {
-                        // Otherwise DO trigger .htaccess update
-                        return true;
-                    }
+                // Do not trigger .htaccess update if the new value results
+                // in same old behaviour (before this option was introduced)
+                if ($newConfig[$prop] == $behaviourBeforeIntroduced) {
+                    continue;
+                } else {
+                    // Otherwise DO trigger .htaccess update
+                    return true;
                 }
-                if ($prop == 'redirect-to-existing-in-htaccess') {
-                    if ($newConfig[$prop] == false) {
-                        continue;
-                    } else {
-                        return true;
-                    }
-                }
-
-                // The option was not set in the old configuration,
-                // - so lets say that .htaccess needs updating
-                return true;
             }
             if ($newConfig[$prop] != $oldConfig[$prop]) {
                 return true;
@@ -248,50 +532,34 @@ class HTAccess
     /**
      *  Must be parsed ie "wp-content", "index", etc. Not real dirs
      */
-    public static function addToActiveHTAccessDirsArray($whichDir)
+    public static function addToActiveHTAccessDirsArray($dirId)
     {
         $activeHtaccessDirs = State::getState('active-htaccess-dirs', []);
-        if (!in_array($whichDir, $activeHtaccessDirs)) {
-            $activeHtaccessDirs[] = $whichDir;
+        if (!in_array($dirId, $activeHtaccessDirs)) {
+            $activeHtaccessDirs[] = $dirId;
             State::setState('active-htaccess-dirs', array_values($activeHtaccessDirs));
         }
     }
 
-    public static function removeFromActiveHTAccessDirsArray($whichDir)
+    public static function removeFromActiveHTAccessDirsArray($dirId)
     {
         $activeHtaccessDirs = State::getState('active-htaccess-dirs', []);
-        if (in_array($whichDir, $activeHtaccessDirs)) {
-            $activeHtaccessDirs = array_diff($activeHtaccessDirs, [$whichDir]);
+        if (in_array($dirId, $activeHtaccessDirs)) {
+            $activeHtaccessDirs = array_diff($activeHtaccessDirs, [$dirId]);
             State::setState('active-htaccess-dirs', array_values($activeHtaccessDirs));
         }
     }
 
-    public static function isInActiveHTAccessDirsArray($whichDir)
+    public static function isInActiveHTAccessDirsArray($dirId)
     {
         $activeHtaccessDirs = State::getState('active-htaccess-dirs', []);
-        return (in_array($whichDir, $activeHtaccessDirs));
-    }
-
-    public static function whichHTAccessDirIsThis($dir) {
-        switch ($dir) {
-            case Paths::getWPContentDirAbs():
-                return 'wp-content';
-            case Paths::getIndexDirAbs():
-                return 'index';
-            case Paths::getHomeDirAbs():
-                return 'home';
-            case Paths::getPluginDirAbs():
-                return 'plugins';
-            case Paths::getUploadDirAbs():
-                return 'uploads';
-        }
-        return '';
+        return (in_array($dirId, $activeHtaccessDirs));
     }
 
     public static function hasRecordOfSavingHTAccessToDir($dir) {
-        $whichDir = self::whichHTAccessDirIsThis($dir);
-        if ($whichDir != '') {
-            return self::isInActiveHTAccessDirsArray($whichDir);
+        $dirId = Paths::getAbsDirId($dir);
+        if ($dirId !== false) {
+            return self::isInActiveHTAccessDirsArray($dirId);
         }
         return false;
     }
@@ -299,7 +567,7 @@ class HTAccess
 
     /**
      *  Sneak peak into .htaccess to see if we have rules in it
-     *  This may not be possible.
+     *  This may not be possible (it requires read permission)
      *  Return true, false, or null if we just can't tell
      */
     public static function haveWeRulesInThisHTAccess($filename) {
@@ -308,7 +576,20 @@ class HTAccess
             if ($content === false) {
                 return null;
             }
-            return (strpos($content, '# Redirect images to webp-on-demand.php') != false);
+
+            $pos1 = strpos($content, '# BEGIN WebP Express');
+            if ($pos1 === false) {
+                return false;
+            }
+            $pos2 = strrpos($content, '# END WebP Express');
+            if ($pos2 === false) {
+                return false;
+            }
+
+            $weRules = substr($content, $pos1, $pos2 - $pos1);
+
+            return (strpos($weRules, '<IfModule mod_rewrite.c>') !== false);
+
         } else {
             // the .htaccess isn't even there. So there are no rules.
             return false;
@@ -326,6 +607,7 @@ class HTAccess
             // We were not allowed to sneak-peak.
             // Well, good thing that we stored successful .htaccess write locations ;)
             // If we recorded a successful write, then we assume there are still rules there
+            // If we did not, we assume there are no rules there
             $dir = FileHelper::dirName($filename);
             return self::hasRecordOfSavingHTAccessToDir($dir);
         }
@@ -376,15 +658,16 @@ class HTAccess
         if ($success) {
             State::setState('htaccess-rules-saved-at-some-point', true);
 
-            $containsRules = (strpos(implode('',$rules), '# Redirect images to webp-on-demand.php') != false);
+            //$containsRules = (strpos(implode('',$rules), '# Redirect images to webp-on-demand.php') != false);
+            $containsRules = (strpos(implode('',$rules), '<IfModule mod_rewrite.c>') !== false);
 
             $dir = FileHelper::dirName($filename);
-            $whichDir = self::whichHTAccessDirIsThis($dir);
-            if ($whichDir != '') {
+            $dirId = Paths::getAbsDirId($dir);
+            if ($dirId !== false) {
                 if ($containsRules) {
-                    self::addToActiveHTAccessDirsArray($whichDir);
+                    self::addToActiveHTAccessDirsArray($dirId);
                 } else {
-                    self::removeFromActiveHTAccessDirsArray($whichDir);
+                    self::removeFromActiveHTAccessDirsArray($dirId);
                 }
             }
         }
@@ -413,7 +696,7 @@ class HTAccess
         //return self::saveHTAccessRules('# Plugin is deactivated');
         $indexDir = Paths::getIndexDirAbs();
         $homeDir = Paths::getHomeDirAbs();
-        $wpContentDir = Paths::getWPContentDirAbs();
+        $wpContentDir = Paths::getContentDirAbs();
         $pluginDir = Paths::getPluginDirAbs();
         $uploadDir = Paths::getUploadDirAbs();
 
@@ -441,11 +724,26 @@ class HTAccess
 
     public static function testLinks($config) {
         if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
-            if ($config['image-types'] != 0) {
-                $webpExpressRoot = Paths::getPluginUrlPath();
-                return '<br>' .
-                    '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug&time=' . time() . '" target="_blank">Convert test image (show debug)</a><br>' .
-                    '<a href="/' . $webpExpressRoot . '/test/test.jpg?' . time() . '" target="_blank">Convert test image</a><br>';
+            if ($config['operation-mode'] != 'no-conversion') {
+                if ($config['image-types'] != 0) {
+                    $webpExpressRoot = Paths::getPluginUrlPath();
+                    $links = '';
+                    if ($config['enable-redirection-to-converter']) {
+                        $links = '<br>';
+                        $links .= '<a href="/' . $webpExpressRoot . '/test/test.jpg?debug&time=' . time() . '" target="_blank">Convert test image (show debug)</a><br>';
+                        $links .= '<a href="/' . $webpExpressRoot . '/test/test.jpg?' . time() . '" target="_blank">Convert test image</a><br>';
+                    }
+                    // TODO: webp-realizer test links (to missing webp)
+                    if ($config['enable-redirection-to-webp-realizer']) {
+                    }
+
+                    // TODO: test link for testing redirection to existing
+                    if ($config['redirect-to-existing-in-htaccess']) {
+
+                    }
+
+                    return $links;
+                }
             }
         }
         return '';
@@ -488,7 +786,7 @@ class HTAccess
         list($minRequired, $pluginToo, $uploadToo) = self::getHTAccessDirRequirements();
 
         $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'wp-content');
-        $wpContentDir = Paths::getWPContentDirAbs();
+        $wpContentDir = Paths::getContentDirAbs();
         $wpContentFailed = !(HTAccess::saveHTAccessRulesToFile($wpContentDir . '/.htaccess', $rules, true));
 
         $overidingRulesInWpContentWarning = false;
@@ -506,6 +804,8 @@ class HTAccess
             }
         } else {
             $mainResult = 'wp-content';
+            // TODO: Change to something like "The rules are placed in the .htaccess file in your wp-content dir."
+            //       BUT! - current text is searched for in page-messages.php
             HTAccess::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false);
         }
 

@@ -2,22 +2,14 @@
 
 namespace WebPExpress;
 
-include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
-
-include_once __DIR__ . '/../classes/HTAccess.php';
 use \WebPExpress\HTAccess;
-
-include_once __DIR__ . '/../classes/Paths.php';
+use \WebPExpress\Messenger;
+use \WebPExpress\Option;
 use \WebPExpress\Paths;
 
-include_once __DIR__ . '/../classes/Messenger.php';
-use \WebPExpress\Messenger;
-
-//Messenger::addMessage('info', 'migration:' .  get_option('webp-express-migration-version', 'not set'));
-
 // On successful migration:
-// update_option('webp-express-migration-version', '1', true);
+// Option::updateOption('webp-express-migration-version', '1', true);
 
 function webp_express_migrate1_createFolders()
 {
@@ -59,15 +51,15 @@ function webp_express_migrate1_createDummyConfigFiles()
 
 function webpexpress_migrate1_migrateOptions()
 {
-    $converters = json_decode(get_option('webp_express_converters', '[]'), true);
+    $converters = json_decode(Option::getOption('webp_express_converters', '[]'), true);
     foreach ($converters as &$converter) {
         unset ($converter['id']);
     }
 
     $options = [
-        'image-types' => intval(get_option('webp_express_image_types_to_convert', 1)),
-        'max-quality' => intval(get_option('webp_express_max_quality', 80)),
-        'fail' => get_option('webp_express_failure_response', 'original'),
+        'image-types' => intval(Option::getOption('webp_express_image_types_to_convert', 1)),
+        'max-quality' => intval(Option::getOption('webp_express_max_quality', 80)),
+        'fail' => Option::getOption('webp_express_failure_response', 'original'),
         'converters' => $converters,
         'forward-query-string' => true
     ];
@@ -168,7 +160,7 @@ function webpexpress_migrate1_deleteOldOptions() {
 
     ];
     foreach ($optionsToDelete as $i => $optionName) {
-        delete_option($optionName);
+        Option::deleteOption($optionName);
     }
 }
 
@@ -199,7 +191,7 @@ if (webp_express_migrate1_createFolders()) {
         if (webpexpress_migrate1_migrateOptions()) {
             webpexpress_migrate1_deleteOldOptions();
             webpexpress_migrate1_deleteOldWebPImages();
-            update_option('webp-express-migration-version', '1');
+            Option::updateOption('webp-express-migration-version', '1');
         }
     }
 }

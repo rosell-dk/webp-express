@@ -20,12 +20,12 @@
 }*/
 
 @media (min-width: 782px) {
-    #webpexpress_settings .form-table th {
+    #webpexpress_settings .form-table > tbody > tr > th {
         padding-top: 5px;
         padding-bottom: 5px;
         width: 200px;
     }
-    #webpexpress_settings .form-table td {
+    #webpexpress_settings .form-table > tbody > tr > td {
         padding-top: 1px;
         padding-bottom: 5px;
     }
@@ -153,13 +153,50 @@
     /*left: 22px;
     top: 20px;*/
     margin-top: -5px;
-    font-size: 12px;
     /*white-space: nowrap;*/
-    color: #000;
     min-width: 150px;
+}
+
+.popup,
+.popup p {
     font-weight: normal;
     text-align: left;
-    max-width: 450px;
+    line-height: 1.5;
+    font-size: 14px;
+    color: #000;
+}
+
+.help .popup.narrow {
+    width: 200px;
+}
+.help .popup {
+    width: 250px;
+}
+.help .popup.wide {
+    width: 350px;
+}
+.help .popup.wider {
+    width: 450px;
+}
+.help .popup.widest {
+    width: 600px;
+}
+@media (max-width: 500px) {
+    .help .popup {
+        max-width: 380px;
+    }
+}
+@media (max-width: 400px) {
+    .help .popup {
+        max-width: 280px;
+    }
+}
+
+.help .popup > p:first-child {
+    margin-top: 0;
+}
+.help .popup > p:last-child {
+    margin-bottom: 0;
 }
 #converters li.operational .popup {
     background-color: #80ff80;
@@ -174,9 +211,6 @@
 
 }
 
-.help .popup {
-    min-width: 250px;
-}
 
 /*
 #converters li > a.remove-converter {
@@ -226,7 +260,20 @@
     vertical-align: top;
     font-family: sans-serif;
     position: relative;
+    font-style: normal;
 }
+.help { /* new look! */
+    background-color: transparent;
+    border: 1px solid #999;
+    color: #333;
+}
+.help.no-margin-left {
+    margin-left: 0px;
+}
+.help.set-margin-right {
+    margin-right: 7px;
+}
+
 
 /*
 .converter-options.wpc #wpc_web_services_div > p {
@@ -359,7 +406,7 @@
     padding: 10px;
     position: sticky;
     top: 30px;
-    z-index: 10;
+    z-index: 1;
 }
 
 @media (min-width: 768px) {
@@ -375,4 +422,139 @@
 
 #webpexpress_settings .block.buttons table {
     float: right;
+}
+
+#alter_html_options_div > div > label {
+    font-style: italic;
+}
+
+/*
+#alter_html_options_div > div {
+    margin-top: 15px;
+}*/
+
+.form-table table th {
+    font-weight: unset;
+    padding: 5px 0px;
+    width: auto;
+}
+
+.form-table table td {
+    padding: 0 10px;
+    width: auto;
+}
+
+
+.form-table td input[type=checkbox] {
+    margin-top: 6px;
+}
+
+.form-table h2 {
+    /*font-size: 1.6em;*/
+    text-transform: uppercase;
+    color: #222;
+}
+.form-table th[colspan='2'] {
+    font-weight: normal;
+    font-size: 14px;
+}
+.form-table th.header-section h2 {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+.form-table th.header-section h2 + p {
+    margin-top: 10px;
+}
+.form-table th.header-section p,
+.form-table th.header-section h2,
+fieldset.block p,
+fieldset.block div.p {
+    max-width: 750px;
+}
+
+.toggler.effect-slider {
+    overflow-y: hidden;
+    transition: all 0.3s ease-in-out;
+    /*transition: all 0.5s cubic-bezier(0, 1, 0.5, 1);*/
+}
+.toggler.effect-slider.closed {
+    transition: all 0.5s cubic-bezier(0, 1, 0.5, 1);
+    max-height: 0px !important;
+}
+
+.toggler.effect-opacity.closed {
+    opacity: 0.5;
+    pointer-events: none;
+    font-weight: 300 !important;
+}
+.form-table .toggler.effect-opacity.closed th {
+    font-weight: 400 !important;
+}
+
+.toggler.effect-visibility {
+    /*position: static;
+    visibility: inherit;*/
+}
+.toggler.effect-visibility.closed {
+    visibility: hidden;
+    position: absolute;
+}
+
+.form-table h4 {
+    margin-bottom: 0;
+    text-decoration: underline;
+}
+
+table.designed {
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    /*box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.1)*/
+}
+table.designed th {
+    font-weight: bold;
+    background-color: #fff;
+}
+table.designed td,
+table.designed th {
+    text-align: left;
+    padding: 9px 17px;
+    border: 1px solid #999;
+    vertical-align: top;
+}
+table.designed td,
+table.designed th,
+table.designed p {
+    font-size: 12px;
+    line-height: 1.3;
+}
+table.designed td > p:first-child {
+    margin-top: 0;
+}
+table.designed tr:nth-child(odd) > td {
+    background-color: #eee;
+}
+table.designed tr:nth-child(even) > td {
+    background-color: #ddd;
+}
+table.designed th:first-child {
+    border-left-width: 0;
+}
+table.designed tr:first-child > th {
+    border-top-width: 0;
+}
+table.designed tr > *:last-child {
+    border-right-width: 0;
+}
+
+#hide_alterhtml_chart_btn {
+    margin-bottom: 20px;
+}
+
+/*table.designed tr:last-child > * {
+    border-bottom-width: 0;
+}*/
+
+ul.with-bullets {
+    padding-left: 20px;
+    list-style: unset;
 }

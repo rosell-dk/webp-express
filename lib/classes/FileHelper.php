@@ -27,12 +27,25 @@ class FileHelper
         return octdec(substr(decoct($perm), -4));
     }
 
+
+    /**
+     *  Get file permission of a file (integer). Only get the last part, ie 0644
+     *  If failure, it returns $fallback
+     */
+    public static function filePermWithFallback($filename, $fallback) {
+        $perm = self::filePerm($filename);
+        if ($perm === false) {
+            return $fallback;
+        }
+        return $perm;
+    }
+
     public static function humanReadableFilePerm($mode) {
         return substr(decoct($mode), -4);
     }
 
     public static function humanReadableFilePermOfFile($filename) {
-        return self::readableFilePerm(self::filePerm($filename));
+        return self::humanReadableFilePerm(self::filePerm($filename));
     }
 
     /**
@@ -59,6 +72,68 @@ class FileHelper
         return false;
     }
 
+    public static function chmod_r($dir, $dirPerm = null, $filePerm = null, $uid = null, $gid = null, $regexFileMatchPattern = null, $regexDirMatchPattern = null) {
+        if (!@file_exists($dir) || (!@is_dir($dir))) {
+            return;
+        }
+        $fileIterator = new \FilesystemIterator($dir);
+
+        while ($fileIterator->valid()) {
+            $filename = $fileIterator->getFilename();
+            $filepath = $dir . "/" . $filename;
+
+//            echo $filepath . "\n";
+
+            $isDir = @is_dir($filepath);
+
+            if ((!$isDir && (is_null($regexFileMatchPattern) || preg_match($regexFileMatchPattern, $filename))) ||
+                    ($isDir && (is_null($regexDirMatchPattern) || preg_match($regexDirMatchPattern, $filename)))) {
+                // chmod
+                if ($isDir) {
+                    if (!is_null($dirPerm)) {
+                        self::chmod($filepath, $dirPerm);
+                        //echo '. chmod dir to:' . self::humanReadableFilePerm($dirPerm) . '. result:' . self::humanReadableFilePermOfFile($filepath) . "\n";
+                    }
+                } else {
+                    if (!is_null($filePerm)) {
+                        self::chmod($filepath, $filePerm);
+                        //echo '. chmod file to:' . self::humanReadableFilePerm($filePerm) . '. result:' . self::humanReadableFilePermOfFile($filepath) . "\n";
+                    }
+
+                }
+
+                // chown
+                if (!is_null($uid)) {
+                    @chown($filepath, $uid);
+                }
+
+                // chgrp
+                if (!is_null($gid)) {
+                    @chgrp($filepath, $gid);
+
+                }
+            }
+
+            // recurse
+            if ($isDir) {
+                self::chmod_r($filepath, $dirPerm, $filePerm, $uid, $gid, $regexFileMatchPattern, $regexDirMatchPattern);
+            }
+
+            // next!
+            $fileIterator->next();
+        }
+    }
+
+
+    /**
+     *  Create a dir using same permissions as parent.
+     *  If
+     */
+     /*
+    public static function mkdirSamePermissionsAsParent($pathname) {
+
+    }*/
+
     /**
      *  Get directory part of filename.
      *  Ie '/var/www/.htaccess' => '/var/www'
@@ -77,7 +152,7 @@ class FileHelper
         if (!@file_exists($dirName)) {
             return false;
         }
-        if (@is_writable($dirName) && @is_executable($dirName)) {
+        if (@is_writable($dirName) && @is_executable($dirName) || self::isWindows() ) {
             return true;
         }
 
@@ -181,6 +256,71 @@ class FileHelper
         } else {
             return false;
         }
+    }
+
+
+    /**
+     *  Copy dir and all its files.
+     *  Existing files are overwritten.
+     *
+     *  @return $success
+     */
+    public static function cpdir($sourceDir, $destinationDir)
+    {
+        if (!@is_dir($sourceDir)) {
+            return false;
+        }
+        if (!@file_exists($destinationDir)) {
+            if (!@mkdir($destinationDir)) {
+                return false;
+            }
+        }
+
+        $fileIterator = new \FilesystemIterator($sourceDir);
+        $success = true;
+
+        while ($fileIterator->valid()) {
+            $filename = $fileIterator->getFilename();
+
+            if (($filename != ".") && ($filename != "..")) {
+                //$filePerm = FileHelper::filePermWithFallback($filename, 0777);
+
+                if (@is_dir($sourceDir . "/" . $filename)) {
+                    if (!self::cpdir($sourceDir . "/" . $filename, $destinationDir . "/" . $filename)) {
+                        $success = false;
+                    }
+                } else {
+                    // its a file.
+                    if (!copy($sourceDir . "/" . $filename, $destinationDir . "/" . $filename)) {
+                        $success = false;
+                    }
+                }
+            }
+            $fileIterator->next();
+        }
+        return $success;
+    }
+
+
+    /**
+     *  Verify if OS is Windows
+     *
+     *
+     *  @return true if windows; false if not.
+     */
+    public static function isWindows(){
+        return (boolean) preg_match('/^win/i', PHP_OS);
+    }
+
+
+     /**
+     *  Normalize separators of directory paths
+     *
+     *
+     *  @return $normalized_path
+     */
+    public static function normalizeSeparator($path, $newSeparator = DIRECTORY_SEPARATOR){
+        return preg_replace("#[\\\/]+#", $newSeparator, $path);
     }
 
 }

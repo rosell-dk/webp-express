@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+
+    # Testing for mod_rewrite
+    # -----------------------
+    # If mod_rewrite is enabled, redirect to 1.php, which returns "1".
+    # If mod_rewrite is disabled, the rewriting fails, and we end at test.php, which always returns 0.
+
+    RewriteEngine On
+    RewriteRule ^test\.php$ 1.php [L]
+
+</IfModule>

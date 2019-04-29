@@ -2,7 +2,7 @@
 
 namespace WebPExpress;
 
-include_once "State.php";
+use \WebPExpress\Option;
 use \WebPExpress\State;
 
 /**
@@ -15,7 +15,7 @@ class Actions
      *  $action:    identifier
      */
     public static function procastinate($action) {
-        update_option('webp-express-actions-pending', true, true);
+        Option::updateOption('webp-express-actions-pending', true, true);
 
         $pendingActions = State::getState('pendingActions', []);
         $pendingActions[] = $action;
@@ -40,7 +40,7 @@ class Actions
         }
 
         State::setState('pendingActions', []);
-        update_option('webp-express-actions-pending', false, true);
+        Option::updateOption('webp-express-actions-pending', false, true);
 
     }
 }

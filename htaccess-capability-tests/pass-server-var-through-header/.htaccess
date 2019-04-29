@@ -1,0 +1,15 @@
+
+
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # PASSTHROUGHHEADERing if we can pass environment variable through request header
+    # We pass document root, because that can easily be checked by the script
+
+    <IfModule mod_headers.c>
+      RequestHeader set PASSTHROUGHHEADER "%{PASSTHROUGHHEADER}e" env=PASSTHROUGHHEADER
+    </IfModule>
+    RewriteRule ^test\.php$ - [E=PASSTHROUGHHEADER:%{DOCUMENT_ROOT},L]
+
+</IfModule>

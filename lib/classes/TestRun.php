@@ -2,16 +2,9 @@
 
 namespace WebPExpress;
 
-include_once "Config.php";
 use \WebPExpress\Config;
-
-include_once __DIR__ . '/../classes/ConvertersHelper.php';
 use \WebPExpress\ConvertersHelper;
-
-include_once "Paths.php";
 use \WebPExpress\Paths;
-
-include_once "FileHelper.php";
 use \WebPExpress\FileHelper;
 
 include_once __DIR__ . '/../../vendor/autoload.php';
@@ -25,16 +18,24 @@ class TestRun
 {
 
 
+    public static $converterStatus = null; // to cache the result
+
     /**
      *  Get an array of working converters OR false, if tests cannot be made
      */
     public static function getConverterStatus() {
+
+        // Is result cached?
+        if (isset(self::$converterStatus)) {
+            return self::$converterStatus;
+        }
         $source = Paths::getWebPExpressPluginDirAbs() . '/test/small-q61.jpg';
         $destination = Paths::getUploadDirAbs() . '/webp-express-test-conversion.webp';
         if (!FileHelper::canCreateFile($destination)) {
-            $destination = Paths::getWPContentDirAbs() . '/webp-express-test-conversion.webp';
+            $destination = Paths::getContentDirAbs() . '/webp-express-test-conversion.webp';
         }
         if (!FileHelper::canCreateFile($destination)) {
+            self::$converterStatus = false;     // // cache the result
             return false;
         }
         $workingConverters = [];
@@ -79,16 +80,27 @@ class TestRun
             }
         }
         //print_r($errors);
-        return [
+
+        // cache the result
+        self::$converterStatus = [
             'workingConverters' => $workingConverters,
             'errors' => $errors
         ];
+        return self::$converterStatus;
     }
 
+
+    public static $localQualityDetectionWorking = null; // to cache the result
+
     public static function isLocalQualityDetectionWorking() {
-        $q = ConverterHelper::detectQualityOfJpg(
-            Paths::getWebPExpressPluginDirAbs() . '/test/small-q61.jpg'
-        );
-        return ($q === 61);
+        if (isset(self::$localQualityDetectionWorking)) {
+            return self::$localQualityDetectionWorking;
+        } else {
+            $q = ConverterHelper::detectQualityOfJpg(
+                Paths::getWebPExpressPluginDirAbs() . '/test/small-q61.jpg'
+            );
+            self::$localQualityDetectionWorking = ($q === 61);
+            return self::$localQualityDetectionWorking;
+        }
     }
 }

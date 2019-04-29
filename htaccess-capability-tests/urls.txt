@@ -1,0 +1,12 @@
+We 0:
+
+http://we0/wp-content-moved/webp-express/capability-tests/has-mod-rewrite/test.php
+http://we0/wp-content-moved/webp-express/capability-tests/pass-through-environment-var/test.php
+http://we0/wp-content-moved/webp-express/capability-tests/pass-server-var-through-header/test.php
+http://we0/wp-content-moved/webp-express/capability-tests/request-uri-usable/test.php
+
+
+
+We 7:
+------
+http://we7/wp-content/webp-express/capability-tests/request-uri-usable/test.php
