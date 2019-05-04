@@ -27,7 +27,7 @@ function webpexpress_autoload($class) {
         require_once WEBPEXPRESS_PLUGIN_DIR . '/lib/classes/' . substr($class, 12) . '.php';
     }
 }
-
+require_once __DIR__ . '/vendor/autoload.php';
 if (is_admin()) {
     \WebPExpress\AdminInit::init();
 }

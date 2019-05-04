@@ -4,8 +4,6 @@ namespace WebPExpress;
 
 use AlterHtmlHelper;
 
-use \WebPExpress\Option;
-
 class AlterHtmlInit
 {
     public static $options = null;
@@ -82,6 +80,9 @@ class AlterHtmlInit
             add_action( 'wp_head', '\\WebPExpress\\AlterHtmlInit::addPictureFillJs');
         }
 
+	    add_filter( 'wp_get_attachment_url', array( __CLASS__, 'filter_attachment_url' ), 999999, 1 );
+	    add_filter( 'wp_get_attachment_image_src', array( __CLASS__, 'filter_attachment_image_src' ), 999999, 1 );
+
         if (Option::getOption('webp-express-alter-html-hooks', 'ob') == 'ob') {
             /* TODO:
                Which hook should we use, and should we make it optional?
@@ -126,4 +127,20 @@ class AlterHtmlInit
         }
     }
 
+	public static function filter_attachment_url( $url ) {
+		$new_url = \WebPExpress\AlterHtmlImageUrls::replaceUrl( $url );
+		if ( ! empty( $new_url ) ) {
+			$url = $new_url;
+		}
+
+		return $url;
+	}
+
+	public static function filter_attachment_image_src( $image ) {
+		$new_url = \WebPExpress\AlterHtmlImageUrls::replaceUrl( $image[0] );
+		if ( ! empty( $new_url ) ) {
+			$image[0] = $new_url;
+		}
+		return $image;
+	}
 }
