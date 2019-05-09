@@ -25,7 +25,12 @@ class AlterHtmlInit
             return $content;
         }
 
-        if (is_admin() ) {
+        if (is_admin()) {
+            return $content;
+        }
+
+        // Exit if it doesn't look like HTML (see #228)
+        if (!preg_match('#\\s<*#', $content)) {
             return $content;
         }
 
@@ -54,6 +59,7 @@ class AlterHtmlInit
             require_once __DIR__ . "/../../vendor/autoload.php";
             require_once __DIR__ . '/AlterHtmlHelper.php';
             require_once __DIR__ . '/AlterHtmlImageUrls.php';
+
             return \WebPExpress\AlterHtmlImageUrls::replace($content);
         }
     }
