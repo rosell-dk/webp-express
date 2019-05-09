@@ -30,7 +30,7 @@ class AlterHtmlInit
         }
 
         // Exit if it doesn't look like HTML (see #228)
-        if (!preg_match('#\\s<*#', $content)) {
+        if (!preg_match("#^\\s*<#", $content)) {
             return $content;
         }
 
