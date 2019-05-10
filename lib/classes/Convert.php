@@ -7,6 +7,7 @@ It is used by webp-on-demand.php, which does not register an auto loader. It is 
 namespace WebPExpress;
 
 use \WebPExpress\ConvertHelperIndependent;
+use \WebPExpress\Config;
 
 class Convert
 {

@@ -82,9 +82,9 @@ class AdminInit
         add_action('wp_ajax_convert_file', array('\WebPExpress\BulkConvert', 'processAjaxConvertFile'));
         add_action('wp_ajax_webpexpress_purge_cache', array('\WebPExpress\CachePurge', 'processAjaxPurgeCache'));
 
-        // Filters for processing upload hooks (in order to convert images upon upload)
-        //add_filter('wp_handle_upload', array('\WebPExpress\HandleUploadHooks', 'handleUpload'), 10, 2);
-        //add_filter('image_make_intermediate_size', array('\WebPExpress\HandleUploadHooks', 'handleMakeIntermediateSize'), 10, 1);
+        // PS:
+        // Filters for processing upload hooks in order to convert images upon upload (wp_handle_upload / image_make_intermediate_size)
+        // are located in webp-express.php
 
     }
 }

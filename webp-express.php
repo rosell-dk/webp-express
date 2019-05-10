@@ -64,6 +64,7 @@ add_action('all', function() {
 // When images are uploaded with Gutenberg, is_admin() returns false, so, hook needs to be added here
 add_filter('wp_handle_upload', array('\WebPExpress\HandleUploadHooks', 'handleUpload'), 10, 2);
 add_filter('image_make_intermediate_size', array('\WebPExpress\HandleUploadHooks', 'handleMakeIntermediateSize'), 10, 1);
+add_filter('wp_delete_file', array('\WebPExpress\HandleDeleteFileHook', 'deleteAssociatedWebP'), 10, 2);
 
 /*
 add_action('wp_handle_upload', function($a) {
