@@ -4,6 +4,7 @@ namespace WebPExpress;
 
 use \WebPExpress\ConvertHelperIndependent;
 use \WebPExpress\Paths;
+use \WebPExpress\PathHelper;
 
 class BulkConvert
 {
@@ -93,6 +94,9 @@ class BulkConvert
     public static function getListRecursively($relDir, &$listOptions)
     {
         $dir = $listOptions['root'] . '/' . $relDir;
+
+        // Canonicalize because dir might contain "/./", which causes file_exists to fail (#222)
+        $dir = PathHelper::canonicalize($dir);
 
         if (!@file_exists($dir) || !@is_dir($dir)) {
             return [];
