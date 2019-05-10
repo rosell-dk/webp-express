@@ -606,6 +606,7 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 = 0.13.1 =
 *(released: 10 may 2019)*
+
 * Fixed critical bug which could result in update failures in the Gutenberg editor. Thanks to Andrei Glingeanu from Moldova for his part in solving this.
 * Fixed bug that caused the Bulk convert to start over. Thanks to Bas van Dijk, presumably from the Netherlands, for finding the root cause.
 * On Nginx (in some configurations), the script that triggered conversion were exiting prematurely. Thanks to Sam Benson from the UK for fixing this.
@@ -618,6 +619,7 @@ For more info, see the closed issues on the 0.13.1 milestone on the github repos
 
 = 0.13.0 =
 *(released: 21 mar 2019)*
+
 * Bulk Conversion
 * Fixed problems with Gd converter and PNG
 * Optinally auto convert upon media upload
@@ -627,14 +629,17 @@ For more info, see the closed issues on the 0.13.0 milestone on the github repos
 
 = 0.12.2 =
 *(released 8 mar 2019)*
+
 * Fixed bug: On some nginx configurations, the newly added protection against directly calling the converter scripts were triggering also when it should not.
 
 = 0.12.1 =
 *(released 7 mar 2019)*
+
 * Fixed bug: Alter HTML crashed when HTML was larger than 600kb and "image urls" where selected
 
 = 0.12.0 =
 *(released 5 mar 2019)*
+
 * Multisite support (!)
 * A new operation mode: "No conversion", if you do not want to use WebP Express for converting. Replaces the old "Just redirect" mode
 * Added capability testing of .htaccess. The .htaccess rules are now tailored to the capabilities on the system. For example, on some platforms the filename of a requested image is passed to the converter script through the query string, but on platforms that supports passing it through an environment variable, that method is used instead
@@ -645,6 +650,7 @@ For more info, see the closed issues on the 0.12.0 milestone on the github repos
 
 = 0.11.3 =
 *(released 18 feb 2019)*
+
 * Fixed bug: Alter HTML caused media library not to display images on some systems. Alter HTML is now disabled in admin mode.
 * Alter HTML (picture tags) could produce the source tags with "src" attribute. But source tags inside picture tags must use "srcset" attribute. Fixed.
 * Alter HTML (image urls): srcsets containing "x" descriptors wasn't handled (ie, srcset="image.jpg 1x")
@@ -654,11 +660,13 @@ For more info, see the closed issues on the 0.12.0 milestone on the github repos
 
 = 0.11.2 =
 *(released 14 feb 2019)*
+
 * Fixed bug which caused Alter HTML to fail miserably on some setups
 * AlterHTML now also looks for lazy load attributes in DIV and LI tags.
 
 = 0.11.1 =
 *(released 6 feb 2019)*
+
 * Fixed bug which caused the new "Convert non-existing webp-files upon request" not to work on all setups
 
 = 0.11.0 =
@@ -670,6 +678,7 @@ For more info, see the closed issues on the 0.11.0 milestone on the github repos
 
 = 0.10.0 =
 *(released 7 jan 2019)*
+
 * Introduced "Operation modes" in order to keep setting screens simple but still allow tweaking
 * WebP Express can now be used in conjunction with Cache Enabler and ShortPixel
 * Cache-Control header is now added in *.htaccess*, when redirecting directly to existing webp
@@ -678,6 +687,7 @@ For more info, see the closed issues on the 0.10.0 milestone on the github repos
 
 = 0.9.1 =
 *(released 28 dec 2018)*
+
 * Fixed critical bug causing blank page on options page
 
 = 0.9.0 =
@@ -690,10 +700,12 @@ For more info, see the closed issues on the 0.9.0 milestone on the github reposi
 
 = 0.8.1 =
 *(released 11 dec 2018)*
+
 * Fixed javascript bug
 
 = 0.8.0 =
 *(released 11 dec 2018)*
+
 * New conversion method, which calls imagick binary directly. This will make WebP express work out of the box on more systems
 * Made sure not to trigger LFI warning i Wordfence (to activate, click the force .htaccess button)
 * Imagick can now be configured to set quality to auto on systems where the auto option isn't generally available
