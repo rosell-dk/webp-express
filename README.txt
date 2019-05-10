@@ -3,7 +3,7 @@ Contributors: rosell.dk
 Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
-Tested up to: 5.1
+Tested up to: 5.2
 Stable tag: 0.13.0
 Requires PHP: 5.6
 License: GPLv3
@@ -604,6 +604,18 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.13.1 =
+*(released: 10 may 2019)*
+* Fixed critical bug which could result in update failures in the Gutenberg editor. Thanks to Andrei Glingeanu from Moldova for his part in solving this.
+* Fixed bug that caused the Bulk convert to start over. Thanks to Bas van Dijk, presumably from the Netherlands, for finding the root cause.
+* On Nginx (in some configurations), the script that triggered conversion were exiting prematurely. Thanks to Sam Benson from the UK for fixing this.
+* Improved Bulk conversion client, which was slowing down when many images where converted.
+* A class had existential problems on HHVM. Thanks to @jaumerrr for posting the PHP error message.
+* When selecting "custom" in the Cache-Control dropdown, the default text was invalid syntax. Thanks to Kevin Batdorf from Thailand for discovering this.
+* When an image was deleted, the corresponding webp image was not automatically deleted. Thanks to Tobias Keller from Germany for pointing out that this could potentially lead to old webp images being shown.
+
+For more info, see the closed issues on the 0.13.1 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/17?closed=1
+
 = 0.13.0 =
 *(released: 21 mar 2019)*
 * Bulk Conversion
@@ -750,6 +762,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.13.1 =
+* Fixed several bugs. You should update...
 
 = 0.13.0 =
 * Bulk Conversion, fixed problem with Gd converter and PNGs and more...

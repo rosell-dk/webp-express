@@ -597,6 +597,9 @@ Here are my current plans ahead: 0.13 might be bulk conversion and addition of a
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.13.1
+- Fixed several bugs.
+
 ## Changes in 0.13.0
 - Bulk Conversion
 - Fixed problems with Gd converter and PNG
