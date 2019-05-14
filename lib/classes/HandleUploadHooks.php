@@ -56,7 +56,7 @@ class HandleUploadHooks
      *  hook: handle_upload
      *  $filename is ie "/var/www/webp-express-tests/we0/wordpress/uploads-moved/image4-10-150x150.jpg"
      */
-    public static function handleUpload($filearray, $overrides, $ignore = false)
+    public static function handleUpload($filearray, $overrides = false, $ignore = false)
     {
         $filename = $filearray['file'];
         self::convertIf($filename);
