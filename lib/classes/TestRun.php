@@ -7,7 +7,8 @@ use \WebPExpress\ConvertersHelper;
 use \WebPExpress\Paths;
 use \WebPExpress\FileHelper;
 
-include_once __DIR__ . '/../../vendor/autoload.php';
+include_once WEBPEXPRESS_PLUGIN_DIR . '/vendor/autoload.php';
+
 use \WebPConvert\Converters\ConverterHelper;
 
 /**
