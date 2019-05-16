@@ -604,6 +604,12 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.13.2 =
+*(released: 16 may 2019)*
+
+* Fixed Fatal error on image upload in combination with the [Enable Media Replace](https://de.wordpress.org/plugins/enable-media-replace/) plugin. Thanks to Alexander Graef from Germany for reporting.
+* It seems we finally nailed the blank settings page bug. Thanks to all involved, especially Richard Spenceley from the UK
+
 = 0.13.1 =
 *(released: 10 may 2019)*
 
@@ -775,14 +781,17 @@ For older releases, check out changelog.txt
 
 == Upgrade Notice ==
 
+= 0.13.2 =
+Fixed critical error on upload (can occur in combination with some plugins), and it seems we finally nailed the blank settings page bug.
+
 = 0.13.1 =
-* Fixed several bugs. You should update...
+Fixed several bugs. You should update...
 
 = 0.13.0 =
-* Bulk Conversion, fixed problem with Gd converter and PNGs and more...
+Bulk Conversion, fixed problem with Gd converter and PNGs and more...
 
 = 0.12.2 =
-* Fixed bug: On some nginx configurations, the newly added protection against directly calling the converter scripts were triggering also when it should not.
+Fixed bug: On some nginx configurations, the newly added protection against directly calling the converter scripts were triggering also when it should not.
 
 = 0.12.1 =
 Fixed bug: Alter HTML crashed when HTML was larger than 600kb and "image urls" where selected

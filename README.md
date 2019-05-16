@@ -597,6 +597,10 @@ Here are my current plans ahead: 0.13 might be bulk conversion and addition of a
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.13.2
+- Fixed Fatal error on image upload in combination with the [Enable Media Replace](https://de.wordpress.org/plugins/enable-media-replace/) plugin. Thanks to Alexander Graef from Germany for reporting.
+- It seems we finally nailed the blank settings page bug. Thanks to all involved, especially Richard Spenceley from the UK
+
 ## Changes in 0.13.1
 - Fixed several bugs.
 
