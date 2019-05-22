@@ -7,9 +7,10 @@ use \WebPExpress\ConvertersHelper;
 use \WebPExpress\Paths;
 use \WebPExpress\FileHelper;
 
-include_once WEBPEXPRESS_PLUGIN_DIR . '/vendor/autoload.php';
+use \WebPConvert\Convert\ConverterFactory;
+use \WebPConvert\Convert\Helpers\JpegQualityDetector;
 
-use \WebPConvert\Converters\ConverterHelper;
+include_once WEBPEXPRESS_PLUGIN_DIR . '/vendor/autoload.php';
 
 /**
  *
@@ -63,6 +64,7 @@ class TestRun
 
         }
 
+        $config = Config::fix($config);
         $options = Config::generateWodOptionsFromConfigObj($config);
         $options['converters'] = ConvertersHelper::normalize($options['converters']);
 
@@ -73,7 +75,14 @@ class TestRun
                 $converterOptions = array_merge($options, $converter['options']);
                 unset($converterOptions['converters']);
 
-                ConverterHelper::runConverter($converterId, $source, $destination, $converterOptions);
+                //ConverterHelper::runConverter($converterId, $source, $destination, $converterOptions);
+                $converterInstance = ConverterFactory::makeConverter(
+                    $converterId,
+                    $source,
+                    $destination,
+                    $converterOptions
+                );
+                $converterInstance->doConvert();
                 $workingConverters[] = $converterId;
             } catch (\Exception $e) {
                 //echo $e->getMessage() . '<br>';
@@ -97,7 +106,7 @@ class TestRun
         if (isset(self::$localQualityDetectionWorking)) {
             return self::$localQualityDetectionWorking;
         } else {
-            $q = ConverterHelper::detectQualityOfJpg(
+            $q = JpegQualityDetector::detectQualityOfJpg(
                 Paths::getWebPExpressPluginDirAbs() . '/test/small-q61.jpg'
             );
             self::$localQualityDetectionWorking = ($q === 61);

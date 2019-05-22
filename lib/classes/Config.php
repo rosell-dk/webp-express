@@ -58,7 +58,7 @@ class Config
             'operation-mode' => 'varied-image-responses',
 
             // general
-            'image-types' => 1,
+            'image-types' => 3,
             'destination-folder' => 'separate',
             'destination-extension' => 'append',
             'cache-control' => 'no-header',     /* can be "no-header", "set" or "custom" */
@@ -76,10 +76,15 @@ class Config
             'enable-redirection-to-webp-realizer' => true,
 
             // conversion options
+            'jpeg-encoding' => 'auto',
+            'jpeg-enable-near-lossless' => true,
+            'jpeg-near-lossless' => 60,
+
             'converters' => [],
             'quality-auto' => $qualityAuto,
             'max-quality' => 80,
             'quality-specific' => 70,
+            'png-quality' => 85,
             'metadata' => 'none',
             'convert-on-upload' => true,
 
@@ -498,16 +503,29 @@ class Config
             $options['cache-control-header'] = self::getCacheControlHeader($config);
         }
 
+        // Create jpeg options
+        // https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/converting/introduction-for-converting.md#png-og-jpeg-specific-options
+
         $auto = (isset($options['quality-auto']) && $options['quality-auto']);
-        $qualitySpecific = (isset($options['quality-specific']) ? $options['quality-specific'] : 70);
+
+        $options['jpeg'] = [
+            'encoding' => $options['jpeg-encoding'],
+            'quality' => ($auto ? 'auto' : $options['quality-specific']),
+        ];
+
         if ($auto) {
-            $options['quality'] = 'auto';
-        } else {
-            $options['quality'] = $qualitySpecific;
-            unset ($options['max-quality']);
+            $options['jpeg']['default-quality'] = $options['quality-specific'];
+            $options['jpeg']['max-quality'] = $options['max-quality'];
         }
+        if (($options['jpeg-enable-near-lossless']) && ($options['jpeg-encoding'] != 'lossy')) {
+            $options['jpeg']['jpeg-near-lossless'] = $options['jpeg-near-lossless'];
+        }
+        unset($options['jpeg-encoding']);
+        unset($options['max-quality']);
         unset($options['quality-auto']);
         unset($options['quality-specific']);
+        unset($options['jpeg-enable-near-lossless']);
+
 
         unset($options['image-types']);
         unset($options['cache-control']);

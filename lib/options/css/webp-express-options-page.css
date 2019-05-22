@@ -262,6 +262,12 @@
     position: relative;
     font-style: normal;
 }
+
+select + .help,
+input + .help {
+    margin-left: 1px;  /* bring help icons closer to select and input boxes  */
+    margin-top: 3px;
+}
 .help { /* new look! */
     background-color: transparent;
     border: 1px solid #999;

@@ -83,18 +83,23 @@ if ($_POST['operation-mode'] != 'no-conversion') {
     // --------
     $config['metadata'] = sanitize_text_field($_POST['metadata']);
 
-    // Quality
+    // Jpeg
     // --------
-    $auto = (isset($_POST['quality-auto']) && $_POST['quality-auto'] == 'auto_on');
-    $config['quality-auto'] = $auto;
+    $config['jpeg-encoding'] = sanitize_text_field($_POST['jpeg-encoding']);
 
+    $auto = (isset($_POST['quality-auto']) && ($_POST['quality-auto'] == 'auto_on'));
+    $config['quality-auto'] = $auto;
     if ($auto) {
         $config['max-quality'] = webp_express_sanitize_quality_field($_POST['max-quality']);
-        $config['quality-specific'] = 70;
+        $config['quality-specific'] = webp_express_sanitize_quality_field($_POST['quality-fallback']);
     } else {
         $config['max-quality'] = 80;
         $config['quality-specific'] = webp_express_sanitize_quality_field($_POST['quality-specific']);
     }
+
+    $jpegEnableNearLossless = (isset($_POST['jpeg-enable-near-lossless']) && ($_POST['jpeg-enable-near-lossless'] == 'on'));
+    $config['jpeg-enable-near-lossless'] = $jpegEnableNearLossless;
+    $config['jpeg-near-lossless'] = webp_express_sanitize_quality_field($_POST['jpeg-near-lossless']);
 
     $config['convert-on-upload'] = isset($_POST['convert-on-upload']);
 

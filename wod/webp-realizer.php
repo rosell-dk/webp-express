@@ -188,23 +188,27 @@ if ($options['forward-query-string']) {
     }
 }
 
-$options['require-for-conversion'] = 'webp-on-demand-2.inc';
-//$options['require-for-conversion'] = '../../../autoload.php';
-
 $options['add-vary-header'] = false;
 $options['fail'] = '404';
-$options['critical-fail'] = '404';
+$options['fail-when-fail-fails'] = '404';
 //$options['show-report'] = true;
 
+/*
 function aboutToServeImageCallBack($servingWhat, $whyServingThis, $obj) {
     // Redirect to same location.
     header('Location: ?fresh' , 302);
     return false;   // tell webp-convert not to serve!
 }
+*/
 
-$options['aboutToServeImageCallBack'] = 'aboutToServeImageCallBack';
+include_once __DIR__ . '/../vendor/autoload.php';
 
-include_once '../vendor/rosell-dk/webp-convert/build/webp-on-demand-1.inc';
-WebPConvert::convertAndServe($source, $destination, $options);
+ini_set('display_errors', 0);
+error_reporting(0);
+
+// TODO: error_log()
+
+WebPConvert::serveConverted($source, $destination, $options);
+
 
 //echo "<pre>source: $source \ndestination: $destination \n\noptions:" . print_r($options, true) . '</pre>'; exit;
