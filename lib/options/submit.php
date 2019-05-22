@@ -101,6 +101,17 @@ if ($_POST['operation-mode'] != 'no-conversion') {
     $config['jpeg-enable-near-lossless'] = $jpegEnableNearLossless;
     $config['jpeg-near-lossless'] = webp_express_sanitize_quality_field($_POST['jpeg-near-lossless']);
 
+
+    // Png
+    // --------
+    $config['png-encoding'] = sanitize_text_field($_POST['png-encoding']);
+
+    $config['quality-png'] = webp_express_sanitize_quality_field($_POST['quality-png']);
+    $pngEnableNearLossless = (isset($_POST['png-enable-near-lossless']) && ($_POST['png-enable-near-lossless'] == 'on'));
+    $config['png-enable-near-lossless'] = $pngEnableNearLossless;
+    $config['png-near-lossless'] = webp_express_sanitize_quality_field($_POST['png-near-lossless']);
+
+
     $config['convert-on-upload'] = isset($_POST['convert-on-upload']);
 
     // Web Service

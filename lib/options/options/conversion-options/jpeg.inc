@@ -21,16 +21,16 @@ png
 
 <tr>
     <th scope="row" colspan=1>
-        Jpeg
+        Jpeg options
         <?php echo helpIcon(
             'The "jpeg" settings applies when the image being converted is a jpeg.'
         );?>
     </th>
     <td>
         <label>
-            Encoding:
+            WebP encoding:
         </label>
-        <select name="jpeg-encoding">
+        <select id="jpeg_encoding_select" name="jpeg-encoding">
             <?php
             webpexpress_selectBoxOptions($config['jpeg-encoding'], [
                 'lossy' => 'Lossy',
@@ -127,34 +127,39 @@ png
 
     </td>
 </tr>
-<tr colspan=2>
+<tr colspan=2 id="jpeg_quality_lossless_row" class="toggler effect-visibility">
     <th></th>
     <td>
         <label>
             Quality for lossless:
         </label>
         <select id="jpeg_enable_near_lossless" name="jpeg-enable-near-lossless">
-            <option value="on" <?php echo ($config['jpeg-enable-near-lossless'] ? 'selected' : ''); ?>>Use "near-lossless" preprocessing</option>
-            <option value="off" <?php echo (!$config['jpeg-enable-near-lossless'] ? 'selected' : ''); ?>>100% lossless</option>
+            <?php
+            webpexpress_selectBoxOptions($config['jpeg-enable-near-lossless'] ? 'on' : 'off', [
+                'on' => 'Apply preprocessing',
+                'off' => '100% lossless',
+            ]);
+            ?>
         </select>
         <?php
             echo helpIcon(
                 '<p>What? Lossless is lossless, right?. Well, that depends on how you look at it. ' .
                 'The webp conversion library has this nifty option called "near lossless preprocessing". The preproccesing manipulates ' .
-                'the image before encoding it using lossless encoding in order to help compressibility.</p>' .
+                'the image before encoding in order to help compressibility.</p>' .
                 '<p>Note: The near-lossless option is supported by the <i>Cwebp</i> and <i>Vips</i> conversion methods.</p>' .
                 '<p>Read more about the feature <a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/converting/introduction-for-converting.md#near-lossless">here</a></p>'
             );
         ?>
-        <div id="jpeg_near_lossless_div" style="display:inline-block; margin-left:10px">
+        <div id="jpeg_near_lossless_div" style="display:inline-block; margin-left:10px" class="toggler effect-visibility">
             <label>
-                Amount:
+                "Near lossless" quality:
             </label>
             <input type="text" size=3 name="jpeg-near-lossless" value="<?php echo $config['jpeg-near-lossless'] ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
             <?php
                 echo helpIcon(
-                    'The level of near-lossless image preprocessing (when trying lossless). Enter a number (0-100). ' .
-                    'You can think of it as "quality" for lossless. 100 is truly lossless. 60 is a fine comprimize between compression and quality.'
+                    'The level of near-lossless image preprocessing (when trying lossless). ' .
+                    'You can think of it as "quality" for lossless. The range is 0 (maximum preprocessing) to 100 (no preprocessing). ' .
+                    '<a href="https://groups.google.com/a/webmproject.org/forum/#!topic/webp-discuss/0GmxDmlexek">Read this</a> to get an informed opinion about appropriate setting.'
                 );
             ?>
         </div>

@@ -79,12 +79,16 @@ class Config
             'jpeg-encoding' => 'auto',
             'jpeg-enable-near-lossless' => true,
             'jpeg-near-lossless' => 60,
-
-            'converters' => [],
             'quality-auto' => $qualityAuto,
             'max-quality' => 80,
             'quality-specific' => 70,
+
+            'png-encoding' => 'auto',
+            'png-enable-near-lossless' => true,
+            'png-near-lossless' => 60,
             'png-quality' => 85,
+
+            'converters' => [],
             'metadata' => 'none',
             'convert-on-upload' => true,
 
@@ -507,25 +511,45 @@ class Config
         // https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/converting/introduction-for-converting.md#png-og-jpeg-specific-options
 
         $auto = (isset($options['quality-auto']) && $options['quality-auto']);
-
         $options['jpeg'] = [
             'encoding' => $options['jpeg-encoding'],
             'quality' => ($auto ? 'auto' : $options['quality-specific']),
         ];
-
         if ($auto) {
             $options['jpeg']['default-quality'] = $options['quality-specific'];
             $options['jpeg']['max-quality'] = $options['max-quality'];
         }
-        if (($options['jpeg-enable-near-lossless']) && ($options['jpeg-encoding'] != 'lossy')) {
-            $options['jpeg']['jpeg-near-lossless'] = $options['jpeg-near-lossless'];
+        if ($options['jpeg-encoding'] != 'lossy') {
+            if ($options['jpeg-enable-near-lossless']) {
+                $options['jpeg']['near-lossless'] = $options['jpeg-near-lossless'];
+            } else {
+                $options['jpeg']['near-lossless'] = 100;
+            }
         }
+
         unset($options['jpeg-encoding']);
         unset($options['max-quality']);
         unset($options['quality-auto']);
         unset($options['quality-specific']);
         unset($options['jpeg-enable-near-lossless']);
 
+        // Create png options
+        // ---
+        $options['png'] = [
+            'encoding' => $options['png-encoding'],
+            'quality' => $options['png-quality'],
+        ];
+        if ($options['png-encoding'] != 'lossy') {
+            if ($options['png-enable-near-lossless']) {
+                $options['png']['near-lossless'] = $options['png-near-lossless'];
+            } else {
+                $options['png']['near-lossless'] = 100;
+            }
+        }
+        unset($options['png-encoding']);
+        unset($options['png-enable-near-lossless']);
+
+        // ---
 
         unset($options['image-types']);
         unset($options['cache-control']);
