@@ -475,14 +475,26 @@ class Config
 
     public static function generateWodOptionsFromConfigObj($config)
     {
-        $options = $config;
-        $options['converters'] = [];
-        foreach ($config['converters'] as $converter) {
-            if (isset($converter['deactivated']) && ($converter['deactivated'])) continue;
 
-            $options['converters'][] = $converter;
+        // WebP convert options
+        // --------------------
+        $wc = [
+            'converters' => []
+        ];
+
+        // Add active converters
+        foreach ($config['converters'] as $converter) {
+            if (isset($converter['deactivated']) && ($converter['deactivated'])) {
+                continue;
+            }
+            $wc['converters'][] = $converter;
         }
-        foreach ($options['converters'] as &$c) {
+
+        // Clean the converter options from junk
+        foreach ($wc['converters'] as &$c) {
+
+            // In cwebp converter options (here in webp express), we have a checkbox "set size"
+            // - there is no such option in webp-convert - so remove.
             if ($c['converter'] == 'cwebp') {
                 if (isset($c['options']['set-size']) && $c['options']['set-size']) {
                     unset($c['options']['set-size']);
@@ -491,6 +503,9 @@ class Config
                     unset($c['options']['size-in-percentage']);
                 }
             }
+
+            // 'id', 'working' and 'error' attributes are used internally in webp-express,
+            // no need to have it in the wod configuration file.
             unset ($c['id']);
             unset($c['working']);
             unset($c['error']);
@@ -498,88 +513,83 @@ class Config
             if (isset($c['options']['quality']) && ($c['options']['quality'] == 'inherit')) {
                 unset ($c['options']['quality']);
             }
+            /*
             if (!isset($c['options'])) {
                 $c = $c['converter'];
-            }
-        }
-
-        if (isset($options['cache-control'])) {
-            $options['cache-control-header'] = self::getCacheControlHeader($config);
+            }*/
         }
 
         // Create jpeg options
         // https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/converting/introduction-for-converting.md#png-og-jpeg-specific-options
 
-        $auto = (isset($options['quality-auto']) && $options['quality-auto']);
-        $options['jpeg'] = [
-            'encoding' => $options['jpeg-encoding'],
-            'quality' => ($auto ? 'auto' : $options['quality-specific']),
+        $auto = (isset($config['quality-auto']) && $config['quality-auto']);
+        $wc['jpeg'] = [
+            'encoding' => $config['jpeg-encoding'],
+            'quality' => ($auto ? 'auto' : $config['quality-specific']),
         ];
         if ($auto) {
-            $options['jpeg']['default-quality'] = $options['quality-specific'];
-            $options['jpeg']['max-quality'] = $options['max-quality'];
+            $wc['jpeg']['default-quality'] = $config['quality-specific'];
+            $wc['jpeg']['max-quality'] = $config['max-quality'];
         }
-        if ($options['jpeg-encoding'] != 'lossy') {
-            if ($options['jpeg-enable-near-lossless']) {
-                $options['jpeg']['near-lossless'] = $options['jpeg-near-lossless'];
+        if ($config['jpeg-encoding'] != 'lossy') {
+            if ($config['jpeg-enable-near-lossless']) {
+                $wc['jpeg']['near-lossless'] = $config['jpeg-near-lossless'];
             } else {
-                $options['jpeg']['near-lossless'] = 100;
+                $wc['jpeg']['near-lossless'] = 100;
             }
         }
-
-        unset($options['jpeg-encoding']);
-        unset($options['max-quality']);
-        unset($options['quality-auto']);
-        unset($options['quality-specific']);
-        unset($options['jpeg-enable-near-lossless']);
 
         // Create png options
         // ---
-        $options['png'] = [
-            'encoding' => $options['png-encoding'],
-            'quality' => $options['png-quality'],
+        $wc['png'] = [
+            'encoding' => $config['png-encoding'],
+            'quality' => $config['png-quality'],
         ];
-        if ($options['png-encoding'] != 'lossy') {
-            if ($options['png-enable-near-lossless']) {
-                $options['png']['near-lossless'] = $options['png-near-lossless'];
+        if ($config['png-encoding'] != 'lossy') {
+            if ($config['png-enable-near-lossless']) {
+                $wc['png']['near-lossless'] = $config['png-near-lossless'];
             } else {
-                $options['png']['near-lossless'] = 100;
+                $wc['png']['near-lossless'] = 100;
             }
         }
-        unset($options['png-encoding']);
-        unset($options['png-enable-near-lossless']);
 
-        // ---
-
-        unset($options['image-types']);
-        unset($options['cache-control']);
-        unset($options['cache-control-custom']);
-        unset($options['cache-control-public']);
-        unset($options['cache-control-max-age']);
-        unset($options['paths-used-in-htaccess']);
-        unset($options['web-service']);
-        unset($options['alter-html']);
-        unset($options['enable-redirection-to-converter']);
-        unset($options['operation-mode']);
-        unset($options['only-redirect-to-converter-for-webp-enabled-browsers']);
-        unset($options['only-redirect-to-converter-on-cache-miss']);
-        unset($options['enable-redirection-to-webp-realizer']);
-        unset($options['convert-on-upload']);
+        // Metadata
+        $wc['metadata'] = $config['metadata'];
 
 
-        //unset($options['']);
-        //unset($options['']);
-        //unset($options['']);
+        // Serve options
+        // -------------
+        $serve = [];
+        if (isset($config['cache-control'])) {
+            $serve['cache-control-header'] = self::getCacheControlHeader($config);
+        }
+        $serve['fail'] = $config['fail'];
 
 
-
-        //unset($options['forward-query-string']);  // It is used in webp-on-demand.php, so do not unset!
-        unset($options['do-not-pass-source-in-query-string']);
-        unset($options['redirect-to-existing-in-htaccess']);
-
-        $options['paths'] = [
-            'uploadDirRel' => Paths::getUploadDirRel()
+        // WOD options
+        // -------------
+        $wod = [
+            'base-htaccess-on-these-capability-tests' => $config['base-htaccess-on-these-capability-tests'],
+            'destination-extension' => $config['destination-extension'],
+            'destination-folder' => $config['destination-folder'],
+            'forward-query-string' => $config['forward-query-string'],
+            'method-for-passing-source' => $config['method-for-passing-source'],
+            'paths' => [
+                'uploadDirRel' => Paths::getUploadDirRel()
+            ],
+            'success-response' => $config['success-response'],
         ];
+
+
+        // Put it all together
+        // -------------
+
+        $options = array_merge($wc, $serve, $wod);
+
+        // I'd like to put the webp-convert options in its own key,
+        // but it requires some work. Postponing it to another day that I can uncomment the two next lines (and remove the one above)
+        //$wc = array_merge($wc, $serve);
+        //$options = array_merge($wod, ['webp-convert' => $wc]);
 
         return $options;
     }
