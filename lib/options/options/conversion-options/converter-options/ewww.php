@@ -8,14 +8,14 @@
       </p>
       <h3>Options</h3>
       <div>
-          <label for="ewww_key">Key</label>
-          <input type="text" id="ewww_key" placeholder="Your API key here">
+          <label for="ewww_api_key">API Key</label>
+          <input type="text" id="ewww_api_key" placeholder="Your API key here">
       </div>
       <br>
       <h4>Fallback (optional)</h4>
       <div>
-          <label for="ewww_key_2">key</label>
-          <input type="text" id="ewww_key_2" placeholder="In case the first one expires...">
+          <label for="ewww_api_key_2">API Key</label>
+          <input type="text" id="ewww_api_key_2" placeholder="In case the first one expires...">
       </div>
       <br>
       <?php webp_express_printUpdateButtons() ?>
