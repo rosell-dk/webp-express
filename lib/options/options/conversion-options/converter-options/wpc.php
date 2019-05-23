@@ -73,9 +73,11 @@
       </div>
 
       <?php
+      /*
+      Removed (#243)
       if (!$canDetectQuality) {
           printAutoQualityOptionForConverter('wpc');
-      }
+      }*/
       ?>
 
       <p>

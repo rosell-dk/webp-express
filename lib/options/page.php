@@ -28,6 +28,8 @@ function webpexpress_converterName($converterId) {
     return $converterId;
 }
 
+/*
+Removed (#243)
 function printAutoQualityOptionForConverter($converterId) {
 ?>
     <div>
@@ -49,6 +51,7 @@ function printAutoQualityOptionForConverter($converterId) {
     </div>
 <?php
 }
+*/
 
 $canDetectQuality = TestRun::isLocalQualityDetectionWorking();
 $testResult = TestRun::getConverterStatus();

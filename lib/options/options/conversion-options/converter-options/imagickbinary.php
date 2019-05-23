@@ -11,9 +11,11 @@
       </div>
 
       <?php
+      /*
+      Removed (#243)
       if (!$canDetectQuality) {
           printAutoQualityOptionForConverter('imagickbinary');
-      }
+      }*/
       ?>
       <!--
       <button onclick="updateConverterOptions()" class="button button-primary" type="button">Update</button>
