@@ -190,6 +190,10 @@ class Config
             $config['alter-html'] = array_replace_recursive($defaultConfig['alter-html'], $config['alter-html']);
         }
 
+        if (!isset($config['base-htaccess-on-these-capability-tests'])) {
+            self::runAndStoreCapabilityTests($config);
+        }
+
         $config = self::applyOperationMode($config);
 
         if (!isset($config['web-service'])) {
@@ -573,7 +577,7 @@ class Config
             'destination-extension' => $config['destination-extension'],
             'destination-folder' => $config['destination-folder'],
             'forward-query-string' => $config['forward-query-string'],
-            'method-for-passing-source' => $config['method-for-passing-source'],
+            //'method-for-passing-source' => $config['method-for-passing-source'],
             'paths' => [
                 'uploadDirRel' => Paths::getUploadDirRel()
             ],
@@ -609,6 +613,9 @@ class Config
      */
     public static function saveConfigurationFileAndWodOptions($config)
     {
+        if (!isset($config['base-htaccess-on-these-capability-tests'])) {
+            self::runAndStoreCapabilityTests($config);
+        }
         if (!(self::saveConfigurationFile($config))) {
             return false;
         }
@@ -630,6 +637,10 @@ class Config
             $rewriteRulesNeedsUpdate = true;
         } else {
             $rewriteRulesNeedsUpdate = HTAccess::doesRewriteRulesNeedUpdate($config);
+        }
+
+        if (!isset($config['base-htaccess-on-these-capability-tests'])) {
+            self::runAndStoreCapabilityTests($config);
         }
 
         if (self::saveConfigurationFile($config)) {

@@ -14,6 +14,7 @@ class ConvertersHelper
             'low-memory' => true,
             'command-line-options' => '',
         ]],
+        ['converter' => 'vips'],
         ['converter' => 'imagickbinary', 'options' => [
             'use-nice' => true,
         ]],

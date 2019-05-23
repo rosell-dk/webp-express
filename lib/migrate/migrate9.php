@@ -7,6 +7,69 @@ use \WebPExpress\Messenger;
 use \WebPExpress\Option;
 use \WebPExpress\Paths;
 
+/**
+ * Get first working and active converter.
+ * @return  object|false
+ */
+function webpexpress_migrate9_getFirstWorkingAndActiveConverter($config) {
+
+    if (!isset($config['converters'])) {
+        return false;
+    }
+    $converters = $config['converters'];
+
+    if (!is_array($converters)) {
+        return false;
+    }
+
+    // Find first active and working.
+    foreach ($converters as $c) {
+        if (isset($c['deactivated']) && $c['deactivated']) {
+            continue;
+        }
+        if (isset($c['working']) && !$c['working']) {
+            continue;
+        }
+        return $c;
+    }
+    return false;
+}
+
+/**
+ * Move a converter to the top
+ * @return  boolean
+ */
+function webpexpress_migrate9_moveConverterToTop(&$config, $converterId) {
+
+    if (!isset($config['converters'])) {
+        return false;
+    }
+
+    if (!is_array($config['converters'])) {
+        return false;
+    }
+
+    // find index of vips
+    $indexOfVips = -1;
+    $vips = null;
+    foreach ($config['converters'] as $i => $c) {
+        if ($c['converter'] == $converterId) {
+            $indexOfVips = $i;
+            $vips = $c;
+            break;
+        }
+    }
+    if ($indexOfVips > 0) {
+        // remove vips found
+        array_splice($config['converters'], $indexOfVips, 1);
+
+        // Insert vips at the top
+        array_unshift($config['converters'], $vips);
+
+    }
+    return false;
+}
+
 function webpexpress_migrate9() {
 
     $config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
@@ -48,6 +111,25 @@ function webpexpress_migrate9() {
                     }
                     break;
             }
+        }
+
+        $firstActiveAndWorking = webpexpress_migrate9_getFirstWorkingAndActiveConverter($config);
+
+        // Find out if first working is cwebp
+        // - because Vips is better than any other converter, except perhaps cwebp
+        // (and it is ok to have a non-functional vips on the top)
+        $firstWorkingIsCwebP = false;
+        if (
+            ($firstActiveAndWorking !== false) &&
+            isset($firstActiveAndWorking['converter']) &&
+            ($firstActiveAndWorking['converter'] == 'cwebp')
+        ) {
+                $firstWorkingIsCwebP = true;
+        };
+
+        // If it aint cwebp, move vips to the top!
+        if (!$firstWorkingIsCwebP) {
+            $vips = webpexpress_migrate9_moveConverterToTop($config, 'vips');
         }
     }
 

@@ -67,6 +67,7 @@ function webp_express_printUpdateButtons() {
 echo '<ul id="converters" style="margin-top: -13px"></ul>';
 
 include 'converter-options/cwebp.php';
+include 'converter-options/vips.php';
 include 'converter-options/gd.php';
 include 'converter-options/imagick.php';
 include 'converter-options/ewww.php';
