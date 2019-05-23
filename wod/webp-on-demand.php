@@ -205,20 +205,14 @@ if ($options['forward-query-string']) {
     }
 }
 
-include_once __DIR__ . '/../vendor/autoload.php';
-
 if (isset($options['success-response']) && ($options['success-response'] == 'original')) {
-
-    // No longer supported.
-    // We simply serve original without converting
-    ServeConvertedWebP::serveOriginal($source, $options);
-} else {
-
-    // TODO: error_log()
-    ini_set('display_errors', 0);
-    error_reporting(0);
-
-    WebPConvert::serveConverted($source, $destination, $options);
+    $options['serve-original'] = true;
 }
 
-//echo "<pre>source: $source \ndestination: $destination \n\noptions:" . print_r($options, true) . '</pre>'; exit;
+include_once __DIR__ . '/../vendor/autoload.php';
+
+// TODO: error_log()
+ini_set('display_errors', 0);
+error_reporting(0);
+
+WebPConvert::serveConverted($source, $destination, $options);
