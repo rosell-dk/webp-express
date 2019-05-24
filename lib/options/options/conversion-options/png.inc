@@ -18,8 +18,12 @@
             ?>
         </select>
         <?php echo helpIcon(
-            '<p>The WebP format supports two types of encoding: lossy and lossless.</p>' .
-            '<p>If you select "Auto", WebP Express will try converting to both encodings ' .
+            '<p>The WebP format supports two types of encoding: lossy and lossless. ' .
+            'With WebP you can have both transparency AND lossy encoding, so "lossy" encoding is not out of the question, just ' .
+            'because the converted file is a PNG. ' .
+            'There is no "lossy" option here, because converting all PNGs to lossy would be a bad idea. ' .
+            'However, in many cases you get better compression with lossy. So this is what the "auto" option is for. ' .
+            'With "Auto", WebP Express will try converting to both encodings ' .
             'and select one that resulted in the smallest file.</p>' .
             '<p>Note that only some converters supports lossless encoding. It is supported by ' .
             'Cwebp, Vips, Imagick binary and Remote WebP Express (if the WebP Express you are ' .
@@ -38,7 +42,21 @@
 
         <input type="text" size=3 name="png-quality" value="<?php echo $config['png-quality'] ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
         <?php
-            echo helpIcon('Enter number (0 - 100)');
+            echo helpIcon(
+                'You probably want to set this value a bit higher than the quality for JPEGs. PNGs are often used for icons and graphics, ' .
+                'which perhaps demands a bit more quality than photos, which jpegs often are used for.'
+            );
+        ?>
+        <label style="margin-left:10px">
+            Alpha quality:
+        </label>
+        <input type="text" size=3 name="alpha-quality" value="<?php echo $config['alpha-quality'] ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
+        <?php
+            echo helpIcon(
+                'The alpha quality is the quality of the alpha channel (the tranparency layer). ' .
+                'The option is only relevant for PNGs (as JPEGs do not have transparency), and only relevant in lossy encoding. ' .
+                'The option is only supported by cwebp, vips and imagickbinary. It is ignored for other converters.'
+            );
         ?>
     </td>
 </tr>

@@ -110,6 +110,7 @@ if ($_POST['operation-mode'] != 'no-conversion') {
     $pngEnableNearLossless = (isset($_POST['png-enable-near-lossless']) && ($_POST['png-enable-near-lossless'] == 'on'));
     $config['png-enable-near-lossless'] = $pngEnableNearLossless;
     $config['png-near-lossless'] = webp_express_sanitize_quality_field($_POST['png-near-lossless']);
+    $config['alpha-quality'] = webp_express_sanitize_quality_field($_POST['alpha-quality']);
 
 
     $config['convert-on-upload'] = isset($_POST['convert-on-upload']);

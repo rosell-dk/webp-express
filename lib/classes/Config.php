@@ -87,6 +87,7 @@ class Config
             'png-enable-near-lossless' => true,
             'png-near-lossless' => 60,
             'png-quality' => 85,
+            'alpha-quality' => 80,
 
             'converters' => [],
             'metadata' => 'none',
@@ -555,6 +556,10 @@ class Config
             } else {
                 $wc['png']['near-lossless'] = 100;
             }
+        }
+        if ($config['png-encoding'] != 'lossless') {
+            // Only relevant for pngs, and only for "lossy" (and thus also "auto")
+            $wc['png']['alpha-quality'] = $config['alpha-quality'];
         }
 
         // Metadata
