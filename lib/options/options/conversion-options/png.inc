@@ -54,7 +54,7 @@
         <?php
             echo helpIcon(
                 'The alpha quality is the quality of the alpha channel (the tranparency layer). ' .
-                'The option is only relevant for PNGs (as JPEGs do not have transparency), and only relevant in lossy encoding. ' .
+                'The option is only relevant for images with alpha channel, and only relevant in lossy encoding. ' .
                 'The option is only supported by cwebp, vips and imagickbinary. It is ignored for other converters.'
             );
         ?>
