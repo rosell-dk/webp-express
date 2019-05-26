@@ -295,8 +295,13 @@ input + .help {
     width: 110px;
     display: inline-block;
 }
-.converter-options.wpc div {
+.converter-options.wpc div,
+.converter-options.vips div  {
     margin-bottom: 5px;
+}
+.converter-options.vips label {
+    width: 143px;
+    display: inline-block;
 }
 #wpc_url {
     min-width: 400px;

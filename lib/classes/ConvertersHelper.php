@@ -14,7 +14,10 @@ class ConvertersHelper
             'low-memory' => true,
             'command-line-options' => '',
         ]],
-        ['converter' => 'vips'],
+        ['converter' => 'vips', 'options' => [
+            'smart-subsample' => false,
+            'preset' => null
+        ]],
         ['converter' => 'imagickbinary', 'options' => [
             'use-nice' => true,
         ]],
@@ -22,7 +25,10 @@ class ConvertersHelper
         ['converter' => 'ewww'],
         ['converter' => 'imagick'],
         ['converter' => 'gmagick'],
-        ['converter' => 'gd'],
+        ['converter' => 'gd', 'options' => [
+            'skip-pngs' => false,
+            'preset' => 'disable'
+        ]],
     ];
 
     public static function getDefaultConverterNames()
