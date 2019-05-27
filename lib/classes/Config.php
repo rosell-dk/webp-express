@@ -137,20 +137,23 @@ class Config
 
         if ($config['operation-mode'] == 'varied-image-responses') {
             $config = array_merge($config, [
+                //'redirect-to-existing-in-htaccess' => true,   // this can now be configured, so do not apply
                 'enable-redirection-to-converter' => true,
                 'only-redirect-to-converter-for-webp-enabled-browsers' => true,
                 'only-redirect-to-converter-on-cache-miss' => false,
                 'do-not-pass-source-in-query-string' => true,       // Will be removed in 0.13
-                //'redirect-to-existing-in-htaccess' => true,
                 'fail' => 'original',
                 'success-response' => 'converted',
             ]);
         } elseif ($config['operation-mode'] == 'cdn-friendly') {
             $config = array_merge($config, [
+                'redirect-to-existing-in-htaccess' => false,
+                'enable-redirection-to-converter' => false,
+                /*
                 'only-redirect-to-converter-for-webp-enabled-browsers' => false,
                 'only-redirect-to-converter-on-cache-miss' => true,
+                */
                 'do-not-pass-source-in-query-string' => true,       // Will be removed in 0.13
-                'redirect-to-existing-in-htaccess' => false,
                 'fail' => 'original',
                 'success-response' => 'original',
                 // cache-control => 'no-header' (we do not need this, as it is not important what it is set to in cdn-friendly mode, and we dont the value to be lost when switching operation mode)

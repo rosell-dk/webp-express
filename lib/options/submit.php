@@ -21,6 +21,8 @@ function webp_express_sanitize_quality_field($text) {
 $config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
 $oldConfig = $config;
 
+// Note that "operation-mode" is actually the old mode. The new mode is posted in "change-operation-mode"
+
 // Set options that are available in all operation modes
 $config = array_merge($config, [
     'operation-mode' => $_POST['operation-mode'],
@@ -30,6 +32,9 @@ $config = array_merge($config, [
     'forward-query-string' => true,
 
 ]);
+
+
+
 
 // Set options that are available in all operation modes, except the "CDN friendly" mode
 if ($_POST['operation-mode'] != 'cdn-friendly') {
@@ -216,8 +221,16 @@ switch ($_POST['operation-mode']) {
 
 //echo '<pre>' . print_r($_POST, true) . '</pre>'; exit;
 if ($_POST['operation-mode'] != $_POST['change-operation-mode']) {
+
+    // Operation mode changed!
     $config['operation-mode'] = $_POST['change-operation-mode'];
     $config = Config::applyOperationMode($config);
+
+    if ($config['operation-mode'] == 'varied-image-responses') {
+        // changing to "varied image responses" mode should enable
+        // the redirect-to-existing-in-htaccess option
+        $config['redirect-to-existing-in-htaccess'] = true;
+    }
 }
 
 // If we are going to save .htaccess, run and store capability tests first (we should only store results when .htaccess is updated as well)
@@ -229,7 +242,6 @@ if (isset($_POST['force']) || HTAccess::doesRewriteRulesNeedUpdate($config)) {
 // SAVE!
 // -----
 $result = Config::saveConfigurationAndHTAccess($config, isset($_POST['force']));
-
 
 // Handle results
 // ---------------
