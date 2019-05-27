@@ -4,7 +4,7 @@
         <?php echo helpIcon(
             '<p>Enabling this option will add lines in the .htaccess which redirects requests for non-existing webp-files to ' .
             'the converter script (webp-realizer.php). ' .
-            'This way you can reference webps before they actually exists.</p>' .
+            '<i>This way you can reference webps before they actually exists.</i></p>' .
             '<p>The feature works the following way:' .
             '<ol>' .
             '<li>WebP adds rules in the <i>.htaccess</i> that redirects requests for non-existing webp files to <i>webp-realizer.php</i></li>' .
