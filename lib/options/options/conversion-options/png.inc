@@ -53,7 +53,6 @@
                 echo helpIcon(
                     'The alpha quality is the quality of the alpha channel (the tranparency layer). ' .
                     'The option is only relevant for images with alpha channel, and only relevant in lossy encoding. ' .
-
                     '<p>Note that Gd and Ewww does not support the "Alpha quality" feature. ' .
                     'They simply ignore the option and converts the alpha channel losslessly. ' .
                     '</p>'
