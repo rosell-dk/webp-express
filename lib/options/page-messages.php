@@ -1,13 +1,14 @@
 <?php
 
-use \WebPExpress\Paths;
-use \WebPExpress\HTAccess;
-use \WebPExpress\Config;
-use \WebPExpress\State;
-use \WebPExpress\Messenger;
-use \WebPExpress\PlatformInfo;
-use \WebPExpress\FileHelper;
 use \WebPExpress\CapabilityTest;
+use \WebPExpress\Config;
+use \WebPExpress\ConvertersHelper;
+use \WebPExpress\FileHelper;
+use \WebPExpress\HTAccess;
+use \WebPExpress\Messenger;
+use \WebPExpress\Paths;
+use \WebPExpress\PlatformInfo;
+use \WebPExpress\State;
 
 //use \WebPExpress\BulkConvert;
 //echo '<pre>' . print_r(BulkConvert::getList($config), true) . "</pre>";
@@ -113,6 +114,21 @@ if ($config['enable-redirection-to-webp-realizer'] && $config['alter-html']['ena
                 '<i>but you have not enabled the option to point to these in Alter HTML</i>. Please do that!'
     );
 }
+
+if ($config['image-types'] == 3) {
+    $workingConverters = ConvertersHelper::getWorkingAndActiveConverters($config);
+    if (count($workingConverters) == 1) {
+        if (ConvertersHelper::getConverterId($workingConverters[0]) == 'gd') {
+            Messenger::printMessage(
+                'warning',
+                    'You have enabled PNGs, but configured Gd to skip PNGs, and Gd is your only active working converter. ' .
+                    'This is a bad combination!'
+            );
+        }
+    }
+}
+
+
 
 
 /*
