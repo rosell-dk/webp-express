@@ -53,7 +53,10 @@
                 echo helpIcon(
                     'The alpha quality is the quality of the alpha channel (the tranparency layer). ' .
                     'The option is only relevant for images with alpha channel, and only relevant in lossy encoding. ' .
-                    'The option is supported by cwebp, vips, imagick, imagickbinary and gmagickbinary. It is ignored for other converters.'
+
+                    '<p>Note that Gd and Ewww does not support the "Alpha quality" feature. ' .
+                    'They simply ignore the option and converts the alpha channel losslessly. ' .
+                    '</p>'
                 );
             ?>
         </div>
@@ -74,7 +77,7 @@
                     '<p>What? Lossless is lossless, right?. Well, that depends on how you look at it. ' .
                     'The webp conversion library has this nifty option called "near lossless preprocessing". The preproccesing manipulates ' .
                     'the image before encoding in order to help compressibility.</p>' .
-                    '<p>Note: The near-lossless option is supported by the <i>Cwebp</i> and <i>Vips</i> conversion methods.</p>' .
+                    '<p>Note that the near-lossless option only is supported by the <i>Cwebp</i> and <i>Vips</i> conversion methods.</p>' .
                     '<p>Read more about the feature <a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/converting/introduction-for-converting.md#near-lossless">here</a></p>'
                 );
             ?>
