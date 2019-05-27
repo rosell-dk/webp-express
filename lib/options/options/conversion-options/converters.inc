@@ -73,5 +73,6 @@ include 'converter-options/imagick.php';
 include 'converter-options/ewww.php';
 include 'converter-options/wpc.php';
 include 'converter-options/imagickbinary.php';
+include 'converter-options/gmagickbinary.php';
 ?>
 </td></tr>

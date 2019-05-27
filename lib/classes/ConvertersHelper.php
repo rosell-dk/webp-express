@@ -21,6 +21,9 @@ class ConvertersHelper
         ['converter' => 'imagickbinary', 'options' => [
             'use-nice' => true,
         ]],
+        ['converter' => 'gmagickbinary', 'options' => [
+            'use-nice' => true,
+        ]],
         ['converter' => 'wpc'],     // we should not set api-version default - it is handled in the javascript
         ['converter' => 'ewww'],
         ['converter' => 'imagick'],
