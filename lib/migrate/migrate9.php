@@ -133,6 +133,9 @@ function webpexpress_migrate9() {
         }
     }
 
+    // #235
+    $config['cache-control-custom'] = preg_replace('#max-age:#', 'max-age=', $config['cache-control-custom']);
+
     if (Config::saveConfigurationFileAndWodOptions($config)) {
 
         Messenger::addMessage(
