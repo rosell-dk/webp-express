@@ -148,7 +148,7 @@ png
                 '<p>What? Lossless is lossless, right?. Well, that depends on how you look at it. ' .
                 'The webp conversion library has this nifty option called "near lossless preprocessing". The preproccesing manipulates ' .
                 'the image before encoding in order to help compressibility.</p>' .
-                '<p>Note: The near-lossless option is supported by the <i>Cwebp</i> and <i>Vips</i> conversion methods.</p>' .
+                '<p>Note that the near-lossless option only is supported by the <i>Cwebp</i> and <i>Vips</i> conversion methods.</p>' .
                 '<p>Read more about the feature <a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/converting/introduction-for-converting.md#near-lossless">here</a></p>'
             );
         ?>
