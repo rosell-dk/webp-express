@@ -73,4 +73,80 @@ class ConvertersHelper
         return $first;
     }
 
+    /**
+     * Get working and active converters.
+     *
+     * @param  object  $config
+     * @return  array
+     */
+    public static function getWorkingAndActiveConverters($config) {
+        if (!isset($config['converters'])) {
+            return [];
+        }
+        $converters = $config['converters'];
+
+        if (!is_array($converters)) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($converters as $c) {
+            if (isset($c['deactivated']) && $c['deactivated']) {
+                continue;
+            }
+            if (isset($c['working']) && !$c['working']) {
+                continue;
+            }
+            $result[] = $c;
+        }
+        return $result;
+    }
+
+    /**
+     * Get converter id by converter object
+     *
+     * @param  object  $converter
+     * @return  string  converter name, or empty string if not set (it should always be set, however)
+     */
+    public static function getConverterId($converter) {
+        if (!isset($converter['converter'])) {
+            return '';
+        }
+        return $converter['converter'];
+    }
+
+    /**
+     * Get first working and active converter.
+     *
+     * @param  object  $config
+     * @return  object|false
+     */
+    public static function getFirstWorkingAndActiveConverter($config) {
+
+        $workingConverters = self::getWorkingAndActiveConverters($config);
+
+        if (count($workingConverters) == 0) {
+            return false;
+        }
+        return $workingConverters[0];
+    }
+
+    /**
+     * Get first working and active converter (name)
+     *
+     * @param  object  $config
+     * @return  string|false    id of converter, or false if no converter is working and active
+     */
+     public static function getFirstWorkingAndActiveConverterName($config) {
+         $c = self::getFirstWorkingAndActiveConverter($config);
+         if ($c === false) {
+             return false;
+         }
+         if (!isset($c['converter'])) {
+             return false;
+         }
+         return $c['converter'];
+     }
+
 }
