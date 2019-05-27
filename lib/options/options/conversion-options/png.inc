@@ -26,10 +26,10 @@
                 'However, in many cases you get better compression with lossy. So this is what the "auto" option is for. ' .
                 'With "Auto", WebP Express will try converting to both encodings ' .
                 'and select one that resulted in the smallest file.</p>' .
-                '<p>Note that only some converters supports lossless encoding. It is supported by ' .
-                'Cwebp, Vips, Imagick, Imagick binary, Gmagick binary and Remote WebP Express (if the WebP Express you are ' .
-                'connecting to are using one of these, and you are using version 0.14+). Converters ' .
-                'that does not support lossless simply ignores the "Auto" option and converts to lossy.</p>' .
+                '<p>Note that Gd and Ewww neither supports "Lossless" or "Auto". ' .
+                'Gd can only produce lossy, and will simply do that. ' .
+                'Ewww can not be configured to use a certain encoding, but automatically chooses lossless encoding for PNGs and lossy for JPEGs.' .
+                '</p>' .
                 '<p>You can read more about the option <a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/converting/introduction-for-converting.md#auto-selecting-between-losslesslossy-encoding">here</a></p>'
             );?>
         </div>
