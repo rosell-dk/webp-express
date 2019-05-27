@@ -20,8 +20,8 @@
         <?php echo helpIcon(
             '<p>The WebP format supports two types of encoding: lossy and lossless. ' .
             'With WebP you can have both transparency AND lossy encoding, so "lossy" encoding is not out of the question, just ' .
-            'because the converted file is a PNG. ' .
-            'There is no "lossy" option here, because converting all PNGs to lossy would be a bad idea. ' .
+            'because the converted file is a PNG.</p>' .
+            '<p>There is no "lossy" option in the combobox, because converting all PNGs to lossy would probably be a bad idea. ' .
             'However, in many cases you get better compression with lossy. So this is what the "auto" option is for. ' .
             'With "Auto", WebP Express will try converting to both encodings ' .
             'and select one that resulted in the smallest file.</p>' .
