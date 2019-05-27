@@ -3,37 +3,10 @@
 namespace WebPExpress;
 
 use \WebPExpress\Config;
+use \WebPExpress\ConvertersHelper;
 use \WebPExpress\Messenger;
 use \WebPExpress\Option;
 use \WebPExpress\Paths;
-
-/**
- * Get first working and active converter.
- * @return  object|false
- */
-function webpexpress_migrate9_getFirstWorkingAndActiveConverter($config) {
-
-    if (!isset($config['converters'])) {
-        return false;
-    }
-    $converters = $config['converters'];
-
-    if (!is_array($converters)) {
-        return false;
-    }
-
-    // Find first active and working.
-    foreach ($converters as $c) {
-        if (isset($c['deactivated']) && $c['deactivated']) {
-            continue;
-        }
-        if (isset($c['working']) && !$c['working']) {
-            continue;
-        }
-        return $c;
-    }
-    return false;
-}
 
 /**
  * Move a converter to the top
@@ -113,22 +86,10 @@ function webpexpress_migrate9() {
             }
         }
 
-        $firstActiveAndWorking = webpexpress_migrate9_getFirstWorkingAndActiveConverter($config);
-
-        // Find out if first working is cwebp
-        // - because Vips is better than any other converter, except perhaps cwebp
-        // (and it is ok to have a non-functional vips on the top)
-        $firstWorkingIsCwebP = false;
-        if (
-            ($firstActiveAndWorking !== false) &&
-            isset($firstActiveAndWorking['converter']) &&
-            ($firstActiveAndWorking['converter'] == 'cwebp')
-        ) {
-                $firstWorkingIsCwebP = true;
-        };
+        $firstActiveAndWorkingConverterName = ConvertersHelper::getFirstWorkingAndActiveConverterName($config);
 
         // If it aint cwebp, move vips to the top!
-        if (!$firstWorkingIsCwebP) {
+        if ($firstActiveAndWorkingConverterName != 'cwebp') {
             $vips = webpexpress_migrate9_moveConverterToTop($config, 'vips');
         }
     }
@@ -143,7 +104,7 @@ function webpexpress_migrate9() {
             'Successfully migrated <i>WebP Express</i> options for 0.14. '
         );
 
-        //Option::updateOption('webp-express-migration-version', '9');
+        Option::updateOption('webp-express-migration-version', '9');
 
     } else {
         Messenger::addMessage(
