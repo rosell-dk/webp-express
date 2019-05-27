@@ -26,7 +26,7 @@
             'With "Auto", WebP Express will try converting to both encodings ' .
             'and select one that resulted in the smallest file.</p>' .
             '<p>Note that only some converters supports lossless encoding. It is supported by ' .
-            'Cwebp, Vips, Imagick binary and Remote WebP Express (if the WebP Express you are ' .
+            'Cwebp, Vips, Imagick, Imagick binary, Gmagick binary and Remote WebP Express (if the WebP Express you are ' .
             'connecting to are using one of these, and you are using version 0.14+). Converters ' .
             'that does not support lossless simply ignores the "Auto" option and converts to lossy.</p>' .
             '<p>You can read more about the option <a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/converting/introduction-for-converting.md#auto-selecting-between-losslesslossy-encoding">here</a></p>'
@@ -55,7 +55,7 @@
             echo helpIcon(
                 'The alpha quality is the quality of the alpha channel (the tranparency layer). ' .
                 'The option is only relevant for images with alpha channel, and only relevant in lossy encoding. ' .
-                'The option is only supported by cwebp, vips and imagickbinary. It is ignored for other converters.'
+                'The option is supported by cwebp, vips, imagick, imagickbinary and gmagickbinary. It is ignored for other converters.'
             );
         ?>
     </td>
