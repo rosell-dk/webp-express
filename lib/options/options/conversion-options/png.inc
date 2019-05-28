@@ -80,19 +80,19 @@
                     '<p>Read more about the feature <a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/converting/introduction-for-converting.md#near-lossless">here</a></p>'
                 );
             ?>
-        </div>
-        <div id="png_near_lossless_div" style="display:inline-block; margin-left:10px" class="toggler effect-visibility">
-            <label>
-                "Near lossless" quality:
-            </label>
-            <input type="text" size=3 name="png-near-lossless" value="<?php echo $config['png-near-lossless'] ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
-            <?php
-                echo helpIcon(
-                    'The level of near-lossless image preprocessing (when trying lossless). ' .
-                    'You can think of it as "quality" for lossless. The range is 0 (maximum preprocessing) to 100 (no preprocessing). ' .
-                    '<a href="https://groups.google.com/a/webmproject.org/forum/#!topic/webp-discuss/0GmxDmlexek">Read this</a> to get an informed opinion about appropriate setting.'
-                );
-            ?>
+            <div id="png_near_lossless_div" style="display:inline-block; margin-left:10px" class="toggler effect-visibility">
+                <label>
+                    "Near lossless" quality:
+                </label>
+                <input type="text" size=3 name="png-near-lossless" value="<?php echo $config['png-near-lossless'] ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
+                <?php
+                    echo helpIcon(
+                        'The level of near-lossless image preprocessing (when trying lossless). ' .
+                        'You can think of it as "quality" for lossless. The range is 0 (maximum preprocessing) to 100 (no preprocessing). ' .
+                        '<a href="https://groups.google.com/a/webmproject.org/forum/#!topic/webp-discuss/0GmxDmlexek">Read this</a> to get an informed opinion about appropriate setting.'
+                    );
+                ?>
+            </div>
         </div>
     </td>
 </tr>
