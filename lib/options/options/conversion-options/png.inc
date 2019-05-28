@@ -5,7 +5,7 @@
             'The "png" settings applies when the image being converted is a png.'
         );?>
     </th>
-    <td>
+    <td id="png_td">
         <div>
             <label>
                 WebP encoding:

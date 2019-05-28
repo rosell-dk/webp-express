@@ -1,0 +1,21 @@
+#tc_content {
+    display: flex;
+}
+
+#tc_content > * {
+    width: 50%;
+}
+
+#tc_conversion_options label {
+    font-weight: bold;
+}
+
+#tc_conversion_options label + select {
+    margin-left: 6px;
+}
+
+@media (max-width:600px) {
+    #tc_content {
+        display: block;
+    }
+}

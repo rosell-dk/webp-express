@@ -6,7 +6,7 @@ use \WebPExpress\Paths;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$version = '0.14.0-beta-e';
+$version = '0.14.0-beta-g';
 
 
 if (!function_exists('webp_express_add_inline_script')) {
@@ -56,6 +56,10 @@ if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conv
     wp_register_script('bulkconvert', plugins_url('js/bulk-convert.js', __FILE__), [], $version);
     wp_enqueue_script('bulkconvert');
 
+    // bulk convert
+    wp_register_script('testconvert', plugins_url('js/test-convert.js', __FILE__), [], $version);
+    wp_enqueue_script('testconvert');
+
     // purge cache
     wp_register_script('purgecache', plugins_url('js/purge-cache.js', __FILE__), [], $version);
     wp_enqueue_script('purgecache');
@@ -72,6 +76,9 @@ wp_enqueue_script('page');
 // Register styles
 wp_register_style('webp-express-options-page-css', plugins_url('css/webp-express-options-page.css', __FILE__), null, $version);
 wp_enqueue_style('webp-express-options-page-css');
+
+wp_register_style('test-convert-css', plugins_url('css/test-convert.css', __FILE__), null, $version);
+wp_enqueue_style('test-convert-css');
 
 wp_register_style('das-popup-css', plugins_url('css/das-popup.css', __FILE__), null, $version);
 wp_enqueue_style('das-popup-css');
