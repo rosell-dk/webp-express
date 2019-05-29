@@ -382,7 +382,7 @@ APACHE
      */
     public static function getPluginUrl()
     {
-        return untrailingslashit(plugins_url('', WEBPEXPRESS_PLUGIN));
+        return untrailingslashit(plugins_url(null, WEBPEXPRESS_PLUGIN));
     }
 
     public static function getPluginUrlPath()
@@ -423,11 +423,14 @@ APACHE
         return [
             'urls' => [
                 'webpExpressRoot' => self::getPluginUrlPath(),
+                'content' => self::getContentUrlPath(),
             ],
             'filePaths' => [
                 'webpExpressRoot' => self::getWebPExpressPluginDirAbs(),
                 'destinationRoot' => self::getCacheDirAbs(),
-                'configRelToDocRoot' => self::getConfigDirRel()
+                'configRelToDocRoot' => self::getConfigDirRel(),
+                'pluginRelToDocRoot' => self::getPluginDirRel(),
+
             ]
         ];
     }

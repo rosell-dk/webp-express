@@ -6,7 +6,7 @@ use \WebPExpress\Paths;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$version = '0.14.0-beta-g';
+$version = '0.14.0-beta-i';
 
 
 if (!function_exists('webp_express_add_inline_script')) {
@@ -56,8 +56,20 @@ if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conv
     wp_register_script('bulkconvert', plugins_url('js/bulk-convert.js', __FILE__), [], $version);
     wp_enqueue_script('bulkconvert');
 
-    // bulk convert
+    // test convert
     wp_register_script('testconvert', plugins_url('js/test-convert.js', __FILE__), [], $version);
+    $canDisplayWebp = (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false ));
+
+    /*
+    AlterHTMLHelper::getWebPUrlInBase(
+        Paths::getPluginUrl() . '/webp-express',    // source url
+        Paths::getPluginUrl(),                    // base url
+        Paths::getPluginDirAbs()                    // base dir
+    );
+
+    getRelUrlPath()*/
+
+    webp_express_add_inline_script('testconvert', 'window.canDisplayWebp = ' . ($canDisplayWebp ? 'true' : 'false') . ';', 'before');
     wp_enqueue_script('testconvert');
 
     // purge cache

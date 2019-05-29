@@ -7,6 +7,7 @@ It is used by webp-on-demand.php, which does not register an auto loader. It is 
 namespace WebPExpress;
 
 use \WebPConvert\WebPConvert;
+use \WebPConvert\Convert\ConverterFactory;
 use \WebPConvert\Loggers\BufferLogger;
 use \WebPExpress\FileHelper;
 
@@ -185,15 +186,24 @@ class ConvertHelperIndependent
         $msg = '';
         $logger = new BufferLogger();
         try {
-            $success = WebPConvert::convert($source, $destination, $options, $logger);
+            if (isset($options['converter'])) {
+                $converter = ConverterFactory::makeConverter($options['converter'], $source, $destination, $options, $logger);
+                $converter->doConvert($source, $destination, $options, $logger);
+            } else {
+                WebPConvert::convert($source, $destination, $options, $logger);
+            }
+            $success = true;
         } catch (\Exception $e) {
             $msg = $e->getMessage();
         }
 
+        $log = $logger->getHtml();
+        $log = preg_replace('#' . preg_quote($_SERVER["DOCUMENT_ROOT"]) . '#', '[doc-root]', $log);
+
         return [
             'success' => $success,
             'msg' => $msg,
-            'log' => $logger->getHtml(),
+            'log' => $log,
         ];
 
     }

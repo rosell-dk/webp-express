@@ -91,6 +91,7 @@ class Config
 
             'converters' => [],
             'metadata' => 'none',
+            'log-call-arguments' => false,
             'convert-on-upload' => true,
 
             // serve options
@@ -565,9 +566,9 @@ class Config
             $wc['png']['alpha-quality'] = $config['alpha-quality'];
         }
 
-        // Metadata
+        // Other convert options
         $wc['metadata'] = $config['metadata'];
-
+        $wc['log-call-arguments'] = $config['log-call-arguments'];
 
         // Serve options
         // -------------
