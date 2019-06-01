@@ -71,7 +71,7 @@ function loadConfig($configFilename) {
 }
 
 function getSource() {
-    global $options;
+    global $wodOptions;
     global $docRoot;
 
     // First check if it is in an environment variable - thats the safest way
@@ -81,8 +81,8 @@ function getSource() {
     }
 
     // Then header
-    if (isset($options['base-htaccess-on-these-capability-tests'])) {
-        $capTests = $options['base-htaccess-on-these-capability-tests'];
+    if (isset($wodOptions['base-htaccess-on-these-capability-tests'])) {
+        $capTests = $wodOptions['base-htaccess-on-these-capability-tests'];
         $passThroughHeaderDefinitelyUnavailable = ($capTests['passThroughHeaderWorking'] === false);
         $passThrougEnvVarDefinitelyAvailable =($capTests['passThroughEnvWorking'] === true);
     } else {
@@ -162,6 +162,10 @@ function getWpContentRel() {
 $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
 $webExpressContentDirAbs = $docRoot . '/' . getWpContentRel() . '/webp-express';
 $options = loadConfig($webExpressContentDirAbs . '/config/wod-options.json');
+$wodOptions = $options['wod'];
+$serveOptions = $options['webp-convert'];
+$convertOptions = &$serveOptions['convert'];
+
 
 $source = getSource();
 //$source = getSource(false, false);
@@ -176,16 +180,16 @@ if (!file_exists($source)) {
 
 $destination = ConvertHelperIndependent::getDestination(
     $source,
-    $options['destination-folder'],
-    $options['destination-extension'],
+    $wodOptions['destination-folder'],
+    $wodOptions['destination-extension'],
     $webExpressContentDirAbs,
-    $docRoot . '/' . $options['paths']['uploadDirRel']
+    $docRoot . '/' . $wodOptions['paths']['uploadDirRel']
 );
 
 //echo $destination; exit;
-//echo '<pre>' . print_r($options, true) . '</pre>'; exit;
+//echo '<pre>' . print_r($wodOptions, true) . '</pre>'; exit;
 
-foreach ($options['converters'] as &$converter) {
+foreach ($convertOptions['converters'] as &$converter) {
     if (isset($converter['converter'])) {
         $converterId = $converter['converter'];
     } else {
@@ -196,17 +200,17 @@ foreach ($options['converters'] as &$converter) {
     }
 }
 
-if ($options['forward-query-string']) {
+if ($wodOptions['forward-query-string']) {
     if (isset($_GET['debug'])) {
-        $options['show-report'] = true;
+        $serveOptions['show-report'] = true;
     }
     if (isset($_GET['reconvert'])) {
-        $options['reconvert'] = true;
+        $serveOptions['reconvert'] = true;
     }
 }
 
-if (isset($options['success-response']) && ($options['success-response'] == 'original')) {
-    $options['serve-original'] = true;
+if (isset($wodOptions['success-response']) && ($wodOptions['success-response'] == 'original')) {
+    $serveOptions['serve-original'] = true;
 }
 
 include_once __DIR__ . '/../vendor/autoload.php';
@@ -215,4 +219,4 @@ include_once __DIR__ . '/../vendor/autoload.php';
 ini_set('display_errors', 0);
 error_reporting(0);
 
-WebPConvert::serveConverted($source, $destination, $options);
+WebPConvert::serveConverted($source, $destination, $serveOptions);

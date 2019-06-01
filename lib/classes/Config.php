@@ -91,7 +91,7 @@ class Config
 
             'converters' => [],
             'metadata' => 'none',
-            'log-call-arguments' => false,
+            //'log-call-arguments' => true,
             'convert-on-upload' => true,
 
             // serve options
@@ -568,7 +568,7 @@ class Config
 
         // Other convert options
         $wc['metadata'] = $config['metadata'];
-        $wc['log-call-arguments'] = $config['log-call-arguments'];
+        $wc['log-call-arguments'] = true; // $config['log-call-arguments'];
 
         // Serve options
         // -------------
@@ -597,12 +597,20 @@ class Config
         // Put it all together
         // -------------
 
-        $options = array_merge($wc, $serve, $wod);
+        //$options = array_merge($wc, $serve, $wod);
 
         // I'd like to put the webp-convert options in its own key,
         // but it requires some work. Postponing it to another day that I can uncomment the two next lines (and remove the one above)
         //$wc = array_merge($wc, $serve);
         //$options = array_merge($wod, ['webp-convert' => $wc]);
+
+        //$options = array_merge($wod, array_merge($serve, ['conversion' => $wc]));
+
+        $options = [
+            'wod' => $wod,
+            'webp-convert' => array_merge($serve, ['convert' => $wc])
+        ];
+
 
         return $options;
     }

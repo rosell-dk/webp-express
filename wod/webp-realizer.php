@@ -76,7 +76,6 @@ function getDestinationRealPath($dest) {
 }*/
 
 function getDestination() {
-    global $options;
     global $docRoot;
 
     // First check if it is in an environment variable - thats the safest way
@@ -147,6 +146,9 @@ function getWpContentRel() {
 $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
 $webExpressContentDirAbs = $docRoot . '/' . getWpContentRel() . '/webp-express';
 $options = loadConfig($webExpressContentDirAbs . '/config/wod-options.json');
+$wodOptions = $options['wod'];
+$serveOptions = $options['webp-convert'];
+$convertOptions = &$serveOptions['convert'];
 
 $destination = getDestination();
 
@@ -154,8 +156,8 @@ $destination = getDestination();
 
 $source = ConvertHelperIndependent::findSource(
     $destination,
-    $options['destination-folder'],
-    $options['destination-extension'],
+    $wodOptions['destination-folder'],
+    $wodOptions['destination-extension'],
     $webExpressContentDirAbs
 );
 
@@ -168,7 +170,7 @@ if ($source === false) {
     //echo 'destination requested:<br><i>' . $destination . '</i>';
 }
 
-foreach ($options['converters'] as &$converter) {
+foreach ($convertOptions['converters'] as &$converter) {
     if (isset($converter['converter'])) {
         $converterId = $converter['converter'];
     } else {
@@ -179,18 +181,18 @@ foreach ($options['converters'] as &$converter) {
     }
 }
 
-if ($options['forward-query-string']) {
+if ($wodOptions['forward-query-string']) {
     if (isset($_GET['debug'])) {
-        $options['show-report'] = true;
+        $serveOptions['show-report'] = true;
     }
     if (isset($_GET['reconvert'])) {
         $options['reconvert'] = true;
     }
 }
 
-$options['add-vary-header'] = false;
-$options['fail'] = '404';
-$options['fail-when-fail-fails'] = '404';
+$serveOptions['add-vary-header'] = false;
+$serveOptions['fail'] = '404';
+$serveOptions['fail-when-fail-fails'] = '404';
 //$options['show-report'] = true;
 
 /*
@@ -208,7 +210,7 @@ error_reporting(0);
 
 // TODO: error_log()
 
-WebPConvert::serveConverted($source, $destination, $options);
+WebPConvert::serveConverted($source, $destination, $serveOptions);
 
 
 //echo "<pre>source: $source \ndestination: $destination \n\noptions:" . print_r($options, true) . '</pre>'; exit;
