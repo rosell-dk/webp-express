@@ -92,7 +92,7 @@ png
                 }
                 */
             ?>
-            <div id="max_quality_div" style="margin-left:10px">
+            <div id="max_quality_div" style="margin-left:10px;display:inline-block" class="toggler effect-visibility">
                 <label>
                     Limit:
                 </label>
@@ -118,7 +118,7 @@ png
                 ?>
             </div>
 
-            <div id="quality_specific_div">
+            <div id="quality_specific_div" style="display:inline-block" class="toggler effect-visibility">
                 <input type="text" size=3 name="quality-specific" value="<?php echo $config['quality-specific'] ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
                 <?php
                     echo helpIcon('Enter number (0 - 100)');

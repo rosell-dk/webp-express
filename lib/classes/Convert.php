@@ -8,6 +8,7 @@ namespace WebPExpress;
 
 use \WebPExpress\ConvertHelperIndependent;
 use \WebPExpress\Config;
+use \WebpExpress\ConvertersHelper;
 
 class Convert
 {
@@ -26,19 +27,22 @@ class Convert
         );
     }
 
-    public static function convertFile($source, $config = null)
+    public static function convertFile($source, $config = null, $convertOptions = null, $converter = null)
     {
         if (is_null($config)) {
             $config = Config::loadConfigAndFix();
         }
-        $options = Config::generateWodOptionsFromConfigObj($config);
-        if (isset($config['converter'])) {
-            $options['converter'] = $config['converter'];    
+        if (is_null($convertOptions)) {
+            $convertOptions = Config::generateWodOptionsFromConfigObj($config)['webp-convert']['convert'];
         }
+        /*
+        if (isset($config['converter'])) {
+            $options['convert']['converter'] = $config['converter'];
+        }*/
 
         $destination = self::getDestination($source, $config);
 
-        $result = ConvertHelperIndependent::convert($source, $destination, $options);
+        $result = ConvertHelperIndependent::convert($source, $destination, $convertOptions, $converter);
 
         //$result['destination'] = $destination;
         if ($result['success'] === true) {
@@ -68,18 +72,34 @@ class Convert
         if (isset($_POST['config-overrides'])) {
             $config = Config::loadConfigAndFix();
 
+            // overrides
             $overrides = $_POST['config-overrides'];
-
-            // We got crazy encoding, perhaps by jQuery. Clean it up
-            $overrides = preg_replace('/\\\\"/', '"', $overrides);
+            $overrides = preg_replace('/\\\\"/', '"', $overrides); // We got crazy encoding, perhaps by jQuery. This cleans it up
             $overrides = json_decode($overrides, true);
-
+            
             $config = array_merge($config, $overrides);
 
+            // single converter
+            $converter = null;
+            $convertOptions = null;
             if (isset($_POST['converter'])) {
-                $config['converter'] = $_POST['converter'];
+                $converter = $_POST['converter'];
+
+                // find converter
+                $c = ConvertersHelper::getConverterById($config, $converter);
+                if ($c !== false) {
+
+                    $convertOptions = Config::generateWodOptionsFromConfigObj($config)['webp-convert']['convert'];
+                    $convertOptions = array_merge($convertOptions, $c['options']);
+                    unset($convertOptions['converters']);
+
+                    $config = array_merge($config, $c['options']);
+                    //echo 'options: <pre>' . print_r($convertOptions, true) . '</pre>'; exit;
+                    //echo 'options: <pre>' . print_r($c['options'], true) . '</pre>'; exit;
+                }
             }
-            $result = self::convertFile($filename, $config);
+
+            $result = self::convertFile($filename, $config, $convertOptions, $converter);
 
         } else {
             $result = self::convertFile($filename);

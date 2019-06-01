@@ -74,6 +74,33 @@ class ConvertersHelper
     }
 
     /**
+     * Get converter by id
+     *
+     * @param  object  $config
+     * @return  array|false  converter object
+     */
+    public static function getConverterById($config, $id) {
+        if (!isset($config['converters'])) {
+            return false;
+        }
+        $converters = $config['converters'];
+
+        if (!is_array($converters)) {
+            return false;
+        }
+
+        foreach ($converters as $c) {
+            if (!isset($c['converter'])) {
+                continue;
+            }
+            if ($c['converter'] == $id) {
+                return $c;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get working and active converters.
      *
      * @param  object  $config

@@ -179,18 +179,23 @@ class ConvertHelperIndependent
         }
     }
 
-    public static function convert($source, $destination, $options) {
+    /**
+     *  To convert with a specific converter, set it in the $converter param.
+     */
+    public static function convert($source, $destination, $convertOptions, $converter = null) {
         include_once __DIR__ . '/../../vendor/autoload.php';
 
         $success = false;
         $msg = '';
         $logger = new BufferLogger();
         try {
-            if (isset($options['converter'])) {
-                $converter = ConverterFactory::makeConverter($options['converter'], $source, $destination, $options, $logger);
-                $converter->doConvert($source, $destination, $options, $logger);
+            if (!is_null($converter)) {
+            //if (isset($convertOptions['converter'])) {
+                //print_r($convertOptions);exit;
+                $converter = ConverterFactory::makeConverter($converter, $source, $destination, $convertOptions, $logger);
+                $converter->doConvert();
             } else {
-                WebPConvert::convert($source, $destination, $options, $logger);
+                WebPConvert::convert($source, $destination, $convertOptions, $logger);
             }
             $success = true;
         } catch (\Exception $e) {
@@ -198,6 +203,8 @@ class ConvertHelperIndependent
         }
 
         $log = $logger->getHtml();
+        //print_r($log); exit;
+        //print_r($convertOptions); exit;
         $log = preg_replace('#' . preg_quote($_SERVER["DOCUMENT_ROOT"]) . '#', '[doc-root]', $log);
 
         return [

@@ -6,7 +6,7 @@ use \WebPExpress\Paths;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$version = '0.14.0-beta-i';
+$version = '0.14.0-beta-p';
 
 
 if (!function_exists('webp_express_add_inline_script')) {
@@ -71,6 +71,10 @@ if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conv
 
     webp_express_add_inline_script('testconvert', 'window.canDisplayWebp = ' . ($canDisplayWebp ? 'true' : 'false') . ';', 'before');
     wp_enqueue_script('testconvert');
+
+    wp_register_script('image-comparison-slider', plugins_url('js/image-comparison-slider.js', __FILE__), [], $version);
+    wp_enqueue_script('image-comparison-slider');
+
 
     // purge cache
     wp_register_script('purgecache', plugins_url('js/purge-cache.js', __FILE__), [], $version);
