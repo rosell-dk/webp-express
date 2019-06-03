@@ -572,9 +572,22 @@ class Config
 
         // Serve options
         // -------------
-        $serve = [];
-        if (isset($config['cache-control'])) {
-            $serve['cache-control-header'] = self::getCacheControlHeader($config);
+        $serve = [
+            'serve-image' => [
+                'headers' => [
+                    'cache-control' => false,
+                    'content-length' => true,
+                    'content-type' => true,
+                    'expires' => false,
+                    'last-modified' => true,
+                    //'vary-accept' => false        // This must be different for webp-on-demand and webp-realizer
+                ]
+            ]
+        ];
+        if ($config['cache-control'] != 'no-header') {
+            $serve['serve-image']['cache-control-header'] = self::getCacheControlHeader($config);
+            $serve['serve-image']['headers']['cache-control'] = true;
+            $serve['serve-image']['headers']['expires'] = true;
         }
         $serve['fail'] = $config['fail'];
 
