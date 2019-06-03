@@ -10,6 +10,7 @@ use \WebPConvert\WebPConvert;
 use \WebPConvert\Convert\ConverterFactory;
 use \WebPConvert\Loggers\BufferLogger;
 use \WebPExpress\FileHelper;
+use WebPConvert\Exceptions\WebPConvertException;
 
 
 class ConvertHelperIndependent
@@ -198,8 +199,14 @@ class ConvertHelperIndependent
                 WebPConvert::convert($source, $destination, $convertOptions, $logger);
             }
             $success = true;
-        } catch (\Exception $e) {
+        } catch (\WebpConvert\Exceptions\WebPConvertException $e) {
             $msg = $e->getMessage();
+        } catch (\Exception $e) {
+            $msg = 'An exception was thrown!';
+        } catch (Throwable $e) {
+            //Executed only in PHP 7, will not match in PHP 5
+            //$msg = $e->getMessage();
+            //$msg = 'oh no';
         }
 
         $log = $logger->getHtml();
