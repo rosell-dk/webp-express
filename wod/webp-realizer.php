@@ -194,6 +194,7 @@ $serveOptions['add-vary-header'] = false;
 $serveOptions['fail'] = '404';
 $serveOptions['fail-when-fail-fails'] = '404';
 //$options['show-report'] = true;
+$serveOptions['serve-image']['headers']['vary-accept'] = false;
 
 /*
 function aboutToServeImageCallBack($servingWhat, $whyServingThis, $obj) {
@@ -209,6 +210,7 @@ ini_set('display_errors', 0);
 error_reporting(0);
 
 // TODO: error_log()
+
 
 WebPConvert::serveConverted($source, $destination, $serveOptions);
 
