@@ -194,6 +194,10 @@ class HTAccess
         //$rules .= "# The following SetEnv allows to diagnose if .htaccess files are turned off\n";
         //$rules .= "SetEnv HTACCESS on\n\n";
         */
+        $rules .= "# The rules below are a result of the WebP Express options, Wordpress configuration and the following .htaccess capability tests:\n" .
+            "# - mod_header working?: " . ($capTests['modHeaderWorking'] === true ? 'yes' : ($capTests['modHeaderWorking'] === false ? 'no' : 'could not be determined')) . "\n" .
+            "# - pass variable from .htaccess to script through header working?: " . ($capTests['passThroughHeaderWorking'] === true ? 'yes' : ($capTests['passThroughHeaderWorking'] === false ? 'no' : 'could not be determined')) . "\n" .
+            "# - pass variable from .htaccess to script through environment variable working?: " . ($capTests['passThroughEnvWorking'] === true ? 'yes' : ($capTests['passThroughEnvWorking'] === false ? 'no' : 'could not be determined')) . "\n";
 
         $rules .= "<IfModule mod_rewrite.c>\n" .
         "  RewriteEngine On\n\n";
