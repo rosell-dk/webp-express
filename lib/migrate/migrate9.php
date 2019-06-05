@@ -97,13 +97,17 @@ function webpexpress_migrate9() {
     // #235
     $config['cache-control-custom'] = preg_replace('#max-age:#', 'max-age=', $config['cache-control-custom']);
 
-    if (Config::saveConfigurationFileAndWodOptions($config)) {
+    // Force htaccess ?
+    $forceHtaccessRegeneration = $config['redirect-to-existing-in-htaccess'];
 
+    // Save both configs and perhaps also htaccess
+    $result = Config::saveConfigurationAndHTAccess($config, $forceHtaccessRegeneration);
+
+    if ($result['saved-both-config']) {
         Messenger::addMessage(
             'info',
             'Successfully migrated <i>WebP Express</i> options for 0.14. '
         );
-
         Option::updateOption('webp-express-migration-version', '9');
 
     } else {
