@@ -111,7 +111,8 @@ if ($_POST['operation-mode'] != 'no-conversion') {
     // --------
     $config['png-encoding'] = sanitize_text_field($_POST['png-encoding']);
 
-    $config['quality-png'] = webp_express_sanitize_quality_field($_POST['quality-png']);
+    // TODO: ERRORS!
+    $config['png-quality'] = webp_express_sanitize_quality_field($_POST['png-quality']);
     $pngEnableNearLossless = (isset($_POST['png-enable-near-lossless']) && ($_POST['png-enable-near-lossless'] == 'on'));
     $config['png-enable-near-lossless'] = $pngEnableNearLossless;
     $config['png-near-lossless'] = webp_express_sanitize_quality_field($_POST['png-near-lossless']);
