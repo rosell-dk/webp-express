@@ -36,6 +36,16 @@ if (CapabilityTest::copyCapabilityTestsToWpContent()) {
 }*/
 
 
+if ($config['redirect-to-existing-in-htaccess']) {
+    if (PlatformInfo::isApacheOrLiteSpeed() && isset($config['base-htaccess-on-these-capability-tests']['modHeaderWorking']) && ($config['base-htaccess-on-these-capability-tests']['modHeaderWorking'] == false)) {
+        Messenger::printMessage(
+            'warning',
+                'It seems your server setup does not support headers in <i>.htaccess</i>. You should either fix this (install <i>mod_headers</i>) <i>or</i> ' .
+                    'deactivate the "Enable direct redirection to existing converted images?" option. Otherwise the <i>Vary:Accept</i> header ' .
+                    'will not be added and this can result in problems for users behind proxy servers (ie used in larger companies)'
+        );
+    }
+}
 
 $anyRedirectionToConverterEnabled = (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer']));
 $anyRedirectionEnabled = ($anyRedirectionToConverterEnabled || $config['redirect-to-existing-in-htaccess']);
@@ -68,7 +78,6 @@ if ($cacheEnablerActivated && !$webpEnabled) {
 
 if (($config['operation-mode'] == 'cdn-friendly') && !$config['alter-html']['enabled']) {
     //echo print_r(get_option('cache-enabler'), true);
-
 
     if ($cacheEnablerActivated) {
         if ($webpEnabled) {
