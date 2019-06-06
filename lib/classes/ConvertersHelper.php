@@ -16,7 +16,7 @@ class ConvertersHelper
         ]],
         ['converter' => 'vips', 'options' => [
             'smart-subsample' => false,
-            'preset' => null
+            'preset' => 'none'
         ]],
         ['converter' => 'imagemagick', 'options' => [
             'use-nice' => true,
@@ -30,7 +30,6 @@ class ConvertersHelper
         ['converter' => 'gmagick'],
         ['converter' => 'gd', 'options' => [
             'skip-pngs' => false,
-            'preset' => 'disable'
         ]],
     ];
 
