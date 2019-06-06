@@ -66,6 +66,7 @@ class AdminInit
         add_action("admin_post_webpexpress_settings_submit", array('\WebPExpress\OptionsPageHooks', 'submitHandler'));
         add_action("admin_init", array('\WebPExpress\AdminInit', 'adminInitHandler'));
 
+
         // Print pending messages, if any
         if (Option::getOption('webp-express-messages-pending')) {
             add_action(Multisite::isNetworkActivated() ? 'network_admin_notices' : 'admin_notices', array('\WebPExpress\Messenger', 'printPendingMessages'));
@@ -81,6 +82,7 @@ class AdminInit
         add_action('wp_ajax_list_unconverted_files', array('\WebPExpress\BulkConvert', 'processAjaxListUnconvertedFiles'));
         add_action('wp_ajax_convert_file', array('\WebPExpress\Convert', 'processAjaxConvertFile'));
         add_action('wp_ajax_webpexpress_purge_cache', array('\WebPExpress\CachePurge', 'processAjaxPurgeCache'));
+        add_action('wp_ajax_webpexpress_dismiss_message', array('\WebPExpress\Messenger', 'processAjaxDismissMessage'));
 
         // PS:
         // Filters for processing upload hooks in order to convert images upon upload (wp_handle_upload / image_make_intermediate_size)

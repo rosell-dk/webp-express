@@ -10,13 +10,15 @@ class Messenger
     private static $printedStyles = false;
 
     /**
-     *  $level:  info | success | warning | error
-     *  $msg:    the message (not translated)
+     *  @param string   $level    (info | success | warning | error)
+     *  @param string   $msg      the message (not translated)
+     *  @param int      $id       id (only relevant for "sticky" messages
+     *  @param boolean  $sticky   a sticky message can only go away by clicking a dismiss button
      *
      *  Hm... we should add some sprintf-like support
      *  $msg = sprintf(__( 'You are on a very old version of PHP (%s). WebP Express may not work as intended.', 'webp-express' ), phpversion());
      */
-    public static function addMessage($level, $msg) {
+    public static function addMessage($level, $msg, $id=0, $sticky = false) {
         //error_log('add message:' . $msg);
 
         Option::updateOption('webp-express-messages-pending', true, true);  // We want this option to be autoloaded
@@ -28,8 +30,19 @@ class Messenger
                 return;
             }
         }
-        $pendingMessages[] = ['level' => $level, 'message' => $msg];
+        $pendingMessages[] = ['level' => $level, 'message' => $msg, 'id' => $id, 'sticky' => $sticky];
         State::setState('pendingMessages', $pendingMessages);
+    }
+
+    public static function addStickyMessage($level, $msg, $id, $gotItText = '')
+    {
+        if ($gotItText != '') {
+            $javascript = "jQuery.post(ajaxurl, {'action': 'webpexpress_dismiss_message', 'id': " . $id . "});";
+            $javascript .= "jQuery(this).parentsUntil('div.notice').parent().hide();";
+
+            $msg .= '<br><br><button type="button" class="button button-primary" onclick="' . $javascript . '">' . $gotItText . '</button>';
+        }
+        self::addMessage($level, $msg, $id, true);
     }
 
     public static function printMessage($level, $msg) {
@@ -46,7 +59,8 @@ class Messenger
         //$msg = __( $msg, 'webp-express');     // uncommented. We should add some sprintf-like functionality before making the plugin translatable
         printf(
           '<div class="%1$s"><p>%2$s</p></div>',
-          esc_attr('notice notice-' . $level . ' is-dismissible'),
+          //esc_attr('notice notice-' . $level . ' is-dismissible'),
+          esc_attr('notice notice-' . $level),
           $msg
         );
     }
@@ -66,7 +80,7 @@ class Messenger
         .notice-error {
             border-left-color: #dc3232;
         }
-        .notice-success {
+        .notice-success {esc_attr('notice notice-' . $level . ' is-dismissible'),
             border-left-color: #46b450;
         }
         .notice-info {
@@ -83,11 +97,35 @@ class Messenger
 
         $messages = State::getState('pendingMessages', []);
 
+        $stickyMessages = [];
         foreach ($messages as $message) {
             self::printMessage($message['level'], $message['message']);
+            if (isset($message['sticky']) && ($message['sticky'] === true)) {
+                $stickyMessages[] = $message;
+            }
         }
 
-        State::setState('pendingMessages', []);
-        Option::updateOption('webp-express-messages-pending', false, true);
+        State::setState('pendingMessages', $stickyMessages);
+        //State::setState('pendingMessages', []);
+
+        if (count($stickyMessages) == 0) {
+            Option::updateOption('webp-express-messages-pending', false, true);
+        }
+    }
+
+    public static function processAjaxDismissMessage() {
+        $id = intval($_POST['id']);
+        error_log('deleting:' . $id);
+
+        $messages = State::getState('pendingMessages', []);
+        $newQueue = [];
+        foreach ($messages as $message) {
+            if ($message['sticky'] && $message['id'] == $id) {
+
+            } else {
+                $newQueue[] = $message;
+            }
+        }
+        State::setState('pendingMessages', $newQueue);
     }
 }

@@ -107,11 +107,63 @@ function webpexpress_migrate9() {
             }
         }
 
-        $firstActiveAndWorkingConverterName = ConvertersHelper::getFirstWorkingAndActiveConverterName($config);
+        $firstActiveAndWorkingConverterId = ConvertersHelper::getFirstWorkingAndActiveConverterId($config);
 
         // If it aint cwebp, move vips to the top!
-        if ($firstActiveAndWorkingConverterName != 'cwebp') {
+        if ($firstActiveAndWorkingConverterId != 'cwebp') {
             $vips = webpexpress_migrate9_moveConverterToTop($config, 'vips');
+        }
+
+        if ($config['image-types'] == 1) {
+            Messenger::addStickyMessage(
+                'info',
+                'WebP Express 0.14 handles PNG to WebP conversions quite well. Perhaps it is time to enable PNGs? ' .
+                    'Go to the <a href="' . Paths::getSettingsUrl() . '">options</a> page to change the "Image types to work on" option.',
+                2,
+                'Got it!'
+            );
+
+        }
+
+        $convertersSupportingEncodingAuto = ['cwebp', 'vips', 'imagick', 'imagemagick', 'gmagick', 'graphicsmagick'];
+
+        if (in_array($firstActiveAndWorkingConverterId, $convertersSupportingEncodingAuto)) {
+            Messenger::addStickyMessage(
+                'info',
+                'WebP Express 0.14 has new options for the conversions. Especially, it can now produce lossless webps, and ' .
+                    'it can automatically try both lossy and lossless and select the smallest. You can play around with the ' .
+                    'new options when your click "test" next to a converter. Once satisfied, dont forget to ' .
+                    'wipe your existing converted files (there is a "Delete converted files" button for that on the ' .
+                    '<a href="' . Paths::getSettingsUrl() . '">options page</a>)',
+                1,
+                'Got it!'
+            );
+        } else {
+            //error_log('working converters: ' . print_r(ConvertersHelper::getWorkingConverterIds($config), true));
+            $workingIds = ConvertersHelper::getWorkingConverterIds($config);
+
+            if ($firstActiveAndWorkingConverterId == 'gd') {
+                foreach ($workingIds as $workingId) {
+                    if (in_array($workingId, $convertersSupportingEncodingAuto)) {
+                        Messenger::addStickyMessage(
+                            'info',
+                            'WebP Express 0.14 has new options for the conversions. Especially, it can now produce lossless webps, and ' .
+                                'it can automatically try both lossy and lossless and select the smallest. You can play around with the ' .
+                                'new options when your click "test" next to a converter. Once satisfied, dont forget to ' .
+                                'wipe your existing converted files (there is a "Delete converted files" button for that on the ' .
+                                '<a href="' . Paths::getSettingsUrl() . '">options page</a>). ' .
+                                '<br><br>Btw: The "gd" conversion method that you are using does not support lossless encoding ' .
+                                '(in fact Gd only supports very few conversion options), but fortunately, you have the ' .
+                                '"' . $workingId . '" conversion method working, so you can simply start using that instead.',
+                            1,
+                            'Got it!'
+                        );
+                        break;
+                    }
+                }
+
+            }
+            //
         }
     }
 
@@ -137,6 +189,7 @@ function webpexpress_migrate9() {
             'Failed migrating webp express options to 0.14+. Probably you need to grant write permissions in your wp-content folder.'
         );
     }
+
 }
 
 webpexpress_migrate9();

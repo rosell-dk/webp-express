@@ -109,6 +109,43 @@ class ConvertersHelper
     }
 
     /**
+     * Get working converters.
+     *
+     * @param  object  $config
+     * @return  array
+     */
+    public static function getWorkingConverters($config) {
+        if (!isset($config['converters'])) {
+            return [];
+        }
+        $converters = $config['converters'];
+
+        if (!is_array($converters)) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($converters as $c) {
+            if (isset($c['working']) && !$c['working']) {
+                continue;
+            }
+            $result[] = $c;
+        }
+        return $result;
+    }
+
+    public static function getWorkingConverterIds($config)
+    {
+        $converters = self::getWorkingConverters($config);
+        $result = [];
+        foreach ($converters as $converter) {
+            $result[] = $converter['converter'];
+        }
+        return $result;
+    }
+
+    /**
      * Get working and active converters.
      *
      * @param  object  $config
@@ -173,7 +210,7 @@ class ConvertersHelper
      * @param  object  $config
      * @return  string|false    id of converter, or false if no converter is working and active
      */
-     public static function getFirstWorkingAndActiveConverterName($config) {
+     public static function getFirstWorkingAndActiveConverterId($config) {
          $c = self::getFirstWorkingAndActiveConverter($config);
          if ($c === false) {
              return false;
