@@ -293,14 +293,14 @@ input + .help {
 
 .converter-options.wpc div,
 .converter-options.vips div,
-.converter-options.imagickbinary div,
-.converter-options.gmagickbinary div {
+.converter-options.imagemagick div,
+.converter-options.graphicsmagick div {
     margin-bottom: 5px;
 }
 .converter-options.vips label,
 .converter-options.wpc label,
-.converter-options.imagickbinary label,
-.converter-options.gmagickbinary label {
+.converter-options.imagemagick label,
+.converter-options.graphicsmagick label {
     display: inline-block;
 }
 .converter-options.wpc label {
@@ -309,8 +309,8 @@ input + .help {
 .converter-options.vips label {
     width: 143px;
 }
-.converter-options.imagickbinary label,
-.converter-options.gmagickbinary label {
+.converter-options.imagemagick label,
+.converter-options.graphicsmagick label {
     width: 110px;
 }
 #wpc_url {

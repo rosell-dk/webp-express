@@ -49,6 +49,20 @@ function webpexpress_migrate9() {
     $converters = &$config['converters'];
     if (is_array($converters)) {
 
+
+        foreach ($converters as $i => $converter) {
+            if (!isset($converter['converter'])) {
+                continue;
+            }
+            if ($converter['converter'] == 'gmagickbinary') {
+                $converters[$i]['converter'] = 'graphicsmagick';
+            }
+            if ($converter['converter'] == 'imagickbinary') {
+                $converters[$i]['converter'] = 'imagemagick';
+            }
+        }
+
+        // Change specific converter options
         foreach ($converters as &$converter) {
             if (!isset($converter['converter'])) {
                 continue;
@@ -83,6 +97,13 @@ function webpexpress_migrate9() {
                         unset($options['key-2']);
                     }
                     break;
+                    /*
+                case 'gmagickbinary':
+                    $converter['converter'] = 'graphicsmagick';
+                    break;
+                case 'imagickbinary':
+                    $converter['converter'] = 'imagemagick';
+                    break;*/
             }
         }
 

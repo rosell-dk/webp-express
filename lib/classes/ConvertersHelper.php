@@ -18,10 +18,10 @@ class ConvertersHelper
             'smart-subsample' => false,
             'preset' => null
         ]],
-        ['converter' => 'imagickbinary', 'options' => [
+        ['converter' => 'imagemagick', 'options' => [
             'use-nice' => true,
         ]],
-        ['converter' => 'gmagickbinary', 'options' => [
+        ['converter' => 'graphicsmagick', 'options' => [
             'use-nice' => true,
         ]],
         ['converter' => 'wpc'],     // we should not set api-version default - it is handled in the javascript
@@ -66,6 +66,14 @@ class ConvertersHelper
         $second = self::normalize($second);
 
         foreach ($second as $converter) {
+            // migrate9 and this functionality could create two converters.
+            // so, for a while, skip graphicsmagick and imagemagick
+            if ($converter['converter'] == 'graphicsmagick') {
+                continue;
+            }
+            if ($converter['converter'] == 'imagemagick') {
+                continue;
+            }
             if (!in_array($converter['converter'], $namesInFirst)) {
                 $first[] = $converter;
             }

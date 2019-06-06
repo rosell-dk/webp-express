@@ -1,24 +1,24 @@
-<div id="imagickbinary" style="display:none;">
-    <div class="imagickbinary converter-options">
+<div id="imagemagick" style="display:none;">
+    <div class="imagemagick converter-options">
 
-      <h3>Imagick binary options</h3>
-      <p>This conversion method works by executing imagick binary (the 'convert' command).</p>
+      <h3>ImageMagick options</h3>
+      <p>This conversion method works by executing imagemagick binary (the 'convert' command).</p>
 
       <div>
-          <label for="imagickbinary_use_nice">
+          <label for="imagemagick_use_nice">
               Use nice
               <?php echo helpIcon(
                   'Enabling this option saves system resources at the cost of slightly slower conversion.'
               ); ?>
           </label>
-          <input type="checkbox" id="imagickbinary_use_nice">
+          <input type="checkbox" id="imagemagick_use_nice">
       </div>
       <br>
       <?php
       /*
       Removed (#243)
       if (!$canDetectQuality) {
-          printAutoQualityOptionForConverter('imagickbinary');
+          printAutoQualityOptionForConverter('imagemagick');
       }*/
       ?>
       <!--

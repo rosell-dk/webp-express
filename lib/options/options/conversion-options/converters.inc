@@ -30,8 +30,8 @@
             include 'converter-options/imagick.php';
             include 'converter-options/ewww.php';
             include 'converter-options/wpc.php';
-            include 'converter-options/imagickbinary.php';
-            include 'converter-options/gmagickbinary.php';
+            include 'converter-options/imagemagick.php';
+            include 'converter-options/graphicsmagick.php';
         ?>
     </td>
 </tr>
