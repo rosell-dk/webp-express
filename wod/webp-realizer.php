@@ -204,15 +204,14 @@ function aboutToServeImageCallBack($servingWhat, $whyServingThis, $obj) {
 }
 */
 
-include_once __DIR__ . '/../vendor/autoload.php';
+ConvertHelperIndependent::serveConverted(
+    $source,
+    $destination,
+    $serveOptions,
+    $webExpressContentDirAbs . '/log',
+    'Conversion triggered with the conversion script (wod/webp-realizer.php)'
+);
 
-ini_set('display_errors', 0);
-error_reporting(0);
-
-// TODO: error_log()
-
-
-WebPConvert::serveConverted($source, $destination, $serveOptions);
 
 
 //echo "<pre>source: $source \ndestination: $destination \n\noptions:" . print_r($options, true) . '</pre>'; exit;

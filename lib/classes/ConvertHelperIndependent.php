@@ -180,10 +180,45 @@ class ConvertHelperIndependent
         }
     }
 
+    public static function saveLog($source, $logDir, $text, $msgTop)
+    {
+        $logDir .= '/conversions';
+         
+        $text = preg_replace('#' . preg_quote($_SERVER["DOCUMENT_ROOT"]) . '#', '[doc-root]', $text);
+
+        $text = $msgTop . ', ' . date("Y-m-d H:i:s") . "\n\r\n\r" . $text;
+
+        // Calculate path for log file
+        // ---------------------------
+        $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
+
+        // Check if source is residing inside document root.
+        // (it is, if path starts with document root + '/')
+        if (self::sourceIsInsideDocRoot($source, $docRoot) ) {
+
+            // We store relative to document root.
+            // "Eat" the left part off the source parameter which contains the document root.
+            // and also eat the slash (+1)
+            $sourceRel = substr($source, strlen($docRoot) + 1);
+            $logFile = $logDir . '/doc-root/' . $sourceRel . '.md';
+        } else {
+            // Source file is residing outside document root.
+            // we must add complete path to structure
+            $logFile = $logDir . '/abs' . $source . '.md';
+        }
+        $logFolder = @dirname($logFile);
+        if (!@file_exists($logFolder)) {
+            mkdir($logFolder, 0777, true);
+        }
+        if (@file_exists($logFolder)) {
+            file_put_contents($logFile, $text);
+        }
+    }
+
     /**
      *  To convert with a specific converter, set it in the $converter param.
      */
-    public static function convert($source, $destination, $convertOptions, $converter = null) {
+    public static function convert($source, $destination, $convertOptions, $logDir, $converter = null) {
         include_once __DIR__ . '/../../vendor/autoload.php';
 
         $success = false;
@@ -193,6 +228,8 @@ class ConvertHelperIndependent
             if (!is_null($converter)) {
             //if (isset($convertOptions['converter'])) {
                 //print_r($convertOptions);exit;
+                $logger->logLn('Converter set to: ' . $converter);
+                $logger->logLn('');
                 $converter = ConverterFactory::makeConverter($converter, $source, $destination, $convertOptions, $logger);
                 $converter->doConvert();
             } else {
@@ -209,17 +246,32 @@ class ConvertHelperIndependent
             //$msg = 'oh no';
         }
 
-        $log = $logger->getHtml();
-        //print_r($log); exit;
-        //print_r($convertOptions); exit;
-        $log = preg_replace('#' . preg_quote($_SERVER["DOCUMENT_ROOT"]) . '#', '[doc-root]', $log);
+        self::saveLog($source, $logDir, $logger->getMarkDown("\n\r"), 'Conversion triggered using bulk conversion');
 
         return [
             'success' => $success,
             'msg' => $msg,
-            'log' => $log,
+            'log' => $logger->getHtml(),
         ];
 
     }
 
+    public static function serveConverted($source, $destination, $serveOptions, $logDir, $logMsgTop = '')
+    {
+        include_once __DIR__ . '/../../vendor/autoload.php';
+
+        // TODO: error_log()
+        //ini_set('display_errors', 0);
+        //error_reporting(0);
+
+        //echo '<pre>' . print_r($serveOptions, true) . '</pre>'; exit;
+
+        $convertLogger = new BufferLogger();
+        WebPConvert::serveConverted($source, $destination, $serveOptions, null, $convertLogger);
+        $convertLog = $convertLogger->getMarkDown("\n\r");
+        if ($convertLog != '') {
+            self::saveLog($source, $logDir, $convertLog, $logMsgTop);
+        }
+
+    }
 }

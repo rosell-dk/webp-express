@@ -218,14 +218,10 @@ if (isset($wodOptions['success-response']) && ($wodOptions['success-response'] =
 }
 
 
-
-
-include_once __DIR__ . '/../vendor/autoload.php';
-
-// TODO: error_log()
-//ini_set('display_errors', 0);
-//error_reporting(0);
-
-//echo '<pre>' . print_r($serveOptions, true) . '</pre>'; exit;
-
-WebPConvert::serveConverted($source, $destination, $serveOptions);
+ConvertHelperIndependent::serveConverted(
+    $source,
+    $destination,
+    $serveOptions,
+    $webExpressContentDirAbs . '/log',
+    'Conversion triggered with the conversion script (wod/webp-on-demand.php)'
+);

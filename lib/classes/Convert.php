@@ -42,7 +42,9 @@ class Convert
 
         $destination = self::getDestination($source, $config);
 
-        $result = ConvertHelperIndependent::convert($source, $destination, $convertOptions, $converter);
+        $logDir = Paths::getWebPExpressContentDirAbs() . '/log';
+
+        $result = ConvertHelperIndependent::convert($source, $destination, $convertOptions, $logDir, $converter);
 
         //$result['destination'] = $destination;
         if ($result['success'] === true) {
@@ -76,7 +78,7 @@ class Convert
             $overrides = $_POST['config-overrides'];
             $overrides = preg_replace('/\\\\"/', '"', $overrides); // We got crazy encoding, perhaps by jQuery. This cleans it up
             $overrides = json_decode($overrides, true);
-            
+
             $config = array_merge($config, $overrides);
 
             // single converter
