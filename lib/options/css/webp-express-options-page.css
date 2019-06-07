@@ -579,3 +579,10 @@ ul.with-bullets {
     padding-left: 20px;
     list-style: unset;
 }
+
+#conversionlog_content {
+    overflow-y: scroll;
+    top: 20px;
+    bottom: 72px;
+    position: absolute;    
+}

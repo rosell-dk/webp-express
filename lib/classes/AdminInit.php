@@ -81,6 +81,7 @@ class AdminInit
         // Ajax actions
         add_action('wp_ajax_list_unconverted_files', array('\WebPExpress\BulkConvert', 'processAjaxListUnconvertedFiles'));
         add_action('wp_ajax_convert_file', array('\WebPExpress\Convert', 'processAjaxConvertFile'));
+        add_action('wp_ajax_webpexpress_view_log', array('\WebPExpress\ConvertLog', 'processAjaxViewLog'));
         add_action('wp_ajax_webpexpress_purge_cache', array('\WebPExpress\CachePurge', 'processAjaxPurgeCache'));
         add_action('wp_ajax_webpexpress_dismiss_message', array('\WebPExpress\Messenger', 'processAjaxDismissMessage'));
 

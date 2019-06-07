@@ -8,6 +8,13 @@
         ?>
     </th>
     <td>
+        <div id="conversionlog" class="das-popup">
+            <div id="conversionlog_content">
+            </div>
+            <button onclick="closeDasPopup()" class="button button-primary" type="button" style="position:absolute; bottom:20px">
+                Close
+            </button>
+        </div>
         <div>
             <button onclick="openBulkConvertPopup()" class="button button-secondary" type="button">Bulk Convert</button>
             <div id="bulkconvertpopup" style="display:none;">

@@ -180,16 +180,11 @@ class ConvertHelperIndependent
         }
     }
 
-    public static function saveLog($source, $logDir, $text, $msgTop)
+    public static function getLogFilename($source, $logDir)
     {
-        $logDir .= '/conversions';
-
-        $text = preg_replace('#' . preg_quote($_SERVER["DOCUMENT_ROOT"]) . '#', '[doc-root]', $text);
-
-        $text = 'WebP Express 0.14.0. ' . $msgTop . ', ' . date("Y-m-d H:i:s") . "\n\r\n\r" . $text;
-
         // Calculate path for log file
         // ---------------------------
+        $logDir .= '/conversions';
         $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
 
         // Check if source is residing inside document root.
@@ -200,12 +195,23 @@ class ConvertHelperIndependent
             // "Eat" the left part off the source parameter which contains the document root.
             // and also eat the slash (+1)
             $sourceRel = substr($source, strlen($docRoot) + 1);
-            $logFile = $logDir . '/doc-root/' . $sourceRel . '.md';
+            return $logDir . '/doc-root/' . $sourceRel . '.md';
         } else {
             // Source file is residing outside document root.
             // we must add complete path to structure
-            $logFile = $logDir . '/abs' . $source . '.md';
+            return $logDir . '/abs' . $source . '.md';
         }
+
+    }
+
+    public static function saveLog($source, $logDir, $text, $msgTop)
+    {
+        $text = preg_replace('#' . preg_quote($_SERVER["DOCUMENT_ROOT"]) . '#', '[doc-root]', $text);
+
+        $text = 'WebP Express 0.14.0. ' . $msgTop . ', ' . date("Y-m-d H:i:s") . "\n\r\n\r" . $text;
+
+        $logFile = self::getLogFilename($source, $logDir);
+
         $logFolder = @dirname($logFile);
         if (!@file_exists($logFolder)) {
             mkdir($logFolder, 0777, true);
