@@ -23,7 +23,7 @@
           <select id="vips_preset">
               <?php
               webpexpress_selectBoxOptions('default', [
-                  'disable' => 'Do not use a preset',
+                  'none' => 'Do not use a preset',
                   'default' => 'Default',
                   'photo' => 'Photo',
                   'picture' => 'Picture',
