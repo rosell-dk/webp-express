@@ -183,10 +183,10 @@ class ConvertHelperIndependent
     public static function saveLog($source, $logDir, $text, $msgTop)
     {
         $logDir .= '/conversions';
-         
+
         $text = preg_replace('#' . preg_quote($_SERVER["DOCUMENT_ROOT"]) . '#', '[doc-root]', $text);
 
-        $text = $msgTop . ', ' . date("Y-m-d H:i:s") . "\n\r\n\r" . $text;
+        $text = 'WebP Express 0.14.0. ' . $msgTop . ', ' . date("Y-m-d H:i:s") . "\n\r\n\r" . $text;
 
         // Calculate path for log file
         // ---------------------------
