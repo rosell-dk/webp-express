@@ -247,6 +247,13 @@ APACHE
         return self::createDirIfMissing(self::getCacheDirAbs());
     }
 
+    // ------------ Cache Dir -------------
+
+    public static function getLogDirAbs()
+    {
+        return self::getWebPExpressContentDirAbs() . '/log';
+    }
+
     // ------------ Plugin Dir (all plugins) -------------
 
     public static function getPluginDirAbs()

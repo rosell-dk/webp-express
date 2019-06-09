@@ -204,8 +204,34 @@ class ConvertHelperIndependent
 
     }
 
+    public static function createLogDir($logDir)
+    {
+        $logDir = Paths::getLogDirAbs();
+
+        if (!is_dir($logDir)) {
+            @mkdir($logDir, 0775, true);
+            @chmod($logDir, 0775);
+            @file_put_contents(rtrim($logDir . '/') . '/.htaccess', <<<APACHE
+<IfModule mod_authz_core.c>
+Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+Order deny,allow
+Deny from all
+</IfModule>
+APACHE
+            );
+            @chmod($logDir . '/.htaccess', 0664);
+        }
+        return is_dir($logDir);
+    }
+
     public static function saveLog($source, $logDir, $text, $msgTop)
     {
+        if (!file_exists($logDir)) {
+            self::createLogDir($logDir);
+        }
+        
         $text = preg_replace('#' . preg_quote($_SERVER["DOCUMENT_ROOT"]) . '#', '[doc-root]', $text);
 
         $text = 'WebP Express 0.14.0. ' . $msgTop . ', ' . date("Y-m-d H:i:s") . "\n\r\n\r" . $text;

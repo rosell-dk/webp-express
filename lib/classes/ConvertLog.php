@@ -7,12 +7,11 @@ use \WebPExpress\Paths;
 
 class ConvertLog
 {
-
     public static function processAjaxViewLog()
     {
         $source = $_POST['source'];
 
-        $logFile = ConvertHelperIndependent::getLogFilename($source, Paths::getWebPExpressContentDirAbs() . '/log');
+        $logFile = ConvertHelperIndependent::getLogFilename($source, Paths::getLogDirAbs());
         $msg = 'Log file: <i>' . $logFile . '</i><br><br><hr>';
 
         if (!file_exists($logFile)) {
