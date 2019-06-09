@@ -67,11 +67,16 @@ class ConvertersHelper
         foreach ($second as $converter) {
             // migrate9 and this functionality could create two converters.
             // so, for a while, skip graphicsmagick and imagemagick
+
             if ($converter['converter'] == 'graphicsmagick') {
-                continue;
+                if (in_array('gmagickbinary', $namesInFirst)) {
+                    continue;
+                }
             }
             if ($converter['converter'] == 'imagemagick') {
-                continue;
+                if (in_array('imagickbinary', $namesInFirst)) {
+                    continue;
+                }
             }
             if (!in_array($converter['converter'], $namesInFirst)) {
                 $first[] = $converter;
