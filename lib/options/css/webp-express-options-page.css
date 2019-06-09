@@ -584,5 +584,7 @@ ul.with-bullets {
     overflow-y: scroll;
     top: 20px;
     bottom: 72px;
-    position: absolute;    
+    position: absolute;
+    right: 0;
+    left: 3%;    
 }
