@@ -26,6 +26,7 @@ class TestRun
      *  Get an array of working converters OR false, if tests cannot be made
      */
     public static function getConverterStatus() {
+        //return false;
 
         // Is result cached?
         if (isset(self::$converterStatus)) {
@@ -66,7 +67,7 @@ class TestRun
 
         $config = Config::fix($config);
         $options = Config::generateWodOptionsFromConfigObj($config);
-        $options['converters'] = ConvertersHelper::normalize($options['converters']);
+        $options['converters'] = ConvertersHelper::normalize($options['webp-convert']['convert']['converters']);
 
         //echo '<pre>' . print_r($options, true) . '</pre>';
         foreach ($options['converters'] as $converter) {
