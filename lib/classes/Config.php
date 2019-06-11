@@ -229,7 +229,10 @@ class Config
                 ConvertersHelper::$defaultConverters
             );
         } else {
+            // This is first time visit!
+            $config['converters'] = ConvertersHelper::$defaultConverters;
 
+            /*
             // This is first time visit!
             // We must add converters.
             // We want to order them according to which ones that are working,
@@ -242,6 +245,7 @@ class Config
             }
 
             $defaultConverters = ConvertersHelper::$defaultConverters;
+
 
             if (count($workingConverters) == 0) {
                 // No converters are working
@@ -273,6 +277,7 @@ class Config
                 }
                 $config['converters'] = array_merge($resultPart1, $resultPart2);
             }
+            */
         }
 
 
