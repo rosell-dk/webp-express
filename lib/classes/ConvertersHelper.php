@@ -24,10 +24,10 @@ class ConvertersHelper
         ['converter' => 'graphicsmagick', 'options' => [
             'use-nice' => true,
         ]],
-        ['converter' => 'wpc'],     // we should not set api-version default - it is handled in the javascript
-        ['converter' => 'ewww'],
-        ['converter' => 'imagick'],
-        ['converter' => 'gmagick'],
+        ['converter' => 'wpc', 'options' => []],     // we should not set api-version default - it is handled in the javascript
+        ['converter' => 'ewww', 'options' => []],
+        ['converter' => 'imagick', 'options' => []],
+        ['converter' => 'gmagick', 'options' => []],
         ['converter' => 'gd', 'options' => [
             'skip-pngs' => false,
         ]],
