@@ -36,6 +36,40 @@ if (CapabilityTest::copyCapabilityTestsToWpContent()) {
 }*/
 
 
+$dismissablePageMessageIds = State::getState('dismissablePageMessageIds', []);
+
+//$dismissablePageMessageIds = ['suggest_enable_pngs'];
+
+/*if ($config['image-types'] == 1) {
+    $dismissablePageMessageIds[] = 'suggest_enable_pngs';
+}*/
+foreach ($dismissablePageMessageIds as $pageMessageId) {
+    switch ($pageMessageId) {
+        case 'suggest_enable_pngs':
+            Messenger::printDismissablePageMessage(
+                'info',
+                'WebP Express 0.14 handles PNG to WebP conversions quite well. Perhaps it is time to enable PNGs? ',
+                'suggest_enable_pngs',
+                'Got it!'
+            );
+
+    }
+}
+
+/*
+if ($config['image-types'] == 1) {
+    if (!in_array('suggest_enable_pngs', $dismissedPageMessageIds)) {
+        Messenger::printMessage(
+            'info',
+            'WebP Express 0.14 handles PNG to WebP conversions quite well. Perhaps it is time to enable PNGs? ' .
+                'Go to the <a href="' . Paths::getSettingsUrl() . '">options</a> page to change the "Image types to work on" option.',
+            2,
+            'Got it!'
+        );
+    }
+}
+*/
+
 if ($config['redirect-to-existing-in-htaccess']) {
     if (PlatformInfo::isApacheOrLiteSpeed() && isset($config['base-htaccess-on-these-capability-tests']['modHeaderWorking']) && ($config['base-htaccess-on-these-capability-tests']['modHeaderWorking'] == false)) {
         Messenger::printMessage(

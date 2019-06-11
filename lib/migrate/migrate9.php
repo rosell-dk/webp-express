@@ -114,6 +114,7 @@ function webpexpress_migrate9() {
             $vips = webpexpress_migrate9_moveConverterToTop($config, 'vips');
         }
 
+/*
         if ($config['image-types'] == 1) {
             Messenger::addStickyMessage(
                 'info',
@@ -122,7 +123,10 @@ function webpexpress_migrate9() {
                 2,
                 'Got it!'
             );
+        }*/
 
+        if ($config['image-types'] == 1) {
+            Messenger::addDismissablePageMessage('suggest_enable_pngs');
         }
 
         $convertersSupportingEncodingAuto = ['cwebp', 'vips', 'imagick', 'imagemagick', 'gmagick', 'graphicsmagick'];

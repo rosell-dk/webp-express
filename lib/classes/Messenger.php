@@ -115,7 +115,7 @@ class Messenger
 
     public static function processAjaxDismissMessage() {
         $id = intval($_POST['id']);
-        error_log('deleting:' . $id);
+        //error_log('deleting:' . $id);
 
         $messages = State::getState('pendingMessages', []);
         $newQueue = [];
@@ -128,4 +128,58 @@ class Messenger
         }
         State::setState('pendingMessages', $newQueue);
     }
+
+
+    /**
+     *  Add dismissible message for the WebP Express options page screen only.
+     *
+     *  @param  string  $id  An identifier, ie "suggest_enable_pngs"
+     */
+    public static function addDismissablePageMessage($id)
+    {
+        $dismissablePageMessageIds = State::getState('dismissablePageMessageIds', []);
+
+        // Ensure we do not add a message that is already there
+        if (in_array($id, $dismissablePageMessageIds)) {
+            return;
+        }
+        $dismissablePageMessageIds[] = $id;
+        State::setState('dismissablePageMessageIds', $dismissablePageMessageIds);
+    }
+
+    public static function printDismissablePageMessage($level, $msg, $id, $gotItText = '')
+    {
+        if ($gotItText != '') {
+            $javascript = "jQuery.post(ajaxurl, {'action': 'webpexpress_dismiss_page_message', 'id': '" . $id . "'});";
+            $javascript .= "jQuery(this).parentsUntil('div.notice').parent().hide();";
+
+            $msg .= '<br><br><button type="button" class="button button-primary" onclick="' . $javascript . '">' . $gotItText . '</button>';
+        }
+        self::printMessage($level, $msg);
+    }
+
+    /**
+     *  Add dismissible message for the WebP Express options page screen only.
+     *
+     *  @param  string  $id  An identifier, ie "suggest_enable_pngs"
+     */
+    public static function dismissPageMessage($id) {
+        $messages = State::getState('dismissablePageMessageIds', []);
+        $newQueue = [];
+        foreach ($messages as $mid) {
+            if ($mid == $id) {
+
+            } else {
+                $newQueue[] = $mid;
+            }
+        }
+        State::setState('dismissablePageMessageIds', $newQueue);
+    }
+
+    public static function processAjaxDismissPageMessage() {
+        $id = $_POST['id'];
+        self::dismissPageMessage($id);
+    }
+
+
 }
