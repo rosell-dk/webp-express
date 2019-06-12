@@ -179,6 +179,11 @@ function webpexpress_migrate9() {
     // #235
     $config['cache-control-custom'] = preg_replace('#max-age:#', 'max-age=', $config['cache-control-custom']);
 
+    // #272
+    if ($config['fail'] == 'report-as-image') {
+        $config['fail'] = 'report';
+    }
+
     // Force htaccess ?
     $forceHtaccessRegeneration = $config['redirect-to-existing-in-htaccess'];
 
