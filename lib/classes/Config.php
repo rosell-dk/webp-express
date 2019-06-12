@@ -297,9 +297,11 @@ class Config
     /**
      *   Loads Config (if available), fills in the rest with defaults
      *   also applies operation mode.
+     *   If config is not saved yet, the default config will be returned
      */
     public static function loadConfigAndFix($checkQualityDetection = true)
     {
+        // PS: Yes, loadConfig may return false. "fix" handles this by returning default config
         return self::fix(Config::loadConfig(), $checkQualityDetection);
     }
 

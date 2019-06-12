@@ -23,7 +23,9 @@ class TestRun
     public static $converterStatus = null; // to cache the result
 
     /**
-     *  Get an array of working converters OR false, if tests cannot be made
+     *  Get a test result object OR false, if tests cannot be made.
+     *
+     *  @return object|false
      */
     public static function getConverterStatus() {
         //return false;
@@ -48,24 +50,13 @@ class TestRun
         // But we cannot simply use loadWodOptions - because that would leave out the deactivated
         // converters. And we need to test all converters - even the deactivated ones.
         // So we load config, set "deactivated" to false, and generate Wod options from the config
-        $config = Config::loadConfig();
-        if ((!$config) || (!isset($config['converters'])) || (count($config['converters']) == 0)) {
-            $config = [
-                'converters' => ConvertersHelper::$defaultConverters
-            ];
-        } else {
-            // set deactivated to false on all converters
-            foreach($config['converters'] as &$converter) {
-                $converter['deactivated'] = false;
-            }
+        $config = Config::loadConfigAndFix();
 
-            // merge missing converters in
-            $config['converters'] = ConvertersHelper::mergeConverters($config['converters'], ConvertersHelper::$defaultConverters);
-//            echo '<pre>' . print_r($config, true) . '</pre>';
-
+        // set deactivated to false on all converters
+        foreach($config['converters'] as &$converter) {
+            $converter['deactivated'] = false;
         }
 
-        $config = Config::fix($config);
         $options = Config::generateWodOptionsFromConfigObj($config);
         $options['converters'] = ConvertersHelper::normalize($options['webp-convert']['convert']['converters']);
 

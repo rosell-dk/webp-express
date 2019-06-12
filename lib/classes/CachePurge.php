@@ -4,6 +4,7 @@ namespace WebPExpress;
 
 use \WebPExpress\Convert;
 use \WebPExpress\FileHelper;
+use \WebPExpress\DismissableMessages;
 use \WebPExpress\Paths;
 
 class CachePurge
@@ -15,6 +16,8 @@ class CachePurge
      */
     public static function purge($config, $onlyPng)
     {
+        DismissableMessages::dismissMessage('0.14.0/suggest-wipe-because-lossless');
+
         $filter = [
             'only-png' => $onlyPng,
             'only-with-corresponding-original' => false

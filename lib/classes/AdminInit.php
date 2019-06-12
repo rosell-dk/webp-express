@@ -83,8 +83,7 @@ class AdminInit
         add_action('wp_ajax_convert_file', array('\WebPExpress\Convert', 'processAjaxConvertFile'));
         add_action('wp_ajax_webpexpress_view_log', array('\WebPExpress\ConvertLog', 'processAjaxViewLog'));
         add_action('wp_ajax_webpexpress_purge_cache', array('\WebPExpress\CachePurge', 'processAjaxPurgeCache'));
-        add_action('wp_ajax_webpexpress_dismiss_message', array('\WebPExpress\Messenger', 'processAjaxDismissMessage'));
-        add_action('wp_ajax_webpexpress_dismiss_page_message', array('\WebPExpress\Messenger', 'processAjaxDismissPageMessage'));
+        add_action('wp_ajax_webpexpress_dismiss_message', array('\WebPExpress\DismissableMessages', 'processAjaxDismissMessage'));
 
         // PS:
         // Filters for processing upload hooks in order to convert images upon upload (wp_handle_upload / image_make_intermediate_size)

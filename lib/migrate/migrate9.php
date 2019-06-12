@@ -4,6 +4,7 @@ namespace WebPExpress;
 
 use \WebPExpress\Config;
 use \WebPExpress\ConvertersHelper;
+use \WebPExpress\DismissableMessages;
 use \WebPExpress\Messenger;
 use \WebPExpress\Option;
 use \WebPExpress\Paths;
@@ -126,9 +127,12 @@ function webpexpress_migrate9() {
         }*/
 
         if ($config['image-types'] == 1) {
-            Messenger::addDismissablePageMessage('suggest_enable_pngs');
+            DismissableMessages::addDismissableMessage('0.14.0/suggest-enable-pngs');
         }
+        DismissableMessages::addDismissableMessage('0.14.0/suggest-wipe-because-lossless');
+        DismissableMessages::addDismissableMessage('0.14.0/say-hello-to-vips');
 
+        /*
         $convertersSupportingEncodingAuto = ['cwebp', 'vips', 'imagick', 'imagemagick', 'gmagick', 'graphicsmagick'];
 
         if (in_array($firstActiveAndWorkingConverterId, $convertersSupportingEncodingAuto)) {
@@ -169,6 +173,7 @@ function webpexpress_migrate9() {
             }
             //
         }
+        */
     }
 
     // #235

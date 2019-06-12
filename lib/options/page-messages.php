@@ -3,6 +3,7 @@
 use \WebPExpress\CapabilityTest;
 use \WebPExpress\Config;
 use \WebPExpress\ConvertersHelper;
+use \WebPExpress\DismissableMessages;
 use \WebPExpress\FileHelper;
 use \WebPExpress\HTAccess;
 use \WebPExpress\Messenger;
@@ -35,30 +36,101 @@ if (CapabilityTest::copyCapabilityTestsToWpContent()) {
     echo 'copy failed!';
 }*/
 
-
-$dismissablePageMessageIds = State::getState('dismissablePageMessageIds', []);
-
-//$dismissablePageMessageIds = ['suggest_enable_pngs'];
-
-/*if ($config['image-types'] == 1) {
-    $dismissablePageMessageIds[] = 'suggest_enable_pngs';
-}*/
-foreach ($dismissablePageMessageIds as $pageMessageId) {
-    switch ($pageMessageId) {
-        case 'suggest_enable_pngs':
-            Messenger::printDismissablePageMessage(
-                'info',
-                'WebP Express 0.14 handles PNG to WebP conversions quite well. Perhaps it is time to enable PNGs? ',
-                'suggest_enable_pngs',
-                'Got it!'
-            );
-
-    }
+// Dissmiss page messages for which the condition no longer applies
+if ($config['image-types'] != 1) {
+    DismissableMessages::dismissMessage('0.14.0/suggest-enable-pngs');
 }
 
+//DismissableMessages::dismissAll();
+//DismissableMessages::addDismissableMessage('0.14.0/suggest-enable-pngs');
+//DismissableMessages::addDismissableMessage('0.14.0/suggest-wipe-because-lossless');
+//DismissableMessages::addDismissableMessage('0.14.0/say-hello-to-vips');
+
+
+DismissableMessages::printMessages();
+
+//$dismissableMessageIds = ['suggest-enable-pngs'];
+
+$firstActiveAndWorkingConverterId = ConvertersHelper::getFirstWorkingAndActiveConverterId($config);
+$workingIds = ConvertersHelper::getWorkingConverterIds($config);
+
+/*print_r($dismissableMessageIds);
+
+foreach ($dismissableMessageIds as $pageMessageId) {
+    switch ($pageMessageId) {
+        case 'suggest-enable-pngs':
+            break;
+        case 'suggest-wipe-because-lossless':
+            // introduced in 0.14.0 (migrate 9)
+
+            $convertersSupportingEncodingAuto = ['cwebp', 'vips', 'imagick', 'imagemagick', 'gmagick', 'graphicsmagick'];
+
+            if (in_array($firstActiveAndWorkingConverterId, $convertersSupportingEncodingAuto)) {
+                DismissableMessages::printDismissableMessage(
+                    'info',
+                    '<p>WebP Express 0.14 has new options for the conversions. Especially, it can now produce lossless webps, and ' .
+                        'it can automatically try both lossy and lossless and select the smallest. You can play around with the ' .
+                        'new options when your click "test" next to a converter.</p>' .
+                        '<p>Once satisfied, dont forget to ' .
+                        'wipe your existing converted files (there is a "Delete converted files" button for that here on this page).</p>',
+                    $pageMessageId,
+                    'Got it!'
+                );
+            } else {
+
+                if ($firstActiveAndWorkingConverterId == 'gd') {
+                    foreach ($workingIds as $workingId) {
+                        if (in_array($workingId, $convertersSupportingEncodingAuto)) {
+                            DismissableMessages::printDismissableMessage(
+                                'info',
+                                '<p>WebP Express 0.14 has new options for the conversions. Especially, it can now produce lossless webps, and ' .
+                                    'it can automatically try both lossy and lossless and select the smallest. You can play around with the ' .
+                                    'new options when your click "test" next to a converter.</p>' .
+                                    '<p>Once satisfied, dont forget to wipe your existing converted files (there is a "Delete converted files" ' .
+                                    'button for that here on this page)</p>' .
+                                    '<p>Btw: The "gd" conversion method that you are using does not support lossless encoding ' .
+                                    '(in fact Gd only supports very few conversion options), but fortunately, you have the ' .
+                                    '"' . $workingId . '" conversion method working, so you can simply start using that instead.</p>',
+                                $pageMessageId,
+                                'Got it!'
+                            );
+                            break;
+                        }
+                    }
+                }
+            }
+            break;
+        case 'say-hello-to-vips':
+            if (in_array('vips', $workingIds)) {
+                if ($firstActiveAndWorkingConverterId == 'cwebp') {
+                    DismissableMessages::printDismissableMessage(
+                        'info',
+                        '<p>I have good news and good news. WebP Express now supports Vips and Vips is working on your server. ' .
+                            'Vips is one of the best method for converting WebPs, on par with cwebp, which you are currently using. ' .
+                            'You may want to use Vips instead of cwebp. Your choice.</p>',
+                        $pageMessageId,
+                        'Got it!'
+                    );
+                } else {
+                    DismissableMessages::printDismissableMessage(
+                        'info',
+                        '<p>I have good news and good news. WebP Express now supports Vips and Vips is working on your server. ' .
+                            'Vips is one of the best method for converting WebPs and has therefore been inserted at the top of the list.' .
+                            '</p>',
+                        $pageMessageId,
+                        'Got it!'
+                    );
+                }
+            } else {
+                // show message?
+            }
+            break;
+    }
+}
+*/
 /*
 if ($config['image-types'] == 1) {
-    if (!in_array('suggest_enable_pngs', $dismissedPageMessageIds)) {
+    if (!in_array('suggest-enable-pngs', $dismissedPageMessageIds)) {
         Messenger::printMessage(
             'info',
             'WebP Express 0.14 handles PNG to WebP conversions quite well. Perhaps it is time to enable PNGs? ' .

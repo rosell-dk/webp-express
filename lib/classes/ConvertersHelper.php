@@ -139,6 +139,9 @@ class ConvertersHelper
         return $result;
     }
 
+    /**
+     *  Get array of working converter ids. Same order as configured.
+     */
     public static function getWorkingConverterIds($config)
     {
         $converters = self::getWorkingConverters($config);
@@ -155,7 +158,8 @@ class ConvertersHelper
      * @param  object  $config
      * @return  array
      */
-    public static function getWorkingAndActiveConverters($config) {
+    public static function getWorkingAndActiveConverters($config)
+    {
         if (!isset($config['converters'])) {
             return [];
         }
@@ -175,6 +179,16 @@ class ConvertersHelper
                 continue;
             }
             $result[] = $c;
+        }
+        return $result;
+    }
+
+    public static function getWorkingAndActiveConverterIds($config)
+    {
+        $converters = self::getWorkingAndActiveConverters($config);
+        $result = [];
+        foreach ($converters as $converter) {
+            $result[] = $converter['converter'];
         }
         return $result;
     }

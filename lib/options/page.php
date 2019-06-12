@@ -57,6 +57,10 @@ $canDetectQuality = TestRun::isLocalQualityDetectionWorking();
 $testResult = TestRun::getConverterStatus();
 $config = Config::getConfigForOptionsPage();
 
+State::setState('workingConverterIds', ConvertersHelper::getWorkingConverterIds($config));
+State::setState('workingAndActiveConverterIds', ConvertersHelper::getWorkingAndActiveConverterIds($config));
+
+
 //State::setState('last-ewww-optimize-attempt', 0);
 //State::setState('last-ewww-optimize', 0);
 \WebPExpress\KeepEwwwSubscriptionAlive::keepAliveIfItIsTime($config);

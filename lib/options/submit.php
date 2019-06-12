@@ -1,11 +1,16 @@
 <?php
 
 use \WebPExpress\CacheMover;
+use \WebPExpress\CapabilityTest;
 use \WebPExpress\Config;
+use \WebPExpress\DismissableMessages;
 use \WebPExpress\HTAccess;
 use \WebPExpress\Messenger;
 use \WebPExpress\Paths;
-use \WebPExpress\CapabilityTest;
+
+
+DismissableMessages::dismissMessage('0.14.0/say-hello-to-vips');
+
 
 // https://premium.wpmudev.org/blog/handling-form-submissions/
 // checkout https://codex.wordpress.org/Function_Reference/sanitize_meta
