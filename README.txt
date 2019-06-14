@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.2
-Stable tag: 0.13.2
+Stable tag: 0.14.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -604,6 +604,21 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.14.0 =
+*(released: 14 jun 2019)*
+
+* Added new "encoding" option, which can be set to auto. This can in some cases dramatically reduce the size of the webp. It is supported by all converters except ewww and gd.
+* Added new "near-lossless" option (only for cwebp and vips). Using this is a good idea for reducing size of lossless webps with an acceptable loss of quality
+* Added new "alpha-quality" option (all converters, except ewww and gd). Using this is a good idea when images with transparency are converted to lossy webp - it has the potential to reduce the size up to 50% (depending on the source material) while keeping an acceptable level of quality
+* Added new conversion methods: Vips and GraphicsMagick
+* Imagick conversion method now supports webp options (finally cracked it!)
+* Using MimeType detection instead of relying on file extensions
+* In "test" converter you now change options and also test PNG files
+* Added conversion logs
+* PNGs are now enabled by default (with the new conversion features especially PNGs are compressed much better)
+
+For more info, see the closed issues on the 0.14.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/9?closed=1
+
 = 0.13.2 =
 *(released: 16 may 2019)*
 
@@ -780,6 +795,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.14.0 =
+New awesome conversion options that gets you even smaller webp files without compromising quality.
 
 = 0.13.2 =
 Fixed critical error on upload (can occur in combination with some plugins), and it seems we finally nailed the blank settings page bug.

@@ -597,6 +597,19 @@ Here are my current plans ahead: 0.13 might be bulk conversion and addition of a
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.14.0
+- Added new "encoding" option, which can be set to auto. This can in some cases dramatically reduce the size of the webp. It is supported by all converters except ewww and gd.
+- Added new "near-lossless" option (only for cwebp and vips). Using this is a good idea for reducing size of lossless webps with an acceptable loss of quality
+- Added new "alpha-quality" option (all converters, except ewww and gd). Using this is a good idea when images with transparency are converted to lossy webp - it has the potential to reduce the size up to 50% (depending on the source material) while keeping an acceptable level of quality
+- Added new conversion methods: Vips and GraphicsMagick
+- Imagick conversion method now supports webp options (finally cracked it!)
+- Using MimeType detection instead of relying on file extensions
+- In "test" converter you now change options and also test PNG files
+- Added conversion logs
+- PNGs are now enabled by default (with the new conversion features especially PNGs are compressed much better)
+
+For more info, see the closed issues on the 0.14.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/9?closed=1
+
 ## Changes in 0.13.2
 - Fixed Fatal error on image upload in combination with the [Enable Media Replace](https://de.wordpress.org/plugins/enable-media-replace/) plugin. Thanks to Alexander Graef from Germany for reporting.
 - It seems we finally nailed the blank settings page bug. Thanks to all involved, especially Richard Spenceley from the UK
