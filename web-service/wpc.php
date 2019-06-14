@@ -16,14 +16,7 @@ include_once __DIR__ . '/../lib/classes/Config.php';
 // Patch together $options object for wpc...
 $options = [];
 
-$config = Config::loadConfig();
-if ($config === false) {
-    if (Config::isConfigFileThere()) {
-        WebPConvertCloudService::exitWithError(WebPConvertCloudService::ERROR_CONFIGURATION, 'config file could not be loaded.');
-    } else {
-        WebPConvertCloudService::exitWithError(WebPConvertCloudService::ERROR_CONFIGURATION, 'config file could not be loaded (its not there): ' . Paths::getConfigFileName());
-    }
-}
+$config = Config::loadConfigAndFix(false);
 
 if (!isset($config['web-service'])) {
     WebPConvertCloudService::exitWithError(WebPConvertCloudService::ERROR_ACCESS_DENIED, 'Web Service is not configured');
