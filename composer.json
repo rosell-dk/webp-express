@@ -3,19 +3,9 @@
     "description": "WebP for the masses",
     "type": "project",
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/rosell-dk/webp-convert"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/rosell-dk/webp-convert-cloud-service"
-        }
-    ],
     "require": {
-        "rosell-dk/webp-convert": "dev-master",
-        "rosell-dk/webp-convert-cloud-service": "dev-master",
+        "rosell-dk/webp-convert": "^2.0.0",
+        "rosell-dk/webp-convert-cloud-service": "^2.0.0",
         "rosell-dk/dom-util-for-webp": "^0.3.0"
     },
     "require-dev": {
