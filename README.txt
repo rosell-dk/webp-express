@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.2
-Stable tag: 0.14.0
+Stable tag: 0.14.0-beta
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -38,6 +38,7 @@ The plugin builds on [WebPConvert](https://github.com/rosell-dk/webp-convert) an
 - Currently ~73% of all traffic, and ~79% of mobile browsing traffic are done with browsers supporting webp. With Mozilla and Microsoft [finally on board](https://medium.com/@richard_90141/webp-image-support-an-8-year-saga-7aa2bedb8d02), these numbers are bound to increase. Check current numbers on [caniuse.com](https://caniuse.com/webp)).
 
 ### Recent news
+Jun 2019: Better conversions and more conversion options
 Feb 2019: Multisite is now supported (0.12.0)
 Jan 2019: Plugin can now alter HTML (0.11.0)
 
@@ -604,8 +605,8 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
-= 0.14.0 =
-*(released: 14 jun 2019)*
+= 0.14.0-beta =
+*(released: 15 jun 2019)*
 
 * Added new "encoding" option, which can be set to auto. This can in some cases dramatically reduce the size of the webp. It is supported by all converters except ewww and gd.
 * Added new "near-lossless" option (only for cwebp and vips). Using this is a good idea for reducing size of lossless webps with an acceptable loss of quality
