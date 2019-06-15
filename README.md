@@ -597,6 +597,9 @@ Here are my current plans ahead: 0.15 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.14.1
+- Strengthened security
+
 ## Changes in 0.14.0
 - Added new "encoding" option, which can be set to auto. This can in some cases dramatically reduce the size of the webp. It is supported by all converters except ewww and gd.
 - Added new "near-lossless" option (only for cwebp and vips). Using this is a good idea for reducing size of lossless webps with an acceptable loss of quality
