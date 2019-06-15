@@ -87,7 +87,7 @@ foreach (Paths::getHTAccessDirs() as $dir) {
 
 //echo 'Working converters:' . print_r($workingConverters, true) . '<br>';
 // Generate a custom nonce value.
-$webpexpress_settings_nonce = wp_create_nonce('webpexpress_settings_nonce');
+$webpexpress_save_settings_nonce = wp_create_nonce('webpexpress_save_settings_nonce');
 ?>
 
 <?php
@@ -100,7 +100,7 @@ $actionUrl = admin_url('admin-post.php');
 echo '<form id="webpexpress_settings" action="' . esc_url($actionUrl) . '" method="post" >';
 ?>
     <input type="hidden" name="action" value="webpexpress_settings_submit">
-    <input type="hidden" name="webpexpress_settings_nonce" value="<?php echo $webpexpress_settings_nonce ?>" />
+    <input type="hidden" name="_wpnonce" value="<?php echo $webpexpress_save_settings_nonce ?>" />
 
     <fieldset class="block buttons">
         <table>
