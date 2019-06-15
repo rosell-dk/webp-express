@@ -34,18 +34,6 @@ $options['access'] = [
     'whitelist' => $webServiceConfig['whitelist']
 ];
 
-/*
-$options['access'] = [
-    'whitelist' => [
-        [
-            'label' => 'testing',
-            'ip' => '127.0.0.1',
-            'api-key' => 'my dog is white',
-            'require-api-key-to-be-hashed-in-transfer' => false,
-        ]
-    ]
-]; */
-
 $options['webp-convert'] = Config::generateWodOptionsFromConfigObj($config);
 
 WebPConvertCloudService::handleRequest($options);

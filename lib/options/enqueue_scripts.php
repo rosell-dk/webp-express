@@ -6,7 +6,7 @@ use \WebPExpress\Paths;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$version = '0.14.0';
+$version = '0.14.1-a';
 
 
 if (!function_exists('webp_express_add_inline_script')) {
@@ -86,6 +86,14 @@ if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conv
 //wp_enqueue_script('api_keys');
 
 wp_register_script( 'page', plugins_url('js/page.js', __FILE__), [], $version);
+webp_express_add_inline_script(
+    'page',
+    'window.webpExpressAjaxConvertNonce = "' . wp_create_nonce('webpexpress-ajax-convert-nonce') . '";' .
+        'window.webpExpressAjaxListUnconvertedFilesNonce = "' . wp_create_nonce('webpexpress-ajax-list-unconverted-files-nonce') . '";' .
+        'window.webpExpressAjaxPurgeCacheNonce = "' . wp_create_nonce('webpexpress-ajax-purge-cache-nonce') . '";' .
+        'window.webpExpressAjaxViewLogNonce = "' . wp_create_nonce('webpexpress-ajax-view-log-nonce') . '";',
+    'before'
+);
 wp_enqueue_script('page');
 
 

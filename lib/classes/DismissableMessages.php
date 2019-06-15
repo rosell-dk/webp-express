@@ -74,6 +74,10 @@ class DismissableMessages
     }
 
     public static function processAjaxDismissMessage() {
+        /*
+        We have no security nonce here. Dismissing a message is not harmful and dismissMessage($id) do anything harmful, no matter what you
+        send in the "id"
+        */
         $id = $_POST['id'];
         self::dismissMessage($id);
     }

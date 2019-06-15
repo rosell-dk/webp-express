@@ -147,6 +147,11 @@ class CachePurge
     public static function processAjaxPurgeCache()
     {
 
+        if (!check_ajax_referer('webpexpress-ajax-purge-cache-nonce', 'nonce', false)) {
+            wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
+            wp_die();
+        }
+
         $onlyPng = ($_POST['only-png'] == 'true');
 
         $config = Config::loadConfigAndFix();

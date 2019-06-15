@@ -69,6 +69,11 @@ class Convert
 
     public static function processAjaxConvertFile()
     {
+        if (!check_ajax_referer('webpexpress-ajax-convert-nonce', 'nonce', false)) {
+            wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
+            wp_die();
+        }
+
         $filename = $_POST['filename'];
 
         if (isset($_POST['config-overrides'])) {

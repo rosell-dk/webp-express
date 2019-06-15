@@ -9,6 +9,10 @@ class ConvertLog
 {
     public static function processAjaxViewLog()
     {
+        if (!check_ajax_referer('webpexpress-ajax-view-log-nonce', 'nonce', false)) {
+            wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
+            wp_die();
+        }
         $source = $_POST['source'];
 
         $logFile = ConvertHelperIndependent::getLogFilename($source, Paths::getLogDirAbs());

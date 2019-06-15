@@ -9,7 +9,7 @@ use \WebPExpress\Messenger;
 use \WebPExpress\Paths;
 
 
-check_admin_referer('webpexpress_save_settings_nonce');
+check_admin_referer('webpexpress-save-settings-nonce');
 
 DismissableMessages::dismissMessage('0.14.0/say-hello-to-vips');
 

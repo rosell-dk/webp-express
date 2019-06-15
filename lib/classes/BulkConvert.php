@@ -198,6 +198,11 @@ class BulkConvert
 
     public static function processAjaxListUnconvertedFiles()
     {
+        if (!check_ajax_referer('webpexpress-ajax-list-unconverted-files-nonce', 'nonce', false)) {
+            wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
+            wp_die();
+        }
+
         $config = Config::loadConfigAndFix();
         $arr = self::getList($config);
         echo json_encode($arr, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
