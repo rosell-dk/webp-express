@@ -69,6 +69,8 @@ function webpexpress_migrate9() {
                 continue;
             }
             if (!isset($converter['options'])) {
+                // #273
+                $converter['options'] = [];
                 continue;
             }
             $options = &$converter['options'];
@@ -98,13 +100,6 @@ function webpexpress_migrate9() {
                         unset($options['key-2']);
                     }
                     break;
-                    /*
-                case 'gmagickbinary':
-                    $converter['converter'] = 'graphicsmagick';
-                    break;
-                case 'imagickbinary':
-                    $converter['converter'] = 'imagemagick';
-                    break;*/
             }
         }
 
