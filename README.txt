@@ -605,7 +605,12 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
-= 0.14.0-beta =
+= 0.14.1 =
+*(released: 15 jun 2019)*
+
+* Strengthened security
+
+= 0.14.0 =
 *(released: 15 jun 2019)*
 
 * Added new "encoding" option, which can be set to auto. This can in some cases dramatically reduce the size of the webp. It is supported by all converters except ewww and gd.
@@ -796,6 +801,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.14.1 =
+Strengthening security
 
 = 0.14.0 =
 New awesome conversion options that gets you even smaller webp files without compromising quality.
