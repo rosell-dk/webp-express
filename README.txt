@@ -605,10 +605,17 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.14.2 =
+*(released: 17 jun 2019)*
+
+* Fixed problem with older versions of cwebp
+* Fixed that images was not deleted
+* Fixed cache problem on options page on systems that disables cache busting (it resulted in "SyntaxError: JSON.parse")
+
 = 0.14.1 =
 *(released: 15 jun 2019)*
 
-* Strengthened security
+* A little something
 
 = 0.14.0 =
 *(released: 15 jun 2019)*
@@ -802,8 +809,11 @@ For older releases, check out changelog.txt
 
 == Upgrade Notice ==
 
+= 0.14.2 =
+A couple of bugfixes
+
 = 0.14.1 =
-Strengthening security
+A little something
 
 = 0.14.0 =
 New awesome conversion options that gets you even smaller webp files without compromising quality.
