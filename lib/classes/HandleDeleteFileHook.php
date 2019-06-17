@@ -17,13 +17,14 @@ class HandleDeleteFileHook
             'image/png',
         ];
         if (!Mime::isOneOfTheseImageMimeTypes($filename, $mimeTypes)) {
-            return;
+            return $filename;
         }
 
         $destination = Convert::getDestination($filename);
         if (!unlink($destination)) {
             error_log('WebP Express failed deleting webp:' . $destination);
         }
+        return $filename;
 
     }
 }
