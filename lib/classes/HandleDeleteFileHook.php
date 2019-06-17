@@ -25,6 +25,5 @@ class HandleDeleteFileHook
             error_log('WebP Express failed deleting webp:' . $destination);
         }
         return $filename;
-
     }
 }

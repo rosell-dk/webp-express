@@ -14,6 +14,8 @@
 Note: Perhaps create a plugin page on my website?, ie https://www.bitwise-it.dk/software/wordpress/webp-express
 */
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 use \WebPExpress\AdminInit;
 use \WebPExpress\Option;
 

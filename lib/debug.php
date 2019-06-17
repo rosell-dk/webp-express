@@ -1,5 +1,6 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 function webpexpress_activated() {
   update_option( 'webp-express-activation-error',  ob_get_contents() );

@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 include_once __DIR__ . '/../classes/Paths.php';
 use \WebPExpress\Paths;
 

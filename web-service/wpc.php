@@ -1,6 +1,5 @@
 <?php
 
-//require '../vendor/rosell-dk/webp-convert/build/webp-on-demand-1.inc';
 require __DIR__ . '/../vendor/autoload.php';
 use \WebPConvertCloudService\WebPConvertCloudService;
 

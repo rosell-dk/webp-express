@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function webPExpressAlterHtml($content) {
     // Don't do anything with the RSS feed.
     if (is_feed()) {

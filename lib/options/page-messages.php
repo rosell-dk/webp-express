@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 use \WebPExpress\CapabilityTest;
 use \WebPExpress\Config;
 use \WebPExpress\ConvertersHelper;
