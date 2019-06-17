@@ -43,10 +43,34 @@ class AdminInit
 
     public static function adminInitHandler()
     {
-        global $pagenow;
-        if ((('options-general.php' === $pagenow) || (('settings.php' === $pagenow)))  && (isset($_GET['page'])) && ('webp_express_settings_page' === $_GET['page'])) {
-            add_action('admin_enqueue_scripts', array('\WebPExpress\OptionsPage', 'enqueueScripts'));
+
+        if (current_user_can('manage_options')) {
+
+            // Hooks related to options page
+
+            global $pagenow;
+            if ((('options-general.php' === $pagenow) || (('settings.php' === $pagenow)))  && (isset($_GET['page'])) && ('webp_express_settings_page' === $_GET['page'])) {
+                add_action('admin_enqueue_scripts', array('\WebPExpress\OptionsPage', 'enqueueScripts'));
+            }
+
+            add_action("admin_post_webpexpress_settings_submit", array('\WebPExpress\OptionsPageHooks', 'submitHandler'));
+
+
+            // Ajax actions
+            add_action('wp_ajax_list_unconverted_files', array('\WebPExpress\BulkConvert', 'processAjaxListUnconvertedFiles'));
+            add_action('wp_ajax_convert_file', array('\WebPExpress\Convert', 'processAjaxConvertFile'));
+            add_action('wp_ajax_webpexpress_view_log', array('\WebPExpress\ConvertLog', 'processAjaxViewLog'));
+            add_action('wp_ajax_webpexpress_purge_cache', array('\WebPExpress\CachePurge', 'processAjaxPurgeCache'));
+            add_action('wp_ajax_webpexpress_dismiss_message', array('\WebPExpress\DismissableMessages', 'processAjaxDismissMessage'));
+
+
+            // Add settings link on the plugins page
+            add_filter('plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), array('\WebPExpress\AdminUi', 'pluginActionLinksFilter'), 10, 2);
+
+            // Add settings link in multisite
+            add_filter('network_admin_plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), array('\WebPExpress\AdminUi', 'networkPluginActionLinksFilter'), 10, 2);
         }
+
     }
 
     public static function addHooks()
@@ -57,33 +81,19 @@ class AdminInit
         register_deactivation_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginDeactivate', 'deactivate'));
         register_uninstall_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginUninstall', 'uninstall'));
 
-        // Hooks related to options page
+        add_action("admin_init", array('\WebPExpress\AdminInit', 'adminInitHandler'));
+
         if (Multisite::isNetworkActivated()) {
             add_action("network_admin_menu", array('\WebPExpress\AdminUi', 'networAdminMenuHook'));
         } else {
             add_action("admin_menu", array('\WebPExpress\AdminUi', 'adminMenuHook'));
         }
-        add_action("admin_post_webpexpress_settings_submit", array('\WebPExpress\OptionsPageHooks', 'submitHandler'));
-        add_action("admin_init", array('\WebPExpress\AdminInit', 'adminInitHandler'));
-
 
         // Print pending messages, if any
         if (Option::getOption('webp-express-messages-pending')) {
             add_action(Multisite::isNetworkActivated() ? 'network_admin_notices' : 'admin_notices', array('\WebPExpress\Messenger', 'printPendingMessages'));
         }
 
-        // Add settings link on the plugins page
-        add_filter('plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), array('\WebPExpress\AdminUi', 'pluginActionLinksFilter'), 10, 2);
-
-        // Add settings link in multisite
-        add_filter('network_admin_plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), array('\WebPExpress\AdminUi', 'networkPluginActionLinksFilter'), 10, 2);
-
-        // Ajax actions
-        add_action('wp_ajax_list_unconverted_files', array('\WebPExpress\BulkConvert', 'processAjaxListUnconvertedFiles'));
-        add_action('wp_ajax_convert_file', array('\WebPExpress\Convert', 'processAjaxConvertFile'));
-        add_action('wp_ajax_webpexpress_view_log', array('\WebPExpress\ConvertLog', 'processAjaxViewLog'));
-        add_action('wp_ajax_webpexpress_purge_cache', array('\WebPExpress\CachePurge', 'processAjaxPurgeCache'));
-        add_action('wp_ajax_webpexpress_dismiss_message', array('\WebPExpress\DismissableMessages', 'processAjaxDismissMessage'));
 
         // PS:
         // Filters for processing upload hooks in order to convert images upon upload (wp_handle_upload / image_make_intermediate_size)
