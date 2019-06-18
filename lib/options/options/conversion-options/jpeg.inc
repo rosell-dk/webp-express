@@ -64,7 +64,7 @@ png
                     '<p>If you select the "Same as the jpeg" option, WebP Express will try to determine the quality of ' .
                     'the jpeg and use that for the webp - unless the quality is higher than the limit entered, in which ' .
                     'case the limit is used.</p>' .
-                    '<p>Ouality detection requires imagick or gmagick (not neccessarily compiled with webp). ' .
+                    '<p>Ouality detection requires imagick, imagemagick or gmagick (not neccessarily compiled with webp). ' .
                     'In case quality detection is not available, the fallback quality is used.</p>' .
                     (
                         $canDetectQuality ?
@@ -110,7 +110,7 @@ png
                     echo helpIcon(
                         'Fallback quality in case quality detection is not available or should fail for some reason (which has yet to be seen). ' .
                         (
-                            !$canDetectQuality ?
+                            $canDetectQuality ?
                             'You have quality detection working, btw, so this setting will probably never be used' :
                             '<i>You do not have quality detection working, btw</i> - which means that all conversions will have the fixed quality entered here'
                         )
