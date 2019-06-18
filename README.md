@@ -597,11 +597,16 @@ Here are my current plans ahead: 0.15 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.14.4
+- Now bundles with multiple cwebp binaries for linux for systems where 1.0.2 fails.
+
+## Changes in 0.14.3
+- Fixed filename of supplied cwebp for linux (bug was introduced in 0.14.2)
+
 ## Changes in 0.14.2
 - Fixed problem with older versions of cwebp
 - Fixed that images was not deleted
 - Fixed cache problem on options page on systems that disables cache busting (it resulted in "SyntaxError: JSON.parse")
-
 
 ## Changes in 0.14.1
 - A little something
