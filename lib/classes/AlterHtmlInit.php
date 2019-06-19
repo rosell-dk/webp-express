@@ -110,7 +110,7 @@ class AlterHtmlInit
 
             /*
             TODO:
-            check out these hooks (used by Jecpack, in class.photon.php)
+            check out these hooks (used by Jetpack, in class.photon.php)
 
             // Images in post content and galleries
     		add_filter( 'the_content', array( __CLASS__, 'filter_the_content' ), 999999 );
