@@ -17,7 +17,6 @@ use \WebPExpress\State;
 //echo '<pre>' . print_r(BulkConvert::getList($config), true) . "</pre>";
 //echo '<pre>' . print_r(BulkConvert::convertFile('/var/www/webp-express-tests/we0/wordpress/uploads-moved/space in name.jpg'), true) . "</pre>";
 
-
 if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }
@@ -236,11 +235,13 @@ if ($config['image-types'] == 3) {
     $workingConverters = ConvertersHelper::getWorkingAndActiveConverters($config);
     if (count($workingConverters) == 1) {
         if (ConvertersHelper::getConverterId($workingConverters[0]) == 'gd') {
-            Messenger::printMessage(
-                'warning',
-                    'You have enabled PNGs, but configured Gd to skip PNGs, and Gd is your only active working converter. ' .
-                    'This is a bad combination!'
-            );
+            if (isset($workingConverters[0]['options']['skip-pngs']) && $workingConverters[0]['options']['skip-pngs']) {
+                Messenger::printMessage(
+                    'warning',
+                        'You have enabled PNGs, but configured Gd to skip PNGs, and Gd is your only active working converter. ' .
+                        'This is a bad combination!'
+                );
+            }
         }
     }
 }
