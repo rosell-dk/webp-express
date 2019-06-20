@@ -1,15 +1,4 @@
 <?php
-// https://www.askapache.com/htaccess/crazy-advanced-mod_rewrite-tutorial/#Decoding_Mod_Rewrite_Variables
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-//echo 'display errors:' . ini_get('display_errors'); exit;
-
-//require 'webp-on-demand-1.inc';
-//require '../vendor/autoload.php';
-
-//print_r($_GET); exit;
 
 use \WebPConvert\WebPConvert;
 use \WebPConvert\Serve\ServeConvertedWebP;
