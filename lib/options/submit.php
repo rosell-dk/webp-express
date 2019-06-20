@@ -33,7 +33,7 @@ $oldConfig = $config;
 
 // Set options that are available in all operation modes
 $config = array_merge($config, [
-    'operation-mode' => $_POST['operation-mode'],
+    'operation-mode' => sanitize_text_field($_POST['operation-mode']),
 
     // redirection rules
     'image-types' => sanitize_text_field($_POST['image-types']),
@@ -82,8 +82,8 @@ if ($_POST['operation-mode'] != 'no-conversion') {
     $config['alter-html']['only-for-webps-that-exists'] = true;
 }
 
-$config['alter-html']['replacement'] = $_POST['alter-html-replacement'];
-$config['alter-html']['hooks'] = $_POST['alter-html-hooks'];
+$config['alter-html']['replacement'] = sanitize_text_field($_POST['alter-html-replacement']);
+$config['alter-html']['hooks'] = sanitize_text_field($_POST['alter-html-hooks']);
 
 
 // Set options that are available in all operation modes, except the "no-conversion" mode
@@ -167,8 +167,20 @@ if ($_POST['operation-mode'] != 'no-conversion') {
 
     // Converters
     // -------------
+    $convertersPosted = json_decode(wp_unslash($_POST['converters']), true); // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
 
-    $config['converters'] = json_decode(wp_unslash($_POST['converters']), true); // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
+    // Sanitize converters
+    foreach ($convertersPosted as &$converter) {
+        if (!isset($converter['options'])) continue;
+        foreach ($converter['options'] as $optionName => $optionValue) {
+            if (gettype($optionValue) == 'string') {
+                $converter['options'][$optionName] = sanitize_text_field($optionValue);
+            }
+        }
+    }
+
+
+    $config['converters'] = $convertersPosted;
 
     // remove converter ids
     foreach ($config['converters'] as &$converter) {
@@ -211,15 +223,15 @@ switch ($_POST['operation-mode']) {
         break;
     case 'cdn-friendly':
         $config = array_merge($config, [
-            'destination-folder' => $_POST['destination-folder'],
-            'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
+            'destination-folder' => sanitize_text_field($_POST['destination-folder']),
+            'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? sanitize_text_field($_POST['destination-extension']) : 'append'),
             'enable-redirection-to-converter' => isset($_POST['enable-redirection-to-converter']),  // PS: its called "autoconvert" in this mode
         ]);
         break;
     case 'no-conversion':
         $config = array_merge($config, [
             'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
-            'destination-extension' => $_POST['destination-extension'],
+            'destination-extension' => sanitize_text_field($_POST['destination-extension']),
         ]);
         break;
     case 'tweaked':
@@ -229,8 +241,8 @@ switch ($_POST['operation-mode']) {
             'only-redirect-to-converter-on-cache-miss' => isset($_POST['only-redirect-to-converter-on-cache-miss']),
             'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
             'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
-            'destination-folder' => $_POST['destination-folder'],
-            'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
+            'destination-folder' => sanitize_text_field($_POST['destination-folder']),
+            'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? sanitize_text_field($_POST['destination-extension']) : 'append'),
             'fail' => sanitize_text_field($_POST['fail']),
             'success-response' => sanitize_text_field($_POST['success-response']),
         ]);
@@ -241,7 +253,7 @@ switch ($_POST['operation-mode']) {
 if ($_POST['operation-mode'] != $_POST['change-operation-mode']) {
 
     // Operation mode changed!
-    $config['operation-mode'] = $_POST['change-operation-mode'];
+    $config['operation-mode'] = sanitize_text_field($_POST['change-operation-mode']);
     $config = Config::applyOperationMode($config);
 
     if ($config['operation-mode'] == 'varied-image-responses') {
