@@ -244,8 +244,6 @@ class ConvertHelperIndependent
 
     public static function createLogDir($logDir)
     {
-        $logDir = Paths::getLogDirAbs();
-
         if (!is_dir($logDir)) {
             @mkdir($logDir, 0775, true);
             @chmod($logDir, 0775);
