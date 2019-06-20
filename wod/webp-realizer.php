@@ -75,7 +75,7 @@ function getDestinationRealPath($dest) {
     }
 }*/
 
-function getDestination() {
+function getDestinationUnsanitized() {
     global $docRoot;
 
     // First check if it is in an environment variable - thats the safest way
@@ -125,6 +125,12 @@ function getDestination() {
     $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
     $dest = $docRoot . urldecode($requestUriNoQS);
     return $dest;
+}
+
+function getDestination() {
+    return ConvertHelperIndependent::sanitizeAbsFilePath(
+        getDestinationUnsanitized()
+    );
 }
 
 function getWpContentRel() {

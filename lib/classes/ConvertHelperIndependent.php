@@ -72,7 +72,7 @@ class ConvertHelperIndependent
     /**
      *  Get destination from source (and some configurations)
      */
-    public static function getDestination($source, $destinationFolder, $destinationExt, $webExpressContentDirAbs, $uploadDirAbs)
+    private static function getDestinationUnsanitized($source, $destinationFolder, $destinationExt, $webExpressContentDirAbs, $uploadDirAbs)
     {
         if (self::storeMingledOrNot($source, $destinationFolder, $uploadDirAbs)) {
             if ($destinationExt == 'append') {
@@ -100,6 +100,43 @@ class ConvertHelperIndependent
                 return $imageRoot . '/abs' . $source . '.webp';
             }
         }
+    }
+
+    /**
+     * Sanitize absolute file path.
+     *
+     * Make sure that file path is not a stream wrapper.
+     * This protects against Phar Deserialization and possibly other nasty tricks
+     * https://blog.ripstech.com/2018/new-php-exploitation-technique/
+     * https://www.php.net/manual/en/wrappers.phar.php
+     *
+     * We also prevent directory traversal, as we do not expect any traversal in our absolute paths.
+     *
+     * @param  string  $absFilePath
+     * @return string  sanitized file path
+     */
+     public static function sanitizeAbsFilePath($absFilePath) {
+         // Remove NUL characters (https://st-g.de/2011/04/doing-filename-checks-securely-in-PHP)
+         $absFilePath = str_replace(chr(0), '', $absFilePath);
+
+         // remove "../"
+         $absFilePath = preg_replace('#\.\.\/#', '', $absFilePath);
+
+         // remove "phar://", "php://" and the like from the beginning of the string
+         // important that this is done after removing "../" - otherwise one could send "../phar://"
+         $absFilePath = preg_replace('#^\\w+://#', '', $absFilePath);
+
+         return $absFilePath;
+     }
+
+    /**
+     *  Get destination from source (and some configurations)
+     */
+    public static function getDestination($source, $destinationFolder, $destinationExt, $webExpressContentDirAbs, $uploadDirAbs)
+    {
+        return self::sanitizeAbsFilePath(
+            self::getDestinationUnsanitized($source, $destinationFolder, $destinationExt, $webExpressContentDirAbs, $uploadDirAbs)
+        );
     }
 
     /**
@@ -132,6 +169,7 @@ class ConvertHelperIndependent
             $source = $sourceRel;
             $source =  preg_replace('/\\.(webp)$/', '', $source);
         }
+        $source = self::sanitizeAbsFilePath($source);
         if (!@file_exists($source)) {
             return false;
         }

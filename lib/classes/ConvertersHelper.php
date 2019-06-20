@@ -156,7 +156,7 @@ class ConvertersHelper
      * Get working and active converters.
      *
      * @param  object  $config
-     * @return  array
+     * @return  array  Array of converter objects
      */
     public static function getWorkingAndActiveConverters($config)
     {

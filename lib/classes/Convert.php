@@ -29,6 +29,8 @@ class Convert
 
     public static function convertFile($source, $config = null, $convertOptions = null, $converter = null)
     {
+        $source = ConvertHelperIndependent::sanitizeAbsFilePath($source);
+
         if (is_null($config)) {
             $config = Config::loadConfigAndFix();
         }
@@ -41,6 +43,7 @@ class Convert
         }*/
 
         $destination = self::getDestination($source, $config);
+        $destination = ConvertHelperIndependent::sanitizeAbsFilePath($destination);
 
         $logDir = Paths::getWebPExpressContentDirAbs() . '/log';
 
@@ -56,6 +59,7 @@ class Convert
 
     public static function findSource($destination, &$config = null)
     {
+        $destination = ConvertHelperIndependent::sanitizeAbsFilePath($destination);
         if (is_null($config)) {
             $config = Config::loadConfigAndFix();
         }

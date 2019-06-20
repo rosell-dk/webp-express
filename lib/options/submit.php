@@ -133,9 +133,18 @@ if ($_POST['operation-mode'] != 'no-conversion') {
     // Web Service
     // -------------
 
+    $whitelistPosted = json_decode(wp_unslash($_POST['whitelist']), true);
+
+    // Sanitize whitelist
+    foreach ($whitelistPosted as &$whitelist) {
+        $whitelist['label'] = sanitize_text_field($whitelist['label']);
+        $whitelist['ip'] = sanitize_text_field($whitelist['ip']);
+        $whitelist['api-key'] = sanitize_text_field($whitelist['api-key']);
+    }
+
     $config['web-service'] = [
         'enabled' => isset($_POST['web-service-enabled']),
-        'whitelist' => json_decode(wp_unslash($_POST['whitelist']), true)
+        'whitelist' => $whitelistPosted
     ];
 
     // Set existing api keys in web service (we removed them from the json array, for security purposes)

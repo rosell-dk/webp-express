@@ -70,7 +70,14 @@ function loadConfig($configFilename) {
     return json_decode($json, true);
 }
 
-function getSource() {
+/**
+ * Get absolute path to source file.
+ *
+ * The path can be passed to this file from the .htaccess file / nginx config in various ways.
+ *
+ * @return string  Absolute path to source (unsanitized! - call sanitizeAbsFilePath immidiately after calling this method)
+ */
+function getSourceUnsanitized() {
     global $wodOptions;
     global $docRoot;
 
@@ -95,7 +102,10 @@ function getSource() {
         }
     }
 
-    // Then querystring (full path)
+    // Then querystring (full path).
+    // PS: The parameters in $_GET are already url decoded. Sanitizing happens on the result
+
+    // TODO: perhaps only allow passing absolute path on nginx?
     if (isset($_GET['xsource'])) {
         return substr($_GET['xsource'], 1);         // No url decoding needed as $_GET is already decoded
     } elseif (isset($_GET['source'])) {
@@ -143,6 +153,12 @@ function getSource() {
     exitWithError('webp-on-demand.php was not passed any filename to convert');
 }
 
+function getSource() {
+    return ConvertHelperIndependent::sanitizeAbsFilePath(
+        getSourceUnsanitized()
+    );
+}
+
 function getWpContentRel() {
     // Passed in env variable?
     $wpContentDirRel = getEnvPassedInRewriteRule('WPCONTENT');
@@ -160,8 +176,14 @@ function getWpContentRel() {
 }
 
 $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
-$webExpressContentDirAbs = $docRoot . '/' . getWpContentRel() . '/webp-express';
+
+// PS: the following sanitizing will remove any "../" (which is good)
+$webExpressContentDirAbs = ConvertHelperIndependent::sanitizeAbsFilePath($docRoot . '/' . getWpContentRel() . '/webp-express');
 $options = loadConfig($webExpressContentDirAbs . '/config/wod-options.json');
+
+// TODO:
+// Exit here, if not configured to redirect to conversion script
+
 $wodOptions = $options['wod'];
 $serveOptions = $options['webp-convert'];
 $convertOptions = &$serveOptions['convert'];
