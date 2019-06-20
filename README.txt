@@ -605,6 +605,11 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.14.5 =
+*(released: 20 jun 2019)*
+
+* Various fixes
+
 = 0.14.4 =
 *(released: 18 jun 2019)*
 
@@ -818,6 +823,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.14.5 =
+Various fixes
 
 = 0.14.4 =
 Now bundles with multiple cwebp binaries for linux for systems where 1.0.2 fails.
