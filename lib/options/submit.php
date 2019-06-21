@@ -15,8 +15,11 @@ check_admin_referer('webpexpress-save-settings-nonce');
 DismissableMessages::dismissMessage('0.14.0/say-hello-to-vips');
 
 
-// https://premium.wpmudev.org/blog/handling-form-submissions/
-// checkout https://codex.wordpress.org/Function_Reference/sanitize_meta
+/*
+--------------------------------
+Custom functions for sanitizing
+--------------------------------
+*/
 
 /**
  * Get sanitized text (NUL removed too)
@@ -80,7 +83,7 @@ function webpexpress_getSanitizedCacheControlHeader($keyInPOST) {
  * @param  string  $keyInPOST  key in $_POST
  * @param  int     $fallback   key in $_POST
  *
- * @return int     the sanitized number.
+ * @return int     the sanitized int value.
  */
 function webpexpress_getSanitizedInt($keyInPOST, $fallback=0) {
     $value = webpexpress_getSanitizedText($keyInPOST, strval($fallback));
@@ -173,15 +176,23 @@ function webpexpress_getSanitizedConverters() {
     return $convertersPosted;
 }
 
-// ---------------
-$config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
-$oldConfig = $config;
 
+/*
+------------------------------------------------------
+
+Create a sanitized object from the POST data
+It reflects the POST data - it has same keys and values - except that the values have been sanitized.
+
+After this, there must be no more references to $_POST
+------------------------------------------------------
+*/
 
 
 // Sanitizing
 $sanitized = [
-    // General
+    // Force htaccess rules
+    'force' => isset($_POST['force']),
+
     // Note that "operation-mode" is actually the old mode. The new mode is posted in "change-operation-mode"
     'operation-mode' => webpexpress_getSanitizedChooseFromSet('operation-mode', 'varied-image-responses', [
         'varied-image-responses',
@@ -195,11 +206,23 @@ $sanitized = [
         'no-conversion',
         'tweaked'
     ]),
+
+
+    // General
+    // --------
     'image-types' => intval(webpexpress_getSanitizedChooseFromSet('image-types', '3', [
         '0',
         '1',
         '3'
     ])),
+    'destination-folder' => webpexpress_getSanitizedChooseFromSet('destination-folder', 'separate', [
+        'separate',
+        'mingled',
+    ]),
+    'destination-extension' => webpexpress_getSanitizedChooseFromSet('destination-extension', 'append', [
+        'append',
+        'set',
+    ]),
     'cache-control' => webpexpress_getSanitizedChooseFromSet('cache-control', 'no-header', [
         'no-header',
         'set',
@@ -219,7 +242,9 @@ $sanitized = [
     ]),
     'cache-control-custom' => webpexpress_getSanitizedCacheControlHeader('cache-control-custom'),
 
+
     // Alter html
+    // ----------
     'alter-html-enabled' => isset($_POST['alter-html-enabled']),
     'alter-html-only-for-webp-enabled-browsers' => isset($_POST['alter-html-only-for-webp-enabled-browsers']),
     'alter-html-add-picturefill-js' => isset($_POST['alter-html-add-picturefill-js']),
@@ -234,7 +259,9 @@ $sanitized = [
     ]),
     'enable-redirection-to-webp-realizer' => isset($_POST['enable-redirection-to-webp-realizer']),
 
+
     // Conversion options
+    // ------------------
     'metadata' => webpexpress_getSanitizedChooseFromSet('metadata', 'none', [
         'none',
         'all'
@@ -267,15 +294,49 @@ $sanitized = [
     ]),
     'alpha-quality' => webpexpress_getSanitizedQuality('png-quality', 80),
     'convert-on-upload' => isset($_POST['convert-on-upload']),
-
-    // Converters
     'converters' => webpexpress_getSanitizedConverters(),
 
+
+    // Serve options
+    // ---------------
+    'fail' => webpexpress_getSanitizedChooseFromSet('fail', 'original', [
+        'original',
+        '404',
+        'report'
+    ]),
+    'success-response' => webpexpress_getSanitizedChooseFromSet('success-response', 'original', [
+        'original',
+        'converted',
+    ]),
+
+
+    // Redirection rules
+    // -----------------
+    'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
+    'enable-redirection-to-converter' => isset($_POST['enable-redirection-to-converter']),
+    'only-redirect-to-converter-for-webp-enabled-browsers' => isset($_POST['only-redirect-to-converter-for-webp-enabled-browsers']),
+    'only-redirect-to-converter-on-cache-miss' => isset($_POST['only-redirect-to-converter-on-cache-miss']),
+    'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
+
     // Web service
+    // ------------
     'web-service-enabled' => isset($_POST['web-service-enabled']),
     'whitelist' => webpexpress_getSanitizedWhitelist(),
 
 ];
+
+
+/*
+------------------------------------------------------
+
+Lets begin working on the data.
+Remember: Use $sanitized instead of $_POST
+
+------------------------------------------------------
+*/
+
+$config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
+$oldConfig = $config;
 
 // Set options that are available in all operation modes
 $config = array_merge($config, [
@@ -430,40 +491,39 @@ if ($sanitized['operation-mode'] != 'no-conversion') {
 switch ($sanitized['operation-mode']) {
     case 'varied-image-responses':
         $config = array_merge($config, [
-            'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
-            'destination-folder' => $_POST['destination-folder'],
-            'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? $_POST['destination-extension'] : 'append'),
+            'redirect-to-existing-in-htaccess' => $sanitized['redirect-to-existing-in-htaccess'],
+            'destination-folder' => $sanitized['destination-folder'],
+            'destination-extension' => (($sanitized['destination-folder'] == 'mingled') ? $sanitized['destination-extension'] : 'append'),
         ]);
         break;
     case 'cdn-friendly':
         $config = array_merge($config, [
-            'destination-folder' => sanitize_text_field($_POST['destination-folder']),
-            'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? sanitize_text_field($_POST['destination-extension']) : 'append'),
-            'enable-redirection-to-converter' => isset($_POST['enable-redirection-to-converter']),  // PS: its called "autoconvert" in this mode
+            'destination-folder' => $sanitized['destination-folder'],
+            'destination-extension' => (($sanitized['destination-folder'] == 'mingled') ? $sanitized['destination-extension'] : 'append'),
+            'enable-redirection-to-converter' => $sanitized['enable-redirection-to-converter'],  // PS: its called "autoconvert" in this mode
         ]);
         break;
     case 'no-conversion':
         $config = array_merge($config, [
-            'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
-            'destination-extension' => sanitize_text_field($_POST['destination-extension']),
+            'redirect-to-existing-in-htaccess' => $sanitized['redirect-to-existing-in-htaccess'],
+            'destination-extension' => $sanitized['destination-extension'],
         ]);
         break;
     case 'tweaked':
         $config = array_merge($config, [
-            'enable-redirection-to-converter' => isset($_POST['enable-redirection-to-converter']),
-            'only-redirect-to-converter-for-webp-enabled-browsers' => isset($_POST['only-redirect-to-converter-for-webp-enabled-browsers']),
-            'only-redirect-to-converter-on-cache-miss' => isset($_POST['only-redirect-to-converter-on-cache-miss']),
-            'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
-            'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
-            'destination-folder' => sanitize_text_field($_POST['destination-folder']),
-            'destination-extension' => (($_POST['destination-folder'] == 'mingled') ? sanitize_text_field($_POST['destination-extension']) : 'append'),
-            'fail' => sanitize_text_field($_POST['fail']),
-            'success-response' => sanitize_text_field($_POST['success-response']),
+            'enable-redirection-to-converter' => $sanitized['enable-redirection-to-converter'],
+            'only-redirect-to-converter-for-webp-enabled-browsers' => $sanitized['only-redirect-to-converter-for-webp-enabled-browsers'],
+            'only-redirect-to-converter-on-cache-miss' => $sanitized['only-redirect-to-converter-on-cache-miss'],
+            'do-not-pass-source-in-query-string' => $sanitized['do-not-pass-source-in-query-string'],
+            'redirect-to-existing-in-htaccess' => $sanitized['redirect-to-existing-in-htaccess'],
+            'destination-folder' => $sanitized['destination-folder'],
+            'destination-extension' => (($sanitized['destination-folder'] == 'mingled') ? $sanitized['destination-extension'] : 'append'),
+            'fail' => $sanitized['fail'],
+            'success-response' => $sanitized['success-response'],
         ]);
         break;
 }
 
-//echo '<pre>' . print_r($_POST, true) . '</pre>'; exit;
 if ($sanitized['operation-mode'] != $sanitized['change-operation-mode']) {
 
     // Operation mode changed!
@@ -478,14 +538,14 @@ if ($sanitized['operation-mode'] != $sanitized['change-operation-mode']) {
 }
 
 // If we are going to save .htaccess, run and store capability tests first (we should only store results when .htaccess is updated as well)
-if (isset($_POST['force']) || HTAccess::doesRewriteRulesNeedUpdate($config)) {
+if ($sanitized['force'] || HTAccess::doesRewriteRulesNeedUpdate($config)) {
     Config::runAndStoreCapabilityTests($config);
 }
 
 
 // SAVE!
 // -----
-$result = Config::saveConfigurationAndHTAccess($config, isset($_POST['force']));
+$result = Config::saveConfigurationAndHTAccess($config, $sanitized['force']);
 
 // Handle results
 // ---------------
