@@ -18,7 +18,6 @@ function getEnvPassedInRewriteRule($envName) {
     return false;
 }
 
-
 $result = getEnvPassedInRewriteRule('PASSTHROUGHENV');
 if ($result === false) {
     echo '0';
