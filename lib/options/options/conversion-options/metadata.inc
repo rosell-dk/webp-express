@@ -4,7 +4,10 @@
 $metadata = $config['metadata'];
 
 echo '<tr><th scope="row">Metadata';
-echo helpIcon('Decide what to do with image metadata, such as Exif. Note that this setting is not supported by the "Gd" conversion method, as it is not possible to copy the metadata with the Gd extension. Imagickbinary also currently lacks support');
+echo helpIcon(
+    'Decide what to do with image metadata, such as Exif. Note that this setting is not supported by the "Gd" conversion method, ' .
+    'as it is not possible to copy the metadata with the Gd extension. Imagickbinary also currently lacks support'
+);
 echo '</th><td>';
 
 echo '<select id="metadata" name="metadata">';

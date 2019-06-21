@@ -10,7 +10,9 @@
     <h2><i>.htaccess</i> rules for webp generation</h2>
     <?php else : ?>
     <h3>Redirection rules</h3>
-    <div><i>The options here affects the rules created in the .htaccess. <?php echo helpIcon('Note: The general options also affects the rules.'); ?></i></div>
+    <div><i>The options here affects the rules created in the .htaccess. <?php
+        echo helpIcon('Note: The general options also affects the rules.');
+    ?></i></div>
     <?php endif; ?>
 
     <table class="form-table">

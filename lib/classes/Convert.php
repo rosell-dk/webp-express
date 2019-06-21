@@ -29,6 +29,7 @@ class Convert
 
     public static function convertFile($source, $config = null, $convertOptions = null, $converter = null)
     {
+        // PS: No need to check mime type as the WebPConvert library does that (it only accepts image/jpeg and image/png)
         $source = ConvertHelperIndependent::sanitizeAbsFilePath($source);
 
         if (is_null($config)) {
@@ -78,6 +79,8 @@ class Convert
             wp_die();
         }
 
+        // No need to sanitize filename. self::convertFile does that for us. And the WebPConvert library also does.
+        // Also, no need to check mime type as the WebPConvert library also does that (it only allows image/jpeg and image/png)
         $filename = $_POST['filename'];
 
         if (isset($_POST['config-overrides'])) {
@@ -115,7 +118,6 @@ class Convert
         } else {
             $result = self::convertFile($filename);
         }
-
 
         echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
         wp_die();

@@ -96,7 +96,7 @@ png
                 <label>
                     Limit:
                 </label>
-                <input type="text" size=3 id="max_quality" name="max-quality" value="<?php echo $config['max-quality']; ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
+                <input type="text" size=3 id="max_quality" name="max-quality" value="<?php echo esc_attr($config['max-quality']); ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
                 <?php echo helpIcon(
                     'Quality is expensive byte-wise. For most websites, more than 80 is a waste of bytes. ' .
                     'This option allows you to limit the quality to whatever is lowest: ' .
@@ -105,7 +105,7 @@ png
                 <label style="display:inline-block; margin-left:10px">
                     Fallback:
                 </label>
-                <input type="text" size=3 name="quality-fallback" value="<?php echo $config['quality-specific'] ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
+                <input type="text" size=3 name="quality-fallback" value="<?php echo esc_attr($config['quality-specific']) ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
                 <?php
                     echo helpIcon(
                         'Fallback quality in case quality detection is not available or should fail for some reason (which has yet to be seen). ' .
@@ -119,7 +119,7 @@ png
             </div>
 
             <div id="quality_specific_div" style="display:inline-block" class="toggler effect-visibility">
-                <input type="text" size=3 name="quality-specific" value="<?php echo $config['quality-specific'] ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
+                <input type="text" size=3 name="quality-specific" value="<?php echo esc_attr($config['quality-specific']) ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
                 <?php
                     echo helpIcon('Enter number (0 - 100)');
                 ?>
@@ -150,7 +150,7 @@ png
                 <label>
                     "Near lossless" quality:
                 </label>
-                <input type="text" size=3 name="jpeg-near-lossless" value="<?php echo $config['jpeg-near-lossless'] ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
+                <input type="text" size=3 name="jpeg-near-lossless" value="<?php echo esc_attr($config['jpeg-near-lossless']) ?>" style="text-align:right; padding-left:0px; padding-right:4px; width:34px">
                 <?php
                     echo helpIcon(
                         'The level of near-lossless image preprocessing (when trying lossless). ' .

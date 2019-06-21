@@ -50,7 +50,7 @@ if ($canDetectQuality) {
 //    echo '<tr id="max_quality_div"><th scope="row">Max quality (0-100)';
     echo '<div id="max_quality_div">Max ';
     //echo '</th><td>';
-    echo '<input type="text" size=3 id="max_quality" name="max-quality" value="' . $maxQuality . '">';
+    echo '<input type="text" size=3 id="max_quality" name="max-quality" value="' . esc_attr($maxQuality) . '">';
     echo helpIcon('Quality is expensive byte-wise. For most websites, more than 80 is a waste of bytes. ' .
         'This option allows you to limit the quality to whatever is lowest: ' .
         'the quality of the jpeg or the limit entered here. Recommended value: Somewhere between 50-85');
@@ -77,7 +77,7 @@ if ($canDetectQuality) {
 */
 //echo '</th><td>';
 
-echo '<input type="text" size=3 id="quality_specific" name="quality-specific" value="' . $qualitySpecific . '">';
+echo '<input type="text" size=3 id="quality_specific" name="quality-specific" value="' . esc_attr($qualitySpecific) . '">';
 echo helpIcon('Enter number (0 - 100)');
 echo '</div>';
 echo '</td></tr>';
@@ -90,6 +90,6 @@ echo helpIcon(
     'Quality of webp, when the image that is converted is a png.'
 );
 echo '</th><td>';
-echo '<input type="text" size=3 id="quality_png" name="quality-png" value="' . $config['quality-png'] . '">';
+echo '<input type="text" size=3 id="quality_png" name="quality-png" value="' . esc_attr($config['quality-png']) . '">';
 echo helpIcon('Enter number (0 - 100). Recommended value: Somewhere between 60-90');
 echo '</td></tr>';

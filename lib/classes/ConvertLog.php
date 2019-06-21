@@ -15,6 +15,12 @@ class ConvertLog
         }
         $source = $_POST['source'];
 
+        // We need to be absolute certain that this feature can be misused.
+        // - so disabling until I get the time...
+
+        $msg = 'This feature is on the road map...';
+        echo json_encode($msg, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
+        /*
         $logFile = ConvertHelperIndependent::getLogFilename($source, Paths::getLogDirAbs());
         $msg = 'Log file: <i>' . $logFile . '</i><br><br><hr>';
 
@@ -35,6 +41,7 @@ class ConvertLog
         //file_get_contents
 
         echo json_encode($msg, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
+        */
         wp_die();
     }
 

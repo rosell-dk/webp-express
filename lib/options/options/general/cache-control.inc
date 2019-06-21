@@ -26,7 +26,7 @@ $cacheControlPublic = $config['cache-control-public'];
             <option value="custom" <?php if ($cacheControl == 'custom') echo ' selected' ?>>Custom</option>
         </select>
         <div id="cache_control_custom_div" style="display:inline-block;">
-            <input type="text" id="cache_control_custom" name="cache-control-custom" value="<?php echo $cacheControlCustom ?>">
+            <input type="text" id="cache_control_custom" name="cache-control-custom" value="<?php echo esc_attr($cacheControlCustom) ?>">
             <?php echo helpIcon(
                 'You can read about possible options ' .
                 '<a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control">here</a>',

@@ -20,7 +20,9 @@
         ?>
     </th>
     <td>
-        <input type="checkbox" id="redirect_to_existing_in_htaccess" name="redirect-to-existing-in-htaccess" value="true" <?php echo ($config['redirect-to-existing-in-htaccess'] ? 'checked="checked"' : '') ?> >
+        <input type="checkbox" id="redirect_to_existing_in_htaccess" name="redirect-to-existing-in-htaccess" value="true" <?php
+            echo ($config['redirect-to-existing-in-htaccess'] ? 'checked="checked"' : '')
+        ?> >
 
         <?php
         /*if ($config['operation-mode'] == 'no-conversion') {

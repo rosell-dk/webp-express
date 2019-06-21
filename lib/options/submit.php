@@ -81,7 +81,7 @@ function webpexpress_getSanitizedCacheControlHeader($keyInPOST) {
  * Get sanitized integer
  *
  * @param  string  $keyInPOST  key in $_POST
- * @param  int     $fallback   key in $_POST
+ * @param  int     $fallback   fallback in case nothing in POST or if we cannot parse it as int
  *
  * @return int     the sanitized int value.
  */
@@ -193,6 +193,9 @@ $sanitized = [
     // Force htaccess rules
     'force' => isset($_POST['force']),
 
+
+    // Operation mode
+    // --------------
     // Note that "operation-mode" is actually the old mode. The new mode is posted in "change-operation-mode"
     'operation-mode' => webpexpress_getSanitizedChooseFromSet('operation-mode', 'varied-image-responses', [
         'varied-image-responses',
@@ -243,21 +246,13 @@ $sanitized = [
     'cache-control-custom' => webpexpress_getSanitizedCacheControlHeader('cache-control-custom'),
 
 
-    // Alter html
-    // ----------
-    'alter-html-enabled' => isset($_POST['alter-html-enabled']),
-    'alter-html-only-for-webp-enabled-browsers' => isset($_POST['alter-html-only-for-webp-enabled-browsers']),
-    'alter-html-add-picturefill-js' => isset($_POST['alter-html-add-picturefill-js']),
-    'alter-html-for-webps-that-has-yet-to-exist' => isset($_POST['alter-html-for-webps-that-has-yet-to-exist']),
-    'alter-html-replacement' => webpexpress_getSanitizedChooseFromSet('alter-html-replacement', 'picture', [
-        'picture',
-        'url'
-    ]),
-    'alter-html-hooks' => webpexpress_getSanitizedChooseFromSet('alter-html-hooks', 'content-hooks', [
-        'content-hooks',
-        'ob'
-    ]),
-    'enable-redirection-to-webp-realizer' => isset($_POST['enable-redirection-to-webp-realizer']),
+    // Redirection rules
+    // -----------------
+    'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
+    'enable-redirection-to-converter' => isset($_POST['enable-redirection-to-converter']),
+    'only-redirect-to-converter-for-webp-enabled-browsers' => isset($_POST['only-redirect-to-converter-for-webp-enabled-browsers']),
+    'only-redirect-to-converter-on-cache-miss' => isset($_POST['only-redirect-to-converter-on-cache-miss']),
+    'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
 
 
     // Conversion options
@@ -310,13 +305,22 @@ $sanitized = [
     ]),
 
 
-    // Redirection rules
-    // -----------------
-    'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
-    'enable-redirection-to-converter' => isset($_POST['enable-redirection-to-converter']),
-    'only-redirect-to-converter-for-webp-enabled-browsers' => isset($_POST['only-redirect-to-converter-for-webp-enabled-browsers']),
-    'only-redirect-to-converter-on-cache-miss' => isset($_POST['only-redirect-to-converter-on-cache-miss']),
-    'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
+    // Alter html
+    // ----------
+    'alter-html-enabled' => isset($_POST['alter-html-enabled']),
+    'alter-html-only-for-webp-enabled-browsers' => isset($_POST['alter-html-only-for-webp-enabled-browsers']),
+    'alter-html-add-picturefill-js' => isset($_POST['alter-html-add-picturefill-js']),
+    'alter-html-for-webps-that-has-yet-to-exist' => isset($_POST['alter-html-for-webps-that-has-yet-to-exist']),
+    'alter-html-replacement' => webpexpress_getSanitizedChooseFromSet('alter-html-replacement', 'picture', [
+        'picture',
+        'url'
+    ]),
+    'alter-html-hooks' => webpexpress_getSanitizedChooseFromSet('alter-html-hooks', 'content-hooks', [
+        'content-hooks',
+        'ob'
+    ]),
+    'enable-redirection-to-webp-realizer' => isset($_POST['enable-redirection-to-webp-realizer']),
+
 
     // Web service
     // ------------

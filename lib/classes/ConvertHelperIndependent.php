@@ -319,7 +319,7 @@ APACHE
         return [
             'success' => $success,
             'msg' => $msg,
-            'log' => $logger->getHtml(),
+            'log' => $logger->getMarkDown("\n"),
         ];
 
     }

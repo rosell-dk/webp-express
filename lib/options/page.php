@@ -134,19 +134,19 @@ function helpIcon($text, $customClass = '') {
 
 function webpexpress_selectBoxOptions($selected, $options) {
     foreach ($options as $optionValue => $text) {
-        echo '<option value="' . $optionValue . '"' . ($optionValue == $selected ? ' selected' : '') . '>';
-        echo $text;
+        echo '<option value="' . esc_attr($optionValue) . '"' . ($optionValue == $selected ? ' selected' : '') . '>';
+        echo esc_html($text);
         echo '</option>';
     }
 }
 
 function webpexpress_radioButton($optionName, $optionValue, $label, $selectedValue, $helpText = null) {
-    $id = str_replace('-', '_', $optionName . '_' . $optionValue);
+    $id = esc_attr(str_replace('-', '_', $optionName . '_' . $optionValue));
     echo '<input type="radio" id="' . $id . '"';
     if ($optionValue == $selectedValue) {
         echo ' checked="checked"';
     }
-    echo ' name="' . $optionName . '" value="' . $optionValue . '" style="margin-right: 10px">';
+    echo ' name="' . esc_attr($optionName) . '" value="' . esc_attr($optionValue) . '" style="margin-right: 10px">';
     echo '<label for="' . $id . '">';
     echo $label;
     if (!is_null($helpText)) {
@@ -158,34 +158,18 @@ function webpexpress_radioButton($optionName, $optionValue, $label, $selectedVal
 function webpexpress_radioButtons($optionName, $selected, $options, $helpTexts = [], $style='margin-left: 20px; margin-top: 5px') {
     echo '<ul style="' . $style . '">';
     foreach ($options as $optionValue => $label) {
-        $id = str_replace('-', '_', $optionName . '_' . $optionValue);
         echo '<li>';
-
         webpexpress_radioButton($optionName, $optionValue, $label, $selected, isset($helpTexts[$optionValue]) ? $helpTexts[$optionValue] : null);
-
-        /*
-        echo '<input type="radio" id="' . $id . '"';
-        if ($optionValue == $selected) {
-            echo ' checked="checked"';
-        }
-        echo ' name="' . $optionName . '" value="' . $optionValue . '" style="margin-right: 10px">';
-        echo '<label for="' . $id . '">';
-        echo $text;
-        if (isset($helpTexts[$optionValue])) {
-            echo helpIcon($helpTexts[$optionValue]);
-        }
-        echo '</label>';
-        */
         echo '</li>';
     }
     echo '</ul>';
 }
 
 function webpexpress_checkbox($optionName, $checked, $label, $helpText = '') {
-    $id = str_replace('-', '_', $optionName);
+    $id = esc_attr(str_replace('-', '_', $optionName));
     echo '<div style="margin:10px 0 0 10px;">';
     echo '<input value="true" type="checkbox" style="margin-right: 10px" ';
-    echo 'name="' . $optionName . '"';
+    echo 'name="' . esc_attr($optionName) . '"';
     echo 'id="' . $id . '"';
     if ($checked) {
         echo ' checked="checked"';

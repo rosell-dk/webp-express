@@ -25,7 +25,7 @@
         <div id="alter_html_options_div">
             <p>
                 Two distinct methods for altering HTML are supported. <a id="show_alterhtml_chart_btn" href="javascript:updateAlterHTMLChartVisibility(true);">View comparison chart</a>
-                <input type="hidden" name="ui-show-alter-html-chart" id="ui_show_alter_html_chart" value="<?php echo 'false'; ?>">
+                <input type="hidden" name="ui-show-alter-html-chart" id="ui_show_alter_html_chart" value="false">
             </p>
             <div id="alter_html_comparison_chart" name="alter-html-comparison-chart" class="toggler effect-slider">
                 <table class="designed">
@@ -100,7 +100,7 @@
                   'alter-html-replacement',
                   'picture',
                   'Replace &lt;img&gt; tags with &lt;picture&gt; tags, adding the webp to srcset.',
-                  $config['alter-html']['replacement'],
+                  $config['alter-html']['replacement'],     // PS: the function takes care of the escaping
                   '<p>"Picture tag" replaces &lt;img&gt tags with &lt;picture&gt; tags and adds the webp as an extra source. ' .
                         'This effectively points webp-enabled browsers to the webp variant and other browsers to ' .
                         'the original image.</p>' .
@@ -118,7 +118,7 @@
                     <?php
                     webpexpress_checkbox(
                         'alter-html-add-picturefill-js',
-                        $config['alter-html']['alter-html-add-picturefill-js'],
+                        $config['alter-html']['alter-html-add-picturefill-js'],  // PS: the function takes care of the escaping
                         'Dynamically load picturefill.js on older browsers',
                         'If you enable this option, a small script will be added which detects if picture tags are supported and loads ' .
                         '<a href="https://github.com/scottjehl/picturefill" target="_blank">picturefill.js</a> if not. ' .
@@ -133,7 +133,7 @@
                   'alter-html-replacement',
                   'url',
                   'Replace image URLs',
-                  $config['alter-html']['replacement'],
+                  $config['alter-html']['replacement'],  // PS: the function takes care of the escaping
                   '<p>"Image URLs" replaces the image URLs to point to ' .
                         'the webp <i>rather than</i> the original. Handles src, srcset, common lazy-load attributes and even ' .
                         'inline styles</p>' .
@@ -153,7 +153,7 @@
                     <?php
                     webpexpress_checkbox(
                         'alter-html-only-for-webp-enabled-browsers',
-                        $config['alter-html']['only-for-webp-enabled-browsers'],
+                        $config['alter-html']['only-for-webp-enabled-browsers'] == true,
                         'Only do the replacements in webp enabled browsers',
                         'If you enable this option, the replacements will only be made, when the request is from ' .
                             'a browser that supports webp. Note that this will not play well with plugins that caches ' .
