@@ -115,9 +115,7 @@ function webpexpress_getSanitizedQuality($keyInPOST, $fallback = 75) {
 /**
  * Get sanitized whitelist
  *
- * @param  string  $keyInPOST  key in $_POST
- *
- * @return int  quality (0-100)
+ * @return array  Sanitized array of the whitelist json array received in $_POST
  */
 function webpexpress_getSanitizedWhitelist() {
     $whitelistPosted = (isset($_POST['whitelist']) ? $_POST['whitelist'] : '[]');
@@ -154,6 +152,27 @@ function webpexpress_getSanitizedWhitelist() {
     return $whitelistSanitized;
 }
 
+/**
+ * Get sanitized converters.
+ *
+ * @return array  Sanitized array of the converters json array received in $_POST
+ */
+function webpexpress_getSanitizedConverters() {
+    $convertersPosted = (isset($_POST['converters']) ? $_POST['converters'] : '[]');
+    $convertersPosted = json_decode(wp_unslash($convertersPosted), true); // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
+
+    // Sanitize converter options
+    foreach ($convertersPosted as &$converter) {
+        if (!isset($converter['options'])) continue;
+        foreach ($converter['options'] as $optionName => $optionValue) {
+            if (gettype($optionValue) == 'string') {
+                $converter['options'][$optionName] = sanitize_text_field($optionValue);
+            }
+        }
+    }
+    return $convertersPosted;
+}
+
 // ---------------
 $config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
 $oldConfig = $config;
@@ -165,6 +184,12 @@ $sanitized = [
     // General
     // Note that "operation-mode" is actually the old mode. The new mode is posted in "change-operation-mode"
     'operation-mode' => webpexpress_getSanitizedChooseFromSet('operation-mode', 'varied-image-responses', [
+        'varied-image-responses',
+        'cdn-friendly',
+        'no-conversion',
+        'tweaked'
+    ]),
+    'change-operation-mode' => webpexpress_getSanitizedChooseFromSet('change-operation-mode', 'varied-image-responses', [
         'varied-image-responses',
         'cdn-friendly',
         'no-conversion',
@@ -241,7 +266,15 @@ $sanitized = [
         'auto'
     ]),
     'alpha-quality' => webpexpress_getSanitizedQuality('png-quality', 80),
+    'convert-on-upload' => isset($_POST['convert-on-upload']),
+
+    // Converters
+    'converters' => webpexpress_getSanitizedConverters(),
+
+    // Web service
+    'web-service-enabled' => isset($_POST['web-service-enabled']),
     'whitelist' => webpexpress_getSanitizedWhitelist(),
+
 ];
 
 // Set options that are available in all operation modes
@@ -293,7 +326,7 @@ $config['alter-html']['hooks'] = $sanitized['alter-html-hooks'];
 
 
 // Set options that are available in all operation modes, except the "no-conversion" mode
-if ($_POST['operation-mode'] != 'no-conversion') {
+if ($sanitized['operation-mode'] != 'no-conversion') {
 
     $config['enable-redirection-to-webp-realizer'] = $sanitized['enable-redirection-to-webp-realizer'];
 
@@ -327,25 +360,15 @@ if ($_POST['operation-mode'] != 'no-conversion') {
     $config['png-near-lossless'] = $sanitized['png-near-lossless'];
     $config['alpha-quality'] = $sanitized['alpha-quality'];
 
-    // Other
-    $config['convert-on-upload'] = isset($_POST['convert-on-upload']);
+    // Other conversion options
+    $config['convert-on-upload'] = $sanitized['convert-on-upload'];
 
 
     // Web Service
     // -------------
 
-/*
-    $whitelistPosted = json_decode(wp_unslash($_POST['whitelist']), true);
-
-    // Sanitize whitelist
-    foreach ($whitelistPosted as &$whitelist) {
-        $whitelist['label'] = sanitize_text_field($whitelist['label']);
-        $whitelist['ip'] = sanitize_text_field($whitelist['ip']);
-        $whitelist['api-key'] = sanitize_text_field($whitelist['api-key']);
-    }*/
-
     $config['web-service'] = [
-        'enabled' => isset($_POST['web-service-enabled']),
+        'enabled' => $sanitized['web-service-enabled'],
         'whitelist' => $sanitized['whitelist']
     ];
 
@@ -360,7 +383,7 @@ if ($_POST['operation-mode'] != 'no-conversion') {
         }
     }
 
-    // Set new api keys in web service
+    // Set changed api keys
     foreach ($config['web-service']['whitelist'] as &$whitelistEntry) {
         if (!empty($whitelistEntry['new-api-key'])) {
             $whitelistEntry['api-key'] = $whitelistEntry['new-api-key'];
@@ -370,20 +393,8 @@ if ($_POST['operation-mode'] != 'no-conversion') {
 
     // Converters
     // -------------
-    $convertersPosted = json_decode(wp_unslash($_POST['converters']), true); // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
 
-    // Sanitize converters
-    foreach ($convertersPosted as &$converter) {
-        if (!isset($converter['options'])) continue;
-        foreach ($converter['options'] as $optionName => $optionValue) {
-            if (gettype($optionValue) == 'string') {
-                $converter['options'][$optionName] = sanitize_text_field($optionValue);
-            }
-        }
-    }
-
-
-    $config['converters'] = $convertersPosted;
+    $config['converters'] = $sanitized['converters'];
 
     // remove converter ids
     foreach ($config['converters'] as &$converter) {
@@ -416,7 +427,7 @@ if ($_POST['operation-mode'] != 'no-conversion') {
 }
 
 
-switch ($_POST['operation-mode']) {
+switch ($sanitized['operation-mode']) {
     case 'varied-image-responses':
         $config = array_merge($config, [
             'redirect-to-existing-in-htaccess' => isset($_POST['redirect-to-existing-in-htaccess']),
@@ -453,10 +464,10 @@ switch ($_POST['operation-mode']) {
 }
 
 //echo '<pre>' . print_r($_POST, true) . '</pre>'; exit;
-if ($_POST['operation-mode'] != $_POST['change-operation-mode']) {
+if ($sanitized['operation-mode'] != $sanitized['change-operation-mode']) {
 
     // Operation mode changed!
-    $config['operation-mode'] = sanitize_text_field($_POST['change-operation-mode']);
+    $config['operation-mode'] = $sanitized['change-operation-mode'];
     $config = Config::applyOperationMode($config);
 
     if ($config['operation-mode'] == 'varied-image-responses') {
