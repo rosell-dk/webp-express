@@ -18,47 +18,253 @@ DismissableMessages::dismissMessage('0.14.0/say-hello-to-vips');
 // https://premium.wpmudev.org/blog/handling-form-submissions/
 // checkout https://codex.wordpress.org/Function_Reference/sanitize_meta
 
-/* We want an integer value between 0-100. We round "77.5" to 78. */
-function webp_express_sanitize_quality_field($text) {
-    $text = str_replace(',', '.', $text);
-    $q = floatval(sanitize_text_field($text));
-    $q = round($q);
+/**
+ * Get sanitized text (NUL removed too)
+ *
+ * General purpose for getting textual values from $_POST.
+ * If the POST value is not set, the fallback is returned
+ *
+ * For sanitizing, the wordpress function "sanitize_text_field" is used. However, before doing that, we
+ * remove any NUL characters. NUL characters can be used to trick input validation, so we better get rid of those
+ * right away
+ *
+ * @param  string  $keyInPOST            key in $_POST
+ * @param  int     $fallback             value to return if the POST does not match any in the set, or it is not send at all
+ * @param  array   $acceptableValues     the set of values that we have to choose between
+ *
+ * @return string  sanitized text, or fallback if value isn't set
+ */
+function webpexpress_getSanitizedText($keyInPOST, $fallbackValue = '') {
+    if (!isset($_POST[$keyInPOST])) {
+        return $fallbackValue;
+    }
+    $value = $_POST[$keyInPOST];
+
+    // Keep in mind checking for NUL when dealing with user input
+    // see https://st-g.de/2011/04/doing-filename-checks-securely-in-PHP
+    $value = str_replace(chr(0), '', $value);
+
+    return sanitize_text_field($value);
+}
+
+/**
+ * Get sanitized value from a set of values.
+ *
+ * Only allows values in the set given. If the value does not match, the fallback will be returned.
+ *
+ * @param  string  $keyInPOST            key in $_POST
+ * @param  int     $fallback             value to return if the POST does not match any in the set, or it is not send at all
+ * @param  array   $acceptableValues     the set of values that we have to choose between
+ *
+ * @return mixed   one of the items in the set - or fallback (which is usually also one in the set)
+ */
+function webpexpress_getSanitizedChooseFromSet($keyInPOST, $fallbackValue, $acceptableValues) {
+    $value = webpexpress_getSanitizedText($keyInPOST, $fallbackValue);
+    if (in_array($value, $acceptableValues)) {
+        return $value;
+    }
+    return $fallbackValue;
+}
+
+function webpexpress_getSanitizedCacheControlHeader($keyInPOST) {
+    $value = webpexpress_getSanitizedText($keyInPOST);
+
+    // Example of valid header: "public, max-age=31536000, stale-while-revalidate=604800, stale-if-error=604800"
+    $value = strtolower($value);
+    return preg_replace('#[^a-z0-9=,\s_\-]#', '', $value);
+}
+
+/**
+ * Get sanitized integer
+ *
+ * @param  string  $keyInPOST  key in $_POST
+ * @param  int     $fallback   key in $_POST
+ *
+ * @return int     the sanitized number.
+ */
+function webpexpress_getSanitizedInt($keyInPOST, $fallback=0) {
+    $value = webpexpress_getSanitizedText($keyInPOST, strval($fallback));
+
+    // strip anything after and including comma
+    $value = preg_replace('#[\.\,].*#', '', $value);
+
+    // remove anything but digits
+    $value = preg_replace('#[^0-9]#', '', $value);
+
+    if ($value == '') {
+        return $fallback;
+    }
+
+    return intval($value);
+}
+
+/**
+ * Get sanitized quality (0-100).
+ *
+ * @param  string  $keyInPOST  key in $_POST
+ *
+ * @return int  quality (0-100)
+ */
+function webpexpress_getSanitizedQuality($keyInPOST, $fallback = 75) {
+    $q = webpexpress_getSanitizedInt($keyInPOST, $fallback);
+    // return value between 0-100
     return max(0, min($q, 100));
 }
 
+
+/**
+ * Get sanitized whitelist
+ *
+ * @param  string  $keyInPOST  key in $_POST
+ *
+ * @return int  quality (0-100)
+ */
+function webpexpress_getSanitizedWhitelist() {
+    $whitelistPosted = (isset($_POST['whitelist']) ? $_POST['whitelist'] : '[]');
+
+    $whitelistPosted = json_decode(wp_unslash($whitelistPosted), true);
+    // TODO: check for json decode error
+
+    $whitelistSanitized = [];
+
+    // Sanitize whitelist
+    foreach ($whitelistPosted as $whitelist) {
+        if (
+            isset($whitelist['label']) &&
+            isset($whitelist['ip'])
+            // note: api-key is not neccessarily set
+        ) {
+            $obj = [
+                'label' => sanitize_text_field($whitelist['label']),
+                'ip' => sanitize_text_field($whitelist['ip']),
+            ];
+            if (isset($whitelist['new-api-key'])) {
+                $obj['new-api-key'] = sanitize_text_field($whitelist['new-api-key']);
+            }
+            if (isset($whitelist['uid'])) {
+                $obj['uid'] = sanitize_text_field($whitelist['uid']);
+            }
+            if (isset($whitelist['require-api-key-to-be-crypted-in-transfer'])) {
+                $obj['require-api-key-to-be-crypted-in-transfer'] = ($whitelist['require-api-key-to-be-crypted-in-transfer'] === true);
+            }
+
+            $whitelistSanitized[] = $obj;
+        }
+    }
+    return $whitelistSanitized;
+}
+
+// ---------------
 $config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
 $oldConfig = $config;
 
-// Note that "operation-mode" is actually the old mode. The new mode is posted in "change-operation-mode"
+
+
+// Sanitizing
+$sanitized = [
+    // General
+    // Note that "operation-mode" is actually the old mode. The new mode is posted in "change-operation-mode"
+    'operation-mode' => webpexpress_getSanitizedChooseFromSet('operation-mode', 'varied-image-responses', [
+        'varied-image-responses',
+        'cdn-friendly',
+        'no-conversion',
+        'tweaked'
+    ]),
+    'image-types' => intval(webpexpress_getSanitizedChooseFromSet('image-types', '3', [
+        '0',
+        '1',
+        '3'
+    ])),
+    'cache-control' => webpexpress_getSanitizedChooseFromSet('cache-control', 'no-header', [
+        'no-header',
+        'set',
+        'custom'
+    ]),
+    'cache-control-max-age' => webpexpress_getSanitizedChooseFromSet('cache-control-max-age', 'one-hour', [
+        'one-second',
+        'one-hour',
+        'one-day',
+        'one-week',
+        'one-month',
+        'one-year',
+    ]),
+    'cache-control-public' => webpexpress_getSanitizedChooseFromSet('cache-control-public', 'public', [
+        'public',
+        'private',
+    ]),
+    'cache-control-custom' => webpexpress_getSanitizedCacheControlHeader('cache-control-custom'),
+
+    // Alter html
+    'alter-html-enabled' => isset($_POST['alter-html-enabled']),
+    'alter-html-only-for-webp-enabled-browsers' => isset($_POST['alter-html-only-for-webp-enabled-browsers']),
+    'alter-html-add-picturefill-js' => isset($_POST['alter-html-add-picturefill-js']),
+    'alter-html-for-webps-that-has-yet-to-exist' => isset($_POST['alter-html-for-webps-that-has-yet-to-exist']),
+    'alter-html-replacement' => webpexpress_getSanitizedChooseFromSet('alter-html-replacement', 'picture', [
+        'picture',
+        'url'
+    ]),
+    'alter-html-hooks' => webpexpress_getSanitizedChooseFromSet('alter-html-hooks', 'content-hooks', [
+        'content-hooks',
+        'ob'
+    ]),
+    'enable-redirection-to-webp-realizer' => isset($_POST['enable-redirection-to-webp-realizer']),
+
+    // Conversion options
+    'metadata' => webpexpress_getSanitizedChooseFromSet('metadata', 'none', [
+        'none',
+        'all'
+    ]),
+    'jpeg-encoding' => webpexpress_getSanitizedChooseFromSet('jpeg-encoding', 'auto', [
+        'lossy',
+        'auto'
+    ]),
+    'jpeg-enable-near-lossless' => webpexpress_getSanitizedChooseFromSet('jpeg-enable-near-lossless', 'on', [
+        'on',
+        'off'
+    ]),
+    'quality-auto' => webpexpress_getSanitizedChooseFromSet('quality-auto', 'auto_on', [
+        'auto_on',
+        'auto_off'
+    ]),
+    'max-quality' => webpexpress_getSanitizedQuality('max-quality', 80),
+    'jpeg-near-lossless' => webpexpress_getSanitizedQuality('jpeg-near-lossless', 60),
+    'quality-specific' => webpexpress_getSanitizedQuality('quality-specific', 70),
+    'quality-fallback' => webpexpress_getSanitizedQuality('quality-fallback', 70),
+    'png-near-lossless' => webpexpress_getSanitizedQuality('png-near-lossless', 60),
+    'png-enable-near-lossless' => webpexpress_getSanitizedChooseFromSet('png-enable-near-lossless', 'on', [
+        'on',
+        'off'
+    ]),
+    'png-quality' => webpexpress_getSanitizedQuality('png-quality', 85),
+    'png-encoding' => webpexpress_getSanitizedChooseFromSet('png-encoding', 'auto', [
+        'lossless',
+        'auto'
+    ]),
+    'alpha-quality' => webpexpress_getSanitizedQuality('png-quality', 80),
+    'whitelist' => webpexpress_getSanitizedWhitelist(),
+];
 
 // Set options that are available in all operation modes
 $config = array_merge($config, [
-    'operation-mode' => sanitize_text_field($_POST['operation-mode']),
+    'operation-mode' => $sanitized['operation-mode'],
 
     // redirection rules
-    'image-types' => sanitize_text_field($_POST['image-types']),
+    'image-types' => $sanitized['image-types'],
     'forward-query-string' => true,
-
 ]);
 
-
-
-
 // Set options that are available in all operation modes, except the "CDN friendly" mode
-if ($_POST['operation-mode'] != 'cdn-friendly') {
-
-    $cacheControl = sanitize_text_field($_POST['cache-control']);
-    $config['cache-control'] = $cacheControl;
-
-    switch ($cacheControl) {
+if ($sanitized['operation-mode'] != 'cdn-friendly') {
+    $config['cache-control'] = $sanitized['cache-control'];
+    switch ($sanitized['cache-control']) {
         case 'no-header':
             break;
         case 'set':
-            $config['cache-control-max-age'] =  sanitize_text_field($_POST['cache-control-max-age']);
-            $config['cache-control-public'] =  (sanitize_text_field($_POST['cache-control-public']) == 'public');
+            $config['cache-control-max-age'] =  $sanitized['cache-control-max-age'];
+            $config['cache-control-public'] = ($sanitized['cache-control-public'] == 'public');
             break;
         case 'custom':
-            $config['cache-control-custom'] = sanitize_text_field($_POST['cache-control-custom']);
+            $config['cache-control-custom'] = $sanitized['cache-control-custom'];
             break;
     }
 }
@@ -67,71 +273,68 @@ if ($_POST['operation-mode'] != 'cdn-friendly') {
 
 // Alter HTML
 $config['alter-html'] = [];
-$config['alter-html']['enabled'] = isset($_POST['alter-html-enabled']);
-if ($_POST['alter-html-replacement'] == 'url') {
-    $config['alter-html']['only-for-webp-enabled-browsers'] = isset($_POST['alter-html-only-for-webp-enabled-browsers']);
+$config['alter-html']['enabled'] = $sanitized['alter-html-enabled'];
+if ($sanitized['alter-html-replacement'] == 'url') {
+    $config['alter-html']['only-for-webp-enabled-browsers'] = $sanitized['alter-html-only-for-webp-enabled-browsers'];
 } else {
     $config['alter-html']['only-for-webp-enabled-browsers'] = false;
 }
-if ($_POST['alter-html-replacement'] == 'picture') {
-    $config['alter-html']['alter-html-add-picturefill-js'] = isset($_POST['alter-html-add-picturefill-js']);
+if ($sanitized['alter-html-replacement'] == 'picture') {
+    $config['alter-html']['alter-html-add-picturefill-js'] = $sanitized['alter-html-add-picturefill-js'];
 }
-if ($_POST['operation-mode'] != 'no-conversion') {
-    $config['alter-html']['only-for-webps-that-exists'] = (!isset($_POST['alter-html-for-webps-that-has-yet-to-exist']));
+if ($sanitized['operation-mode'] != 'no-conversion') {
+    $config['alter-html']['only-for-webps-that-exists'] = (!$sanitized['alter-html-for-webps-that-has-yet-to-exist']);
 } else {
     $config['alter-html']['only-for-webps-that-exists'] = true;
 }
 
-$config['alter-html']['replacement'] = sanitize_text_field($_POST['alter-html-replacement']);
-$config['alter-html']['hooks'] = sanitize_text_field($_POST['alter-html-hooks']);
+$config['alter-html']['replacement'] = $sanitized['alter-html-replacement'];
+$config['alter-html']['hooks'] = $sanitized['alter-html-hooks'];
 
 
 // Set options that are available in all operation modes, except the "no-conversion" mode
 if ($_POST['operation-mode'] != 'no-conversion') {
 
-
-    $config['enable-redirection-to-webp-realizer'] = isset($_POST['enable-redirection-to-webp-realizer']);
+    $config['enable-redirection-to-webp-realizer'] = $sanitized['enable-redirection-to-webp-realizer'];
 
     // Metadata
     // --------
-    $config['metadata'] = sanitize_text_field($_POST['metadata']);
+    $config['metadata'] = $sanitized['metadata'];
 
     // Jpeg
     // --------
-    $config['jpeg-encoding'] = sanitize_text_field($_POST['jpeg-encoding']);
+    $config['jpeg-encoding'] = $sanitized['jpeg-encoding'];
 
-    $auto = (isset($_POST['quality-auto']) && ($_POST['quality-auto'] == 'auto_on'));
+    $auto = ($sanitized['quality-auto'] == 'auto_on');
     $config['quality-auto'] = $auto;
     if ($auto) {
-        $config['max-quality'] = webp_express_sanitize_quality_field($_POST['max-quality']);
-        $config['quality-specific'] = webp_express_sanitize_quality_field($_POST['quality-fallback']);
+        $config['max-quality'] = $sanitized['max-quality'];
+        $config['quality-specific'] = $sanitized['quality-fallback'];
     } else {
         $config['max-quality'] = 80;
-        $config['quality-specific'] = webp_express_sanitize_quality_field($_POST['quality-specific']);
+        $config['quality-specific'] = $sanitized['quality-specific'];
     }
 
-    $jpegEnableNearLossless = (isset($_POST['jpeg-enable-near-lossless']) && ($_POST['jpeg-enable-near-lossless'] == 'on'));
-    $config['jpeg-enable-near-lossless'] = $jpegEnableNearLossless;
-    $config['jpeg-near-lossless'] = webp_express_sanitize_quality_field($_POST['jpeg-near-lossless']);
+    $config['jpeg-enable-near-lossless'] = ($sanitized['jpeg-enable-near-lossless'] == 'on');
+    $config['jpeg-near-lossless'] = $sanitized['jpeg-near-lossless'];
 
 
     // Png
     // --------
-    $config['png-encoding'] = sanitize_text_field($_POST['png-encoding']);
+    $config['png-encoding'] = $sanitized['png-encoding'];
+    $config['png-quality'] = $sanitized['png-quality'];
+    $config['png-enable-near-lossless'] = ($sanitized['png-enable-near-lossless'] == 'on');
+    $config['png-near-lossless'] = $sanitized['png-near-lossless'];
+    $config['alpha-quality'] = $sanitized['alpha-quality'];
 
-    // TODO: ERRORS!
-    $config['png-quality'] = webp_express_sanitize_quality_field($_POST['png-quality']);
-    $pngEnableNearLossless = (isset($_POST['png-enable-near-lossless']) && ($_POST['png-enable-near-lossless'] == 'on'));
-    $config['png-enable-near-lossless'] = $pngEnableNearLossless;
-    $config['png-near-lossless'] = webp_express_sanitize_quality_field($_POST['png-near-lossless']);
-    $config['alpha-quality'] = webp_express_sanitize_quality_field($_POST['alpha-quality']);
-
-
+    // Other
     $config['convert-on-upload'] = isset($_POST['convert-on-upload']);
+
 
     // Web Service
     // -------------
 
+/*
     $whitelistPosted = json_decode(wp_unslash($_POST['whitelist']), true);
 
     // Sanitize whitelist
@@ -139,11 +342,11 @@ if ($_POST['operation-mode'] != 'no-conversion') {
         $whitelist['label'] = sanitize_text_field($whitelist['label']);
         $whitelist['ip'] = sanitize_text_field($whitelist['ip']);
         $whitelist['api-key'] = sanitize_text_field($whitelist['api-key']);
-    }
+    }*/
 
     $config['web-service'] = [
         'enabled' => isset($_POST['web-service-enabled']),
-        'whitelist' => $whitelistPosted
+        'whitelist' => $sanitized['whitelist']
     ];
 
     // Set existing api keys in web service (we removed them from the json array, for security purposes)
