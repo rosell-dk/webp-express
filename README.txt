@@ -605,6 +605,11 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.14.8 =
+*(released: 21 jun 2019)*
+
+* Tidied up code
+
 = 0.14.7 =
 *(released: 20 jun 2019)*
 
@@ -833,6 +838,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.14.8 =
+Tidied up code
 
 = 0.14.7 =
 Removed unneccesary files from webp-convert library
