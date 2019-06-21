@@ -5,10 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use \WebPExpress\CacheMover;
 use \WebPExpress\CapabilityTest;
 use \WebPExpress\Config;
+use \WebPExpress\ConvertersHelper;
 use \WebPExpress\DismissableMessages;
 use \WebPExpress\HTAccess;
 use \WebPExpress\Messenger;
 use \WebPExpress\Paths;
+
 
 check_admin_referer('webpexpress-save-settings-nonce');
 
@@ -164,16 +166,102 @@ function webpexpress_getSanitizedConverters() {
     $convertersPosted = (isset($_POST['converters']) ? $_POST['converters'] : '[]');
     $convertersPosted = json_decode(wp_unslash($convertersPosted), true); // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
 
-    // Sanitize converter options
-    foreach ($convertersPosted as &$converter) {
-        if (!isset($converter['options'])) continue;
-        foreach ($converter['options'] as $optionName => $optionValue) {
-            if (gettype($optionValue) == 'string') {
-                $converter['options'][$optionName] = sanitize_text_field($optionValue);
+    $convertersSanitized = [];
+
+    // Get list of possible converter ids.
+    $availableConverterIDs = [];
+    foreach (ConvertersHelper::$defaultConverters as $converter) {
+        $availableConverterIDs[] = $converter['converter'];
+    }
+
+    // Add converters one at the time.
+    foreach ($convertersPosted as $unsanitizedConverter) {
+        if (!isset($unsanitizedConverter['converter'])) {
+            continue;
+        }
+
+        // Only add converter if its ID is a known converter.
+        if (!in_array($unsanitizedConverter['converter'], $availableConverterIDs)) {
+            continue;
+        }
+
+        $sanitizedConverter = [];
+        $sanitizedConverter['converter'] = $unsanitizedConverter['converter'];
+
+        // Sanitize and add expected fields ("options", "working", "deactivated" and "error")
+
+        // "options"
+        if (isset($unsanitizedConverter['options'])) {
+            $sanitizedConverter['options'] = [];
+
+            // Sanitize all (string) options individually
+            foreach ($unsanitizedConverter['options'] as $optionName => $unsanitizedOptionValue) {
+
+                $acceptedOptions = [
+                    // vips
+                    'smart-subsample' => 'boolean',
+                    'preset' => 'string',
+
+                    // gd
+                    'skip-pngs' => 'boolean',
+
+                    // in multiple
+                    "use-nice" => 'boolean',
+
+                    // cwebp
+                    "try-common-system-paths" => 'boolean',
+                    "try-supplied-binary-for-os" => 'boolean',
+                    "method" => 'string',  // 0-6,      // TODO: make a migration so we use integer instead
+                    "size-in-percentage" => 'string',
+                    "low-memory" => 'boolean',
+                    "command-line-options" => 'string',     // webp-convert takes care of sanitizing this very carefully!
+                    "set-size" => 'boolean',
+
+                    // wpc
+                    "api-url" => 'string',
+                    "api-version" => 'integer',
+                    "crypt-api-key-in-transfer" => 'boolean',
+                    "api-key" => 'string',
+                ];
+
+                // check that it is an accepted option name
+                if (!isset($acceptedOptions[$optionName])) {
+                    continue;
+                }
+
+                // check that type is as expected
+                $expectedType = $acceptedOptions[$optionName];
+                if (gettype($unsanitizedOptionValue) != $expectedType) {
+                    continue;
+                }
+                if ($expectedType == 'string') {
+                    $sanitizedOptionValue = sanitize_text_field($unsanitizedOptionValue);
+                } else {
+                    // integer and boolean are completely safe!
+                    $sanitizedOptionValue = $unsanitizedOptionValue;
+                }
+                if (($optionName == "size-in-percentage") && ($sanitizedOptionValue == '')) {
+                    continue;
+                }
+                $sanitizedConverter['options'][$optionName] = $sanitizedOptionValue;
+
             }
         }
+
+        // "working" (bool)
+        if (isset($unsanitizedConverter['working'])) {
+            $sanitizedConverter['working'] = ($unsanitizedConverter['working'] === true);
+        }
+
+        // "deactivated" (bool)
+        if (isset($unsanitizedConverter['deactivated'])) {
+            $sanitizedConverter['deactivated'] = ($unsanitizedConverter['deactivated'] === true);
+        }
+
+        $convertersSanitized[] = $sanitizedConverter;
     }
-    return $convertersPosted;
+
+    return $convertersSanitized;
 }
 
 
