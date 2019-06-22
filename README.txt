@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.2
-Stable tag: 0.14.7
+Stable tag: 0.14.9
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -605,6 +605,11 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.14.9 =
+*(released: 22 jun 2019)*
+
+* Tidied up code
+
 = 0.14.8 =
 *(released: 21 jun 2019)*
 
@@ -838,6 +843,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.14.9 =
+Tidied up code
 
 = 0.14.8 =
 Tidied up code

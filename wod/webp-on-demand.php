@@ -243,18 +243,6 @@ class WebPOnDempand
             self::exitWithError('failed validating ' . $validating . ': '. $e->getMessage());
         }
 
-        // Change a cwebp default option
-        foreach ($convertOptions['converters'] as &$converter) {
-            if (isset($converter['converter'])) {
-                $converterId = $converter['converter'];
-            } else {
-                $converterId = $converter;
-            }
-            if ($converterId == 'cwebp') {
-                $converter['options']['rel-path-to-precompiled-binaries'] = '../src/Converters/Binaries';
-            }
-        }
-
         /*
         if ($wodOptions['forward-query-string']) {
             if (isset($_GET['debug'])) {
@@ -272,7 +260,8 @@ class WebPOnDempand
             $serveOptions['serve-image']['headers']['vary-accept'] = true;
         }
 
-        //$serveOptions['show-report'] = true;
+        //echo '<pre>' . print_r($serveOptions, true) . '</pre>'; exit;
+        $serveOptions['show-report'] = true;
 
         ConvertHelperIndependent::serveConverted(
             $source,

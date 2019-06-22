@@ -205,11 +205,21 @@ if (!Paths::createContentDirIfMissing()) {
 
 if (Config::isConfigFileThere()) {
     if (!Config::isConfigFileThereAndOk()) {
-        Messenger::printMessage(
-            'warning',
-            'Warning: The configuration file is not ok! (cant be read, or not valid json).<br>' .
-                'file: "' . esc_html(Paths::getConfigFileName()) . '"'
-        );
+        $json = FileHelper::loadFile(Paths::getConfigFileName());
+        if ($json === false) {
+            Messenger::printMessage(
+                'warning',
+                'Warning: The configuration file is not ok! (cant be read).<br>' .
+                    'file: "' . esc_html(Paths::getConfigFileName()) . '"'
+            );
+        } else {
+            Messenger::printMessage(
+                'warning',
+                'Warning: The configuration file is not ok! (not valid json).<br>' .
+                    'file: "' . esc_html(Paths::getConfigFileName()) . '"'
+            );
+        }
+
     } else {
         if (HTAccess::arePathsUsedInHTAccessOutdated()) {
             Messenger::printMessage(

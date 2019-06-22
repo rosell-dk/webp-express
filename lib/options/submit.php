@@ -208,8 +208,8 @@ function webpexpress_getSanitizedConverters() {
                     // cwebp
                     "try-common-system-paths" => 'boolean',
                     "try-supplied-binary-for-os" => 'boolean',
-                    "method" => 'string',  // 0-6,      // TODO: make a migration so we use integer instead
-                    "size-in-percentage" => 'string',
+                    "method" => 'integer',  // 0-6,
+                    "size-in-percentage" => 'integer',  // 0-100
                     "low-memory" => 'boolean',
                     "command-line-options" => 'string',     // webp-convert takes care of sanitizing this very carefully!
                     "set-size" => 'boolean',

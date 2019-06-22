@@ -8,8 +8,8 @@ use \WebPExpress\Paths;
 include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$ver = '2';             // note: Minimum 1
-$jsDir = 'js/0.14.5';   // We change dir when it is critical that no-one gets the cached version (there is a plugin that strips version strings out there...)
+$ver = '1';             // note: Minimum 1
+$jsDir = 'js/0.14.9';   // We change dir when it is critical that no-one gets the cached version (there is a plugin that strips version strings out there...)
 
 if (!function_exists('webp_express_add_inline_script')) {
     function webp_express_add_inline_script($id, $script, $position) {

@@ -10,7 +10,6 @@ class ConvertersHelper
             'try-common-system-paths' => true,
             'try-supplied-binary-for-os' => true,
             'method' => 6,
-            'size-in-percentage' => null,
             'low-memory' => true,
             'command-line-options' => '',
         ]],

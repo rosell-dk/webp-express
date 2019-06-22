@@ -229,18 +229,6 @@ class WebPRealizer
             self::exitWithError('failed validating ' . $validating . ': '. $e->getMessage());
         }
 
-        // Change a cwebp default option
-        foreach ($convertOptions['converters'] as &$converter) {
-            if (isset($converter['converter'])) {
-                $converterId = $converter['converter'];
-            } else {
-                $converterId = $converter;
-            }
-            if ($converterId == 'cwebp') {
-                $converter['options']['rel-path-to-precompiled-binaries'] = '../src/Converters/Binaries';
-            }
-        }
-
         /*
         if ($wodOptions['forward-query-string']) {
             if (isset($_GET['debug'])) {

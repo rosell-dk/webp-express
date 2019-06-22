@@ -89,24 +89,30 @@ class Validate
         }
     }
 
-    public static function absPathLooksSaneExistsAndIsDir($path, $errorMsg = 'Path points to a file (it should point to a directory)')
-    {
+    public static function absPathLooksSaneExistsAndIsDir(
+        $path,
+        $errorMsg = 'Path points to a file (it should point to a directory)'
+    ) {
         self::absPathLooksSaneAndExists($path);
         if (!is_dir($path)) {
             throw new ValidateException($errorMsg);
         }
     }
 
-    public static function absPathLooksSaneExistsAndIsFile($path, $errorMsg = 'Path points to a directory (it should not do that)')
-    {
+    public static function absPathLooksSaneExistsAndIsFile(
+        $path,
+        $errorMsg = 'Path points to a directory (it should not do that)'
+    ) {
         self::absPathLooksSaneAndExists($path, 'File does not exist');
         if (@is_dir($path)) {
             throw new ValidateException($errorMsg);
         }
     }
 
-    public static function absPathLooksSaneExistsAndIsNotDir($path, $errorMsg = 'Path points to a directory (it should point to a file)')
-    {
+    public static function absPathLooksSaneExistsAndIsNotDir(
+        $path,
+        $errorMsg = 'Path points to a directory (it should point to a file)'
+    ) {
         self::absPathLooksSaneExistsAndIsFile($path, $errorMsg);
     }
 

@@ -88,14 +88,18 @@ class Convert
             $filename = sanitize_text_field($_POST['filename']);
             Validate::absPathLooksSaneExistsAndIsNotDir($filename);
 
-            // validate "converter"
+
+            // validate converter id
+            // ---------------------
             $validating = '"converter" argument';
             if (isset($_POST['converter'])) {
                 $converterId = sanitize_text_field($_POST['converter']);
                 Validate::isConverterId($converterId);
             }
 
+
             // validate "config-overrides"
+            // ---------------------------
             $validating = '"config-overrides" argument';
             if (isset($_POST['config-overrides'])) {
                 $configOverridesJSON = Sanitize::removeNUL($_POST['config-overrides']);
@@ -119,11 +123,18 @@ class Convert
         if (isset($configOverrides)) {
             $config = Config::loadConfigAndFix();
 
+
             // convert using specific converter
-            if (isset($converterId) && isset($converter) && isset($converter['options'])) {
+            if (!is_null($converterId)) {
 
                 // Merge in the config-overrides (config-overrides only have effect when using a specific converter)
                 $config = array_merge($config, $configOverrides);
+
+                $converter = ConvertersHelper::getConverterById($config, $converterId);
+                if ($converter === false) {
+                    wp_send_json_error('Converter could not be loaded');
+                    wp_die();
+                }
 
                 // the converter options stored in config.json is not precisely the same as the ones
                 // we send to webp-convert.
