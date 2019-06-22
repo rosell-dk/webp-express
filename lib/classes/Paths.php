@@ -400,6 +400,7 @@ APACHE
     public static function getWodUrlPath()
     {
         return self::getPluginUrlPath() . '/wod/webp-on-demand.php';
+        //return self::getHomeUrlPath() . '/webp-on-demand';
     }
 
     public static function getWebPRealizerUrlPath()

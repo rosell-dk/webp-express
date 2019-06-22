@@ -602,6 +602,8 @@ class Config
         // WOD options
         // -------------
         $wod = [
+            'enable-redirection-to-converter' => $config['enable-redirection-to-converter'],
+            'enable-redirection-to-webp-realizer' => $config['enable-redirection-to-webp-realizer'],
             'base-htaccess-on-these-capability-tests' => $config['base-htaccess-on-these-capability-tests'],
             'destination-extension' => $config['destination-extension'],
             'destination-folder' => $config['destination-folder'],

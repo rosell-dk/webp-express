@@ -22,7 +22,7 @@ use \WebPExpress\Option;
 define('WEBPEXPRESS_PLUGIN', __FILE__);
 define('WEBPEXPRESS_PLUGIN_DIR', __DIR__);
 
-// Autoloading rules!
+// Autoload WebPExpress classes
 spl_autoload_register('webpexpress_autoload');
 function webpexpress_autoload($class) {
     if (strpos($class, 'WebPExpress\\') === 0) {
@@ -35,16 +35,25 @@ if (is_admin()) {
 }
 
 function webp_express_process_post() {
+    //echo 'hi'; die();
     // strip query string
     $requestUriNoQS = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+    //echo '<pre>' . print_r($_SERVER, true) . '</pre>'; die();
 
-    if (!preg_match('/webp-express-web-service$/', $requestUriNoQS)) {
-        return;
+    if (preg_match('/webp-express-web-service$/', $requestUriNoQS)) {
+        include __DIR__ . '/web-service/wpc.php';
+        die();
     }
-    include __DIR__ . '/web-service/wpc.php';
-    die();
+
+    /*
+    if (preg_match('#webp-on-demand#', $requestUriNoQS)) {
+        echo 'hi2'; die();
+        //include __DIR__ . '/wod/webp-on-demand.php';
+        //die();
+    }*/
 }
 add_action( 'init', 'webp_express_process_post' );
+//add_action( 'parse_request', 'webp_express_process_post' );
 
 if (Option::getOption('webp-express-alter-html', false)) {
     require_once __DIR__ . '/lib/classes/AlterHtmlInit.php';

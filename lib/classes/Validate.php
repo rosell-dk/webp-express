@@ -75,21 +75,41 @@ class Validate
         self::noStreamWrappers($path);
     }
 
-    public static function absPathLooksSaneAndExists($path)
+    public static function absPathLooksSane($path)
     {
-        self::pathLooksSane($path);
+        self::pathLooksSane($path);        
+    }
+
+
+    public static function absPathLooksSaneAndExists($path, $errorMsg = 'Path does not exist')
+    {
+        self::absPathLooksSane($path);
         if (@!file_exists($path)) {
-            throw new ValidateException('Path does not exists');
+            throw new ValidateException($errorMsg);
         }
     }
 
-    public static function absPathLooksSaneExistsAndIsNotDir($path)
+    public static function absPathLooksSaneExistsAndIsDir($path, $errorMsg = 'Path points to a file (it should point to a directory)')
     {
         self::absPathLooksSaneAndExists($path);
-        if (@is_dir($absFilePath)) {
-            throw new ValidateException('Path may not be a directory');
+        if (!is_dir($path)) {
+            throw new ValidateException($errorMsg);
         }
     }
+
+    public static function absPathLooksSaneExistsAndIsFile($path, $errorMsg = 'Path points to a directory (it should not do that)')
+    {
+        self::absPathLooksSaneAndExists($path, 'File does not exist');
+        if (@is_dir($path)) {
+            throw new ValidateException($errorMsg);
+        }
+    }
+
+    public static function absPathLooksSaneExistsAndIsNotDir($path, $errorMsg = 'Path points to a directory (it should point to a file)')
+    {
+        self::absPathLooksSaneExistsAndIsFile($path, $errorMsg);
+    }
+
 
     public static function isString($string, $errorMsg = 'Not a string')
     {
