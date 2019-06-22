@@ -59,15 +59,16 @@ class WebPRealizer
         // Next, check querystring (relative path)
         $destinationRel = '';
         if (isset($_GET['xdestination-rel'])) {
-            $destinationRel = substr($_GET['xdestination-rel'], 1);
+            $destinationRel = substr(Sanitize::removeNUL($_GET['xdestination-rel']), 1);
         } elseif (isset($_GET['destination-rel'])) {
-            $destinationRel = $_GET['destination-rel'];
+            $destinationRel = Sanitize::removeNUL($_GET['destination-rel']);
         }
         if ($destinationRel != '') {
+            /*
             if (isset($_GET['source-rel-filter'])) {
-                if ($_GET['source-rel-filter'] == 'discard-parts-before-wp-content') {
+                if (Sanitize::removeNUL($_GET['source-rel-filter']) == 'discard-parts-before-wp-content') {
                     $parts = explode('/', $destinationRel);
-                    $wp_content = isset($_GET['wp-content']) ? $_GET['wp-content'] : 'wp-content';
+                    $wp_content = isset($_GET['wp-content']) ? Sanitize::removeNUL($_GET['wp-content']) : 'wp-content';
 
                     if (in_array($wp_content, $parts)) {
                         foreach($parts as $index => $part) {
@@ -80,7 +81,7 @@ class WebPRealizer
                         $destinationRel = implode('/', $parts);
                     }
                 }
-            }
+            }*/
             return $docRoot . '/' . $destinationRel;
         }
 
@@ -102,7 +103,7 @@ class WebPRealizer
     }
 
 
-    static function getWpContentRel() {
+    static function getWpContentRelUnsanitized() {
         // Passed in env variable?
         $wpContentDirRel = self::getEnvPassedInRewriteRule('WPCONTENT');
         if ($wpContentDirRel !== false) {
@@ -160,7 +161,7 @@ class WebPRealizer
             // ---------------------------------
             $validating = 'WebP Express content dir';
             $webExpressContentDirAbs = ConvertHelperIndependent::sanitizeAbsFilePath(
-                $docRoot . '/' . self::getWpContentRel() . '/webp-express'
+                $docRoot . '/' . self::getWpContentRelUnsanitized() . '/webp-express'
             );
             Validate::absPathLooksSaneExistsAndIsDir($webExpressContentDirAbs);
 

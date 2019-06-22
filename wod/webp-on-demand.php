@@ -79,6 +79,7 @@ class WebPOnDempand
             $srcRel = $_GET['source-rel'];
         }
         if ($srcRel != '') {
+            /*
             if (isset($_GET['source-rel-filter'])) {
                 if ($_GET['source-rel-filter'] == 'discard-parts-before-wp-content') {
                     $parts = explode('/', $srcRel);
@@ -95,7 +96,7 @@ class WebPOnDempand
                         $srcRel = implode('/', $parts);
                     }
                 }
-            }
+            }*/
             return $docRoot . '/' . $srcRel;
         }
 
@@ -124,7 +125,7 @@ class WebPOnDempand
         self::exitWithError('webp-on-demand.php was not passed any filename to convert');
     }
 
-    static function getWpContentRel() {
+    private static function getWpContentRelUnsanitized() {
         // Passed in env variable?
         $wpContentDirRel = self::getEnvPassedInRewriteRule('WPCONTENT');
         if ($wpContentDirRel !== false) {
@@ -182,7 +183,7 @@ class WebPOnDempand
             // ---------------------------------
             $validating = 'WebP Express content dir';
             $webExpressContentDirAbs = ConvertHelperIndependent::sanitizeAbsFilePath(
-                $docRoot . '/' . self::getWpContentRel() . '/webp-express'
+                $docRoot . '/' . self::getWpContentRelUnsanitized() . '/webp-express'
             );
             Validate::absPathLooksSaneExistsAndIsDir($webExpressContentDirAbs);
 
