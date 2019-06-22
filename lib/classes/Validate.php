@@ -29,14 +29,17 @@ class Validate
     }
 
     /**
-     *  Non printable characters are seldom needed... This also prevents NUL
+     *  Prevent control chararters (#00 - #20).
      *
-     *  @param  string  $string  string to test for non-printable chars in
+     *  This prevents line feed, new line, tab, charater return, tab, ets.
+     *  https://www.rapidtables.com/code/text/ascii-table.html
+     *
+     *  @param  string  $string  string to test for control characters
      */
-    public static function noNonPrintable($string)
+    public static function noControlChars($string)
     {
-        if (!ctype_print($string)) {
-            throw new ValidateException('Non-printable characters are not allowed');
+        if (preg_match('#[\x{0}-\x{1f}]#', $string)) {
+            throw new ValidateException('Control characters are not allowed');
         }
     }
 
@@ -70,7 +73,7 @@ class Validate
     public static function pathLooksSane($path)
     {
         self::notEmpty($path);
-        self::noNonPrintable($path);
+        self::noControlChars($path);
         self::noDirectoryTraversal($path);
         self::noStreamWrappers($path);
     }
