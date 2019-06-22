@@ -261,7 +261,7 @@ class WebPOnDempand
         }
 
         //echo '<pre>' . print_r($serveOptions, true) . '</pre>'; exit;
-        $serveOptions['show-report'] = true;
+        //$serveOptions['show-report'] = true;
 
         ConvertHelperIndependent::serveConverted(
             $source,
