@@ -182,12 +182,10 @@ class ConvertHelperIndependent
      */
     private static function findSourceMingled($destination, $destinationExt)
     {
-        global $options;
-        global $destination;
         if ($destinationExt == 'append') {
             $source =  preg_replace('/\\.(webp)$/', '', $destination);
         } else {
-            $source =  preg_replace('/\\.webp$/', '.jpg', $destination);
+            $source =  preg_replace('#\\.webp$#', '.jpg', $destination);
             if (!@file_exists($source)) {
                 $source =  preg_replace('/\\.webp$/', '.jpeg', $destination);
             }

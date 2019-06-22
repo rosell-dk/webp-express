@@ -47,7 +47,7 @@ class Validate
     public static function notEmpty($mixed)
     {
         if (empty($mixed)) {
-            throw new ValidateException('May not be empty');
+            throw new ValidateException('Must be non-empty');
         }
     }
 
@@ -77,7 +77,7 @@ class Validate
 
     public static function absPathLooksSane($path)
     {
-        self::pathLooksSane($path);        
+        self::pathLooksSane($path);
     }
 
 
