@@ -152,7 +152,7 @@ class CachePurge
             wp_die();
         }
 
-        $onlyPng = ($_POST['only-png'] == 'true');
+        $onlyPng = (sanitize_text_field($_POST['only-png']) == 'true');
 
         $config = Config::loadConfigAndFix();
         $result = self::purge($config, $onlyPng);

@@ -13,14 +13,14 @@ class ConvertLog
             wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
             wp_die();
         }
-        $source = $_POST['source'];
 
-        // We need to be absolute certain that this feature can be misused.
+        // We need to be absolute certain that this feature cannot be misused.
         // - so disabling until I get the time...
 
         $msg = 'This feature is on the road map...';
         echo json_encode($msg, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
         /*
+        $source = sanitize_text_field($_POST['source']);
         $logFile = ConvertHelperIndependent::getLogFilename($source, Paths::getLogDirAbs());
         $msg = 'Log file: <i>' . $logFile . '</i><br><br><hr>';
 

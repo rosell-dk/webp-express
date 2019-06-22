@@ -169,10 +169,7 @@ function webpexpress_getSanitizedConverters() {
     $convertersSanitized = [];
 
     // Get list of possible converter ids.
-    $availableConverterIDs = [];
-    foreach (ConvertersHelper::$defaultConverters as $converter) {
-        $availableConverterIDs[] = $converter['converter'];
-    }
+    $availableConverterIDs = ConvertersHelper::getDefaultConverterNames();
 
     // Add converters one at the time.
     foreach ($convertersPosted as $unsanitizedConverter) {

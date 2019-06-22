@@ -1,14 +1,13 @@
 <?php
 
-/*
-This class is made to be independent of other classes, and must be kept like that.
-It is used by webp-on-demand.php, which does not register an auto loader. It is also used for bulk conversion.
-*/
 namespace WebPExpress;
 
 use \WebPExpress\ConvertHelperIndependent;
 use \WebPExpress\Config;
-use \WebpExpress\ConvertersHelper;
+use \WebPExpress\ConvertersHelper;
+use \WebPExpress\Sanitize;
+use \WebPExpress\Validate;
+use \WebPExpress\ValidateException;
 
 class Convert
 {
@@ -74,47 +73,76 @@ class Convert
 
     public static function processAjaxConvertFile()
     {
+
         if (!check_ajax_referer('webpexpress-ajax-convert-nonce', 'nonce', false)) {
             wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
             wp_die();
         }
 
-        // No need to sanitize filename. self::convertFile does that for us. And the WebPConvert library also does.
-        // Also, no need to check mime type as the WebPConvert library also does that (it only allows image/jpeg and image/png)
-        $filename = $_POST['filename'];
+        // Validate input
+        // ---------------------------
+        try {
+            // validate "filename"
+            $validating = '"filename" argument';
+            Validate::postHasKey('filename');
+            $filename = sanitize_text_field($_POST['filename']);
+            Validate::absPathLooksSaneExistsAndIsNotDir($filename);
 
-        if (isset($_POST['config-overrides'])) {
-            $config = Config::loadConfigAndFix();
-
-            // overrides
-            $overrides = $_POST['config-overrides'];
-            $overrides = preg_replace('/\\\\"/', '"', $overrides); // We got crazy encoding, perhaps by jQuery. This cleans it up
-            $overrides = json_decode($overrides, true);
-
-            $config = array_merge($config, $overrides);
-
-            // single converter
-            $converter = null;
-            $convertOptions = null;
+            // validate "converter"
+            $validating = '"converter" argument';
             if (isset($_POST['converter'])) {
-                $converter = $_POST['converter'];
-
-                // find converter
-                $c = ConvertersHelper::getConverterById($config, $converter);
-                if ($c !== false) {
-
-                    $convertOptions = Config::generateWodOptionsFromConfigObj($config)['webp-convert']['convert'];
-                    $convertOptions = array_merge($convertOptions, $c['options']);
-                    unset($convertOptions['converters']);
-
-                    $config = array_merge($config, $c['options']);
-                    //echo 'options: <pre>' . print_r($convertOptions, true) . '</pre>'; exit;
-                    //echo 'options: <pre>' . print_r($c['options'], true) . '</pre>'; exit;
-                }
+                $converterId = sanitize_text_field($_POST['converter']);
+                Validate::isConverterId($converterId);
             }
 
-            $result = self::convertFile($filename, $config, $convertOptions, $converter);
+            // validate "config-overrides"
+            $validating = '"config-overrides" argument';
+            if (isset($_POST['config-overrides'])) {
+                $configOverridesJSON = Sanitize::removeNUL($_POST['config-overrides']);
+                $configOverridesJSON = preg_replace('/\\\\"/', '"', $configOverridesJSON); // We got crazy encoding, perhaps by jQuery. This cleans it up
 
+                Validate::isJSONObject($configOverridesJSON, $configOverridesJSON);
+                $configOverrides = json_decode($configOverridesJSON, true);
+
+                // PS: We do not need to validate the overrides.
+                // webp-convert checks all options. Nothing can be passed to webp-convert which causes harm.
+            }
+
+        } catch (ValidateException $e) {
+            wp_send_json_error('failed validating ' . $validating . ': '. $e->getMessage());
+            wp_die();
+        }
+
+
+        // Input has been processed, now lets get to work!
+        // -----------------------------------------------
+        if (isset($configOverrides)) {
+            $config = Config::loadConfigAndFix();
+
+            // convert using specific converter
+            if (isset($converterId) && isset($converter) && isset($converter['options'])) {
+
+                // Merge in the config-overrides (config-overrides only have effect when using a specific converter)
+                $config = array_merge($config, $configOverrides);
+
+                // the converter options stored in config.json is not precisely the same as the ones
+                // we send to webp-convert.
+                // We need to "regenerate" webp-convert options in order to use the ones specified in the config-overrides
+                // And we need to merge the general options (such as quality etc) into the option for the specific converter
+
+                $generalWebpConvertOptions = Config::generateWodOptionsFromConfigObj($config)['webp-convert']['convert'];
+                $converterSpecificWebpConvertOptions = $converter['options'];
+
+                $webpConvertOptions = array_merge($generalWebpConvertOptions, $converterSpecificWebpConvertOptions);
+                unset($webpConvertOptions['converters']);
+
+                // what is this? - I forgot why!
+                //$config = array_merge($config, $converter['options']);
+                $result = self::convertFile($filename, $config, $webpConvertOptions, $converterId);
+
+            } else {
+                $result = self::convertFile($filename, $config);
+            }
         } else {
             $result = self::convertFile($filename);
         }

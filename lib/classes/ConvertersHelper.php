@@ -35,7 +35,14 @@ class ConvertersHelper
 
     public static function getDefaultConverterNames()
     {
-        return array_column(self::$defaultConverters, 'converter');
+        $availableConverterIDs = [];
+        foreach (self::$defaultConverters as $converter) {
+            $availableConverterIDs[] = $converter['converter'];
+        }
+        return $availableConverterIDs;
+
+        // PS: In a couple of years:
+        //return array_column(self::$defaultConverters, 'converter');
     }
 
     public static function getConverterNames($converters)
