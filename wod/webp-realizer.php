@@ -5,28 +5,25 @@ use \WebPConvert\WebPConvert;
 use \WebPConvert\Serve\ServeConvertedWebP;
 use \WebPExpress\ConvertHelperIndependent;
 use \WebPExpress\Sanitize;
-use \WebPExpress\ValidateException;
+use \WebPExpress\SanityCheck;
+use \WebPExpress\SanityException;
 
 class WebPRealizer
 {
 
     private static $docRoot;
 
-    public static function exitWithError($msg) {
+    private static function exitWithError($msg) {
         header('X-WebP-Express-Error: ' . $msg, true);
         echo $msg;
         exit;
     }
 
-    //echo $_SERVER["SERVER_SOFTWARE"]; exit;
-    //stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') !== false
-
-
     /**
      *  Get environment variable set with mod_rewrite module
      *  Return false if the environment variable isn't found
      */
-    static function getEnvPassedInRewriteRule($envName) {
+    private static function getEnvPassedInRewriteRule($envName) {
         // Envirenment variables passed through the REWRITE module have "REWRITE_" as a prefix (in Apache, not Litespeed, if I recall correctly)
         //  Multiple iterations causes multiple REWRITE_ prefixes, and we get many environment variables set.
         // Multiple iterations causes multiple REWRITE_ prefixes, and we get many environment variables set.
@@ -41,146 +38,67 @@ class WebPRealizer
         return false;
     }
 
-    /**
-     * Get absolute path to destination file.
-     *
-     * The path can be passed to this file from the .htaccess file / nginx config in various ways.
-     *
-     * @return string  Absolute path to destination (unsanitized! - call sanitizeAbsFilePath immidiately after calling this method)
-     */
-    static function getDestinationUnsanitized($docRoot) {
+    public static function process() {
 
-        // First check if it is in an environment variable - thats the safest way
-        $destinationRel = self::getEnvPassedInRewriteRule('DESTINATIONREL');
-        if ($destinationRel !== false) {
-            return $docRoot . '/' . $destinationRel;
-        }
-
-        // Next, check querystring (relative path)
-        $destinationRel = '';
-        if (isset($_GET['xdestination-rel'])) {
-            $destinationRel = substr(Sanitize::removeNUL($_GET['xdestination-rel']), 1);
-        } elseif (isset($_GET['destination-rel'])) {
-            $destinationRel = Sanitize::removeNUL($_GET['destination-rel']);
-        }
-        if ($destinationRel != '') {
-            /*
-            if (isset($_GET['source-rel-filter'])) {
-                if (Sanitize::removeNUL($_GET['source-rel-filter']) == 'discard-parts-before-wp-content') {
-                    $parts = explode('/', $destinationRel);
-                    $wp_content = isset($_GET['wp-content']) ? Sanitize::removeNUL($_GET['wp-content']) : 'wp-content';
-
-                    if (in_array($wp_content, $parts)) {
-                        foreach($parts as $index => $part) {
-                            if($part !== $wp_content) {
-                                unset($parts[$index]);
-                            } else {
-                                break;
-                            }
-                        }
-                        $destinationRel = implode('/', $parts);
-                    }
-                }
-            }*/
-            return $docRoot . '/' . $destinationRel;
-        }
-
-        // Then querystring (full path) - But only on Nginx (our Apache .htaccess rules never passes absolute url)
-        if (stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') !== false) {
-            if (isset($_GET['xdestination'])) {
-                return substr($_GET['xdestination'], 1);         // No url decoding needed as $_GET is already decoded
-            } elseif (isset($_GET['destination'])) {
-                return $_GET['destination'];
-            }
-        }
-
-        // Last resort is to use $_SERVER['REQUEST_URI'], well knowing that it does not give the
-        // correct result in all setups (ie "folder method 1")
-        $requestUriNoQS = explode('?', $_SERVER['REQUEST_URI'])[0];
-        $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
-        $dest = $docRoot . urldecode($requestUriNoQS);
-        return $dest;
-    }
-
-
-    static function getWpContentRelUnsanitized() {
-        // Passed in env variable?
-        $wpContentDirRel = self::getEnvPassedInRewriteRule('WPCONTENT');
-        if ($wpContentDirRel !== false) {
-            return $wpContentDirRel;
-        }
-
-        // Passed in QS?
-        if (isset($_GET['wp-content'])) {
-            return $_GET['wp-content'];
-        }
-
-        // In case above fails, fall back to standard location
-        return 'wp-content';
-    }
-
-    /*
-    static function registerAutoload()
-    {
-        define('WEBPEXPRESS_PLUGIN_DIR', __DIR__);
-
-        // Autoload WebPExpress classes
-        spl_autoload_register('webpexpress_autoload');
-        function webpexpress_autoload($class) {
-            if (strpos($class, 'WebPExpress\\') === 0) {
-                require_once WEBPEXPRESS_PLUGIN_DIR . '/lib/classes/' . substr($class, 12) . '.php';
-            }
-        }
-    }*/
-
-    static function process() {
-
-        include_once "../lib/classes/ConvertHelperIndependent.php";
+        include_once __DIR__ . "/../lib/classes/ConvertHelperIndependent.php";
         include_once __DIR__ . '/../lib/classes/Sanitize.php';
-        include_once __DIR__ . '/../lib/classes/Validate.php';
-        include_once __DIR__ . '/../lib/classes/ValidateException.php';
+        include_once __DIR__ . '/../lib/classes/SanityCheck.php';
+        include_once __DIR__ . '/../lib/classes/SanityException.php';
 
-        // Validate!
-        // ----------
+        // Check input
+        // --------------
 
         try {
 
-            // Validate DOCUMENT_ROOT
+            // Check DOCUMENT_ROOT
             // ----------------------
-            $validating = 'DOCUMENT_ROOT';
-            $realPathResult = realpath(Sanitize::removeNUL($_SERVER["DOCUMENT_ROOT"]));
-            if ($realPathResult === false) {
-                throw new ValidateException('Cannot find document root');
+            $checking = 'DOCUMENT_ROOT';
+            $docRoot = SanityCheck::absPath($_SERVER["DOCUMENT_ROOT"]);
+
+            // Use realpath to expand symbolic links and check if it exists
+            $docRoot = realpath($docRoot);
+            if ($docRoot === false) {
+                throw new SanityException('Cannot find document root');
             }
-            $docRoot = rtrim($realPathResult, '/');
-            Validate::absPathLooksSaneExistsAndIsDir($docRoot);
-            $docRoot = $docRoot;
+            $docRoot = rtrim($docRoot, '/');
+            $docRoot = SanityCheck::absPathExistsAndIsDir($docRoot);
 
+            // Check wp-content
+            // ----------------------
 
-            // Validate WebP Express content dir
+            // Passed in env variable?
+            $wpContentDirRel = self::getEnvPassedInRewriteRule('WPCONTENT');
+            if ($wpContentDirRel === false) {
+
+                // Passed in QS?
+                if (isset($_GET['wp-content'])) {
+                    $wpContentDirRel = SanityCheck::pathWithoutDirectoryTraversal($_GET['wp-content']);
+                } else {
+                    // In case above fails, fall back to standard location
+                    $wpContentDirRel = 'wp-content';
+                }
+            }
+
+            // Check WebP Express content dir
             // ---------------------------------
-            $validating = 'WebP Express content dir';
-            $webExpressContentDirAbs = ConvertHelperIndependent::sanitizeAbsFilePath(
-                $docRoot . '/' . self::getWpContentRelUnsanitized() . '/webp-express'
-            );
-            Validate::absPathLooksSaneExistsAndIsDir($webExpressContentDirAbs);
+            $checking = 'WebP Express content dir';
+            $webExpressContentDirAbs = SanityCheck::absPathExistsAndIsDir($docRoot . '/' . $wpContentDirRel . '/webp-express');
 
 
-            // Validate config file name
+            // Check config file name
             // ---------------------------------
-            $validating = 'config file';
-            $configFilename = $webExpressContentDirAbs . '/config/wod-options.json';
-            Validate::absPathLooksSaneExistsAndIsFile($configFilename);
+            $checking = 'config file';
+            $configFilename = SanityCheck::absPathExistsAndIsFile($webExpressContentDirAbs . '/config/wod-options.json');
 
 
-            // Validate config file
+            // Check config file
             // --------------------
             $configLoadResult = file_get_contents($configFilename);
             if ($configLoadResult === false) {
                 throw new ValidateException('Cannot open config file');
             }
-            Validate::isJSONObject($configLoadResult);
-            $json = $configLoadResult;
+            $json = SanityCheck::isJSONObject($configLoadResult);
+
             $options = json_decode($json, true);
             $wodOptions = $options['wod'];
             $serveOptions = $options['webp-convert'];
@@ -190,23 +108,55 @@ class WebPRealizer
 
             // Validate that WebPExpress was configured to redirect to this conversion script
             // ------------------------------------------------------------------------------
-            $validating = 'settings';
-            if (!isset($wodOptions['enable-redirection-to-webp-realizer']) || ($wodOptions['enable-redirection-to-webp-realizer'] === false)) {
+            $checking = 'settings';
+            if (!isset($wodOptions['enable-redirection-to-converter']) || ($wodOptions['enable-redirection-to-converter'] === false)) {
                 throw new ValidateException('Redirection to conversion script is not enabled');
             }
 
 
-            // Validate destination (the image that was requested, but has not been converted yet)
+            // Check destination (the image that was requested, but has not been converted yet)
             // ------------------------------------------------------------------------------------
-            $validating = 'destination path';
-            $destination = Sanitize::removeNUL(self::getDestinationUnsanitized($docRoot));
-            Validate::absPathLooksSane($destination);
-            //echo $destination; exit;
+            $checking = 'destination path';
+
+            // Check if it is in an environment variable
+            $destRel = self::getEnvPassedInRewriteRule('DESTINATIONREL');
+            if ($destRel !== false) {
+                $destination = SanityCheck::absPath($docRoot . '/' . $destRel);
+            } else {
+                // Check querystring (relative path)
+                if (isset($_GET['xdestination-rel'])) {
+                    $xdestRel = SanityCheck::noControlChars($_GET['xdestination-rel']);
+                    $destRel = SanityCheck::pathWithoutDirectoryTraversal(substr($xdestRel, 1));
+                    $destination = SanityCheck::absPath($docRoot . '/' . $destRel);
+                } else {
+
+                    // Then querystring (full path)
+                    // - But only on Nginx (our Apache .htaccess rules never passes absolute url)
+                    if (
+                        (stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') !== false) &&
+                        (isset($_GET['destination']) || isset($_GET['xdestination']))
+                    ) {
+                        if (isset($_GET['destination'])) {
+                            $destination = SanityCheck::absPath($_GET['destination']);
+                        } else {
+                            $xdest = SanityCheck::noControlChars($_GET['xdestination']);
+                            $destination = SanityCheck::absPath(substr($xdest, 1));
+                        }
+                    } else {
+                        // Last resort is to use $_SERVER['REQUEST_URI'], well knowing that it does not give the
+                        // correct result in all setups (ie "folder method 1")
+                        $destRel = SanityCheck::pathWithoutDirectoryTraversal(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+                        $destination = SanityCheck::absPath($docRoot . $destRel);
+                    }
+                }
+            }
+
+            $destination = SanityCheck::pregMatch('#\.webp$#', $destination, 'Does not end with .webp');
 
 
             // Validate source path
             // --------------------------------------------
-            $validating = 'source path';
+            $checking = 'source path';
             $source = ConvertHelperIndependent::findSource(
                 $destination,
                 $wodOptions['destination-folder'],
@@ -215,45 +165,28 @@ class WebPRealizer
             );
 
             if ($source === false) {
-                header('X-WebP-Express-Error: webp-realizer.php could not find an existing jpg or png that corresponds to the webp requested', true);
+                header('X-WebP-Express-Error: webp-realizer.php could not find an existing jpg/png that corresponds to the webp requested', true);
 
                 $protocol = isset($_SERVER["SERVER_PROTOCOL"]) ? $_SERVER["SERVER_PROTOCOL"] : 'HTTP/1.0';
                 header($protocol . " 404 Not Found");
                 die();
                 //echo 'destination requested:<br><i>' . $destination . '</i>';
             }
-            Validate::absPathLooksSaneExistsAndIsFile($source);
-            //echo $source; exit;
+            $source = SanityCheck::absPathExistsAndIsFile($source);
 
+        } catch (SanityException $e) {
+            self::exitWithError('Sanity check failed for ' . $checking . ': '. $e->getMessage());
         } catch (ValidateException $e) {
-            self::exitWithError('failed validating ' . $validating . ': '. $e->getMessage());
+            self::exitWithError('Validation failed for ' . $checking . ': '. $e->getMessage());
         }
 
-        /*
-        if ($wodOptions['forward-query-string']) {
-            if (isset($_GET['debug'])) {
-                $serveOptions['show-report'] = true;
-            }
-            if (isset($_GET['reconvert'])) {
-                $serveOptions['reconvert'] = true;
-            }
-        }*/
 
+        // Done with sanitizing, lets get to work!
+        // ---------------------------------------
         $serveOptions['add-vary-header'] = false;
         $serveOptions['fail'] = '404';
         $serveOptions['fail-when-fail-fails'] = '404';
         $serveOptions['serve-image']['headers']['vary-accept'] = false;
-
-        /*
-        function aboutToServeImageCallBack($servingWhat, $whyServingThis, $obj) {
-            // Redirect to same location.
-            header('Location: ?fresh' , 302);
-            return false;   // tell webp-convert not to serve!
-        }
-        */
-
-        //echo '<pre>' . print_r($serveOptions, true) . '</pre>'; exit;
-        //$serveOptions['show-report'] = true;
 
         ConvertHelperIndependent::serveConverted(
             $source,
@@ -262,7 +195,6 @@ class WebPRealizer
             $webExpressContentDirAbs . '/log',
             'Conversion triggered with the conversion script (wod/webp-realizer.php)'
         );
-
     }
 }
 

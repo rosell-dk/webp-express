@@ -5,7 +5,8 @@ namespace WebPExpress;
 use \WebPExpress\ConvertHelperIndependent;
 use \WebPExpress\Config;
 use \WebPExpress\ConvertersHelper;
-use \WebPExpress\Sanitize;
+use \WebPExpress\SanityCheck;
+use \WebPExpress\SanityException;
 use \WebPExpress\Validate;
 use \WebPExpress\ValidateException;
 
@@ -79,41 +80,44 @@ class Convert
             wp_die();
         }
 
-        // Validate input
-        // ---------------------------
+        // Check input
+        // --------------
         try {
-            // validate "filename"
-            $validating = '"filename" argument';
+            // Check "filename"
+            $checking = '"filename" argument';
             Validate::postHasKey('filename');
             $filename = sanitize_text_field($_POST['filename']);
-            Validate::absPathLooksSaneExistsAndIsNotDir($filename);
+            $filename = SanityCheck::absPathExistsAndIsNotDir($filename);
 
 
-            // validate converter id
+            // Check converter id
             // ---------------------
-            $validating = '"converter" argument';
+            $checking = '"converter" argument';
             if (isset($_POST['converter'])) {
                 $converterId = sanitize_text_field($_POST['converter']);
                 Validate::isConverterId($converterId);
             }
 
 
-            // validate "config-overrides"
+            // Check "config-overrides"
             // ---------------------------
-            $validating = '"config-overrides" argument';
+            $checking = '"config-overrides" argument';
             if (isset($_POST['config-overrides'])) {
-                $configOverridesJSON = Sanitize::removeNUL($_POST['config-overrides']);
+                $configOverridesJSON = SanityCheck::noControlChars($_POST['config-overrides']);
                 $configOverridesJSON = preg_replace('/\\\\"/', '"', $configOverridesJSON); // We got crazy encoding, perhaps by jQuery. This cleans it up
 
-                Validate::isJSONObject($configOverridesJSON, $configOverridesJSON);
+                $configOverridesJSON = SanityCheck::isJSONObject($configOverridesJSON);
                 $configOverrides = json_decode($configOverridesJSON, true);
 
                 // PS: We do not need to validate the overrides.
                 // webp-convert checks all options. Nothing can be passed to webp-convert which causes harm.
             }
 
+        } catch (SanityException $e) {
+            wp_send_json_error('Sanitation check failed for ' . $checking . ': '. $e->getMessage());
+            wp_die();
         } catch (ValidateException $e) {
-            wp_send_json_error('failed validating ' . $validating . ': '. $e->getMessage());
+            wp_send_json_error('Validation failed for ' . $checking . ': '. $e->getMessage());
             wp_die();
         }
 
