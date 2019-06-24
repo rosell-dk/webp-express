@@ -29,28 +29,62 @@ class Convert
 
     public static function convertFile($source, $config = null, $convertOptions = null, $converter = null)
     {
-        // PS: No need to check mime type as the WebPConvert library does that (it only accepts image/jpeg and image/png)
-        $source = ConvertHelperIndependent::sanitizeAbsFilePath($source);
+        try {
+            // Check source
+            // ---------------
+            $checking = 'filename';
+            $filename = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
+            // PS: No need to check mime type as the WebPConvert library does that (it only accepts image/jpeg and image/png)
 
-        if (is_null($config)) {
-            $config = Config::loadConfigAndFix();
+
+            // Check config
+            // --------------
+            $checking = 'configuration file';
+            if (is_null($config)) {
+                $config = Config::loadConfigAndFix();  // ps: if this fails to load, default config is returned.
+            }
+            if (!is_array($config)) {
+                throw new SanityException('file is corrupt');
+            }
+
+            // Check convert options
+            // -------------------------------
+            if (is_null($convertOptions)) {
+                $wodOptions = Config::generateWodOptionsFromConfigObj($config);
+                if (!isset($wodOptions['webp-convert']['convert'])) {
+                    throw new SanityException('conversion options are missing');
+                }
+                $convertOptions = $wodOptions['webp-convert']['convert'];
+            }
+            if (!is_array($convertOptions)) {
+                throw new SanityException('conversion options are missing');
+            }
+
+
+            // Check destination
+            // -------------------------------
+            $destination = self::getDestination($source, $config);
+            $destination = SanityCheck::absPathIsInDocRoot($destination);
+
+
+            // Check log dir
+            // -------------------------------
+            $logDir = SanityCheck::absPathIsInDocRoot(Paths::getWebPExpressContentDirAbs() . '/log');
+
+
+        } catch (SanityException $e) {
+            return [
+                'success' => false,
+                'msg' => 'Sanitation check failed for ' . $checking . ': '. $e->getMessage(),
+                'log' => '',
+            ];
         }
-        if (is_null($convertOptions)) {
-            $convertOptions = Config::generateWodOptionsFromConfigObj($config)['webp-convert']['convert'];
-        }
-        /*
-        if (isset($config['converter'])) {
-            $options['convert']['converter'] = $config['converter'];
-        }*/
 
-        $destination = self::getDestination($source, $config);
-        $destination = ConvertHelperIndependent::sanitizeAbsFilePath($destination);
-
-        $logDir = Paths::getWebPExpressContentDirAbs() . '/log';
+        // Done with sanitizing, lets get to work!
+        // ---------------------------------------
 
         $result = ConvertHelperIndependent::convert($source, $destination, $convertOptions, $logDir, $converter);
 
-        //$result['destination'] = $destination;
         if ($result['success'] === true) {
             $result['filesize-original'] = @filesize($source);
             $result['filesize-webp'] = @filesize($destination);
@@ -58,12 +92,33 @@ class Convert
         return $result;
     }
 
+    /**
+     *  Determine the location of a source from the location of a destination.
+     *
+     *  If for example Operation mode is set to "mingled" and extension is set to "Append .webp",
+     *  the result of looking passing "/path/to/logo.jpg.webp" will be "/path/to/logo.jpg".
+     *
+     *  Additionally, it is tested if the source exists. If not, false is returned.
+     *  The destination does not have to exist.
+     *
+     *  @return  string|null  The source path corresponding to a destination path
+     *                        - or false on failure (if the source does not exist or $destination is not sane)
+     *
+     */
     public static function findSource($destination, &$config = null)
     {
-        $destination = ConvertHelperIndependent::sanitizeAbsFilePath($destination);
+        try {
+            // Check that destination path is sane and inside document root
+            $destination = SanityCheck::absPathIsInDocRoot($destination);
+        } catch (SanityException $e) {
+            return false;
+        }
+
+        // Load config if not already loaded
         if (is_null($config)) {
             $config = Config::loadConfigAndFix();
         }
+
         return ConvertHelperIndependent::findSource(
             $destination,
             $config['destination-folder'],
@@ -87,7 +142,8 @@ class Convert
             $checking = '"filename" argument';
             Validate::postHasKey('filename');
             $filename = sanitize_text_field($_POST['filename']);
-            $filename = SanityCheck::absPathExistsAndIsNotDir($filename);
+            $filename = SanityCheck::absPathExistsAndIsFileInDocRoot($filename);
+            // PS: No need to check mime version as webp-convert does that.
 
 
             // Check converter id

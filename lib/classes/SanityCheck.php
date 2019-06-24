@@ -115,6 +115,23 @@ class SanityCheck
         return $input;
     }
 
+    public static function absPathIsInDocRoot($input, $errorMsg = 'Path is outside allowed path')
+    {
+        $docRoot = self::absPath($_SERVER["DOCUMENT_ROOT"]);
+
+        // Use realpath to expand symbolic links and check if it exists
+        $docRoot = realpath($docRoot);
+        if ($docRoot === false) {
+            throw new SanityException('Cannot find document root');
+        }
+        $docRoot = rtrim($docRoot, '/');
+        $docRoot = self::absPathExists($docRoot, 'Document root does not exist!');
+        $docRoot = self::absPathExistsAndIsDir($docRoot, 'Document root is not a directory!');
+
+        self::pathBeginsWith($input, $docRoot . '/', $errorMsg);
+        return $input;
+    }
+
     public static function absPath($input)
     {
         return self::path($input);
@@ -148,6 +165,13 @@ class SanityCheck
         if (@is_dir($input)) {
             throw new SanityException($errorMsg);
         }
+        return $input;
+    }
+
+    public static function absPathExistsAndIsFileInDocRoot($input)
+    {
+        self::absPathExistsAndIsFile($input);
+        self::absPathIsInDocRoot($input);
         return $input;
     }
 

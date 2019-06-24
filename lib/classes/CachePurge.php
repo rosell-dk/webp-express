@@ -55,7 +55,7 @@ class CachePurge
      *
      *  @return [num files deleted, num files failed to delete]
      */
-    public static function purgeWebPFilesInDir($dir, &$filter, &$config)
+    private static function purgeWebPFilesInDir($dir, &$filter, &$config)
     {
         if (!@file_exists($dir) || !@is_dir($dir)) {
             return [0, 0];

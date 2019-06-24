@@ -5,6 +5,8 @@ namespace WebPExpress;
 use \WebPExpress\Config;
 use \WebPExpress\Convert;
 use \WebPExpress\Mime;
+use \WebPExpress\SanityCheck;
+use \WebPExpress\SanityException;
 
 class HandleUploadHooks
 {
@@ -58,9 +60,14 @@ class HandleUploadHooks
      */
     public static function handleUpload($filearray, $overrides = false, $ignore = false)
     {
-        $filename = $filearray['file'];
-        self::convertIf($filename);
-
+        if (isset($filearray['file'])) {
+            try {
+                $filename = SanityCheck::absPathExistsAndIsFileInDocRoot($filearray['file']);
+                self::convertIf($filename);
+            } catch (SanityException $e) {
+                // fail silently. (maybe we should write to debug log instead?)
+            }
+        }
         return $filearray;
     }
 
@@ -70,7 +77,14 @@ class HandleUploadHooks
      */
     public static function handleMakeIntermediateSize($filename)
     {
-        self::convertIf($filename);
+        if (!is_null($filename)) {
+            try {
+                $filenameToConvert = SanityCheck::absPathExistsAndIsFileInDocRoot($filearray['file']);
+                self::convertIf($filenameToConvert);
+            } catch (SanityException $e) {
+                // fail silently. (maybe we should write to debug log instead?)
+            }
+        }
         return $filename;
     }
 }

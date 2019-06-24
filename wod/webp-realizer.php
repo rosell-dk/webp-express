@@ -88,7 +88,7 @@ class WebPRealizer
             // Check config file name
             // ---------------------------------
             $checking = 'config file';
-            $configFilename = SanityCheck::absPathExistsAndIsFile($webExpressContentDirAbs . '/config/wod-options.json');
+            $configFilename = SanityCheck::absPathExistsAndIsFileInDocRoot($webExpressContentDirAbs . '/config/wod-options.json');
 
 
             // Check config file
@@ -137,10 +137,10 @@ class WebPRealizer
                         (isset($_GET['destination']) || isset($_GET['xdestination']))
                     ) {
                         if (isset($_GET['destination'])) {
-                            $destination = SanityCheck::absPath($_GET['destination']);
+                            $destination = SanityCheck::absPathIsInDocRoot($_GET['destination']);
                         } else {
                             $xdest = SanityCheck::noControlChars($_GET['xdestination']);
-                            $destination = SanityCheck::absPath(substr($xdest, 1));
+                            $destination = SanityCheck::absPathIsInDocRoot(substr($xdest, 1));
                         }
                     } else {
                         // Last resort is to use $_SERVER['REQUEST_URI'], well knowing that it does not give the
@@ -152,7 +152,7 @@ class WebPRealizer
             }
 
             $destination = SanityCheck::pregMatch('#\.webp$#', $destination, 'Does not end with .webp');
-            $destination = SanityCheck::pathBeginsWith($destination, $docRoot . '/');
+            $destination = SanityCheck::absPathIsInDocRoot($destination);
 
 
             // Validate source path

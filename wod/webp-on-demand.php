@@ -121,7 +121,8 @@ class WebPOnDempand
             // Check if it is in an environment variable
             $source = self::getEnvPassedInRewriteRule('REQFN');
             if ($source !== false) {
-                $source = SanityCheck::absPathExistsAndIsFile($source);
+                $source = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
+                echo $source; exit;
             } else {
                 // Check if it is in header (but only if .htaccess was configured to send in header)
                 if (isset($wodOptions['base-htaccess-on-these-capability-tests'])) {
@@ -134,7 +135,7 @@ class WebPOnDempand
                 }
                 if ((!$passThrougEnvVarDefinitelyAvailable) && (!$passThroughHeaderDefinitelyUnavailable)) {
                     if (isset($_SERVER['HTTP_REQFN'])) {
-                        $source = SanityCheck::absPathExistsAndIsFile($_SERVER['HTTP_REQFN']);
+                        $source = SanityCheck::absPathExistsAndIsFileInDocRoot($_SERVER['HTTP_REQFN']);
                     }
                 } else {
                     // Check querystring (relative path)
@@ -151,10 +152,10 @@ class WebPOnDempand
                             (isset($_GET['source']) || isset($_GET['xsource']))
                         ) {
                             if (isset($_GET['source'])) {
-                                $source = SanityCheck::absPathExistsAndIsFile($_GET['source']);
+                                $source = SanityCheck::absPathExistsAndIsFileInDocRoot($_GET['source']);
                             } else {
                                 $xsrc = SanityCheck::noControlChars($_GET['xsource']);
-                                $source = SanityCheck::absPathExistsAndIsFile(substr($xsrc, 1));
+                                $source = SanityCheck::absPathExistsAndIsFileInDocRoot(substr($xsrc, 1));
                             }
                         } else {
                             // Last resort is to use $_SERVER['REQUEST_URI'], well knowing that it does not give the

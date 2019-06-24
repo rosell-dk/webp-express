@@ -13,14 +13,9 @@ use \WebPExpress\Paths;
 use \WebPExpress\PlatformInfo;
 use \WebPExpress\State;
 
-//use \WebPExpress\BulkConvert;
-//echo '<pre>' . print_r(BulkConvert::getList($config), true) . "</pre>";
-//echo '<pre>' . print_r(BulkConvert::convertFile('/var/www/webp-express-tests/we0/wordpress/uploads-moved/space in name.jpg'), true) . "</pre>";
-
 if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }
-
 
 /*
 if (CapabilityTest::modRewriteWorking()) {
