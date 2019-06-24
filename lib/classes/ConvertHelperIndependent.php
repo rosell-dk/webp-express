@@ -265,6 +265,7 @@ class ConvertHelperIndependent
         } catch (SanityException $e) {
             return false;
         }
+        return $logFileName;
 
     }
 
@@ -309,15 +310,17 @@ APACHE
      */
     private static function saveLog($source, $logDir, $text, $msgTop)
     {
+
         if (!file_exists($logDir)) {
             self::createLogDir($logDir);
         }
 
         $text = preg_replace('#' . preg_quote($_SERVER["DOCUMENT_ROOT"]) . '#', '[doc-root]', $text);
 
-        $text = 'WebP Express 0.14.10. ' . $msgTop . ', ' . date("Y-m-d H:i:s") . "\n\r\n\r" . $text;
+        $text = 'WebP Express 0.14.11. ' . $msgTop . ', ' . date("Y-m-d H:i:s") . "\n\r\n\r" . $text;
 
         $logFile = self::getLogFilename($source, $logDir);
+
         if ($logFile === false) {
             return;
         }
