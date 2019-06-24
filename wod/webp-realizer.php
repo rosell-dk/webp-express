@@ -152,6 +152,7 @@ class WebPRealizer
             }
 
             $destination = SanityCheck::pregMatch('#\.webp$#', $destination, 'Does not end with .webp');
+            $destination = SanityCheck::pathBeginsWith($destination, $docRoot . '/');
 
 
             // Validate source path
@@ -173,6 +174,7 @@ class WebPRealizer
                 //echo 'destination requested:<br><i>' . $destination . '</i>';
             }
             $source = SanityCheck::absPathExistsAndIsFile($source);
+            $source = SanityCheck::pathBeginsWith($source, $docRoot . '/');
 
         } catch (SanityException $e) {
             self::exitWithError('Sanity check failed for ' . $checking . ': '. $e->getMessage());

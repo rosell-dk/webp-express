@@ -106,11 +106,19 @@ class SanityCheck
         return self::path($input);
     }
 
+    public static function pathBeginsWith($input, $beginsWith, $errorMsg = 'Path is outside allowed path')
+    {
+        self::path($input);
+        if (!(strpos($input, $beginsWith) === 0)) {
+            throw new SanityException($errorMsg);
+        }
+        return $input;
+    }
+
     public static function absPath($input)
     {
         return self::path($input);
     }
-
 
     public static function absPathExists($input, $errorMsg = 'Path does not exist')
     {

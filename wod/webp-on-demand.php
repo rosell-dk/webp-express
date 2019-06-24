@@ -165,6 +165,7 @@ class WebPOnDempand
                     }
                 }
             }
+            $source = SanityCheck::pathBeginsWith($source, $docRoot . '/');
 
             // Check destination path
             // --------------------------------------------
@@ -178,6 +179,7 @@ class WebPOnDempand
             );
             $destination = SanityCheck::absPath($destination);
             $destination = SanityCheck::pregMatch('#\.webp$#', $destination, 'Does not end with .webp');
+            $destination = SanityCheck::pathBeginsWith($destination, $docRoot . '/');
 
         } catch (SanityException $e) {
             self::exitWithError('Sanity check failed for ' . $checking . ': '. $e->getMessage());
