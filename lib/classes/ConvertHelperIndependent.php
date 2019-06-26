@@ -71,25 +71,34 @@ class ConvertHelperIndependent
         try {
             // Check source
             // --------------
-            $source = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
+            // TODO: make this check work with symlinks
+            //$source = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
 
             // Calculate destination and check that the result is sane
             // -------------------------------------------------------
             if (self::storeMingledOrNot($source, $destinationFolder, $uploadDirAbs)) {
                 if ($destinationExt == 'append') {
-                    $destination = SanityCheck::absPathIsInDocRoot($source . '.webp');
+                    // TODO: make this check work with symlinks
+                    //$destination = SanityCheck::absPathIsInDocRoot($source . '.webp');
+                    $destination = $source . '.webp';
                 } else {
                     $destination = preg_replace('/\\.(jpe?g|png)$/', '', $source) . '.webp';
-                    $destination = SanityCheck::absPathIsInDocRoot($source . '.webp');
+                    // TODO: make this check work with symlinks
+                    //$destination = SanityCheck::absPathIsInDocRoot($source . '.webp');
+                    $destination = $source . '.webp';
                 }
             } else {
                 $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
                 $imageRoot = $webExpressContentDirAbs . '/webp-images';
-                SanityCheck::absPathIsInDocRoot($imageRoot);
+
+                // TODO: make this check work with symlinks
+                //SanityCheck::absPathIsInDocRoot($imageRoot);
 
                 $sourceRel = substr($source, strlen($docRoot) + 1);
                 $destination = $imageRoot . '/doc-root/' . $sourceRel . '.webp';
-                $destination = SanityCheck::absPathIsInDocRoot($destination);
+
+                // TODO: make this check work with symlinks
+                //$destination = SanityCheck::absPathIsInDocRoot($destination);
             }
 
         } catch (SanityException $e) {

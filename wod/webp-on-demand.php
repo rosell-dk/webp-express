@@ -51,21 +51,22 @@ class WebPOnDempand
 
         // Check input
         // --------------
-
         try {
 
             // Check DOCUMENT_ROOT
             // ----------------------
             $checking = 'DOCUMENT_ROOT';
             $docRoot = SanityCheck::absPath($_SERVER["DOCUMENT_ROOT"]);
-
-            // Use realpath to expand symbolic links and check if it exists
-            $docRoot = realpath($docRoot);
-            if ($docRoot === false) {
-                throw new SanityException('Cannot find document root');
-            }
             $docRoot = rtrim($docRoot, '/');
             $docRoot = SanityCheck::absPathExistsAndIsDir($docRoot);
+
+            // Use realpath to expand symbolic links and check if it exists
+            $docRootSymLinksExpanded = realpath($docRoot);
+            if ($docRootSymLinksExpanded === false) {
+                throw new SanityException('Cannot find document root');
+            }
+            $docRootSymLinksExpanded = rtrim($docRootSymLinksExpanded, '/');
+            $docRootSymLinksExpanded = SanityCheck::absPathExistsAndIsDir($docRootSymLinksExpanded);
 
             // Check wp-content
             // ----------------------
@@ -125,7 +126,7 @@ class WebPOnDempand
             // Check if it is in an environment variable
             $source = self::getEnvPassedInRewriteRule('REQFN');
             if ($source !== false) {
-                $source = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
+                $source = SanityCheck::absPathExistsAndIsFile($source);
             } else {
                 // Check if it is in header (but only if .htaccess was configured to send in header)
                 if (isset($wodOptions['base-htaccess-on-these-capability-tests'])) {
@@ -138,7 +139,7 @@ class WebPOnDempand
                 }
                 if ((!$passThrougEnvVarDefinitelyAvailable) && (!$passThroughHeaderDefinitelyUnavailable)) {
                     if (isset($_SERVER['HTTP_REQFN'])) {
-                        $source = SanityCheck::absPathExistsAndIsFileInDocRoot($_SERVER['HTTP_REQFN']);
+                        $source = SanityCheck::absPathExistsAndIsFile($_SERVER['HTTP_REQFN']);
                     }
                 } else {
                     // Check querystring (relative path)
@@ -155,10 +156,10 @@ class WebPOnDempand
                             (isset($_GET['source']) || isset($_GET['xsource']))
                         ) {
                             if (isset($_GET['source'])) {
-                                $source = SanityCheck::absPathExistsAndIsFileInDocRoot($_GET['source']);
+                                $source = SanityCheck::absPathExistsAndIsFile($_GET['source']);
                             } else {
                                 $xsrc = SanityCheck::noControlChars($_GET['xsource']);
-                                $source = SanityCheck::absPathExistsAndIsFileInDocRoot(substr($xsrc, 1));
+                                $source = SanityCheck::absPathExistsAndIsFile(substr($xsrc, 1));
                             }
                         } else {
                             // Last resort is to use $_SERVER['REQUEST_URI'], well knowing that it does not give the
@@ -169,7 +170,13 @@ class WebPOnDempand
                     }
                 }
             }
-            $source = SanityCheck::pathBeginsWith($source, $docRoot . '/');
+
+            // Make sure it is in doc root
+            try {
+                $source = SanityCheck::pathBeginsWith($source, $docRoot . '/');
+            } catch (SanityException $e) {
+                $source = SanityCheck::pathBeginsWith(realpath($source), $docRootSymLinksExpanded . '/');
+            }
 
             // Check destination path
             // --------------------------------------------
@@ -181,6 +188,7 @@ class WebPOnDempand
                 $webExpressContentDirAbs,
                 $docRoot . '/' . $wodOptions['paths']['uploadDirRel']
             );
+            //echo 'dest:' . $destination; exit;
             $destination = SanityCheck::absPath($destination);
             $destination = SanityCheck::pregMatch('#\.webp$#', $destination, 'Does not end with .webp');
             $destination = SanityCheck::pathBeginsWith($destination, $docRoot . '/');
