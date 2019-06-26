@@ -122,7 +122,6 @@ class WebPOnDempand
             $source = self::getEnvPassedInRewriteRule('REQFN');
             if ($source !== false) {
                 $source = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
-                echo $source; exit;
             } else {
                 // Check if it is in header (but only if .htaccess was configured to send in header)
                 if (isset($wodOptions['base-htaccess-on-these-capability-tests'])) {
