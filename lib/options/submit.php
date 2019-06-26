@@ -583,6 +583,7 @@ switch ($sanitized['operation-mode']) {
             'redirect-to-existing-in-htaccess' => $sanitized['redirect-to-existing-in-htaccess'],
             'destination-folder' => $sanitized['destination-folder'],
             'destination-extension' => (($sanitized['destination-folder'] == 'mingled') ? $sanitized['destination-extension'] : 'append'),
+            'enable-redirection-to-converter' => $sanitized['enable-redirection-to-converter'],
         ]);
         break;
     case 'cdn-friendly':
