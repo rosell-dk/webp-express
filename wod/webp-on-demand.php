@@ -126,6 +126,7 @@ class WebPOnDempand
             // Check if it is in an environment variable
             $source = self::getEnvPassedInRewriteRule('REQFN');
             if ($source !== false) {
+                $checking = 'source (passed through env)';
                 $source = SanityCheck::absPathExistsAndIsFile($source);
             } else {
                 // Check if it is in header (but only if .htaccess was configured to send in header)
@@ -133,18 +134,20 @@ class WebPOnDempand
                     $capTests = $wodOptions['base-htaccess-on-these-capability-tests'];
                     $passThroughHeaderDefinitelyUnavailable = ($capTests['passThroughHeaderWorking'] === false);
                     $passThrougEnvVarDefinitelyAvailable =($capTests['passThroughEnvWorking'] === true);
+                    // This determines if .htaccess was configured to send in querystring
+                    $headerMagicAddedInHtaccess = ((!$passThrougEnvVarDefinitelyAvailable) && (!$passThroughHeaderDefinitelyUnavailable));
                 } else {
-                    $passThroughHeaderDefinitelyUnavailable = false;
-                    $passThrougEnvVarDefinitelyAvailable = false;
+                    $headerMagicAddedInHtaccess = true;  // pretend its true
                 }
-                if ((!$passThrougEnvVarDefinitelyAvailable) && (!$passThroughHeaderDefinitelyUnavailable)) {
-                    if (isset($_SERVER['HTTP_REQFN'])) {
-                        $source = SanityCheck::absPathExistsAndIsFile($_SERVER['HTTP_REQFN']);
-                    }
+
+                if ($headerMagicAddedInHtaccess && (isset($_SERVER['HTTP_REQFN']))) {
+                    $checking = 'source (passed through request header)';
+                    $source = SanityCheck::absPathExistsAndIsFile($_SERVER['HTTP_REQFN']);
                 } else {
                     // Check querystring (relative path)
                     $srcRel = '';
                     if (isset($_GET['xsource-rel'])) {
+                        $checking = 'source (passed as relative path, through querystring)';
                         $xsrcRel = SanityCheck::noControlChars($_GET['xsource-rel']);
                         $srcRel = SanityCheck::pathWithoutDirectoryTraversal(substr($xsrcRel, 1));
                         $source = SanityCheck::absPathExistsAndIsFile($docRoot . '/' . $srcRel);
@@ -155,6 +158,7 @@ class WebPOnDempand
                             (stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') !== false) &&
                             (isset($_GET['source']) || isset($_GET['xsource']))
                         ) {
+                            $checking = 'source (passed as absolute path on nginx)';
                             if (isset($_GET['source'])) {
                                 $source = SanityCheck::absPathExistsAndIsFile($_GET['source']);
                             } else {
@@ -164,6 +168,7 @@ class WebPOnDempand
                         } else {
                             // Last resort is to use $_SERVER['REQUEST_URI'], well knowing that it does not give the
                             // correct result in all setups (ie "folder method 1")
+                            $checking = 'source (retrieved by the request_uri server var)';
                             $srcRel = SanityCheck::pathWithoutDirectoryTraversal(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
                             $source = SanityCheck::absPathExistsAndIsFile($docRoot . $srcRel);
                         }
@@ -207,6 +212,7 @@ class WebPOnDempand
         } else {
             $serveOptions['serve-image']['headers']['vary-accept'] = true;
         }
+//echo $source . '<br>' . $destination; exit;
 
         ConvertHelperIndependent::serveConverted(
             $source,
