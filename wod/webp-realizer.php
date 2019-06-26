@@ -7,6 +7,8 @@ use \WebPExpress\ConvertHelperIndependent;
 use \WebPExpress\Sanitize;
 use \WebPExpress\SanityCheck;
 use \WebPExpress\SanityException;
+use \WebPExpress\ValidateException;
+use \WebPExpress\Validate;
 
 class WebPRealizer
 {
@@ -44,6 +46,8 @@ class WebPRealizer
         include_once __DIR__ . '/../lib/classes/Sanitize.php';
         include_once __DIR__ . '/../lib/classes/SanityCheck.php';
         include_once __DIR__ . '/../lib/classes/SanityException.php';
+        include_once __DIR__ . '/../lib/classes/Validate.php';
+        include_once __DIR__ . '/../lib/classes/ValidateException.php';
 
         // Check input
         // --------------
@@ -109,8 +113,8 @@ class WebPRealizer
             // Validate that WebPExpress was configured to redirect to this conversion script
             // ------------------------------------------------------------------------------
             $checking = 'settings';
-            if (!isset($wodOptions['enable-redirection-to-converter']) || ($wodOptions['enable-redirection-to-converter'] === false)) {
-                throw new ValidateException('Redirection to conversion script is not enabled');
+            if (!isset($wodOptions['enable-redirection-to-webp-realizer']) || ($wodOptions['enable-redirection-to-webp-realizer'] === false)) {
+                throw new ValidateException('Redirection to webp realizer is not enabled');
             }
 
 
