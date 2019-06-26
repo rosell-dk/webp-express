@@ -115,6 +115,11 @@ class SanityCheck
         return $input;
     }
 
+    public static function absPath($input)
+    {
+        return self::path($input);
+    }
+
     public static function absPathIsInDocRoot($input, $errorMsg = 'Path is outside allowed path')
     {
         $docRoot = self::absPath($_SERVER["DOCUMENT_ROOT"]);
@@ -130,11 +135,6 @@ class SanityCheck
 
         self::pathBeginsWith($input, $docRoot . '/', $errorMsg);
         return $input;
-    }
-
-    public static function absPath($input)
-    {
-        return self::path($input);
     }
 
     public static function absPathExists($input, $errorMsg = 'Path does not exist')
