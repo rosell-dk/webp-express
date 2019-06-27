@@ -567,7 +567,7 @@ if ($sanitized['operation-mode'] != 'no-conversion') {
         if (isset($converter['converter']) && ($converter['converter'] == 'wpc')) {
             unset($converter['options']['_api-key-non-empty']);
             if (isset($converter['options']['new-api-key'])) {
-                $converter['options']['api-key'] = strval($converter['options']['new-api-key']);
+                $converter['options']['api-key'] = $converter['options']['new-api-key'];
                 unset($converter['options']['new-api-key']);
             } else {
                 $converter['options']['api-key'] = $existingWpcApiKey;
