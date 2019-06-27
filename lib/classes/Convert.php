@@ -32,8 +32,9 @@ class Convert
         try {
             // Check source
             // ---------------
-            $checking = 'filename';
-            $filename = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
+            $checking = 'filename!';
+            $filename = $source;
+            //$filename = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
             // PS: No need to check mime type as the WebPConvert library does that (it only accepts image/jpeg and image/png)
 
 
@@ -49,6 +50,7 @@ class Convert
 
             // Check convert options
             // -------------------------------
+            $checking = 'configuration file (options)';
             if (is_null($convertOptions)) {
                 $wodOptions = Config::generateWodOptionsFromConfigObj($config);
                 if (!isset($wodOptions['webp-convert']['convert'])) {
@@ -63,12 +65,14 @@ class Convert
 
             // Check destination
             // -------------------------------
+            $checking = 'destination';
             $destination = self::getDestination($source, $config);
-            $destination = SanityCheck::absPathIsInDocRoot($destination);
 
+            $destination = SanityCheck::absPathIsInDocRoot($destination);
 
             // Check log dir
             // -------------------------------
+            $checking = 'conversion log dir';
             $logDir = SanityCheck::absPathIsInDocRoot(Paths::getWebPExpressContentDirAbs() . '/log');
 
 
@@ -142,7 +146,7 @@ class Convert
             $checking = '"filename" argument';
             Validate::postHasKey('filename');
             $filename = sanitize_text_field($_POST['filename']);
-            $filename = SanityCheck::absPathExistsAndIsFileInDocRoot($filename);
+            //$filename = SanityCheck::absPathExistsAndIsFileInDocRoot($filename);
             // PS: No need to check mime version as webp-convert does that.
 
 

@@ -115,13 +115,47 @@ class SanityCheck
         return $input;
     }
 
-    public static function absPath($input)
+    public static function absPath($input, $errorMsg = 'Not an absolute path')
     {
+        if ((strpos($input, '/') !== 0)) {
+            throw new SanityException($errorMsg . $input);
+        }
         return self::path($input);
     }
 
+    private static function findClosestExistingFolderSymLinksExpanded($input) {
+        // Get closest existing folder with symlinks expanded.
+        // this is a bit complicated, as the input path may not yet exist.
+        // in case of realpath failure, we must try with one folder pealed off at the time
+
+        $levelsUp = 1;
+        while (true) {
+            $dir = dirname($input, $levelsUp);
+            $realPathResult = realpath($dir);
+            if ($realPathResult !== false) {
+                return $realPathResult;
+            }
+            if (($dir == '/') || (strlen($dir) < 4)) {
+                return $dir;
+            }
+            $levelsUp++;
+        }
+    }
+
+    public static function pathBeginsWithSymLinksExpanded($input, $beginsWith, $errorMsg = 'Path is outside allowed path') {
+        $closestExistingFolder = self::findClosestExistingFolderSymLinksExpanded($input);
+        self::pathBeginsWith($closestExistingFolder, $beginsWith, $errorMsg);
+    }
+
+    /**
+     * Test that absolute path is in document root.
+     *
+     * It is acceptable if the absolute path does not exist
+     */
     public static function absPathIsInDocRoot($input, $errorMsg = 'Path is outside document root')
     {
+        self::absPath($input);
+
         $docRoot = self::absPath($_SERVER["DOCUMENT_ROOT"]);
         $docRoot = rtrim($docRoot, '/');
         $docRoot = self::absPathExistsAndIsDir($docRoot);
@@ -137,11 +171,10 @@ class SanityCheck
 
         try {
             // try without symlinks expanded
+            throw new SanityException('Cannot find document root');
             self::pathBeginsWith($input, $docRoot . '/', $errorMsg);
         } catch (SanityException $e) {
-
-            // if that fails, check with symlinks expanded
-            self::pathBeginsWith(realpath($input), $docRootSymLinksExpanded . '/', $errorMsg);
+            self::pathBeginsWithSymLinksExpanded($input, $docRootSymLinksExpanded . '/', $errorMsg);
         }
 
         return $input;
