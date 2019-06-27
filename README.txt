@@ -608,6 +608,11 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.14.16 =
+*(released: 26 jun 2019)*
+
+* Fixed conversion errors using Bulk convert or Test convert on systems with symlinked folders
+
 = 0.14.15 =
 *(released: 26 jun 2019)*
 
@@ -886,6 +891,9 @@ For older releases, check out changelog.txt
 
 == Upgrade Notice ==
 
+= 0.14.16 =
+* Fixed more errors on systems with symlinked folders
+
 = 0.14.15 =
 * Fixed errors with "redirect to conversion script"
 
@@ -899,25 +907,25 @@ Fixed errors in conversion scripts
 Fixed critical bug
 
 = 0.14.11 =
-Tidied up code
+Important security fixes. Upgrade immediately!
 
 = 0.14.10 =
-Tidied up code
+Security related
 
 = 0.14.9 =
-Tidied up code
+Security related
 
 = 0.14.8 =
-Tidied up code
+Security related
 
 = 0.14.7 =
-Removed unneccesary files from webp-convert library
+Security related: Removed unneccesary files from webp-convert library
 
 = 0.14.6 =
-Various fixes
+Security related
 
 = 0.14.5 =
-Various fixes
+Security related
 
 = 0.14.4 =
 Now bundles with multiple cwebp binaries for linux for systems where 1.0.2 fails.
@@ -929,7 +937,7 @@ Fixed supplied binary for cwebp (linux)
 A couple of bugfixes
 
 = 0.14.1 =
-A little something
+Security related
 
 = 0.14.0 =
 New awesome conversion options that gets you even smaller webp files without compromising quality.
