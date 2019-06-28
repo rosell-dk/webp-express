@@ -206,7 +206,6 @@ class SanityCheck
 
         try {
             // try without symlinks expanded
-            throw new SanityException('Cannot find document root');
             self::pathBeginsWith($input, $docRoot . '/', $errorMsg);
         } catch (SanityException $e) {
             self::pathBeginsWithSymLinksExpanded($input, $docRootSymLinksExpanded . '/', $errorMsg);
