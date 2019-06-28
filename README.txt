@@ -104,7 +104,7 @@ Do not simply remove the plugin without deactivating it first. Deactivation take
 * The plugin [should now work on Microsoft IIS server](https://github.com/rosell-dk/webp-express/pull/213), but it has not been tested thoroughly.
 
 == Supporting WebP Express ==
-Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue wasting time on this plugin:
+Bread on the table don't come for free, even though this plugin does, and always will (although I am playing with the thought making a PRO version too). I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue wasting time on this plugin:
 
 * [Buy me a Coffee](https://ko-fi.com/rosell)
 * [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell)
