@@ -6,7 +6,7 @@
         echo helpIcon(
             'Drag to reorder. The conversion method on top will first be tried. ' .
             'Should it fail, the next will be used, etc. To learn more about the conversion methods, ' .
-            '<a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/converters.md">Go here</a>'
+            '<a target="_blank" href="https://github.com/rosell-dk/webp-convert/blob/master/docs/v1.3/converting/converters.md">Go here</a>'
         ); ?>
     </th>
     <td>
