@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.2
-Stable tag: 0.14.16
+Stable tag: 0.14.17
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -612,6 +612,12 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.14.17 =
+*(released: 28 jun 2019)*
+
+* Relaxed abspath sanity check on Windows
+* Fixed updating password for Remote WebP Express
+
 = 0.14.16 =
 *(released: 26 jun 2019)*
 
@@ -894,6 +900,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.14.17 =
+* Relaxed abspath sanity check on Windows and fixed updating password for Remote WebP Express
 
 = 0.14.16 =
 * Fixed more errors on systems with symlinked folders
