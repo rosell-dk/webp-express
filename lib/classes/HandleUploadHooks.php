@@ -79,7 +79,7 @@ class HandleUploadHooks
     {
         if (!is_null($filename)) {
             try {
-                $filenameToConvert = SanityCheck::absPathExistsAndIsFileInDocRoot($filearray['file']);
+                $filenameToConvert = SanityCheck::absPathExistsAndIsFileInDocRoot($filename);
                 self::convertIf($filenameToConvert);
             } catch (SanityException $e) {
                 // fail silently. (maybe we should write to debug log instead?)
