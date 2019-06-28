@@ -115,14 +115,45 @@ class SanityCheck
         return $input;
     }
 
+    public static function absPathMicrosoftStyle($input, $errorMsg = 'Not an fully qualified Windows path')
+    {
+        // On microsoft we allow [drive letter]:\
+        if (!preg_match("#^[A-Z]:\\\\|/#", $input)) {
+            throw new SanityException($errorMsg . ':' . $input);
+        }
+        return $input;
+    }
+
     public static function absPath($input, $errorMsg = 'Not an absolute path')
     {
         if ((strpos($input, '/') !== 0)) {
-            throw new SanityException($errorMsg . $input);
+            // On microsoft, allow
+
+            $onMicrosoft = false;
+            if (isset($_SERVER['SERVER_SOFTWARE'])) {
+                if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), 'microsoft') !== false) {
+                    $onMicrosoft = true;
+                }
+            }
+            switch (PHP_OS) {
+                case "WINNT":
+                case "WIN32":
+                case "INTERIX":
+                case "UWIN":
+                case "UWIN-W7":
+                    $onMicrosoft = true;
+                    break;
+            }
+
+            if (!$onMicrosoft) {
+                throw new SanityException($errorMsg . ':' . $input);
+            }
+            self::absPathMicrosoftStyle($input);
+
         }
         return self::path($input);
     }
-
+    
     private static function findClosestExistingFolderSymLinksExpanded($input) {
         // Get closest existing folder with symlinks expanded.
         // this is a bit complicated, as the input path may not yet exist.
