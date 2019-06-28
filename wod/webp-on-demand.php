@@ -1,5 +1,9 @@
 <?php
+
 namespace WebPExpress;
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 use \WebPConvert\WebPConvert;
 use \WebPConvert\Serve\ServeConvertedWebP;
@@ -169,7 +173,7 @@ class WebPOnDempand
             }
 
             // Make sure it is in doc root
-            $source = SanityCheck::absPathIsInDocRoot();
+            $source = SanityCheck::absPathIsInDocRoot($source);
 
             // Check destination path
             // --------------------------------------------
