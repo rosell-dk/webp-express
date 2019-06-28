@@ -128,7 +128,7 @@ class SanityCheck
     {
         // On microsoft we allow [drive letter]:\
         if (!preg_match("#^[A-Z]:\\\\|/#", $input)) {
-            throw new SanityException($errorMsg . ':' . $input);
+            throw new SanityException($errorMsg);
         }
         return $input;
     }
@@ -155,7 +155,7 @@ class SanityCheck
             }
 
             if (!$onMicrosoft) {
-                throw new SanityException($errorMsg . ':' . $input);
+                throw new SanityException($errorMsg);
             }
             self::absPathMicrosoftStyle($input);
 
