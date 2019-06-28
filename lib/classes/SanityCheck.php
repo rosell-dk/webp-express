@@ -106,6 +106,10 @@ class SanityCheck
         return self::path($input);
     }
 
+    /**
+     *  Beware: This does not take symlinks into account.
+     *  I should make one that does. Until then, you should probably not call this method from outside this class
+     */
     public static function pathBeginsWith($input, $beginsWith, $errorMsg = 'Path is outside allowed path')
     {
         self::path($input);
@@ -113,6 +117,11 @@ class SanityCheck
             throw new SanityException($errorMsg);
         }
         return $input;
+    }
+
+    public static function pathBeginsWithSymLinksExpanded($input, $beginsWith, $errorMsg = 'Path is outside allowed path') {
+        $closestExistingFolder = self::findClosestExistingFolderSymLinksExpanded($input);
+        self::pathBeginsWith($closestExistingFolder, $beginsWith, $errorMsg);
     }
 
     public static function absPathMicrosoftStyle($input, $errorMsg = 'Not an fully qualified Windows path')
@@ -153,7 +162,7 @@ class SanityCheck
         }
         return self::path($input);
     }
-    
+
     private static function findClosestExistingFolderSymLinksExpanded($input) {
         // Get closest existing folder with symlinks expanded.
         // this is a bit complicated, as the input path may not yet exist.
@@ -171,11 +180,6 @@ class SanityCheck
             }
             $levelsUp++;
         }
-    }
-
-    public static function pathBeginsWithSymLinksExpanded($input, $beginsWith, $errorMsg = 'Path is outside allowed path') {
-        $closestExistingFolder = self::findClosestExistingFolderSymLinksExpanded($input);
-        self::pathBeginsWith($closestExistingFolder, $beginsWith, $errorMsg);
     }
 
     /**

@@ -177,8 +177,7 @@ class WebPRealizer
                 die();
                 //echo 'destination requested:<br><i>' . $destination . '</i>';
             }
-            $source = SanityCheck::absPathExistsAndIsFile($source);
-            $source = SanityCheck::pathBeginsWith($source, $docRoot . '/');
+            $source = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
 
         } catch (SanityException $e) {
             self::exitWithError('Sanity check failed for ' . $checking . ': '. $e->getMessage());

@@ -60,14 +60,6 @@ class WebPOnDempand
             $docRoot = rtrim($docRoot, '/');
             $docRoot = SanityCheck::absPathExistsAndIsDir($docRoot);
 
-            // Use realpath to expand symbolic links and check if it exists
-            $docRootSymLinksExpanded = realpath($docRoot);
-            if ($docRootSymLinksExpanded === false) {
-                throw new SanityException('Cannot find document root');
-            }
-            $docRootSymLinksExpanded = rtrim($docRootSymLinksExpanded, '/');
-            $docRootSymLinksExpanded = SanityCheck::absPathExistsAndIsDir($docRootSymLinksExpanded);
-
             // Check wp-content
             // ----------------------
 
@@ -177,11 +169,7 @@ class WebPOnDempand
             }
 
             // Make sure it is in doc root
-            try {
-                $source = SanityCheck::pathBeginsWith($source, $docRoot . '/');
-            } catch (SanityException $e) {
-                $source = SanityCheck::pathBeginsWith(realpath($source), $docRootSymLinksExpanded . '/');
-            }
+            $source = SanityCheck::absPathIsInDocRoot();
 
             // Check destination path
             // --------------------------------------------
@@ -194,9 +182,8 @@ class WebPOnDempand
                 $docRoot . '/' . $wodOptions['paths']['uploadDirRel']
             );
             //echo 'dest:' . $destination; exit;
-            $destination = SanityCheck::absPath($destination);
+            $destination = SanityCheck::absPathIsInDocRoot($destination);
             $destination = SanityCheck::pregMatch('#\.webp$#', $destination, 'Does not end with .webp');
-            $destination = SanityCheck::pathBeginsWith($destination, $docRoot . '/');
 
         } catch (SanityException $e) {
             self::exitWithError('Sanity check failed for ' . $checking . ': '. $e->getMessage());
