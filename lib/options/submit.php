@@ -219,6 +219,10 @@ function webpexpress_getSanitizedConverters() {
                     "api-version" => 'integer',
                     "crypt-api-key-in-transfer" => 'boolean',
                     "new-api-key" => 'string',
+
+	                //ewww
+                    "api-key" => 'string',
+                    "api-key-2" => 'string',
                 ];
 
                 // check that it is an accepted option name
