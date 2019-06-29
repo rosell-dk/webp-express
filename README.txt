@@ -920,7 +920,7 @@ For older releases, check out changelog.txt
 == Upgrade Notice ==
 
 = 0.14.20 =
-* Ewww api-key was forgot upon saving options
+* Ewww api-key was forgotten upon saving options
 
 = 0.14.19 =
 * Bug fix
