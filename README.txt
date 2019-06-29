@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.2
-Stable tag: 0.14.19
+Stable tag: 0.14.20
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -612,6 +612,11 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.14.20 =
+*(released: 29 jun 2019)*
+
+* Fixed bug: Ewww api-key was forgot upon saving options
+
 = 0.14.19 =
 *(released: 28 jun 2019)*
 
@@ -913,6 +918,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.14.20 =
+* Ewww api-key was forgot upon saving options
 
 = 0.14.19 =
 * Bug fix
