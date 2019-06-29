@@ -4,17 +4,25 @@
 
         if ($config['operation-mode'] == 'no-conversion') {
             echo 'Activate redirection';
-            echo helpIcon('This will add rules in the .htaccess that redirects directly to existing converted files (note that it is an internal redirect, which is much faster than a 301 or 302 redirect).');
+            echo helpIcon(
+                'This will add rules in the .htaccess that redirects directly to existing converted files ' .
+                '(note that it is an internal redirect, which is much faster than a 301 or 302 redirect).'
+            );
         } else {
-            echo 'Redirect directly to existing converted images';
-            echo helpIcon('This will add rules in the .htaccess that redirects directly to existing converted files. ' .
-                'If you do not activate this setting, it will be the PHP script that handles the redirection to existing ' .
-                'webp files. Best performance is achieved by redirecting in .htaccess');
+            echo 'Enable direct redirection to existing converted images?';
+            echo helpIcon(
+                '<p>This will add rules in the .htaccess that redirects directly to existing converted files, for ' .
+                'browsers that supports webp.</p>' .
+                '<p>The rule is placed above the rule that redirects to the converter.</p>'
+            );
         }
-            ?>
+
+        ?>
     </th>
     <td>
-        <input type="checkbox" id="redirect_to_existing_in_htaccess" name="redirect-to-existing-in-htaccess" value="true" <?php echo ($config['redirect-to-existing-in-htaccess'] ? 'checked="checked"' : '') ?> >
+        <input type="checkbox" id="redirect_to_existing_in_htaccess" name="redirect-to-existing-in-htaccess" value="true" <?php
+            echo ($config['redirect-to-existing-in-htaccess'] ? 'checked="checked"' : '')
+        ?> >
 
         <?php
         /*if ($config['operation-mode'] == 'no-conversion') {

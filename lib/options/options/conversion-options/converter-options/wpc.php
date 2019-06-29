@@ -34,11 +34,11 @@
     </div>
 
       <div>
-          <label for="wpc_url">
+          <label for="wpc_api_url">
               URL
               <?php echo helpIcon('The endpoint of the web service. Copy it from the remote setup.'); ?>
           </label>
-          <input type="text" id="wpc_url" placeholder="Url to your Remote WebP Express">
+          <input type="text" id="wpc_api_url" placeholder="Url to your Remote WebP Express">
       </div>
 
       <div id="wpc_secret_div">
@@ -73,9 +73,11 @@
       </div>
 
       <?php
+      /*
+      Removed (#243)
       if (!$canDetectQuality) {
           printAutoQualityOptionForConverter('wpc');
-      }
+      }*/
       ?>
 
       <p>

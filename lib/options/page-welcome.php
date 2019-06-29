@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 use \WebPExpress\Paths;
 use \WebPExpress\Config;
 use \WebPExpress\State;

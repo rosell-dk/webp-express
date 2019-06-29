@@ -7,8 +7,10 @@ use \WebPExpress\ConvertersHelper;
 use \WebPExpress\Paths;
 use \WebPExpress\FileHelper;
 
-include_once __DIR__ . '/../../vendor/autoload.php';
-use \WebPConvert\Converters\ConverterHelper;
+use \WebPConvert\Convert\ConverterFactory;
+use \WebPConvert\Convert\Helpers\JpegQualityDetector;
+
+include_once WEBPEXPRESS_PLUGIN_DIR . '/vendor/autoload.php';
 
 /**
  *
@@ -21,9 +23,12 @@ class TestRun
     public static $converterStatus = null; // to cache the result
 
     /**
-     *  Get an array of working converters OR false, if tests cannot be made
+     *  Get a test result object OR false, if tests cannot be made.
+     *
+     *  @return object|false
      */
     public static function getConverterStatus() {
+        //return false;
 
         // Is result cached?
         if (isset(self::$converterStatus)) {
@@ -45,25 +50,15 @@ class TestRun
         // But we cannot simply use loadWodOptions - because that would leave out the deactivated
         // converters. And we need to test all converters - even the deactivated ones.
         // So we load config, set "deactivated" to false, and generate Wod options from the config
-        $config = Config::loadConfig();
-        if ((!$config) || (!isset($config['converters'])) || (count($config['converters']) == 0)) {
-            $config = [
-                'converters' => ConvertersHelper::$defaultConverters
-            ];
-        } else {
-            // set deactivated to false on all converters
-            foreach($config['converters'] as &$converter) {
-                $converter['deactivated'] = false;
-            }
+        $config = Config::loadConfigAndFix();
 
-            // merge missing converters in
-            $config['converters'] = ConvertersHelper::mergeConverters($config['converters'], ConvertersHelper::$defaultConverters);
-//            echo '<pre>' . print_r($config, true) . '</pre>';
-
+        // set deactivated to false on all converters
+        foreach($config['converters'] as &$converter) {
+            $converter['deactivated'] = false;
         }
 
         $options = Config::generateWodOptionsFromConfigObj($config);
-        $options['converters'] = ConvertersHelper::normalize($options['converters']);
+        $options['converters'] = ConvertersHelper::normalize($options['webp-convert']['convert']['converters']);
 
         //echo '<pre>' . print_r($options, true) . '</pre>';
         foreach ($options['converters'] as $converter) {
@@ -72,7 +67,14 @@ class TestRun
                 $converterOptions = array_merge($options, $converter['options']);
                 unset($converterOptions['converters']);
 
-                ConverterHelper::runConverter($converterId, $source, $destination, $converterOptions);
+                //ConverterHelper::runConverter($converterId, $source, $destination, $converterOptions);
+                $converterInstance = ConverterFactory::makeConverter(
+                    $converterId,
+                    $source,
+                    $destination,
+                    $converterOptions
+                );
+                $converterInstance->doConvert();
                 $workingConverters[] = $converterId;
             } catch (\Exception $e) {
                 //echo $e->getMessage() . '<br>';
@@ -96,7 +98,7 @@ class TestRun
         if (isset(self::$localQualityDetectionWorking)) {
             return self::$localQualityDetectionWorking;
         } else {
-            $q = ConverterHelper::detectQualityOfJpg(
+            $q = JpegQualityDetector::detectQualityOfJpg(
                 Paths::getWebPExpressPluginDirAbs() . '/test/small-q61.jpg'
             );
             self::$localQualityDetectionWorking = ($q === 61);

@@ -4,7 +4,9 @@
     <table class="form-table">
         <tbody>
             <?php
-            include_once 'quality.inc';
+//            include_once 'quality.inc';
+            include_once 'jpeg.inc';
+            include_once 'png.inc';
             include_once 'metadata.inc';
             include_once 'converters.inc';
             include_once 'convert-on-upload.inc';

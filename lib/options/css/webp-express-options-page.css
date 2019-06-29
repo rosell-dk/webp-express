@@ -262,6 +262,12 @@
     position: relative;
     font-style: normal;
 }
+
+select + .help,
+input + .help {
+    margin-left: 1px;  /* bring help icons closer to select and input boxes  */
+    margin-top: 3px;
+}
 .help { /* new look! */
     background-color: transparent;
     border: 1px solid #999;
@@ -285,12 +291,27 @@
     margin-bottom: 0px;
 }*/
 
-.converter-options.wpc label {
-    width: 110px;
+.converter-options.wpc div,
+.converter-options.vips div,
+.converter-options.imagemagick div,
+.converter-options.graphicsmagick div {
+    margin-bottom: 5px;
+}
+.converter-options.vips label,
+.converter-options.wpc label,
+.converter-options.imagemagick label,
+.converter-options.graphicsmagick label {
     display: inline-block;
 }
-.converter-options.wpc div {
-    margin-bottom: 5px;
+.converter-options.wpc label {
+    width: 110px;
+}
+.converter-options.vips label {
+    width: 143px;
+}
+.converter-options.imagemagick label,
+.converter-options.graphicsmagick label {
+    width: 110px;
 }
 #wpc_url {
     min-width: 400px;
@@ -557,4 +578,13 @@ table.designed tr > *:last-child {
 ul.with-bullets {
     padding-left: 20px;
     list-style: unset;
+}
+
+#conversionlog_content {
+    overflow-y: scroll;
+    top: 20px;
+    bottom: 72px;
+    position: absolute;
+    right: 0;
+    left: 3%;    
 }

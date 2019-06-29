@@ -6,9 +6,13 @@ use \WebPExpress\Paths;
 //echo '<script>window.whitelist = ' . json_encode($whitelist) . '</script>';
 ?>
 <tr id="share">
-    <th scope="row">Enable web service?<?php echo helpIcon('Enabling the web service will allow selected sites to convert webp-images through this site (more options will appear, if you enable)'); ?></th>
+    <th scope="row">Enable web service?<?php echo helpIcon(
+        'Enabling the web service will allow selected sites to convert webp-images through this site (more options will appear, if you enable)'
+    ); ?></th>
     <td>
-        <input type="checkbox" id="web_service_enabled" name="web-service-enabled" value="true" <?php echo ($config['web-service']['enabled'] ? 'checked="checked"' : '') ?>>
+        <input type="checkbox" id="web_service_enabled" name="web-service-enabled" value="true" <?php
+            echo ($config['web-service']['enabled'] ? 'checked="checked"' : '')
+        ?>>
         <input type='text' name='whitelist' id='whitelist' value='' style='visibility:hidden; height:0' />
         <div id="whitelist_div"></div>
         <div id="whitelist_properties_popup" class="das-popup">
@@ -42,11 +46,16 @@ use \WebPExpress\Paths;
             <div>
                 <label for="whitelist_require_api_key_to_be_crypted_in_transfer">
                     Require api-key to be crypted in transfer?
-                    <?php echo helpIcon('If checked, the web service will only accept crypted api keys. Crypting the api-key protects it from being stolen during transfer. On a few older server setups, clients do not have the capability to crypt'); ?>
+                    <?php echo helpIcon(
+                        'If checked, the web service will only accept crypted api keys. Crypting the api-key protects it from being ' .
+                        'stolen during transfer. On a few older server setups, clients do not have the capability to crypt');
+                    ?>
                 </label>
                 <input id="whitelist_require_api_key_to_be_crypted_in_transfer" type="checkbox">
             </div>
-            <p style="margin-top: 15px">Psst: The endpoint of the web service is: <b><?php echo Paths::getWebServiceUrl() ?></b></p>
+            <p style="margin-top: 15px">Psst: The endpoint of the web service is: <b><?php
+                echo esc_url(Paths::getWebServiceUrl())
+            ?></b></p>
             <button id="whitelist_properties_add_button" onclick="whitelistAddWhitelistEntry()" class="hide-in-edit button button-primary" type="button" style="position:absolute; bottom:20px">
                 Add
             </button>

@@ -4,6 +4,7 @@ namespace WebPExpress;
 
 use \WebPExpress\ConvertHelperIndependent;
 use \WebPExpress\Paths;
+use \WebPExpress\PathHelper;
 
 class BulkConvert
 {
@@ -93,6 +94,9 @@ class BulkConvert
     public static function getListRecursively($relDir, &$listOptions)
     {
         $dir = $listOptions['root'] . '/' . $relDir;
+
+        // Canonicalize because dir might contain "/./", which causes file_exists to fail (#222)
+        $dir = PathHelper::canonicalize($dir);
 
         if (!@file_exists($dir) || !@is_dir($dir)) {
             return [];
@@ -194,19 +198,14 @@ class BulkConvert
 
     public static function processAjaxListUnconvertedFiles()
     {
+        if (!check_ajax_referer('webpexpress-ajax-list-unconverted-files-nonce', 'nonce', false)) {
+            wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
+            wp_die();
+        }
+
         $config = Config::loadConfigAndFix();
         $arr = self::getList($config);
         echo json_encode($arr, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
-        wp_die();
-    }
-
-    public static function processAjaxConvertFile()
-    {
-        $filename = $_POST['filename'];
-
-        $result = Convert::convertFile($filename);
-
-        echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
         wp_die();
     }
 

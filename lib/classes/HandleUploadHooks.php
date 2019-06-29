@@ -4,38 +4,14 @@ namespace WebPExpress;
 
 use \WebPExpress\Config;
 use \WebPExpress\Convert;
+use \WebPExpress\Mime;
+use \WebPExpress\SanityCheck;
+use \WebPExpress\SanityException;
 
 class HandleUploadHooks
 {
 
     private static $config;
-
-
-    private static function getMimeTypeOfMedia($filename)
-    {
-        // Try the Wordpress function. It tries exif_imagetype and getimagesize and returns false if no methods are available
-        $mimeType = wp_get_image_mime($filename);
-        if ($mimeType !== false) {
-            return $mimeType;
-        }
-
-        // Try mime_content_type
-        if (function_exists('mime_content_type')) {
-            $mimeType = mime_content_type($filename);
-            if ($mimeType !== false) {
-                return $mimeType;
-            }
-        }
-
-        // Try wordpress method, which simply uses the file extension and a map
-        $mimeType = wp_check_filetype($filePath)['type'];
-        if ($mimeType !== false) {
-            return $mimeType;
-        }
-
-        // Don't say we didn't try!
-        return 'unknown';
-    }
 
     /**
      *  Convert if:
@@ -70,7 +46,7 @@ class HandleUploadHooks
             $allowedMimeTypes[] = 'image/png';
         }
 
-        if (!in_array(self::getMimeTypeOfMedia($filename), $allowedMimeTypes)) {
+        if (!in_array(Mime::getMimeTypeOfMedia($filename), $allowedMimeTypes)) {
             return;
         }
 
@@ -82,11 +58,16 @@ class HandleUploadHooks
      *  hook: handle_upload
      *  $filename is ie "/var/www/webp-express-tests/we0/wordpress/uploads-moved/image4-10-150x150.jpg"
      */
-    public static function handleUpload($filearray, $overrides, $ignore = false)
+    public static function handleUpload($filearray, $overrides = false, $ignore = false)
     {
-        $filename = $filearray['file'];
-        self::convertIf($filename);
-
+        if (isset($filearray['file'])) {
+            try {
+                $filename = SanityCheck::absPathExistsAndIsFileInDocRoot($filearray['file']);
+                self::convertIf($filename);
+            } catch (SanityException $e) {
+                // fail silently. (maybe we should write to debug log instead?)
+            }
+        }
         return $filearray;
     }
 
@@ -96,7 +77,14 @@ class HandleUploadHooks
      */
     public static function handleMakeIntermediateSize($filename)
     {
-        self::convertIf($filename);
+        if (!is_null($filename)) {
+            try {
+                $filenameToConvert = SanityCheck::absPathExistsAndIsFileInDocRoot($filename);
+                self::convertIf($filenameToConvert);
+            } catch (SanityException $e) {
+                // fail silently. (maybe we should write to debug log instead?)
+            }
+        }
         return $filename;
     }
 }

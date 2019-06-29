@@ -36,6 +36,8 @@ class HTAccess
             return '# WebP Express does not need to write any rules (it has not been set up to redirect to converter, nor to existing webp, and the "convert non-existing webp-files upon request" option has not been enabled)';
         }
 
+
+
         if (isset($config['base-htaccess-on-these-capability-tests'])) {
             $capTests = $config['base-htaccess-on-these-capability-tests'];
             $modHeaderDefinitelyUnavailable = ($capTests['modHeaderWorking'] === false);
@@ -57,6 +59,11 @@ class HTAccess
         $passFullFilePathInQSRealizer = false;
         $passRelativeFilePathInQSRealizer = $passRelativeFilePathInQS;
 
+
+        $addVary = $config['redirect-to-existing-in-htaccess'];
+        if ($modHeaderDefinitelyUnavailable) {
+            $addVary = false;
+        }
 
 
         /* Calculate $fileExt */
@@ -167,6 +174,7 @@ class HTAccess
             $uploadsRel = PathHelper::getRelDir(Paths::getIndexDirAbs(), Paths::getUploadDirAbs());
 
             //$rules .= '# rel: ' . $uploadsRel . "\n";
+
             if (strpos($wpContentRel, '.') !== 0) {
 
                 if (strpos($uploadsRel, $wpContentRel) === 0) {
@@ -186,6 +194,10 @@ class HTAccess
         //$rules .= "# The following SetEnv allows to diagnose if .htaccess files are turned off\n";
         //$rules .= "SetEnv HTACCESS on\n\n";
         */
+        $rules .= "# The rules below are a result of the WebP Express options, Wordpress configuration and the following .htaccess capability tests:\n" .
+            "# - mod_header working?: " . ($capTests['modHeaderWorking'] === true ? 'yes' : ($capTests['modHeaderWorking'] === false ? 'no' : 'could not be determined')) . "\n" .
+            "# - pass variable from .htaccess to script through header working?: " . ($capTests['passThroughHeaderWorking'] === true ? 'yes' : ($capTests['passThroughHeaderWorking'] === false ? 'no' : 'could not be determined')) . "\n" .
+            "# - pass variable from .htaccess to script through environment variable working?: " . ($capTests['passThroughEnvWorking'] === true ? 'yes' : ($capTests['passThroughEnvWorking'] === false ? 'no' : 'could not be determined')) . "\n";
 
         $rules .= "<IfModule mod_rewrite.c>\n" .
         "  RewriteEngine On\n\n";
@@ -229,10 +241,10 @@ class HTAccess
 
                 if ($config['destination-extension'] == 'append') {
                     $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp -f\n";
-                    $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ $1.$2.webp [T=image/webp,E=EXISTING:1,L]\n\n";
+                    $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ $1.$2.webp [T=image/webp,E=EXISTING:1," . ($addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
                 } else {
                     $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp -f\n";
-                    $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1,L]\n\n";
+                    $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1," . ($addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
                     //$rules .= "  RewriteRule ^(.+)\.(" . $fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1,L]\n\n";
                 }
             }
@@ -243,6 +255,14 @@ class HTAccess
             $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp -f\n";
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
             //$rules .= "  RewriteRule ^\/?(.*)\.(" . $fileExt . ")$ /" . $cacheDirRel . "/" . $htaccessDirRel . "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
+
+            if ($addVary) {
+                $rules .= "  # Make sure that browsers which does not support webp also gets the Vary:Accept header\n" .
+                    "  # when requesting images that would be redirected to existing webp on browsers that does.\n" .
+                    "  <IfModule mod_setenvif.c>\n" .
+                    "    SetEnvIf Request_URI \"\.(" . $fileExt . ")$\" ADDVARY\n" .
+                    "  </IfModule>\n\n";
+            }
 
             $rules .= $ccRules;
 
@@ -389,22 +409,23 @@ class HTAccess
             $rules .= "\n";
         }
 
-        $addVary = ($config['enable-redirection-to-converter'] && ($config['success-response'] == 'converted')) || ($config['redirect-to-existing-in-htaccess']);
+        //$addVary = ($config['enable-redirection-to-converter'] && ($config['success-response'] == 'converted')) || ($config['redirect-to-existing-in-htaccess']);
 
         if ($addVary) {
             $rules .= "  <IfModule mod_headers.c>\n";
             $rules .= "    <IfModule mod_setenvif.c>\n";
 
+            $rules .= "      # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
+                "      # So, the next lines are for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
+                "      SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
+                "      SetEnvIf REDIRECT_ADDVARY 1 ADDVARY=1\n\n";
+
             $rules .= "      # Set Vary:Accept header for the image types handled by WebP Express.\n" .
                 "      # The purpose is to make proxies and CDNs aware that the response varies with the Accept header. \n" .
-                "      SetEnvIf Request_URI \"\.(" . $fileExt . ")\" ADDVARY\n" .
                 "      Header append \"Vary\" \"Accept\" env=ADDVARY\n\n";
 
             if ($config['redirect-to-existing-in-htaccess']) {
                 $rules .= "      # Set X-WebP-Express header for diagnose purposes\n" .
-                    "      # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
-                    "      # So, the next line is for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
-                    "      SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
                     //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
                     //"  # Set the debug header\n" .
                     "      Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING\n";

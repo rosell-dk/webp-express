@@ -23,6 +23,11 @@ class PlatformInfo
         return ( strpos( $server, 'litespeed') !== false );
     }
 
+    public static function isApacheOrLiteSpeed()
+    {
+        return self::isApache() || self::isLiteSpeed();
+    }
+
     /**
      *  It is not always possible to determine if apache has a given module...
      *  We shall not fool anyone into thinking otherwise by providing a "got" method like Wordpress does...

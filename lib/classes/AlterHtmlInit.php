@@ -25,7 +25,12 @@ class AlterHtmlInit
             return $content;
         }
 
-        if (is_admin() ) {
+        if (is_admin()) {
+            return $content;
+        }
+
+        // Exit if it doesn't look like HTML (see #228)
+        if (!preg_match("#^\\s*<#", $content)) {
             return $content;
         }
 
@@ -54,6 +59,7 @@ class AlterHtmlInit
             require_once __DIR__ . "/../../vendor/autoload.php";
             require_once __DIR__ . '/AlterHtmlHelper.php';
             require_once __DIR__ . '/AlterHtmlImageUrls.php';
+
             return \WebPExpress\AlterHtmlImageUrls::replace($content);
         }
     }
@@ -104,7 +110,7 @@ class AlterHtmlInit
 
             /*
             TODO:
-            check out these hooks (used by Jecpack, in class.photon.php)
+            check out these hooks (used by Jetpack, in class.photon.php)
 
             // Images in post content and galleries
     		add_filter( 'the_content', array( __CLASS__, 'filter_the_content' ), 999999 );

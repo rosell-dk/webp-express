@@ -10,7 +10,7 @@ $operationMode = $config['operation-mode'];
     'Changing back will override the tweaks (you will lose them).</p>' .
     '<p>You will never loose your converter configurations by changing mode</p>');
 ?>
-<input type="hidden" name="operation-mode" id="operation_mode" value="<?php echo $operationMode ?>">
+<input type="hidden" name="operation-mode" id="operation_mode" value="<?php echo esc_attr($operationMode); ?>">
 <select name="change-operation-mode" id="change_operation_mode">
     <option value="varied-image-responses"<?php if ($operationMode == 'varied-image-responses') echo ' selected'?>>Varied image responses</option>
     <option value="cdn-friendly"<?php if ($operationMode == 'cdn-friendly') echo ' selected'?>>CDN friendly</option>

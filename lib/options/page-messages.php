@@ -1,23 +1,21 @@
 <?php
 
-use \WebPExpress\Paths;
-use \WebPExpress\HTAccess;
-use \WebPExpress\Config;
-use \WebPExpress\State;
-use \WebPExpress\Messenger;
-use \WebPExpress\PlatformInfo;
-use \WebPExpress\FileHelper;
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 use \WebPExpress\CapabilityTest;
-
-//use \WebPExpress\BulkConvert;
-//echo '<pre>' . print_r(BulkConvert::getList($config), true) . "</pre>";
-//echo '<pre>' . print_r(BulkConvert::convertFile('/var/www/webp-express-tests/we0/wordpress/uploads-moved/space in name.jpg'), true) . "</pre>";
-
+use \WebPExpress\Config;
+use \WebPExpress\ConvertersHelper;
+use \WebPExpress\DismissableMessages;
+use \WebPExpress\FileHelper;
+use \WebPExpress\HTAccess;
+use \WebPExpress\Messenger;
+use \WebPExpress\Paths;
+use \WebPExpress\PlatformInfo;
+use \WebPExpress\State;
 
 if ((!State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
 }
-
 
 /*
 if (CapabilityTest::modRewriteWorking()) {
@@ -34,7 +32,34 @@ if (CapabilityTest::copyCapabilityTestsToWpContent()) {
     echo 'copy failed!';
 }*/
 
+// Dissmiss page messages for which the condition no longer applies
+if ($config['image-types'] != 1) {
+    DismissableMessages::dismissMessage('0.14.0/suggest-enable-pngs');
+}
 
+//DismissableMessages::dismissAll();
+//DismissableMessages::addDismissableMessage('0.14.0/suggest-enable-pngs');
+//DismissableMessages::addDismissableMessage('0.14.0/suggest-wipe-because-lossless');
+//DismissableMessages::addDismissableMessage('0.14.0/say-hello-to-vips');
+
+
+DismissableMessages::printMessages();
+
+//$dismissableMessageIds = ['suggest-enable-pngs'];
+
+$firstActiveAndWorkingConverterId = ConvertersHelper::getFirstWorkingAndActiveConverterId($config);
+$workingIds = ConvertersHelper::getWorkingConverterIds($config);
+
+if ($config['redirect-to-existing-in-htaccess']) {
+    if (PlatformInfo::isApacheOrLiteSpeed() && isset($config['base-htaccess-on-these-capability-tests']['modHeaderWorking']) && ($config['base-htaccess-on-these-capability-tests']['modHeaderWorking'] == false)) {
+        Messenger::printMessage(
+            'warning',
+                'It seems your server setup does not support headers in <i>.htaccess</i>. You should either fix this (install <i>mod_headers</i>) <i>or</i> ' .
+                    'deactivate the "Enable direct redirection to existing converted images?" option. Otherwise the <i>Vary:Accept</i> header ' .
+                    'will not be added and this can result in problems for users behind proxy servers (ie used in larger companies)'
+        );
+    }
+}
 
 $anyRedirectionToConverterEnabled = (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer']));
 $anyRedirectionEnabled = ($anyRedirectionToConverterEnabled || $config['redirect-to-existing-in-htaccess']);
@@ -61,20 +86,21 @@ if ($cacheEnablerActivated) {
 if ($cacheEnablerActivated && !$webpEnabled) {
     Messenger::printMessage(
         'warning',
-            'You are using Cache Enabler, but have not enabled the webp option, so Cache Enabler is not operating with a separate cache for webp-enabled browsers.'
+            'You are using Cache Enabler, but have not enabled the webp option, so Cache Enabler is not operating with a separate cache ' .
+            'for webp-enabled browsers.'
     );
 }
 
 if (($config['operation-mode'] == 'cdn-friendly') && !$config['alter-html']['enabled']) {
     //echo print_r(get_option('cache-enabler'), true);
 
-
     if ($cacheEnablerActivated) {
         if ($webpEnabled) {
             Messenger::printMessage(
                 'info',
                     'You should consider enabling Alter HTML. This is not neccessary, as you have <i>Cache Enabler</i> enabled, which alters HTML. ' .
-                    'However, it is a good idea because currently <i>Cache Enabler</i> does not replace as many URLs as WebP Express (ie background images in inline styles)'
+                    'However, it is a good idea because currently <i>Cache Enabler</i> does not replace as many URLs as WebP Express (ie ' .
+                    'background images in inline styles)'
             );
         }
 
@@ -82,7 +108,8 @@ if (($config['operation-mode'] == 'cdn-friendly') && !$config['alter-html']['ena
         Messenger::printMessage(
             'warning',
                 'You are in CDN friendly mode but have not enabled Alter HTML (and you are not using Cache Enabler either). ' .
-                    'This is usually a misconfiguration because in this mode, the only way to get webp files delivered is by referencing them in the HTML.'
+                    'This is usually a misconfiguration because in this mode, the only way to get webp files delivered ' .
+                    'is by referencing them in the HTML.'
         );
 
     }
@@ -114,6 +141,23 @@ if ($config['enable-redirection-to-webp-realizer'] && $config['alter-html']['ena
     );
 }
 
+if ($config['image-types'] == 3) {
+    $workingConverters = ConvertersHelper::getWorkingAndActiveConverters($config);
+    if (count($workingConverters) == 1) {
+        if (ConvertersHelper::getConverterId($workingConverters[0]) == 'gd') {
+            if (isset($workingConverters[0]['options']['skip-pngs']) && $workingConverters[0]['options']['skip-pngs']) {
+                Messenger::printMessage(
+                    'warning',
+                        'You have enabled PNGs, but configured Gd to skip PNGs, and Gd is your only active working converter. ' .
+                        'This is a bad combination!'
+                );
+            }
+        }
+    }
+}
+
+
+
 
 /*
 if (Config::isConfigFileThereAndOk() ) { // && PlatformInfo::definitelyGotModEnv()
@@ -133,7 +177,8 @@ if (!Paths::createContentDirIfMissing()) {
     Messenger::printMessage(
         'error',
         'WebP Express needs to create a directory "webp-express" under your wp-content folder, but does not have permission to do so.<br>' .
-            'Please create the folder manually, or change the file permissions of your wp-content folder (failed to create this folder: ' . Paths::getWebPExpressContentDirAbs() . ')'
+            'Please create the folder manually, or change the file permissions of your wp-content folder (failed to create this folder: ' .
+            esc_html(Paths::getWebPExpressContentDirAbs()) . ')'
     );
 } else {
     if (!Paths::createConfigDirIfMissing()) {
@@ -155,16 +200,27 @@ if (!Paths::createContentDirIfMissing()) {
 
 if (Config::isConfigFileThere()) {
     if (!Config::isConfigFileThereAndOk()) {
-        Messenger::printMessage(
-            'warning',
-            'Warning: The configuration file is not ok! (cant be read, or not valid json).<br>' .
-                'file: "' . Paths::getConfigFileName() . '"'
-        );
+        $json = FileHelper::loadFile(Paths::getConfigFileName());
+        if ($json === false) {
+            Messenger::printMessage(
+                'warning',
+                'Warning: The configuration file is not ok! (cant be read).<br>' .
+                    'file: "' . esc_html(Paths::getConfigFileName()) . '"'
+            );
+        } else {
+            Messenger::printMessage(
+                'warning',
+                'Warning: The configuration file is not ok! (not valid json).<br>' .
+                    'file: "' . esc_html(Paths::getConfigFileName()) . '"'
+            );
+        }
+
     } else {
         if (HTAccess::arePathsUsedInHTAccessOutdated()) {
             Messenger::printMessage(
                 'warning',
-                'Warning: Wordpress paths have changed since the last time the Rewrite Rules was generated. The rules needs updating! (click <i>Save settings</i> to do so)<br>'
+                'Warning: Wordpress paths have changed since the last time the Rewrite Rules was generated. The rules ' .
+                'needs updating! (click <i>Save settings</i> to do so)<br>'
             );
         }
     }

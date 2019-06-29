@@ -247,6 +247,13 @@ APACHE
         return self::createDirIfMissing(self::getCacheDirAbs());
     }
 
+    // ------------ Cache Dir -------------
+
+    public static function getLogDirAbs()
+    {
+        return self::getWebPExpressContentDirAbs() . '/log';
+    }
+
     // ------------ Plugin Dir (all plugins) -------------
 
     public static function getPluginDirAbs()
@@ -382,7 +389,7 @@ APACHE
      */
     public static function getPluginUrl()
     {
-        return untrailingslashit(plugins_url('', WEBPEXPRESS_PLUGIN));
+        return untrailingslashit(plugins_url(null, WEBPEXPRESS_PLUGIN));
     }
 
     public static function getPluginUrlPath()
@@ -393,6 +400,7 @@ APACHE
     public static function getWodUrlPath()
     {
         return self::getPluginUrlPath() . '/wod/webp-on-demand.php';
+        //return self::getHomeUrlPath() . '/webp-on-demand';
     }
 
     public static function getWebPRealizerUrlPath()
@@ -423,11 +431,14 @@ APACHE
         return [
             'urls' => [
                 'webpExpressRoot' => self::getPluginUrlPath(),
+                'content' => self::getContentUrlPath(),
             ],
             'filePaths' => [
                 'webpExpressRoot' => self::getWebPExpressPluginDirAbs(),
                 'destinationRoot' => self::getCacheDirAbs(),
-                'configRelToDocRoot' => self::getConfigDirRel()
+                'configRelToDocRoot' => self::getConfigDirRel(),
+                'pluginRelToDocRoot' => self::getPluginDirRel(),
+
             ]
         ];
     }

@@ -1,5 +1,11 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+/*
+This file is actually not included, only when debugging activation errors, I include it manually.
+Haven't used it in a quite a while...
+*/
 
 function webpexpress_activated() {
   update_option( 'webp-express-activation-error',  ob_get_contents() );

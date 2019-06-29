@@ -11,6 +11,8 @@
                 '"CDN friendly" operation mode.</p>'
             );
         ?>
-        <input type="checkbox" name="only-redirect-to-converter-on-cache-miss" value="true" <?php echo ($config['only-redirect-to-converter-on-cache-miss'] ? 'checked="checked"' : '') ?> >
+        <input type="checkbox" name="only-redirect-to-converter-on-cache-miss" value="true" <?php
+            echo ($config['only-redirect-to-converter-on-cache-miss'] ? 'checked="checked"' : '')
+        ?> >
     </td>
 </tr>

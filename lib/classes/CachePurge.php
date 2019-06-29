@@ -4,6 +4,7 @@ namespace WebPExpress;
 
 use \WebPExpress\Convert;
 use \WebPExpress\FileHelper;
+use \WebPExpress\DismissableMessages;
 use \WebPExpress\Paths;
 
 class CachePurge
@@ -15,6 +16,8 @@ class CachePurge
      */
     public static function purge($config, $onlyPng)
     {
+        DismissableMessages::dismissMessage('0.14.0/suggest-wipe-because-lossless');
+
         $filter = [
             'only-png' => $onlyPng,
             'only-with-corresponding-original' => false
@@ -52,7 +55,7 @@ class CachePurge
      *
      *  @return [num files deleted, num files failed to delete]
      */
-    public static function purgeWebPFilesInDir($dir, &$filter, &$config)
+    private static function purgeWebPFilesInDir($dir, &$filter, &$config)
     {
         if (!@file_exists($dir) || !@is_dir($dir)) {
             return [0, 0];
@@ -144,7 +147,12 @@ class CachePurge
     public static function processAjaxPurgeCache()
     {
 
-        $onlyPng = ($_POST['only-png'] == 'true');
+        if (!check_ajax_referer('webpexpress-ajax-purge-cache-nonce', 'nonce', false)) {
+            wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
+            wp_die();
+        }
+
+        $onlyPng = (sanitize_text_field($_POST['only-png']) == 'true');
 
         $config = Config::loadConfigAndFix();
         $result = self::purge($config, $onlyPng);

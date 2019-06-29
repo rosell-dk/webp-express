@@ -198,9 +198,8 @@ class AlterHtmlHelper
      *  Get url for webp
      *  returns second argument if no webp
      *
-     *  @param $imageUrl    (ie http://example.com/wp-content/image.jpg)
-     *  @param $baseUrl     (ie http://example.com/wp-content)
-     *  @param $baseDir     (ie /var/www/example.com/wp-content)
+     *  @param $sourceUrl
+     *  @param $returnValueOnFail
      */
     public static function getWebPUrl($sourceUrl, $returnValueOnFail)
     {
