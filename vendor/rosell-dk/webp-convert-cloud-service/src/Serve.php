@@ -112,7 +112,7 @@ class Serve
 
             if (isset($_POST['options'])) {
                 // Merge in options in $_POST, overwriting the webp-convert options in config
-                $convertOptionsInPost = (array) json_decode($_POST['options']);
+                $convertOptionsInPost = (array) json_decode($_POST['options'], true);
                 $convertOptions = array_merge($options['webp-convert'], $convertOptionsInPost);
             } else {
                 $convertOptions = $options['webp-convert'];
