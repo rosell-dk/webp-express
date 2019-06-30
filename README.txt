@@ -19,7 +19,7 @@ Almost 4 out of 5 mobile users use a browser that is able to display webp images
 Security issues has recently been found and fixed. I urge you to upgrade to the latest release (at least 0.14.11, but go with 0.14.21, as there are important bug fixes)
 
 **VACATION NOTICE**
-The maintainer is on vacation between June the 30th and end July. Please help each other out. In case something cannot wait, remember that this library is open source. You can find it on github, fork it and fix it (or have someone do it for you).
+The maintainer is on vacation until end July. Please help each other out. In case something cannot wait, remember that this library is open source. You can find it on github, fork it and fix it (or have someone do it for you).
 
 
 ### The image converter
@@ -44,10 +44,6 @@ The plugin builds on [WebPConvert](https://github.com/rosell-dk/webp-convert) an
 - Less bandwidth consumption - makes a huge difference in the parts of the world where the internet is slow and costly (you know, ~80% of the world population lives under these circumstances).
 - Currently ~73% of all traffic, and ~79% of mobile browsing traffic are done with browsers supporting webp. With Mozilla and Microsoft [finally on board](https://medium.com/@richard_90141/webp-image-support-an-8-year-saga-7aa2bedb8d02), these numbers are bound to increase. Check current numbers on [caniuse.com](https://caniuse.com/webp)).
 
-### Recent news
-Jun 2019: Better conversions and more conversion options
-Feb 2019: Multisite is now supported (0.12.0)
-Jan 2019: Plugin can now alter HTML (0.11.0)
 
 == Installation ==
 
@@ -158,7 +154,10 @@ Easy enough. Browsers looks at the *content type* header rather than the URL to 
 I am btw considering making an option to have the plugin redirect to the webp instead of serving immediately. That would remove the apparent mismatch between file extension and content type header. However, the cost of doing that will be an extra request for each image, which means extra time and worse performance. I believe you'd be ill advised to use that option, so I guess I will not implement it. But perhaps you have good reasons to use it? If you do, please let me know!
 
 = I am on NGINX / OpenResty =
-It is possible to make WebP Express work on NGINX, but it requires manually inserting redirection rules in the NGINX configuration file (nginx.conf or the configuration file for the site, found in `/etc/nginx/sites-available`).
+The easy solution is simply to use the plugin in "CDN friendly" mode, do a bulk conversion and activate the "Convert on upload" option.
+
+This however does not cover images in CSS and images being dynamically added with javascript.
+To get this working, requires manually inserting redirection rules in the NGINX configuration file (nginx.conf or the configuration file for the site, found in `/etc/nginx/sites-available`).
 
 There are two different approaches to achieve the redirections. One based on *rewrite* and one based on *try_files*. As *try_files* performs best, I shall recommend that.
 
