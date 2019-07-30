@@ -18,9 +18,6 @@ Almost 4 out of 5 mobile users use a browser that is able to display webp images
 !! **SECURITY NOTICE** !!
 Security issues has recently been found and fixed. I urge you to upgrade to the latest release (at least 0.14.11, but go with 0.14.21, as there are important bug fixes)
 
-**VACATION NOTICE**
-The maintainer is on vacation until end July. Please help each other out. In case something cannot wait, remember that this library is open source. You can find it on github, fork it and fix it (or have someone do it for you).
-
 
 ### The image converter
 The plugin uses the [WebP Convert](https://github.com/rosell-dk/webp-convert) library to convert images to webp. *WebP Convert* is able to convert images using multiple methods. There are the "local" conversion methods: `cwebp`, `gd`, `imagick`. If none of these works on your host, there are the cloud alternatives: `ewww` (paid) or connecting to a Wordpress site where you got WebP Express installed and you enabled the "web service" functionality.
