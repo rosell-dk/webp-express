@@ -145,7 +145,11 @@ Easy enough. Browsers looks at the *content type* header rather than the URL to 
 I am btw considering making an option to have the plugin redirect to the webp instead of serving immediately. That would remove the apparent mismatch between file extension and content type header. However, the cost of doing that will be an extra request for each image, which means extra time and worse performance. I believe you'd be ill advised to use that option, so I guess I will not implement it. But perhaps you have good reasons to use it? If you do, please let me know!
 
 ### I am on NGINX / OpenResty
-It is possible to make WebP Express work on NGINX, but it requires manually inserting redirection rules in the NGINX configuration file (nginx.conf or the configuration file for the site, found in `/etc/nginx/sites-available`).
+The easy solution is simply to use the plugin in "CDN friendly" mode, do a bulk conversion (takes care of converting existing images) and activate the "Convert on upload" option (takes care of converting new images in the media library).
+
+This however does not cover images in external CSS and images being dynamically added with javascript. And it does not handle new theme images.
+
+To get this working, requires manually inserting redirection rules in the NGINX configuration file (nginx.conf or the configuration file for the site, found in `/etc/nginx/sites-available`).
 
 There are two different approaches to achieve the redirections. One based on *rewrite* and one based on *try_files*. As *try_files* performs best, I shall recommend that.
 
@@ -170,7 +174,7 @@ location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
   }
   try_files
     /nonexisting-because-try-files-needs-fallback
-    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content&$args
+    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content
     ;
 }
 ```
@@ -190,17 +194,16 @@ If you cannot get this to work then perhaps you need to add the following to you
 
 If you still cannot get it to work, you can instead try *method 2*
 
+Note: There is no longer any reason to add "&$args" to the line begining with "/wp-content". It was there to enable debugging a single image by appending "?debug" to the url. I however removed that functionality from `webp-on-demand.php`.
 
 **Step 2**: *Redirecting directly to existing webp images.*
 
 Once you got this working, lets improve performance by redirecting directly to existing webp images. This step isn't necessary, as the script also does that - but invoking the php script takes more resources that the direct redirect. Also, a direct redirect will produce *ETag* response header, which is increases caching performance.
 
-The rules looks for existing webp files by appending ".webp" to the URL. So for this to work, you must configure *WebP Express* to store the converted files like that:
-1. Set *Destination folder* to *mingled*
-2. Set *File extension* to *Append ".webp"*
+The rules looks for existing webp files by appending ".webp" to the URL. So for this to work, you must configure *WebP Express* to store the converted files like that.
 
+The following rules works both when WebP Express are configured to store images in the same folder as the originals ("mingled") and when or in a separate folder. Nginx will first see if there is a corresponding webp in the separate folder and then if there is a corresponding webp in the same folder and finally fall back to calling the conversion script.
 
-Now, place the following in the `server` context (replacing what you inserted in step 1):
 ```nginx
 # WebP Express rules
 # --------------------
@@ -211,13 +214,16 @@ location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
     break;
   }
   try_files
+    /wp-content/webp-express/webp-images/doc-root/$uri.webp
     $uri.webp
-    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content&$args
+    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content
     ;
 }
 # ------------------- (WebP Express rules ends here)
 ```
 *Beware when copy/pasting: You might get html-encoded characters. Verify that the ampersand before "wp-content" isn't encoded*
+
+If you have configured WebP Express to store images in separate folder, you do not need the "$uri.webp" line. But it doesn't hurt to have it. But the reverse is not true. If configured to store images in the same folder ("mingled"), you still need the line that looks for a webp in the separate folder. The reason for this is that the "mingled" only applies to the images in the upload folder - other images - such as theme images are always stored in a separate folder.
 
 Again, beware that if you haven't enabled *png* conversion, you should replace "(png|jpe?g)" with "jpe?g".
 
@@ -259,7 +265,7 @@ if ($http_accept ~* "webp"){
 
 **Step 2**: *Redirecting directly to existing webp images.*
 
-Insert the following in the `server` context (replacing the rules you inserted in step 1)
+Make sure that WebP Express is configured with "Destination" set to "Mingled". And then insert the following in the `server` context (replacing the rules you inserted in step 1)
 ```nginx
 # WebP Express rules
 # --------------------
