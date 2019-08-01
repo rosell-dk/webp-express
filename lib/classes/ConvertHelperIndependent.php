@@ -83,9 +83,6 @@ class ConvertHelperIndependent
                     $destination = $source . '.webp';
                 } else {
                     $destination = preg_replace('/\\.(jpe?g|png)$/', '', $source) . '.webp';
-                    // TODO: make this check work with symlinks
-                    //$destination = SanityCheck::absPathIsInDocRoot($source . '.webp');
-                    $destination = $source . '.webp';
                 }
             } else {
                 $docRoot = rtrim(realpath($_SERVER["DOCUMENT_ROOT"]), '/');
