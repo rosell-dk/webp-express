@@ -111,10 +111,13 @@ class WebPRealizer
 
 
             // Validate that WebPExpress was configured to redirect to this conversion script
+            // (but do not require that for Nginx)
             // ------------------------------------------------------------------------------
             $checking = 'settings';
-            if (!isset($wodOptions['enable-redirection-to-webp-realizer']) || ($wodOptions['enable-redirection-to-webp-realizer'] === false)) {
-                throw new ValidateException('Redirection to webp realizer is not enabled');
+            if (stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') === false) {
+                if (!isset($wodOptions['enable-redirection-to-webp-realizer']) || ($wodOptions['enable-redirection-to-webp-realizer'] === false)) {
+                    throw new ValidateException('Redirection to webp realizer is not enabled');
+                }
             }
 
 

@@ -108,10 +108,14 @@ class WebPOnDempand
 
 
             // Validate that WebPExpress was configured to redirect to this conversion script
+            // (but do not require that for Nginx)
             // ------------------------------------------------------------------------------
             $checking = 'settings';
-            if (!isset($wodOptions['enable-redirection-to-converter']) || ($wodOptions['enable-redirection-to-converter'] === false)) {
-                throw new ValidateException('Redirection to conversion script is not enabled');
+            if (stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') === false) {
+                if (!isset($wodOptions['enable-redirection-to-converter']) || ($wodOptions['enable-redirection-to-converter'] === false)) {
+                    throw new ValidateException('Redirection to conversion script is not enabled');
+                }
+
             }
 
 
