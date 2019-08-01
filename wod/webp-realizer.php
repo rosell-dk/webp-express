@@ -15,7 +15,7 @@ class WebPRealizer
 
     private static $docRoot;
 
-    private static function exitWithError($msg) {
+    public static function exitWithError($msg) {
         header('X-WebP-Express-Error: ' . $msg, true);
         echo $msg;
         exit;
