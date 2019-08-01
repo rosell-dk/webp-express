@@ -612,6 +612,13 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.14.22 =
+*(released: not released yet!)*
+* Fixed bug in Nginx rules in the FAQ (they did not take into account that the webp images outside upload folder are never stored "mingled")
+* Fixed bug: The extension setting was not respected - it was always appending ".webp", never setting. Thanks to @flocco21 for reporting.
+* Fixed bug-like behavior: The conversion scripts no longer requires that the respective setting is on for Nginx. Thanks to Mike (@mixar) for reporting this.
+* Fixed bug: Attempt to call private method in a rare scenario (when accessing one of the php scripts in the "wod" folder directly - which is not allowed). Thanks to Giacomo Lawrance for providing input that led to this discovery.
+
 = 0.14.21 =
 *(released: 30 jun 2019)*
 
