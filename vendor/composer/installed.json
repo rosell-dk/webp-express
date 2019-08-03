@@ -1,17 +1,17 @@
 [
     {
         "name": "rosell-dk/dom-util-for-webp",
-        "version": "0.3.0",
-        "version_normalized": "0.3.0.0",
+        "version": "0.3.1",
+        "version_normalized": "0.3.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/rosell-dk/dom-util-for-webp.git",
-            "reference": "c9cebf304553695fb6f7cf5634da51172e8e4aba"
+            "reference": "bae8f4a9b666726359d28bfb227d886c12f136a9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/c9cebf304553695fb6f7cf5634da51172e8e4aba",
-            "reference": "c9cebf304553695fb6f7cf5634da51172e8e4aba",
+            "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/bae8f4a9b666726359d28bfb227d886c12f136a9",
+            "reference": "bae8f4a9b666726359d28bfb227d886c12f136a9",
             "shasum": ""
         },
         "require-dev": {
@@ -19,7 +19,7 @@
             "phpunit/phpunit": "5.7.27",
             "squizlabs/php_codesniffer": "3.*"
         },
-        "time": "2019-03-07T09:15:07+00:00",
+        "time": "2019-07-31T14:17:18+00:00",
         "type": "library",
         "extra": {
             "scripts-descriptions": {
@@ -44,8 +44,8 @@
         "authors": [
             {
                 "name": "Bjørn Rosell",
-                "homepage": "https://www.bitwise-it.dk/contact",
-                "role": "Project Author"
+                "role": "Project Author",
+                "homepage": "https://www.bitwise-it.dk/contact"
             }
         ],
         "description": "Replace image URLs found in HTML",
@@ -115,17 +115,17 @@
     },
     {
         "name": "rosell-dk/webp-convert",
-        "version": "2.1.4",
-        "version_normalized": "2.1.4.0",
+        "version": "2.1.5",
+        "version_normalized": "2.1.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/rosell-dk/webp-convert.git",
-            "reference": "4ea37baaa3edee036223b45249ec6898fa945821"
+            "reference": "b28ce7fe71ce4f930bd352f12b4f1591ac21b9f0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/4ea37baaa3edee036223b45249ec6898fa945821",
-            "reference": "4ea37baaa3edee036223b45249ec6898fa945821",
+            "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/b28ce7fe71ce4f930bd352f12b4f1591ac21b9f0",
+            "reference": "b28ce7fe71ce4f930bd352f12b4f1591ac21b9f0",
             "shasum": ""
         },
         "require": {
@@ -143,7 +143,7 @@
             "ext-vips": "to use Vips extension for converting.",
             "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
         },
-        "time": "2019-06-28T19:21:17+00:00",
+        "time": "2019-08-02T14:13:24+00:00",
         "type": "library",
         "extra": {
             "scripts-descriptions": {
@@ -167,14 +167,14 @@
         ],
         "authors": [
             {
-                "name": "Martin Folkers",
-                "homepage": "https://twobrain.io",
-                "role": "Collaborator"
+                "name": "Bjørn Rosell",
+                "role": "Project Author",
+                "homepage": "https://www.bitwise-it.dk/contact"
             },
             {
-                "name": "Bjørn Rosell",
-                "homepage": "https://www.bitwise-it.dk/contact",
-                "role": "Project Author"
+                "name": "Martin Folkers",
+                "role": "Collaborator",
+                "homepage": "https://twobrain.io"
             }
         ],
         "description": "Convert JPEG & PNG to WebP with PHP",
@@ -193,17 +193,17 @@
     },
     {
         "name": "rosell-dk/webp-convert-cloud-service",
-        "version": "2.0.0",
-        "version_normalized": "2.0.0.0",
+        "version": "2.0.1",
+        "version_normalized": "2.0.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/rosell-dk/webp-convert-cloud-service.git",
-            "reference": "5345c63d0a44d529591c36ebab33c3bcfc080787"
+            "reference": "703c2f1c76d30468ee3977170bfa3da138d8c4ad"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/webp-convert-cloud-service/zipball/5345c63d0a44d529591c36ebab33c3bcfc080787",
-            "reference": "5345c63d0a44d529591c36ebab33c3bcfc080787",
+            "url": "https://api.github.com/repos/rosell-dk/webp-convert-cloud-service/zipball/703c2f1c76d30468ee3977170bfa3da138d8c4ad",
+            "reference": "703c2f1c76d30468ee3977170bfa3da138d8c4ad",
             "shasum": ""
         },
         "require": {
@@ -214,7 +214,7 @@
             "phpunit/phpunit": "5.7.27",
             "squizlabs/php_codesniffer": "3.*"
         },
-        "time": "2019-06-14T13:05:09+00:00",
+        "time": "2019-06-30T08:28:35+00:00",
         "type": "library",
         "extra": {
             "scripts-descriptions": {
@@ -239,8 +239,8 @@
         "authors": [
             {
                 "name": "Bjørn Rosell",
-                "homepage": "https://www.bitwise-it.dk/contact",
-                "role": "Project Author"
+                "role": "Project Author",
+                "homepage": "https://www.bitwise-it.dk/contact"
             }
         ],
         "description": "Cloud service for converting JPEG & PNG to WebP",

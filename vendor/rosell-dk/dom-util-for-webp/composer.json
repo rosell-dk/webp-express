@@ -10,17 +10,19 @@
       "@build",
       "@test",
       "@phpcs-all",
-      "@composer validate --no-check-all --strict"
+      "@composer validate --no-check-all --strict",
+      "@phpstan-global"
     ],
     "cs-fix-all": [
       "php-cs-fixer fix src"
     ],
     "cs-fix": "php-cs-fixer fix",
     "cs-dry": "php-cs-fixer fix --dry-run --diff",
-    "test": "phpunit",
+    "test": "phpunit  --coverage-text --coverage-clover=coverage.clover",
     "phpcs": "phpcs --standard=PSR2",
-    "phpcs-all": "phpcs --standard=PSR2 --ignore=src/simple_html_dom/simple_html_dom.inc src",
-    "phpcbf": "phpcbf --standard=PSR2"
+    "phpcbf": "phpcbf --standard=PSR2",
+    "phpstan": "vendor/bin/phpstan analyse src --level=4",
+    "phpstan-global": "~/.composer/vendor/bin/phpstan analyse src --level=4"
   },
   "extra": {
       "scripts-descriptions": {

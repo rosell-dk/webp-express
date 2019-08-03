@@ -30,11 +30,11 @@ class PictureTags
     /**
      * Look for attributes such as "data-lazy-src" and "data-src" and prefer them over "src"
      *
-     * @param $attributes  an array of attributes for the element
-     * @param $attrName    ie "src", "srcset" or "sizes"
+     * @param  array  $attributes  an array of attributes for the element
+     * @param  string  $attrName    ie "src", "srcset" or "sizes"
      *
-     * @return [value:.., attrName:...]  (value is the value of the attribute and
-     *                                    attrName is the name of the attribute used)
+     * @return array  an array with "value" key and "attrName" key. ("value" is the value of the attribute and
+     *                                    "attrName" is the name of the attribute used)
      *
      */
     private static function lazyGet($attributes, $attrName)
@@ -90,7 +90,7 @@ class PictureTags
     /**
      * Makes a string with all attributes.
      *
-     * @param $attribute_array
+     * @param  array $attribute_array
      * @return string
      */
     private static function createAttributes($attribute_array)
@@ -194,7 +194,7 @@ class PictureTags
     public static function replace($html)
     {
         if (!function_exists('str_get_html')) {
-            require_once 'simple_html_dom/simple_html_dom.inc';
+            require_once __DIR__ . '/../src-vendor/simple_html_dom/simple_html_dom.inc';
         }
         $pt = new static();
         return $pt->replaceHtml($html);

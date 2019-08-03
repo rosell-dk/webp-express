@@ -26,17 +26,30 @@ namespace DOMUtilForWebP;
 class ImageUrlReplacer
 {
 
-    // define tags to be searched. The div and li are on the list because these are often used with lazy loading
-    public static $searchInTags = ['img', 'source', 'input', 'iframe', 'div', 'li'];
+    // define tags to be searched.
+    // The div and li are on the list because these are often used with lazy loading
+    // should we add <meta> ?
+    // Probably not for open graph images or twitter
+    // so not these:
+    // - <meta property="og:image" content="[url]">
+    // - <meta property="og:image:secure_url" content="[url]">
+    // - <meta name="twitter:image" content="[url]">
+    // Meta can also be used in schema.org micro-formatting, ie:
+    // - <meta itemprop="image" content="[url]">
+    //
+    // How about preloaded images? - yes, suppose we should replace those
+    // - <link rel="prefetch" href="[url]">
+    // - <link rel="preload" as="image" href="[url]">
+    public static $searchInTags = ['img', 'source', 'input', 'iframe', 'div', 'li', 'link', 'a', 'section'];
 
     /**
      *
-     * @return webp url or, if URL should not be changed, return nothing
+     * @return string|null webp url or, if URL should not be changed, return nothing
      **/
     public function replaceUrl($url)
     {
         if (!preg_match('#(png|jpe?g)$#', $url)) {
-            return;
+            return null;
         }
         return $url . '.webp';
     }
@@ -157,6 +170,11 @@ class ImageUrlReplacer
 
         //$dom = HtmlDomParser::str_get_html($html, false, false, 'UTF-8', false);
         $dom = str_get_html($html, false, false, 'UTF-8', false);
+
+        // MAX_FILE_SIZE is defined in simple_html_dom.
+        // For safety sake, we make sure it is defined before using
+        defined('MAX_FILE_SIZE') || define('MAX_FILE_SIZE', 600000);
+
         if ($dom === false) {
             if (strlen($html) > MAX_FILE_SIZE) {
                 return '<!-- Alter HTML was skipped because the HTML is too big to process! ' .
@@ -204,7 +222,7 @@ class ImageUrlReplacer
     public static function replace($html)
     {
         if (!function_exists('str_get_html')) {
-            require_once 'simple_html_dom/simple_html_dom.inc';
+            require_once __DIR__ . '/../src-vendor/simple_html_dom/simple_html_dom.inc';
         }
         $iur = new static();
         return $iur->replaceHtml($html);

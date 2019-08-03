@@ -4,9 +4,9 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "rosell-dk/webp-convert": "^2.1.3",
+        "rosell-dk/webp-convert": "^2.1.5",
         "rosell-dk/webp-convert-cloud-service": "^2.0.0",
-        "rosell-dk/dom-util-for-webp": "^0.3.0"
+        "rosell-dk/dom-util-for-webp": "^0.3.1"
     },
     "require-dev": {
     },
