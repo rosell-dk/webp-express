@@ -937,6 +937,9 @@ For older releases, check out changelog.txt
 
 == Upgrade Notice ==
 
+= 0.14.22 =
+* A bundle of bug fixes and a security fix for Windows
+
 = 0.14.21 =
 * Hopefully fixed WebP Express Error: "png" option is Object
 
