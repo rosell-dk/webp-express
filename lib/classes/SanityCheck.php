@@ -98,6 +98,11 @@ class SanityCheck
         self::noControlChars($input);
         self::noDirectoryTraversal($input);
         self::noStreamWrappers($input);
+
+        // PS: The following sanitize has no effect, as we have just tested that there are no NUL and
+        // no stream wrappers. It is here to avoid false positives on coderisk.com
+        $input = Sanitize::path($input);
+
         return $input;
     }
 
@@ -133,34 +138,41 @@ class SanityCheck
         return $input;
     }
 
+    private static function isOnMicrosoft()
+    {
+        if (isset($_SERVER['SERVER_SOFTWARE'])) {
+            if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), 'microsoft') !== false) {
+                return true;
+            }
+        }
+        switch (PHP_OS) {
+            case "WINNT":
+            case "WIN32":
+            case "INTERIX":
+            case "UWIN":
+            case "UWIN-W7":
+                return true;
+                break;
+        }
+        return false;
+    }
+
     public static function absPath($input, $errorMsg = 'Not an absolute path')
     {
+        // first make sure there are no nasty things like control chars, phar wrappers, etc.
+        // - and no directory traversal either.
+        self::path($input);
+
+        // For non-windows, we require that an absolute path begins with "/"
+        // On windows, we also accept that a path starts with a drive letter, ie "C:\"
         if ((strpos($input, '/') !== 0)) {
-            // On microsoft, allow
-
-            $onMicrosoft = false;
-            if (isset($_SERVER['SERVER_SOFTWARE'])) {
-                if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), 'microsoft') !== false) {
-                    $onMicrosoft = true;
-                }
-            }
-            switch (PHP_OS) {
-                case "WINNT":
-                case "WIN32":
-                case "INTERIX":
-                case "UWIN":
-                case "UWIN-W7":
-                    $onMicrosoft = true;
-                    break;
-            }
-
-            if (!$onMicrosoft) {
+            if (self::isOnMicrosoft()) {
+                self::absPathMicrosoftStyle($input);
+            } else {
                 throw new SanityException($errorMsg);
             }
-            self::absPathMicrosoftStyle($input);
-
         }
-        return self::path($input);
+        return $input;
     }
 
     private static function findClosestExistingFolderSymLinksExpanded($input) {
