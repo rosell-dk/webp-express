@@ -21,8 +21,10 @@ class HandleDeleteFileHook
         }
 
         $destination = Convert::getDestination($filename);
-        if (!unlink($destination)) {
-            error_log('WebP Express failed deleting webp:' . $destination);
+        if (@file_exists($destination)) {
+            if (!@unlink($destination)) {
+                error_log('WebP Express failed deleting webp:' . $destination);
+            }            
         }
         return $filename;
     }
