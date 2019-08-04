@@ -613,11 +613,17 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 == Changelog ==
 
 = 0.14.22 =
-*(released: not released yet!)*
+*(released: 4 aug 2019)*
+
 * Fixed bug in Nginx rules in the FAQ (they did not take into account that the webp images outside upload folder are never stored "mingled")
 * Fixed bug: The extension setting was not respected - it was always appending ".webp", never setting. Thanks to Florian from Germany and Derrick Hammer from USA for reporting.
+* Fixed bug: It turns out that Imagick gives up quality detection for some images and returns 0. This resulted in very poor quality webps when the quality was set to same as jpeg. The 0 is now treated as a failure and the max-quality will be used for such images. Thanks to @sanjayojha303 from India for reporting that there were quality problems on some images.
 * Fixed bug-like behavior: The conversion scripts no longer requires that the respective setting is on for Nginx. Thanks to Mike from Russia for reporting this.
-* Fixed bug: Attempt to call private method in a rare scenario (when accessing one of the php scripts in the "wod" folder directly - which is not allowed). Thanks to Giacomo Lawrance from the U.K. for providing input that led to this discovery.
+* Fixed bug: The error handler in webp-convert for handling warnings could in some cases result in endless recursion. For some the result was that they could no longer upload images. Thanks to Tobias Keller from Germany for reporting this bug.
+* Fixed minor bug: Attempt to call private method in a rare scenario (when accessing one of the php scripts in the "wod" folder directly - which is not allowed). Thanks to Giacomo Lawrance from the U.K. for providing input that led to this discovery.
+* Fixed minor bug: It was not tested whether a corresponding webp existed before trying to deleting it when an image was deleted. This produced warnings in debug.log.
+* Security related: Added sanitizing of paths to avoid false positives on coderisk.com (there where no risk because already test the paths for sanity - but this is not detected by coderisk, as the variable is not modified). This was simply done in order get rid of the warnings at coderisk.
+* Security fix: Paths were not sanitized on Windows.
 
 = 0.14.21 =
 *(released: 30 jun 2019)*
