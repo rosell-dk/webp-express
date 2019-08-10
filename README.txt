@@ -39,8 +39,8 @@ The plugin builds on [WebPConvert](https://github.com/rosell-dk/webp-convert) an
 - Better user experience (whether performance goes from terrible to bad, or from good to impressive, it is a benefit)
 - Better ranking in Google searches (performance is taken into account by Google)
 - Less bandwidth consumption - makes a huge difference in the parts of the world where the internet is slow and costly (you know, ~80% of the world population lives under these circumstances).
-- Currently ~73% of all traffic, and ~79% of mobile browsing traffic are done with browsers supporting webp. With Mozilla and Microsoft [finally on board](https://medium.com/@richard_90141/webp-image-support-an-8-year-saga-7aa2bedb8d02), these numbers are bound to increase. Check current numbers on [caniuse.com](https://caniuse.com/webp)).
-
+- Currently ~83% of all traffic, and ~80% of mobile browsing traffic are done with browsers supporting webp. With Mozilla and Microsoft [finally on board](https://medium.com/@richard_90141/webp-image-support-an-8-year-saga-7aa2bedb8d02), these numbers are bound to increase. Check current numbers on  [caniuse.com](https://caniuse.com/webp)).
+- It's great for the environment too! Reducing network traffic reduces electricity consumption which reduces CO2 emissions.
 
 == Installation ==
 
