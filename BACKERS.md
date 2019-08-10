@@ -13,6 +13,7 @@ To become a backer, yourself, [go to my page at patreon.com](https://www.patreon
 | Name                  | Date       | Message (max 70 chars, plain text only) |
 | --------------------- | ---------- | ----------------------------------------------------------------------- |
 | Tammy Valgardson      | 2018-12-27 |          |
+| Max Kreminsky         | 2019-08-02 |          |
 
 <sub>I reserve the right to disallow inappropriate messages. No Trump hooting or bashing here, please. And don't be aggressive, obscene or anything unpleasant. But I don't have to point that out, do I?</sub>
 
