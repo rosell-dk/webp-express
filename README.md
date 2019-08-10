@@ -74,14 +74,17 @@ In case no conversion methods are working out of the box, you have several optio
 - You can install this plugin on another website, which supports a local conversion method and connect to that using the "Remote WebP Express" conversion method
 - You can [purchase a key](https://ewww.io/plans/) for the ewww cloud converter. They do not charge credits for webp conversions, so all you ever have to pay is the one dollar start-up fee :)
 - You can set up [webp-convert-cloud-service](https://github.com/rosell-dk/webp-convert-cloud-service) on another server and connect to that. Its open source.
-- You can try to meet the server requirements of cwebp, gd, imagick or gmagick. Check out [this wiki page](https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters) on how to do that
+- You can try to meet the server requirements of cwebp, Gd, Imagick, Gmagick or Vips. Check out [this wiki page](https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters) on how to do that
 
-### The auto quality
-If your server has imagick og gmagick installed, the plugin will be able to detect the quality of a jpeg, and use the same quality for the converted webp. You can tell if it does, by looking at the quality option. If it allows you to select "auto" quality, it is available, otherwise it is not, and you will only have the option to set a specific quality for all conversions. *Auto* should be chosen, if available, as this ensures that each conversion are converted with an appropriate quality. Say you have a jpeg with low quality (say 30). The best result, is achieved by converting it to the same quality. Converting it with high quality (say 80), will not get you better quality, only a larger file.
+### Quality detection of jpegs
+If your server has Imagick extension or is able to execute imagemagick binary, the plugin will be able to detect the quality of a jpeg, and use that quality for the converted webp. You can tell if the quality detection is available by hovering the help icon in Conversion > Jpeg options > Quality for lossy. The last line in that help text tells you.
 
-If you do not the "auto" option available:
-- Install imagick or gmagick, if you can
-- Use "Remote WebP Express" converter to connect to a site, that *does* have the auto option available
+This auto quality has benefits over fixed quality as it ensures that each conversion are converted with an appropriate quality. Encoding low quality jpegs to high quality webps does not magically increase the visual quality so that your webp looks better than the original. But it does result in a much larger filesize than if the jpeg where converting to a webp with the same quality setting as the original.
+
+If you do not have quality detection working, you can try one of the following:
+- Install Imagick on the server (for this purpose, it is not required that it is compiled with WebP support)
+- Install imagemagick on the server and grant permission for PHP to use the "exec" function.
+- Use "Remote WebP Express" converter to connect to a site, that *does* have quality detection working
 - If you have cwebp converter available, you can configure it to aim for a certain reduction, rather than using the quality parameter. Set this to for example 50%, or even 45%.
 
 ### Verifying that it works.
