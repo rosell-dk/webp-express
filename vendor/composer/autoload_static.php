@@ -100,6 +100,7 @@ class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
         'WebPConvert\\Helpers\\InputValidator' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Helpers/InputValidator.php',
         'WebPConvert\\Helpers\\MimeType' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Helpers/MimeType.php',
         'WebPConvert\\Helpers\\PathChecker' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Helpers/PathChecker.php',
+        'WebPConvert\\Helpers\\Sanitize' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Helpers/Sanitize.php',
         'WebPConvert\\Loggers\\BaseLogger' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Loggers/BaseLogger.php',
         'WebPConvert\\Loggers\\BufferLogger' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Loggers/BufferLogger.php',
         'WebPConvert\\Loggers\\EchoLogger' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Loggers/EchoLogger.php',

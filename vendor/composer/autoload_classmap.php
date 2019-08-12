@@ -64,6 +64,7 @@ return array(
     'WebPConvert\\Helpers\\InputValidator' => $vendorDir . '/rosell-dk/webp-convert/src/Helpers/InputValidator.php',
     'WebPConvert\\Helpers\\MimeType' => $vendorDir . '/rosell-dk/webp-convert/src/Helpers/MimeType.php',
     'WebPConvert\\Helpers\\PathChecker' => $vendorDir . '/rosell-dk/webp-convert/src/Helpers/PathChecker.php',
+    'WebPConvert\\Helpers\\Sanitize' => $vendorDir . '/rosell-dk/webp-convert/src/Helpers/Sanitize.php',
     'WebPConvert\\Loggers\\BaseLogger' => $vendorDir . '/rosell-dk/webp-convert/src/Loggers/BaseLogger.php',
     'WebPConvert\\Loggers\\BufferLogger' => $vendorDir . '/rosell-dk/webp-convert/src/Loggers/BufferLogger.php',
     'WebPConvert\\Loggers\\EchoLogger' => $vendorDir . '/rosell-dk/webp-convert/src/Loggers/EchoLogger.php',
