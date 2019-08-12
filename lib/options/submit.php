@@ -164,7 +164,7 @@ function webpexpress_getSanitizedWhitelist() {
  */
 function webpexpress_getSanitizedConverters() {
     $convertersPosted = (isset($_POST['converters']) ? $_POST['converters'] : '[]');
-    $convertersPosted = json_decode(wp_unslash($convertersPosted), true); // holy moly! - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
+    $convertersPosted = json_decode(wp_unslash($convertersPosted), true); // holy moly! Wordpress automatically adds slashes to the global POST vars- https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
 
     $convertersSanitized = [];
 
