@@ -145,7 +145,12 @@ class Convert
             // Check "filename"
             $checking = '"filename" argument';
             Validate::postHasKey('filename');
-            $filename = sanitize_text_field($_POST['filename']);
+
+            $filename = sanitize_text_field(stripslashes($_POST['filename']));
+
+            // holy moly! Wordpress automatically adds slashes to the global POST vars - https://stackoverflow.com/questions/2496455/why-are-post-variables-getting-escaped-in-php
+            $filename = wp_unslash($_POST['filename']);
+
             //$filename = SanityCheck::absPathExistsAndIsFileInDocRoot($filename);
             // PS: No need to check mime version as webp-convert does that.
 
