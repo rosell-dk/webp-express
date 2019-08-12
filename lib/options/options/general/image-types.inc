@@ -33,6 +33,7 @@ $imageTypes = $config['image-types'];
 echo '<select name="image-types" id="image_types">';
 echo '<option value="0"' . ($imageTypes == 0 ? ' selected' : '') . '>None! (disable)</option>';
 echo '<option value="1"' . ($imageTypes == 1 ? ' selected' : '') . '>Only jpegs</option>';
+echo '<option value="2"' . ($imageTypes == 2 ? ' selected' : '') . '>Only pngs</option>';
 echo '<option value="3"' . ($imageTypes == 3 ? ' selected' : '') . '>Both jpegs and pngs</option>';
 echo '</select>';
 

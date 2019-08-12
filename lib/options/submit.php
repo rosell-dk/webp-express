@@ -305,6 +305,7 @@ $sanitized = [
     'image-types' => intval(webpexpress_getSanitizedChooseFromSet('image-types', '3', [
         '0',
         '1',
+        '2',
         '3'
     ])),
     'destination-folder' => webpexpress_getSanitizedChooseFromSet('destination-folder', 'separate', [

@@ -19,7 +19,7 @@ png
 //$canDetectQuality = false;
 ?>
 
-<tr>
+<tr id="jpeg_row" class="toggler effect-opacity">
     <th scope="row" colspan=1>
         Jpeg options
         <?php echo helpIcon(
