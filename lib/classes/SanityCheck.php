@@ -8,6 +8,15 @@ use \WebPExpress\SanityException;
 class SanityCheck
 {
 
+    private static function fail($errorMsg, $input)
+    {
+        // sanitize input before calling error_log(), it might be sent to file, mail, syslog etc.
+        error_log($errorMsg . '. input:' . Sanitize::removeNUL($input));
+        //error_log(get_magic_quotes_gpc() ? 'on' :'off');
+        throw new SanityException($errorMsg);   //  . '. Check debug.log for details (and make sure debugging is enabled)'
+    }
+
+
     /**
      *
      *  @param  string  $input  string to test for NUL char
@@ -15,7 +24,7 @@ class SanityCheck
     public static function mustBeString($input, $errorMsg = 'String expected')
     {
         if (gettype($input) !== 'string') {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -30,7 +39,7 @@ class SanityCheck
     {
         self::mustBeString($input);
         if (strpos($input, chr(0)) !== false) {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -43,12 +52,12 @@ class SanityCheck
      *
      *  @param  string  $input  string to test for control characters
      */
-    public static function noControlChars($input)
+    public static function noControlChars($input, $errorMsg = 'Control characters are not allowed')
     {
         self::mustBeString($input);
         self::noNUL($input);
         if (preg_match('#[\x{0}-\x{1f}]#', $input)) {
-            throw new SanityException('Control characters are not allowed');
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -61,7 +70,7 @@ class SanityCheck
     public static function notEmpty($input, $errorMsg = 'Must be non-empty')
     {
         if (empty($input)) {
-            throw new SanityException($input);
+            self::fail($errorMsg, '');
         }
         return $input;
     }
@@ -73,7 +82,7 @@ class SanityCheck
         self::mustBeString($input);
         self::noControlChars($input);
         if (preg_match('#\.\.\/#', $input)) {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -86,7 +95,7 @@ class SanityCheck
         // Prevent stream wrappers ("phar://", "php://" and the like)
         // https://www.php.net/manual/en/wrappers.phar.php
         if (preg_match('#^\\w+://#', Sanitize::removeNUL($input))) {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -119,7 +128,7 @@ class SanityCheck
     {
         self::path($input);
         if (!(strpos($input, $beginsWith) === 0)) {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -133,7 +142,7 @@ class SanityCheck
     {
         // On microsoft we allow [drive letter]:\
         if (!preg_match("#^[A-Z]:\\\\|/#", $input)) {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -169,7 +178,7 @@ class SanityCheck
             if (self::isOnMicrosoft()) {
                 self::absPathMicrosoftStyle($input);
             } else {
-                throw new SanityException($errorMsg);
+                self::fail($errorMsg, $input);
             }
         }
         return $input;
@@ -210,7 +219,8 @@ class SanityCheck
         // Use realpath to expand symbolic links and check if it exists
         $docRootSymLinksExpanded = realpath($docRoot);
         if ($docRootSymLinksExpanded === false) {
-            throw new SanityException('Cannot find document root');
+            $errorMsg = 'Cannot find document root';
+            self::fail($errorMsg, $input);
         }
         $docRootSymLinksExpanded = rtrim($docRootSymLinksExpanded, '/');
         $docRootSymLinksExpanded = self::absPathExists($docRootSymLinksExpanded, 'Document root does not exist!');
@@ -230,7 +240,7 @@ class SanityCheck
     {
         self::absPath($input);
         if (@!file_exists($input)) {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -241,7 +251,7 @@ class SanityCheck
     ) {
         self::absPathExists($input);
         if (!is_dir($input)) {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -252,7 +262,7 @@ class SanityCheck
     ) {
         self::absPathExists($input, 'File does not exist');
         if (@is_dir($input)) {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -278,7 +288,7 @@ class SanityCheck
         self::noNUL($input);
         self::mustBeString($input);
         if (!preg_match($pattern, $input)) {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -289,7 +299,7 @@ class SanityCheck
         self::mustBeString($input);
         self::notEmpty($input);
         if ((strpos($input, '[') !== 0) || (!is_array(json_decode($input)))) {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
@@ -300,7 +310,7 @@ class SanityCheck
         self::mustBeString($input);
         self::notEmpty($input);
         if ((strpos($input, '{') !== 0) || (!is_object(json_decode($input)))) {
-            throw new SanityException($errorMsg);
+            self::fail($errorMsg, $input);
         }
         return $input;
     }
