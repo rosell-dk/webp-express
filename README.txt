@@ -214,11 +214,9 @@ The rules looks for existing webp files by appending ".webp" to the URL. So for 
 The following rules works both when WebP Express are configured to store images in the same folder as the originals ("mingled") and when or in a separate folder. Nginx will first see if there is a corresponding webp in the separate folder and then if there is a corresponding webp in the same folder and finally fall back to calling the conversion script.
 
 `
-# WebP Express rules
-# --------------------
 location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
   add_header Vary Accept;
-  # expires 365d;
+  expires 365d;
   if ($http_accept !~* "webp"){
     break;
   }
@@ -228,7 +226,6 @@ location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
     /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content
     ;
 }
-# ------------------- (WebP Express rules ends here)
 `
 *Beware when copy/pasting: You might get html-encoded characters. Verify that the ampersand before "wp-content" isn't encoded*
 
