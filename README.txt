@@ -28,9 +28,7 @@ The plugin supports different ways of delivering webps to browsers that supports
 4. In combination with *Cache Enabler*, the same as above can be achieved, but with page caching.
 5. You can also deliver webp to *all* browsers and add the [webpjs](http://webpjs.appspot.com) javascript, which provides webp support for browsers that doesn't support webp natively. However, beware that the javascript doesn't support srcset attributes, which is why I haven't added that method to the plugin (yet).
 
-The plugin implements the "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/webp-on-demand/webp-on-demand.md).
-
-It builds on the a bunch of open source libraries:
+The plugin implements the "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/webp-on-demand/webp-on-demand.md) and builds on a bunch of open source libraries (all maintained by me):
 - [WebPConvert](https://github.com/rosell-dk/webp-convert): For converting images to webp
 - [WebP Convert Cloud Service](https://github.com/rosell-dk/webp-convert-cloud-service): For the Web Service functionality
 - [DOM Util for WebP](https://github.com/rosell-dk/dom-util-for-webp): For the Alter HTML functionality
