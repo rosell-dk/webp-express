@@ -123,7 +123,7 @@ class PluginActivate
                 '<a href="' . Paths::getSettingsUrl() . '">configure it here</a>.'
         );
 
-        // While not neccessary, lets get those tests copied right away. Some servers are a bit slow to pick up on changes in the filesystem
+        // While not necessary, lets get those tests copied right away. Some servers are a bit slow to pick up on changes in the filesystem
         CapabilityTest::copyCapabilityTestsToWpContent();
     }
 }
