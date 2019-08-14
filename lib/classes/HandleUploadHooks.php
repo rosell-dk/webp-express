@@ -40,7 +40,7 @@ class HandleUploadHooks
         $imageTypes = $config['image-types'];
         if ($imageTypes & 1) {
             $allowedMimeTypes[] = 'image/jpeg';
-            $allowedMimeTypes[] = 'image/jpg';      /* don't think "image/jpg" is neccessary, but just in case */
+            $allowedMimeTypes[] = 'image/jpg';      /* don't think "image/jpg" is necessary, but just in case */
         }
         if ($imageTypes & 2) {
             $allowedMimeTypes[] = 'image/png';
