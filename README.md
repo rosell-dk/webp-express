@@ -29,7 +29,13 @@ The plugin supports different ways of delivering webps to browsers that supports
 4. In combination with *Cache Enabler*, the same as above can be achieved, but with page caching.
 5. You can also deliver webp to *all* browsers and add the [webpjs](http://webpjs.appspot.com) javascript, which provides webp support for browsers that doesn't support webp natively. However, beware that the javascript doesn't support srcset attributes, which is why I haven't added that method to the plugin (yet).
 
-The plugin builds on [WebPConvert](https://github.com/rosell-dk/webp-convert) and its "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/webp-on-demand/webp-on-demand.md)
+The plugin implements the "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/webp-on-demand/webp-on-demand.md).
+
+It builds on the a bunch of open source libraries:
+- [WebPConvert](https://github.com/rosell-dk/webp-convert): For converting images to webp 
+- [WebP Convert Cloud Service](https://github.com/rosell-dk/webp-convert-cloud-service): For the Web Service functionality
+- [DOM Util for WebP](https://github.com/rosell-dk/dom-util-for-webp): For the Alter HTML functionality
+- [Image MimeType Guesser](https://github.com/rosell-dk/image-mime-type-guesser): For detecting mime types of images.
 
 ### Benefits
 - Much faster load time for images in browsers that supports webp. The converted images are typically *less than half the size* (for jpeg), while maintaining the same quality. Bear in mind that for most web sites, images are responsible for the largest part of the waiting time.
