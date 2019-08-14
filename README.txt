@@ -155,23 +155,21 @@ I am btw considering making an option to have the plugin redirect to the webp in
 
 = I am on NGINX / OpenResty =
 
-### I am on NGINX or OpenResty
-
-#### The simple way (no redirecting rules)
+**The simple way (no redirecting rules**
 The easy solution is simply to use the plugin in "CDN friendly" mode, do a bulk conversion (takes care of converting existing images) and activate the "Convert on upload" option (takes care of converting new images in the media library).
 
 *PRO*: Very easy to set up.
 *CON*: Images in external CSS and images being dynamically added with javascript will not be served as webp.
 *CON*: New new theme images will not be converted until you run a new Bulk conversion
 
-#### The advanced way (creating NGINX redirecting rules)
+**The advanced way (creating NGINX redirecting rules)**
 Creating NGINX rules requires manually inserting redirection rules in the NGINX configuration file (nginx.conf or the configuration file for the site, found in `/etc/nginx/sites-available`). If you do not have access to do that, you will have to settle with the "simple way" described above.
 
 There are two different approaches to achieve the redirections. The one that I recommend is based on a *try_files* directive. If that doesn't work for you, you can try the alternative rules that are based on the *rewrite* directive. The rules are described in the next couple of sections.
 
 For multisite on NGINX, read [here](https://github.com/rosell-dk/webp-express/issues/8)
 
-#### Recommended rules (using "try_files")
+**Recommended rules (using "try_files")**
 
 __Preparational step:__
 The rules looks for existing webp files by appending ".webp" to the URL. So for this to work, you must configure *WebP Express* to store the converted files like that by setting *General > File extension* to *Append ".webp"*
@@ -199,7 +197,7 @@ location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
 location ~* ^/?wp-content/.*\.(png|jpe?g)\.webp$ {
     try_files
       $uri
-      /wp-content/plugins/webp-express/wod/webp-realizer.php?wp-content=wp-content&$args
+      /wp-content/plugins/webp-express/wod/webp-realizer.php?wp-content=wp-content
       ;
 }
 &#35; ------------------- (WebP Express rules ends here)
@@ -227,7 +225,7 @@ If you still cannot get it to work, you can instead try the alternative rules be
 
 Credits: These rules are builds upon [Eugene Lazutkins solution](http://www.lazutkin.com/blog/2014/02/23/serve-files-with-nginx-conditionally/).
 
-#### Alternative rules (using "rewrite")
+**Alternative rules (using "rewrite")**
 
 In case the recommended rules does not work for you, you can try these alternative rules.
 
