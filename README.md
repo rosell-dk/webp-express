@@ -17,7 +17,7 @@ Security issues has been found and fixed. I urge you to upgrade to the latest re
 
 
 ### The image converter
-The plugin uses the [WebP Convert](https://github.com/rosell-dk/webp-convert) library to convert images to webp. *WebP Convert* is able to convert images using multiple methods. There are the "local" conversion methods: `cwebp`, `gd`, `imagick`. If none of these works on your host, there are the cloud alternatives: `ewww` (paid) or connecting to a Wordpress site where you got WebP Express installed and you enabled the "web service" functionality.
+The plugin uses the [WebP Convert](https://github.com/rosell-dk/webp-convert) library to convert images to webp. *WebP Convert* is able to convert images using multiple methods. There are the "local" conversion methods: `imagick`, `cwebp`, `vips`, `gd`. If none of these works on your host, there are the cloud alternatives: `ewww` (paid) or connecting to a Wordpress site where you got WebP Express installed and you enabled the "web service" functionality.
 
 ### The "Serving webp to browsers that supports it" part.
 
@@ -27,7 +27,7 @@ The plugin supports different ways of delivering webps to browsers that supports
 2. By altering the HTML, replacing image tags with *picture* tags. Missing webps are auto generated upon visit.
 3. By altering the HTML, replacing image URLs so all points to webp. The replacements only being made for browsers that supports webp. Again, missing webps are auto generated upon visit.
 4. In combination with *Cache Enabler*, the same as above can be achieved, but with page caching.
-5. You can also deliver webp to *all* browsers and add the [webpjs](http://webpjs.appspot.com) javascript, which provides webp support for browsers that doesn't support webp natively. You currently have to add the javascript yourself, but I expect to add an option for it in the next release.
+5. You can also deliver webp to *all* browsers and add the [webpjs](http://webpjs.appspot.com) javascript, which provides webp support for browsers that doesn't support webp natively. However, beware that the javascript doesn't support srcset attributes, which is why I haven't added that method to the plugin (yet).
 
 The plugin builds on [WebPConvert](https://github.com/rosell-dk/webp-convert) and its "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/webp-on-demand/webp-on-demand.md)
 
@@ -69,7 +69,7 @@ Here you have all options available.
 
 
 #### Conversion methods
-WebP Express has a bunch of methods available for converting images: Executing cwebp binary, Gd extension, Imagick extension, ewww cloud converter and remote WebP express. Each requires *something*. In many cases, one of the conversion methods will be available. You can quickly identify which converters are working - there is a green icon next to them. Hovering conversion methods that are not working will show you what is wrong.
+WebP Express has a bunch of methods available for converting images: Executing cwebp binary, Gd extension, Imagick extension, Vips extension, ewww cloud converter and remote WebP express etc. Each requires *something*. In many cases, one of the conversion methods will be available. You can quickly identify which converters are working - there is a green icon next to them. Hovering conversion methods that are not working will show you what is wrong.
 
 In case no conversion methods are working out of the box, you have several options:
 - You can install this plugin on another website, which supports a local conversion method and connect to that using the "Remote WebP Express" conversion method

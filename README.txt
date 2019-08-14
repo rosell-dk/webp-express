@@ -20,7 +20,7 @@ Security issues has recently been found and fixed. I urge you to upgrade to the 
 
 
 ### The image converter
-The plugin uses the [WebP Convert](https://github.com/rosell-dk/webp-convert) library to convert images to webp. *WebP Convert* is able to convert images using multiple methods. There are the "local" conversion methods: `cwebp`, `gd`, `imagick`. If none of these works on your host, there are the cloud alternatives: `ewww` (paid) or connecting to a Wordpress site where you got WebP Express installed and you enabled the "web service" functionality.
+The plugin uses the [WebP Convert](https://github.com/rosell-dk/webp-convert) library to convert images to webp. *WebP Convert* is able to convert images using multiple methods. There are the "local" conversion methods: `imagick`, `cwebp`, `vips`, `gd`. If none of these works on your host, there are the cloud alternatives: `ewww` (paid) or connecting to a Wordpress site where you got WebP Express installed and you enabled the "web service" functionality.
 
 ### The "Serving webp to browsers that supports it" part.
 
@@ -30,7 +30,7 @@ The plugin supports different ways of delivering webps to browsers that supports
 2. By altering the HTML, replacing image tags with *picture* tags. Missing webps are auto generated upon visit.
 3. By altering the HTML, replacing image URLs so all points to webp. The replacements only being made for browsers that supports webp. Again, missing webps are auto generated upon visit.
 4. In combination with *Cache Enabler*, the same as above can be achieved, but with page caching.
-5. You can also deliver webp to *all* browsers and add the [webpjs](http://webpjs.appspot.com) javascript, which provides webp support for browsers that doesn't support webp natively. You currently have to add the javascript yourself, but I expect to add an option for it in the next release.
+5. You can also deliver webp to *all* browsers and add the [webpjs](http://webpjs.appspot.com) javascript, which provides webp support for browsers that doesn't support webp natively. However, beware that the javascript doesn't support srcset attributes, which is why I haven't added that method to the plugin (yet).
 
 The plugin builds on [WebPConvert](https://github.com/rosell-dk/webp-convert) and its "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/webp-on-demand/webp-on-demand.md)
 
@@ -153,9 +153,9 @@ Easy enough. Browsers looks at the *content type* header rather than the URL to 
 
 I am btw considering making an option to have the plugin redirect to the webp instead of serving immediately. That would remove the apparent mismatch between file extension and content type header. However, the cost of doing that will be an extra request for each image, which means extra time and worse performance. I believe you'd be ill advised to use that option, so I guess I will not implement it. But perhaps you have good reasons to use it? If you do, please let me know!
 
-= I am on NGINX / OpenResty =
+= I am on NGINX or OpenResty =
 
-**The simple way (no redirecting rules**
+**The simple way (no redirecting rules)**
 The easy solution is simply to use the plugin in "CDN friendly" mode, do a bulk conversion (takes care of converting existing images) and activate the "Convert on upload" option (takes care of converting new images in the media library).
 
 *PRO*: Very easy to set up.
