@@ -194,7 +194,7 @@ location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
 location ~* ^/?wp-content/.*\.(png|jpe?g)\.webp$ {
     try_files
       $uri
-      /wp-content/plugins/webp-express/wod/webp-realizer.php?wp-content=wp-content&$args
+      /wp-content/plugins/webp-express/wod/webp-realizer.php?wp-content=wp-content
       ;
 }
 # ------------------- (WebP Express rules ends here)
