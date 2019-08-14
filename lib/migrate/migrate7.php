@@ -36,7 +36,7 @@ function webpexpress_migrate7() {
     if (Config::saveConfigurationFileAndWodOptions($config)) {
 
         $msg = 'Successfully migrated <i>WebP Express</i> options for 0.12. ';
-        // The webp realizer rules where errornous, so recreate rules, if neccessary. (see issue #195)
+        // The webp realizer rules where errornous, so recreate rules, if necessary. (see issue #195)
 
         if (($config['enable-redirection-to-webp-realizer']) && ($config['destination-folder'] != 'mingled')) {
             HTAccess::saveRules($config);

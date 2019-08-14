@@ -98,7 +98,7 @@ if (($config['operation-mode'] == 'cdn-friendly') && !$config['alter-html']['ena
         if ($webpEnabled) {
             Messenger::printMessage(
                 'info',
-                    'You should consider enabling Alter HTML. This is not neccessary, as you have <i>Cache Enabler</i> enabled, which alters HTML. ' .
+                    'You should consider enabling Alter HTML. This is not necessary, as you have <i>Cache Enabler</i> enabled, which alters HTML. ' .
                     'However, it is a good idea because currently <i>Cache Enabler</i> does not replace as many URLs as WebP Express (ie ' .
                     'background images in inline styles)'
             );
