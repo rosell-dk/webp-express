@@ -57,13 +57,6 @@ class Paths
         return rtrim($dir, '/');
     }
 
-    // ------------ Document Root -------------
-
-    public static function getDocumentRootAbs()
-    {
-        return self::getAbsDir($_SERVER["DOCUMENT_ROOT"]);
-    }
-
     // ------------ Home Dir -------------
 
     public static function getHomeDirAbs()
