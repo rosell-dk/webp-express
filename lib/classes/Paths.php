@@ -29,10 +29,12 @@ class Paths
     }
 
     /**
-     *  Return relative dir - relative to realpath(document root)
+     *  Return relative dir (relative to document root)
      */
     public static function getRelDir($dir)
     {
+        //return PathHelper::getRelDir(self::getHomeDirAbs(), $dir);
+
         return PathHelper::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), $dir);
     }
 
@@ -59,6 +61,8 @@ class Paths
 
     // ------------ Home Dir -------------
 
+    // PS: Home dir is not the same as index dir.
+    // For example, if Wordpress folder has been moved (method 2), the home dir could be below.
     public static function getHomeDirAbs()
     {
         if (!function_exists('get_home_path')) {
@@ -72,12 +76,23 @@ class Paths
         return self::getRelDir(self::getHomeDirAbs());
     }
 
-    // ------------ Index Dir  -------------
-    // (The Wordpress installation dir)
+    // ------------ Index Dir  (WP root dir) -------------
+    // (The Wordpress installation dir- where index.php and wp-load.php resides)
 
     public static function getIndexDirAbs()
     {
-        return self::getAbsDir(ABSPATH);
+        // We used to return self::getAbsDir(ABSPATH), which used realpath.
+        // It has been changed now, as it seems we do not need realpath for ABSPATH, as it is defined
+        // (in wp-load.php) as dirname(__FILE__) . "/" and according to this link, __FILE__ returns resolved paths:
+        // https://stackoverflow.com/questions/3221771/how-do-you-get-php-symlinks-and-file-to-work-together-nicely
+        // AND a user reported an open_basedir restriction problem thrown by realpath($_SERVER['DOCUMENT_ROOT']),
+        // due to symlinking and opendir restriction (see #322)
+
+        return rtrim(ABSPATH, '/');
+
+        // TODO: read up on this, regarding realpath:
+        // https://github.com/twigphp/Twig/issues/2707
+
     }
 
     public static function getIndexDirRel()
