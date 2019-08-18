@@ -423,17 +423,6 @@ APACHE
         return self::getHomeUrl() . '/webp-express-web-service';
     }
 
-    /**
-     *  Calculate path to existing image, excluding
-     *  (relative to document root)
-     *  Ie: "/webp-express-test/wordpress/wp-content/webp-express/webp-images/webp-express-test/wordpress/"
-     *  This is needed for the .htaccess
-     */
-    public static function getPathToExisting()
-    {
-        return self::getCacheDirRel() . '/doc-root/' . self::getHomeDirRel();
-    }
-
     public static function getUrlsAndPathsForTheJavascript()
     {
         return [

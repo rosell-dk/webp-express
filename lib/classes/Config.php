@@ -447,7 +447,6 @@ class Config
     public static function saveConfigurationFile($config)
     {
         $config['paths-used-in-htaccess'] = [
-            'existing' => Paths::getPathToExisting(),
             'wod-url-path' => Paths::getWodUrlPath(),
             'config-dir-rel' => Paths::getConfigDirRel()
         ];

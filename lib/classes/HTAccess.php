@@ -476,7 +476,6 @@ class HTAccess
         }
 
         $pathsGoingToBeUsedInHtaccess = [
-            'existing' => Paths::getPathToExisting(),
             'wod-url-path' => Paths::getWodUrlPath(),
             'config-dir-rel' => Paths::getConfigDirRel()
         ];
