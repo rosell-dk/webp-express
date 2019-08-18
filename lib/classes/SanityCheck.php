@@ -268,6 +268,7 @@ class SanityCheck
         self::fail($errorMsg, $input);
     }
 
+    /*
     public static function sourcePath($input, $errorMsg = 'The source path is outside allowed roots. It is only allowed to convert images that resides in: home dir, content path, upload dir and plugin dir.')
     {
         $validPaths = [
@@ -292,7 +293,7 @@ class SanityCheck
             //Paths::getWebPExpressContentDirRel() . '/webp-images'
         ];
         return self::filePathWithinOneOfTheseRoots($input, $validPaths, $errorMsg);
-    }
+    }*/
 
 
     /**
@@ -344,7 +345,7 @@ class SanityCheck
         $input,
         $errorMsg = 'Path points to a file (it should point to a directory)'
     ) {
-        self::absPathExists($input);
+        self::absPathExists($input, 'Directory does not exist or is outside restricted basedir');
         if (!is_dir($input)) {
             self::fail($errorMsg, $input);
         }
@@ -355,7 +356,7 @@ class SanityCheck
         $input,
         $errorMsg = 'Path points to a directory (it should not do that)'
     ) {
-        self::absPathExists($input, 'File does not exist');
+        self::absPathExists($input, 'File does not exist or is outside restricted basedir');
         if (@is_dir($input)) {
             self::fail($errorMsg, $input);
         }
