@@ -100,12 +100,11 @@ class SanityCheck
         return $input;
     }
 
-    public static function path($input)
+    public static function pathDirectoryTraversalAllowed($input)
     {
         self::notEmpty($input);
         self::mustBeString($input);
         self::noControlChars($input);
-        self::noDirectoryTraversal($input);
         self::noStreamWrappers($input);
 
         // PS: The following sanitize has no effect, as we have just tested that there are no NUL and
@@ -117,14 +116,24 @@ class SanityCheck
 
     public static function pathWithoutDirectoryTraversal($input)
     {
-        return self::path($input);
+        self::pathDirectoryTraversalAllowed($input);
+        self::noDirectoryTraversal($input);
+        $input = Sanitize::path($input);
+
+        return $input;
     }
+
+    public static function path($input)
+    {
+        return self::pathWithoutDirectoryTraversal($input);
+    }
+
 
     /**
      *  Beware: This does not take symlinks into account.
      *  I should make one that does. Until then, you should probably not call this method from outside this class
      */
-    public static function pathBeginsWith($input, $beginsWith, $errorMsg = 'Path is outside allowed path')
+    private static function pathBeginsWith($input, $beginsWith, $errorMsg = 'Path is outside allowed path')
     {
         self::path($input);
         if (!(strpos($input, $beginsWith) === 0)) {
@@ -133,12 +142,12 @@ class SanityCheck
         return $input;
     }
 
-    public static function pathBeginsWithSymLinksExpanded($input, $beginsWith, $errorMsg = 'Path is outside allowed path') {
+    private static function pathBeginsWithSymLinksExpanded($input, $beginsWith, $errorMsg = 'Path is outside allowed path') {
         $closestExistingFolder = self::findClosestExistingFolderSymLinksExpanded($input);
         self::pathBeginsWith($closestExistingFolder, $beginsWith, $errorMsg);
     }
 
-    public static function absPathMicrosoftStyle($input, $errorMsg = 'Not an fully qualified Windows path')
+    private static function absPathMicrosoftStyle($input, $errorMsg = 'Not an fully qualified Windows path')
     {
         // On microsoft we allow [drive letter]:\
         if (!preg_match("#^[A-Z]:\\\\|/#", $input)) {
@@ -191,8 +200,10 @@ class SanityCheck
 
         $levelsUp = 1;
         while (true) {
-            $dir = dirname($input, $levelsUp);
-            $realPathResult = realpath($dir);
+            // We suppress warning because we are aware that we might get a
+            // open_basedir restriction warning.
+            $dir = @dirname($input, $levelsUp);
+            $realPathResult = @realpath($dir);
             if ($realPathResult !== false) {
                 return $realPathResult;
             }
@@ -203,8 +214,92 @@ class SanityCheck
         }
     }
 
+    public static function absPathInOneOfTheseRoots()
+    {
+
+    }
+
+
+    /**
+     * Look if filepath is within a dir path.
+     * Also tries expanding symlinks
+     *
+     * @param  string  $filePath   Path to file. It may be non-existing.
+     * @param  string  $dirPath    Path to dir. It must exist in order for symlinks to be expanded.
+     */
+    private static function isFilePathWithinDirPath($filePath, $dirPath)
+    {
+        // sanity-check input
+        self::absPathExistsAndIsFile($filePath);
+
+        // sanity-check dir
+        self::absPathExistsAndIsDir($dirPath);
+
+        // See if path begins with dir
+        if (!(strpos($filePath, $dirPath . '/') === 0)) {
+
+            // Also try with symlinks expanded
+            $closestExistingDirOfFile = self::findClosestExistingFolderSymLinksExpanded($filePath);
+            if (!(strpos($filePath, $closestExistingDirOfFile . '/') === 0)) {
+
+                // Nope, it is not there either.
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Look if filepath is within multiple dir paths.
+     * Also tries expanding symlinks
+     *
+     * @param  string  $input    Path to file. It may be non-existing.
+     * @param  array   $roots    Allowed root dirs. Note that they must exist in order for symlinks to be expanded.
+     */
+    public static function filePathWithinOneOfTheseRoots($input, $roots, $errorMsg = 'The path is outside allowed roots.')
+    {
+        self::absPath($input);
+
+        foreach ($roots as $root) {
+            if (self::isFilePathWithinDirPath($input, $root)) {
+                return $input;
+            }
+        }
+        self::fail($errorMsg, $input);
+    }
+
+    public static function sourcePath($input, $errorMsg = 'The source path is outside allowed roots. It is only allowed to convert images that resides in: home dir, content path, upload dir and plugin dir.')
+    {
+        $validPaths = [
+            Paths::getHomeDirAbs(),
+            Paths::getIndexDirAbs(),
+            Paths::getContentDirAbs(),
+            Paths::getUploadDirAbs(),
+            Paths::getPluginDirAbs()
+        ];
+        return self::filePathWithinOneOfTheseRoots($input, $validPaths, $errorMsg);
+    }
+
+    public static function destinationPath($input, $errorMsg = 'The destination path is outside allowed roots. The webps may only be stored in the upload folder and in the folder that WebP Express stores converted images in')
+    {
+        self::absPath($input);
+
+        // Webp Express only store converted images in upload folder and in its "webp-images" folder
+        // Check that destination path is within one of these.
+        $validPaths = [
+            '/var/www/webp-express-tests/we1'
+            //Paths::getUploadDirAbs(),
+            //Paths::getWebPExpressContentDirRel() . '/webp-images'
+        ];
+        return self::filePathWithinOneOfTheseRoots($input, $validPaths, $errorMsg);
+    }
+
+
     /**
      * Test that absolute path is in document root.
+     *
+     * TODO: Instead of this method, we shoud check
+     *
      *
      * It is acceptable if the absolute path does not exist
      */
@@ -217,7 +312,7 @@ class SanityCheck
         $docRoot = self::absPathExistsAndIsDir($docRoot);
 
         // Use realpath to expand symbolic links and check if it exists
-        $docRootSymLinksExpanded = realpath($docRoot);
+        $docRootSymLinksExpanded = @realpath($docRoot);
         if ($docRootSymLinksExpanded === false) {
             $errorMsg = 'Cannot find document root';
             self::fail($errorMsg, $input);
@@ -236,7 +331,7 @@ class SanityCheck
         return $input;
     }
 
-    public static function absPathExists($input, $errorMsg = 'Path does not exist')
+    public static function absPathExists($input, $errorMsg = 'Path does not exist or it is outside restricted basedir')
     {
         self::absPath($input);
         if (@!file_exists($input)) {
