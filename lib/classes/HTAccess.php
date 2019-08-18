@@ -240,7 +240,8 @@ class HTAccess
                 $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
 
                 if ($config['destination-extension'] == 'append') {
-                    $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp -f\n";
+                    $rules .= "  RewriteCond %{REQUEST_FILENAME}.webp -f\n";
+                    //$rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.$2.webp -f\n";
                     $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . $fileExt . ")$ $1.$2.webp [T=image/webp,E=EXISTING:1," . ($addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
                 } else {
                     $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $htaccessDirRel . "/$1.webp -f\n";
