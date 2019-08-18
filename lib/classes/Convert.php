@@ -32,8 +32,8 @@ class Convert
         try {
             // Check source
             // ---------------
-            $checking = 'filename!';
-            $filename = $source;
+            $checking = 'source path';
+            $source = SanityCheck::absPathExistsAndIsFile();
             //$filename = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
             // PS: No need to check mime type as the WebPConvert library does that (it only accepts image/jpeg and image/png)
 
