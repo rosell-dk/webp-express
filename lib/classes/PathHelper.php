@@ -5,6 +5,12 @@ namespace WebPExpress;
 class PathHelper
 {
 
+    public static function frontslasher($str)
+    {
+        // TODO: replace backslash with frontslash
+        return $str;
+    }
+
     /**
      *  Replace double slash with single slash. ie '/var//www/' => '/var/www/'
      *  This allows you to lazely concatenate paths with '/' and then call this method to clean up afterwards.
