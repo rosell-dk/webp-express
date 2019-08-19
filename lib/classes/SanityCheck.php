@@ -336,6 +336,9 @@ class SanityCheck
     {
         self::absPath($input);
         if (@!file_exists($input)) {
+            // TODO: We might be able to detect if the problem is that the path does not exist or if the problem
+            // is that it is outside restricted basedir.
+            // ie by creating an error handler or inspecting the php ini "open_basedir" setting
             self::fail($errorMsg, $input);
         }
         return $input;
