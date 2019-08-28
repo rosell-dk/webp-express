@@ -135,13 +135,14 @@ class AlterHtmlHelper
      *
      *  returns false
      *  - if no source file found in that base
-     *  - or webp file isn't there and the `only-for-webps-that-exists` option is set
+     *  - or source file is found but webp file isn't there and the `only-for-webps-that-exists` option is set
      *
-     *  @param $imageUrl    (ie http://example.com/wp-content/image.jpg)
-     *  @param $baseUrl     (ie http://example.com/wp-content)
-     *  @param $baseDir     (ie /var/www/example.com/wp-content)
+     *  @param  string  $sourceUrl   Url of source image (ie http://example.com/wp-content/image.jpg)
+     *  @param  string  $rootId      Id (created in Config::updateAutoloadedOptions). Ie "uploads", "content" or any image root id
+     *  @param  string  $baseUrl     Base url of source image (ie http://example.com/wp-content)
+     *  @param  string  $baseDir     Base dir of source image (ie /var/www/example.com/wp-content)
      */
-    private static function getWebPUrlInBase($sourceUrl, $baseUrl, $baseDir)
+    private static function getWebPUrlInBase($sourceUrl, $rootId, $baseUrl, $baseDir)
     {
         //error_log('getWebPUrlInBase:' . $sourceUrl . ':' . $baseUrl . ':' . $baseDir);
 
@@ -176,13 +177,55 @@ class AlterHtmlHelper
         } else {
             // separate (images that are not in upload are always put in separate)
 
-            $relPathFromDocRoot = '/webp-express/webp-images/doc-root/';
-            $relPathFromDocRoot .= PathHelper::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), $baseDir) . $srcPathRel;
+            if ((self::$options['destination-structure'] == 'doc-root')) {
+                $relPathFromDocRoot = '/webp-express/webp-images/doc-root/';
+                $relPathFromDocRoot .= PathHelper::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), realpath($baseDir)) . $srcPathRel;
 
-            list ($contentDirAbs, $contentUrl) = self::$options['bases']['content'];
+                // hm, we dont need $contentDirAbs and $contentUrl, do we? They are passed to this function as
+                // $baseDir and $baseUrl aren't they?
+                list($contentDirAbs, $contentUrl) = self::$options['bases']['content'];
 
-            $destPathAbs = $contentDirAbs . $relPathFromDocRoot . '.webp';
-            $destUrl = $contentUrl . $relPathFromDocRoot . '.webp';
+                // PS: we always append ".webp" in separate dir
+                $destPathAbs = $contentDirAbs . $relPathFromDocRoot . '.webp';
+                $destUrl = $contentUrl . $relPathFromDocRoot . '.webp';
+
+            } else {
+                $destinationRoot = Paths::destinationRoot(
+                    $rootId,
+                    self::$options['destination-folder'],
+                    self::$options['destination-structure']
+                );
+                //error_log('look:' . $destinationRoot['url']);
+
+                $relPathFromImageRootToSource = PathHelper::getRelDir(
+                    realpath(Paths::getAbsDirById($rootId)),
+                    realpath($srcPathAbs)
+                );
+                $relPathFromImageRootToDest = ConvertHelperIndependent::appendOrSetExtension(
+                    $relPathFromImageRootToSource,
+                    self::$options['destination-extension'],
+                    ($rootId == 'uploads')
+                );
+                $result['destination-url'] = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
+
+                $destPathAbs = $destinationRoot['abs-path'] . '/' . $relPathFromImageRootToDest;
+                $destUrl = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
+
+                /*
+                $relPathToDestinationFromBaseDir = '/webp-express/webp-images/doc-root/';
+                $relPathFromBaseDir .= PathHelper::getRelDir(
+                    realpath($_SERVER['DOCUMENT_ROOT']),
+                    realpath($baseDir)
+                ) . $srcPathRel;
+
+                foreach ()
+                list($contentDirAbs, $contentUrl) = self::$options['bases']['content'];
+
+                $destPathAbs = $baseDir . $relPathFromDocRoot . '.webp';
+                $destUrl = $contentUrl . $relPathFromDocRoot . '.webp';
+                */
+
+            }
         }
 
         $webpMustExist = self::$options['only-for-webps-that-exists'];
@@ -243,7 +286,7 @@ class AlterHtmlHelper
                 $baseDir = Paths::getUploadDirAbs();
             }
 
-            $result = self::getWebPUrlInBase($sourceUrl, $baseUrl, $baseDir);
+            $result = self::getWebPUrlInBase($sourceUrl, $id, $baseUrl, $baseDir);
             if ($result !== false) {
                 return $result;
             }

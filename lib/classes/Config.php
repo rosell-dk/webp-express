@@ -61,6 +61,7 @@ class Config
             'image-types' => 3,
             'destination-folder' => 'separate',
             'destination-extension' => 'append',
+            'destination-structure' => 'doc-root',  /* can be "doc-root" or "image-roots"
             'cache-control' => 'no-header',     /* can be "no-header", "set" or "custom" */
             'cache-control-custom' => 'public, max-age=31536000, stale-while-revalidate=604800, stale-if-error=604800',
             'cache-control-max-age' => 'one-week',
@@ -425,16 +426,33 @@ class Config
         unset($obj['enabled']);
         $obj['destination-folder'] = $config['destination-folder'];
         $obj['destination-extension'] = $config['destination-extension'];
+        $obj['destination-structure'] = $config['destination-structure'];
+
+        // TODO!
+        // Instead of "bases", use image root ids.
+        // Its a numeric array and there is no id called "content"
+
         $obj['bases'] = [
             'uploads' => [
                 Paths::getUploadDirAbs(),
                 Paths::getUploadUrl()
             ],
-            'content' => [
+        ];
+
+        if ($obj['destination-structure'] == 'doc-root') {
+            $obj['bases']['content'] = [
                 Paths::getContentDirAbs(),
                 Paths::getContentUrl()
-            ],
-        ];
+            ];
+        } else {
+            foreach (Paths::getImageRootIds() as $rootId) {
+                $obj['bases'][$rootId] = [
+                    Paths::getAbsDirById($rootId),
+                    Paths::getUrlById($rootId)
+                ];
+            }
+        }
+
         $obj['image-types'] = $config['image-types'];   // 0=none,1=jpg, 2=png, 3=both
 
         Option::updateOption(
@@ -448,7 +466,6 @@ class Config
     {
         $config['paths-used-in-htaccess'] = [
             'wod-url-path' => Paths::getWodUrlPath(),
-            'config-dir-rel' => Paths::getConfigDirRel()
         ];
 
         if (Paths::createConfigDirIfMissing()) {
@@ -608,9 +625,7 @@ class Config
             'destination-folder' => $config['destination-folder'],
             'forward-query-string' => $config['forward-query-string'],
             //'method-for-passing-source' => $config['method-for-passing-source'],
-            'paths' => [
-                'uploadDirRel' => Paths::getUploadDirRel()
-            ],
+            'image-roots' => Paths::getImageRoots(),
             'success-response' => $config['success-response'],
         ];
 

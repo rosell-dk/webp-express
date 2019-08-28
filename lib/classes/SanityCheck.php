@@ -2,6 +2,7 @@
 
 namespace WebPExpress;
 
+use \WebPExpress\PathHelper;
 use \WebPExpress\Sanitize;
 use \WebPExpress\SanityException;
 
@@ -143,7 +144,7 @@ class SanityCheck
     }
 
     private static function pathBeginsWithSymLinksExpanded($input, $beginsWith, $errorMsg = 'Path is outside allowed path') {
-        $closestExistingFolder = self::findClosestExistingFolderSymLinksExpanded($input);
+        $closestExistingFolder = PathHelper::findClosestExistingFolderSymLinksExpanded($input);
         self::pathBeginsWith($closestExistingFolder, $beginsWith, $errorMsg);
     }
 
@@ -193,26 +194,7 @@ class SanityCheck
         return $input;
     }
 
-    private static function findClosestExistingFolderSymLinksExpanded($input) {
-        // Get closest existing folder with symlinks expanded.
-        // this is a bit complicated, as the input path may not yet exist.
-        // in case of realpath failure, we must try with one folder pealed off at the time
 
-        $levelsUp = 1;
-        while (true) {
-            // We suppress warning because we are aware that we might get a
-            // open_basedir restriction warning.
-            $dir = @dirname($input, $levelsUp);
-            $realPathResult = @realpath($dir);
-            if ($realPathResult !== false) {
-                return $realPathResult;
-            }
-            if (($dir == '/') || (strlen($dir) < 4)) {
-                return $dir;
-            }
-            $levelsUp++;
-        }
-    }
 
     public static function absPathInOneOfTheseRoots()
     {
@@ -227,26 +209,15 @@ class SanityCheck
      * @param  string  $filePath   Path to file. It may be non-existing.
      * @param  string  $dirPath    Path to dir. It must exist in order for symlinks to be expanded.
      */
-    private static function isFilePathWithinDirPath($filePath, $dirPath)
+    private static function isFilePathWithinExistingDirPath($filePath, $dirPath)
     {
-        // sanity-check input
-        self::absPathExistsAndIsFile($filePath);
+        // sanity-check input. It must be a valid absolute filepath. It is allowed to be non-existing
+        self::absPath($filePath);
 
-        // sanity-check dir
+        // sanity-check dir and that it exists.
         self::absPathExistsAndIsDir($dirPath);
 
-        // See if path begins with dir
-        if (!(strpos($filePath, $dirPath . '/') === 0)) {
-
-            // Also try with symlinks expanded
-            $closestExistingDirOfFile = self::findClosestExistingFolderSymLinksExpanded($filePath);
-            if (!(strpos($filePath, $closestExistingDirOfFile . '/') === 0)) {
-
-                // Nope, it is not there either.
-                return false;
-            }
-        }
-        return true;
+        return PathHelper::isFilePathWithinDirPath($filePath, $dirPath);
     }
 
     /**
@@ -261,7 +232,7 @@ class SanityCheck
         self::absPath($input);
 
         foreach ($roots as $root) {
-            if (self::isFilePathWithinDirPath($input, $root)) {
+            if (self::isFilePathWithinExistingDirPath($input, $root)) {
                 return $input;
             }
         }

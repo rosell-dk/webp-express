@@ -5,6 +5,7 @@ namespace WebPExpress;
 use \WebPExpress\ConvertHelperIndependent;
 use \WebPExpress\Config;
 use \WebPExpress\ConvertersHelper;
+use \WebPExpress\ImageRoots;
 use \WebPExpress\SanityCheck;
 use \WebPExpress\SanityException;
 use \WebPExpress\Validate;
@@ -23,7 +24,9 @@ class Convert
             $config['destination-folder'],
             $config['destination-extension'],
             Paths::getWebPExpressContentDirAbs(),
-            Paths::getUploadDirAbs()
+            Paths::getUploadDirAbs(),
+            (($config['destination-structure'] == 'doc-root') && (Paths::canUseDocRootForStructuringCacheDir())),
+            new ImageRoots(Paths::getImageRoots())
         );
     }
 
@@ -33,10 +36,16 @@ class Convert
             // Check source
             // ---------------
             $checking = 'source path';
-            $source = SanityCheck::absPathExistsAndIsFile();
+            $source = SanityCheck::absPathExistsAndIsFile($source);
             //$filename = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
             // PS: No need to check mime type as the WebPConvert library does that (it only accepts image/jpeg and image/png)
 
+            // Check that source is within a valid image root
+            $activeRootIds = Paths::getImageRootIds();  // Currently, root ids cannot be selected, so all root ids are active.
+            $rootId = Paths::findImageRootOfPath($source, $activeRootIds);
+            if ($rootId === false) {
+                throw new Exception('Path of source is not within a valid image root');
+            }
 
             // Check config
             // --------------
@@ -76,22 +85,37 @@ class Convert
             $logDir = SanityCheck::absPathIsInDocRoot(Paths::getWebPExpressContentDirAbs() . '/log');
 
 
-        } catch (SanityException $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
-                'msg' => 'Sanitation check failed for ' . $checking . ': '. $e->getMessage(),
+                'msg' => 'Check failed for ' . $checking . ': '. $e->getMessage(),
                 'log' => '',
             ];
         }
 
         // Done with sanitizing, lets get to work!
         // ---------------------------------------
-
+//return false;
         $result = ConvertHelperIndependent::convert($source, $destination, $convertOptions, $logDir, $converter);
 
         if ($result['success'] === true) {
             $result['filesize-original'] = @filesize($source);
             $result['filesize-webp'] = @filesize($destination);
+            $result['destination-path'] = $destination;
+
+            $rootOfDestination = Paths::destinationRoot($rootId, $config['destination-folder'], $config['destination-structure']);
+
+            $relPathFromImageRootToSource = PathHelper::getRelDir(
+                realpath(Paths::getAbsDirById($rootId)),
+                realpath($source)
+            );
+            $relPathFromImageRootToDest = ConvertHelperIndependent::appendOrSetExtension(
+                $relPathFromImageRootToSource,
+                $config['destination-extension'], 
+                ($rootId == 'uploads')
+            );
+
+            $result['destination-url'] = $rootOfDestination['url'] . '/' . $relPathFromImageRootToDest;
         }
         return $result;
     }
@@ -127,7 +151,9 @@ class Convert
             $destination,
             $config['destination-folder'],
             $config['destination-extension'],
-            Paths::getWebPExpressContentDirAbs()
+            $config['destination-structure'],
+            Paths::getWebPExpressContentDirAbs(),
+            new ImageRoots(Paths::getImageRoots())
         );
     }
 

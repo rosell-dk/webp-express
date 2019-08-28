@@ -28,7 +28,8 @@ class PluginActivate
 
     private static function reactivate()
     {
-        $config = Config::loadConfig();
+        $config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
+
         if ($config === false) {
             Messenger::addMessage(
                 'error',

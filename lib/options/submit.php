@@ -11,11 +11,11 @@ use \WebPExpress\HTAccess;
 use \WebPExpress\Messenger;
 use \WebPExpress\Paths;
 
+// TODO: Move this code to a class
 
 check_admin_referer('webpexpress-save-settings-nonce');
 
 DismissableMessages::dismissMessage('0.14.0/say-hello-to-vips');
-
 
 /*
 --------------------------------

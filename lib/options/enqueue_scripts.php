@@ -2,14 +2,11 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-include_once __DIR__ . '/../classes/Paths.php';
 use \WebPExpress\Paths;
-
-include_once __DIR__ . '/../classes/Config.php';
 use \WebPExpress\Config;
 
-$ver = '6';             // note: Minimum 1
-$jsDir = 'js/0.14.9';   // We change dir when it is critical that no-one gets the cached version (there is a plugin that strips version strings out there...)
+$ver = '2';             // note: Minimum 1
+$jsDir = 'js/0.14.23';   // We change dir when it is critical that no-one gets the cached version (there is a plugin that strips version strings out there...)
 
 if (!function_exists('webp_express_add_inline_script')) {
     function webp_express_add_inline_script($id, $script, $position) {
@@ -76,6 +73,7 @@ if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conv
     /*
     AlterHTMLHelper::getWebPUrlInBase(
         Paths::getPluginUrl() . '/webp-express',    // source url
+        $baseId,
         Paths::getPluginUrl(),                    // base url
         Paths::getPluginDirAbs()                    // base dir
     );
