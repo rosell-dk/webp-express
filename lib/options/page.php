@@ -121,7 +121,11 @@ function helpIcon($text, $customClass = '') {
     if (strlen($text) > 150) {
         if (strlen($text) > 300) {
             if (strlen($text) > 500) {
-                $className = 'widest';
+                if (strlen($text) > 1000) {
+                    $className = 'widest';
+                } else {
+                    $className = 'even-wider';
+                }
             } else {
                 $className = 'wider';
             }

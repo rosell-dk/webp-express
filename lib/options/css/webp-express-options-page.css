@@ -178,8 +178,26 @@
 .help .popup.wider {
     width: 450px;
 }
-.help .popup.widest {
+.help .popup.even-wider {
     width: 600px;
+}
+.help .popup.widest {
+    width: 750px;
+}
+@media (max-width: 1150px) {
+    .help .popup {
+        max-width: 620px;
+    }
+}
+@media (max-width: 900px) {
+    .help .popup {
+        max-width: 560px;
+    }
+}
+@media (max-width: 830px) {
+    .help .popup {
+        max-width: 530px;
+    }
 }
 @media (max-width: 500px) {
     .help .popup {
@@ -586,5 +604,5 @@ ul.with-bullets {
     bottom: 72px;
     position: absolute;
     right: 0;
-    left: 3%;    
+    left: 3%;
 }
