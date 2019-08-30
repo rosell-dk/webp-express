@@ -77,7 +77,6 @@ class ConvertHelperIndependent
      *
      * @return string|false   Returns path to destination corresponding to source, or false on failure
      */
-     // TODO! take ImageRoots object instead, and change all calls
     public static function getDestination(
         $source,
         $destinationFolder,
@@ -377,8 +376,6 @@ class ConvertHelperIndependent
      */
     private static function findSourceMingled($destination, $destinationExt, $destinationStructure)
     {
-        // TODO! Need to work without doc-root too
-
         try {
 
             if ($destinationStructure == 'doc-root') {

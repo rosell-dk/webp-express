@@ -48,7 +48,7 @@ class HTAccessRules
             "# - Image types: " . str_replace('?', '', implode(', ', self::$fileExtensions)) . "\n" .
 
             "#\n# Wordpress/Server configuration:\n" .
-            '# - Document root status: ' . Paths::docRootStatusText() . "\n" .
+            '# - Document root availablity: ' . Paths::docRootStatusText() . "\n" .
 
             "#\n# .htaccess capability test results:\n" .
             "# - mod_header working?: " .
