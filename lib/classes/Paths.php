@@ -416,6 +416,22 @@ APACHE
         return PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed(self::getCacheDirAbs());
     }
 
+    public static function getCacheDirForImageRoot($destinationFolder, $destinationStructure, $imageRootId)
+    {
+        if (($destinationFolder == 'mingled') && ($imageRootId == 'uploads')) {
+            return self::getUploadDirAbs();
+        }
+
+        if ($destinationStructure == 'doc-root') {
+            $relPath = PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed(
+                self::getAbsDirById($imageRootId)
+            );
+            return self::getCacheDirAbs() . '/doc-root/' . $relPath;
+        } else {
+            return self::getCacheDirAbs() . '/' . $imageRootId;
+        }
+    }
+
     public static function createCacheDirIfMissing()
     {
         return self::createDirIfMissing(self::getCacheDirAbs());

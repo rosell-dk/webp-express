@@ -46,18 +46,9 @@ class CacheMover
         FileHelper::chmod_r($dir, $dirPerm, $filePerm, $uid, $gid, '#\.webp$#', ($alsoSetOnDirs ? null : '#^$#'));
     }
 
-    public static function getDestinationFolderForImageRoot($config, $rootId)
+    public static function getDestinationFolderForImageRoot($config, $imageRootId)
     {
-        if (($config['destination-folder'] == 'mingled') && ($rootId == 'uploads')) {
-            return Paths::getUploadDirAbs();
-        }
-
-        if ($config['destination-structure'] == 'doc-root') {
-            $relPath = PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed(Paths::getAbsDirById($rootId));
-            return Paths::getCacheDirAbs() . '/doc-root/' . $relPath;
-        } else {
-            return Paths::getCacheDirAbs() . '/' . $rootId;
-        }
+        return Paths::getCacheDirForImageRoot($config['destination-folder'], $config['destination-structure'], $imageRootId);
     }
 
     /**
