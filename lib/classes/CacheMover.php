@@ -70,7 +70,6 @@ class CacheMover
         }
 
         $changeStructure = ($newConfig['destination-structure'] != $oldConfig['destination-structure']);
-        self::$canUseDocRootForStructuringCacheDir = Paths::canUseDocRootForStructuringCacheDir();
 
         if ($changeStructure) {
             $rootIds = Paths::getImageRootIds();
