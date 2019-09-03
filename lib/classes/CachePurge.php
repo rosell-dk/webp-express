@@ -7,6 +7,8 @@ use \WebPExpress\FileHelper;
 use \WebPExpress\DismissableMessages;
 use \WebPExpress\Paths;
 
+// TODO! Needs to be updated to work with the new "destination-structure" setting
+
 class CachePurge
 {
 
