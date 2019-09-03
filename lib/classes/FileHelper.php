@@ -301,6 +301,33 @@ class FileHelper
         return $success;
     }
 
+    /**
+     *  Remove empty subfolders.
+     *
+     *  Got it here: https://stackoverflow.com/a/1833681/842756
+     *
+     *  @return  boolean  If folder is empty and can be deleted
+     */
+    public static function removeEmptySubFolders($path)
+    {
+        if (!file_exists($path)) {
+            return;
+        }
+        $empty = true;
+        foreach (glob($path . DIRECTORY_SEPARATOR . "*") as $file) {
+            if (is_dir($file)) {
+                if (!self::removeEmptySubFolders($file)) {
+                    $empty=false;
+                }
+            } else {
+                $empty=false;
+            }
+        }
+        if ($empty) {
+            rmdir($path);
+        }
+        return $empty;
+    }
 
     /**
      *  Verify if OS is Windows

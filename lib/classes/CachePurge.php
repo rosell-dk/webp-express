@@ -29,6 +29,7 @@ class CachePurge
         $numFailed = 0;
 
         list($numDeleted, $numFailed) = self::purgeWebPFilesInDir(Paths::getCacheDirAbs(), $filter, $config);
+        FileHelper::removeEmptySubFolders(Paths::getCacheDirAbs());
 
         if ($config['destination-folder'] == 'mingled') {
             list($d, $f) = self::purgeWebPFilesInDir(Paths::getUploadDirAbs(), $filter, $config);
@@ -36,6 +37,7 @@ class CachePurge
             $numDeleted += $d;
             $numFailed += $f;
         }
+
 
         return [
             'delete-count' => $numDeleted,

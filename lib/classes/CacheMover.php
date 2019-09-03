@@ -81,6 +81,7 @@ class CacheMover
         $numFilesFailedMovingTotal = 0;
         foreach ($rootIds as $rootId) {
 
+            $isUploadsMingled = (($newConfig['destination-folder'] == 'mingled') && ($rootId == 'uploads'));
 
             $fromDir = self::getDestinationFolderForImageRoot($oldConfig, $rootId);
             $fromExt = $oldConfig['destination-extension'];
@@ -91,10 +92,13 @@ class CacheMover
             $srcDir = Paths::getAbsDirById($rootId);
 
             list($numFilesMoved, $numFilesFailedMoving) = self::moveRecursively($fromDir, $toDir, $srcDir, $fromExt, $toExt);
+            if (!$isUploadsMingled) {
+                FileHelper::removeEmptySubFolders($fromDir);
+            }
+
             $numFilesMovedTotal += $numFilesMoved;
             $numFilesFailedMovingTotal += $numFilesFailedMoving;
 
-            $isUploadsMingled = (($newConfig['destination-folder'] == 'mingled') && ($rootId == 'uploads'));
             $chmodFixFoldersToo = !$isUploadsMingled;
             self::chmodFixSubDirs($toDir, $chmodFixFoldersToo);
         }
