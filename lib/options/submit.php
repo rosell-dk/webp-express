@@ -9,6 +9,7 @@ use \WebPExpress\ConvertersHelper;
 use \WebPExpress\DismissableMessages;
 use \WebPExpress\HTAccess;
 use \WebPExpress\Messenger;
+use \WebPExpress\PathHelper;
 use \WebPExpress\Paths;
 
 // TODO: Move this code to a class
@@ -316,6 +317,10 @@ $sanitized = [
         'append',
         'set',
     ]),
+    'destination-structure' => webpexpress_getSanitizedChooseFromSet('destination-structure', 'doc-root', [
+        'doc-root',
+        'image-roots',
+    ]),
     'cache-control' => webpexpress_getSanitizedChooseFromSet('cache-control', 'no-header', [
         'no-header',
         'set',
@@ -419,6 +424,9 @@ $sanitized = [
 
 ];
 
+if (!Paths::canUseDocRootForRelPaths()) {
+    $sanitized['destination-structure'] = 'image-roots';
+}
 
 /*
 ------------------------------------------------------
@@ -581,6 +589,7 @@ if ($sanitized['operation-mode'] != 'no-conversion') {
     }
 }
 
+$config['destination-structure'] = $sanitized['destination-structure'];
 
 switch ($sanitized['operation-mode']) {
     case 'varied-image-responses':
@@ -638,6 +647,18 @@ if ($sanitized['force'] || HTAccess::doesRewriteRulesNeedUpdate($config)) {
 }
 
 
+$config['environment-when-config-was-saved'] = [
+    'doc-root-available' => PathHelper::isDocRootAvailable(),
+    'doc-root-resolvable' => PathHelper::isDocRootAvailableAndResolvable(),
+    'doc-root-usable-for-structuring' => Paths::canUseDocRootForRelPaths(),
+    'image-roots' => Paths::getImageRoots(),
+    'document-root' => null,
+];
+
+if (PathHelper::isDocRootAvailable()) {
+    $config['document-root'] = $_SERVER['DOCUMENT_ROOT'];
+}
+
 // SAVE!
 // -----
 $result = Config::saveConfigurationAndHTAccess($config, $sanitized['force']);
@@ -661,18 +682,26 @@ if (!$result['saved-both-config']) {
 
     }
 } else {
-    if (($config['destination-folder'] != $oldConfig['destination-folder']) || ($config['destination-extension'] != $oldConfig['destination-extension'])) {
-        $whatShouldIt = '';
-        if ($config['destination-folder'] == $oldConfig['destination-folder']) {
-            $whatShouldIt = 'renamed';
-            $whatShouldIt2 = 'rename';
+    $changeFolder = ($config['destination-folder'] != $oldConfig['destination-folder']);
+    $changeExtension = ($config['destination-extension'] != $oldConfig['destination-extension']);
+    $changeStructure = ($config['destination-structure'] != $oldConfig['destination-structure']);
+
+    if ($changeFolder || $changeExtension || $changeStructure) {
+
+        $relocate = $changeFolder || $changeStructure;
+        $rename = $changeExtension;
+
+        $actionPastTense = '';
+        if ($rename && $relocate) {
+            $actionPastTense = 'relocated and renamed';
+            $actionPresentTense = 'relocate and rename';
         } else {
-            if ($config['destination-extension'] == $oldConfig['destination-extension']) {
-                $whatShouldIt = 'relocated';
-                $whatShouldIt2 = 'relocate';
+            if ($rename) {
+                $actionPastTense = 'renamed';
+                $actionPresentTense = 'rename';                
             } else {
-                $whatShouldIt = 'relocated and renamed';
-                $whatShouldIt2 = 'relocate and rename';
+                $actionPastTense = 'relocated';
+                $actionPresentTense = 'relocate';
             }
         }
 
@@ -681,25 +710,25 @@ if (!$result['saved-both-config']) {
             if ($numFilesMoved == 0) {
                 Messenger::addMessage(
                     'notice',
-                    'No cached webp files needed to be ' . $whatShouldIt
+                    'No cached webp files needed to be ' . $actionPastTense
                 );
 
             } else {
                 Messenger::addMessage(
                     'success',
-                    'The webp files was ' . $whatShouldIt . ' (' . $whatShouldIt . ' ' . $numFilesMoved . ' images)'
+                    'The webp files was ' . $actionPastTense . ' (' . $actionPastTense . ' ' . $numFilesMoved . ' images)'
                 );
             }
         } else {
             if ($numFilesMoved == 0) {
                 Messenger::addMessage(
                     'warning',
-                    'No webp files could not be ' . $whatShouldIt . ' (failed to ' . $whatShouldIt2 . ' ' . $numFilesFailedMoving . ' images)'
+                    'No webp files could not be ' . $actionPastTense . ' (failed to ' . $actionPresentTense . ' ' . $numFilesFailedMoving . ' images)'
                 );
             } else {
                 Messenger::addMessage(
                     'warning',
-                    'Some webp files could not be ' . $whatShouldIt . ' (failed to ' . $whatShouldIt2 . ' ' . $numFilesFailedMoving . ' images, but successfully ' . $whatShouldIt . ' ' . $numFilesMoved . ' images)'
+                    'Some webp files could not be ' . $actionPastTense . ' (failed to ' . $actionPresentTense . ' ' . $numFilesFailedMoving . ' images, but successfully ' . $actionPastTense . ' ' . $numFilesMoved . ' images)'
                 );
 
             }

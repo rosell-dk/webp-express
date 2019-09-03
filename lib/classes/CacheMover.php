@@ -3,6 +3,7 @@
 namespace WebPExpress;
 
 use \WebPExpress\FileHelper;
+use \WebPExpress\PathHelper;
 use \WebPExpress\Paths;
 
 class CacheMover
@@ -45,15 +46,70 @@ class CacheMover
         FileHelper::chmod_r($dir, $dirPerm, $filePerm, $uid, $gid, '#\.webp$#', ($alsoSetOnDirs ? null : '#^$#'));
     }
 
+    public static function getDestinationFolderForImageRoot($config, $rootId)
+    {
+        if (($config['destination-folder'] == 'mingled') && ($rootId == 'uploads')) {
+            return Paths::getUploadDirAbs();
+        }
+
+        if ($config['destination-structure'] == 'doc-root') {
+            $relPath = PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed(Paths::getAbsDirById($rootId));
+            return Paths::getCacheDirAbs() . '/doc-root/' . $relPath;
+        } else {
+            return Paths::getCacheDirAbs() . '/' . $rootId;
+        }
+    }
+
     /**
      *  Move cache because of change in options.
-     *  Only move the upload folder
+     *  If structure is unchanged, only move the upload folder
      *  Only move those that has an original
      *  Only move those that can be moved.
      *  @return [$numFilesMoved, $numFilesFailedMoving]
      */
     public static function move($newConfig, $oldConfig)
     {
+        if (!Paths::canUseDocRootForStructuringCacheDir()) {
+            if (($oldConfig['destination-structure'] == 'doc-root') || ($newConfig['destination-structure'] == 'doc-root')) {
+                // oh, well. Seems document root is not available.
+                // so we cannot move from or to that kind of structure
+                // This could happen if document root once was available but now is unavailable
+                return [0, 0];
+            }
+        }
+
+        $changeStructure = ($newConfig['destination-structure'] != $oldConfig['destination-structure']);
+        self::$canUseDocRootForStructuringCacheDir = Paths::canUseDocRootForStructuringCacheDir();
+
+        if ($changeStructure) {
+            $rootIds = Paths::getImageRootIds();
+        } else {
+            $rootIds = ['uploads'];
+        }
+
+        $numFilesMovedTotal = 0;
+        $numFilesFailedMovingTotal = 0;
+        foreach ($rootIds as $rootId) {
+
+
+            $fromDir = self::getDestinationFolderForImageRoot($oldConfig, $rootId);
+            $fromExt = $oldConfig['destination-extension'];
+
+            $toDir = self::getDestinationFolderForImageRoot($newConfig, $rootId);
+            $toExt = $newConfig['destination-extension'];
+
+            $srcDir = Paths::getAbsDirById($rootId);
+
+            list($numFilesMoved, $numFilesFailedMoving) = self::moveRecursively($fromDir, $toDir, $srcDir, $fromExt, $toExt);
+            $numFilesMovedTotal += $numFilesMoved;
+            $numFilesFailedMovingTotal += $numFilesFailedMoving;
+
+            $isUploadsMingled = (($newConfig['destination-folder'] == 'mingled') && ($rootId == 'uploads'));
+            $chmodFixFoldersToo = !$isUploadsMingled;
+            self::chmodFixSubDirs($toDir, $chmodFixFoldersToo);
+        }
+        return [$numFilesMovedTotal, $numFilesFailedMovingTotal];
+/*
         $fromDir = self::getUploadFolder($oldConfig['destination-folder']);
         $fromExt = $oldConfig['destination-extension'];
 
@@ -61,6 +117,12 @@ class CacheMover
         $toExt = $newConfig['destination-extension'];
 
         $srcDir = self::getUploadFolder('mingled');
+
+        $result = self::moveRecursively($fromDir, $toDir, $srcDir, $fromExt, $toExt);
+        self::chmodFixSubDirs($toDir, ($newConfig['destination-folder'] == 'separate'));
+        */
+
+        //return $result;
 
         // for testing!
         /*
@@ -77,10 +139,6 @@ class CacheMover
 
         //error_log('move to:' . $toDir . ' ( ' . (file_exists($toDir) ? 'exists' : 'does not exist ') . ')');
 
-        $result = self::moveRecursively($fromDir, $toDir, $srcDir, $fromExt, $toExt);
-        self::chmodFixSubDirs($toDir, ($newConfig['destination-folder'] == 'separate'));
-
-        return $result;
         //self::moveRecursively($toDir, $fromDir, $srcDir, $fromExt, $toExt);
     }
 

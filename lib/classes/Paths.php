@@ -237,11 +237,6 @@ class Paths
         return self::getAbsDir(get_home_path());
     }
 
-    public static function getHomeDirRel()
-    {
-        return PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed(self::getHomeDirAbs());
-    }
-
     // ------------ Index Dir  (WP root dir) -------------
     // (The Wordpress installation dir- where index.php and wp-load.php resides)
 
@@ -260,12 +255,6 @@ class Paths
         // https://github.com/twigphp/Twig/issues/2707
 
     }
-
-    public static function getIndexDirRel()
-    {
-        return PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed(self::getIndexDirAbs());
-    }
-
 
     // ------------ .htaccess dir -------------
     // (directory containing the relevant .htaccess)

@@ -1,5 +1,5 @@
 
-<tr>
+<tr id="destination_structure_row">
     <th scope="row">Destination structure<?php
         echo helpIcon(
             '<p>This setting determines how the converted files are structured within the folder that WebP Express ' .

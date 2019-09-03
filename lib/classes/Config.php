@@ -122,7 +122,13 @@ class Config
                     ]
                     */
                 ]
+            ],
 
+            'environment-when-config-was-saved' => [
+                'doc-root-available' => null, // null means unavailable
+                'doc-root-resolvable' => null,
+                'doc-root-usable-for-structuring' => null,
+                'image-roots' => null,
             ]
         ];
     }
@@ -193,8 +199,14 @@ class Config
             $defaultConfig = self::getDefaultConfig(true);
             $config = array_merge($defaultConfig, $config);
 
+            // Make sure new defaults below "alter-html" are added into the existing array
+            // (note that this will not remove old unused properties, if some key should become obsolete)
             $config['alter-html'] = array_replace_recursive($defaultConfig['alter-html'], $config['alter-html']);
+
+            // Make sure new defaults below "environment-when-config-was-saved" are added into the existing array
+            $config['environment-when-config-was-saved'] = array_replace_recursive($defaultConfig['environment-when-config-was-saved'], $config['environment-when-config-was-saved']);
         }
+
 
         if (!isset($config['base-htaccess-on-these-capability-tests'])) {
             self::runAndStoreCapabilityTests($config);

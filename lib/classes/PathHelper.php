@@ -7,7 +7,7 @@ class PathHelper
 
     public static function isDocRootAvailable() {
 
-        return false;
+        //return false;
 
         if (!isset($_SERVER['DOCUMENT_ROOT'])) {
             return false;

@@ -30,7 +30,8 @@
             'or <a target="_blank" href="https://wordpress.org/plugins/shortpixel-image-optimiser/">Shortpixel</a>, set this option to Set"</p>' .
             (($config['operation-mode'] == 'cdn-friendly') ? '<p>In this mode, the webp files will be stored in the same folder as the originals, except for images that are not inside the uploads folder (these are stored in wp-content/webp-express/webp-images/doc-root).</p>' : '') .
             '<p>Changing this option will cause existing webp images to be renamed (only those in the upload folder, and only those that has a ' .
-            'corresponding source image)</p>'
+            'corresponding source image)</p>' .
+            '<p>Note that this option only applies to the webp images stored in the uploads folder (mingled).</p>'
         );
     }
     ?>

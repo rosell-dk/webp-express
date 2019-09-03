@@ -4,6 +4,7 @@ namespace WebPExpress;
 
 use \WebPExpress\Config;
 use \WebPExpress\Paths;
+use \WebPExpress\PathHelper;
 
 class HTAccessRules
 {
@@ -522,23 +523,9 @@ class HTAccessRules
 
         self::$htaccessDirRelToDocRoot = '';
         if (self::$useDocRootForStructuringCacheDir) {
-            switch (self::$htaccessDir) {
-                case 'index':
-                    self::$htaccessDirRelToDocRoot = Paths::getIndexDirRel();
-                    break;
-                case 'home':
-                    self::$htaccessDirRelToDocRoot = Paths::getHomeDirRel();
-                    break;
-                case 'plugin':
-                    self::$htaccessDirRelToDocRoot = Paths::getPluginDirRel();
-                    break;
-                case 'uploads':
-                    self::$htaccessDirRelToDocRoot = Paths::getUploadDirRel();
-                    break;
-                case 'wp-content':
-                    self::$htaccessDirRelToDocRoot = Paths::getContentDirRel();
-                    break;
-            }
+            self::$htaccessDirRelToDocRoot = PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed(
+                self::$htaccessDirAbs
+            );
         }
 
         // Fix config.
