@@ -147,7 +147,7 @@ class HTAccessRules
         $rules = '';
 
 
-        if (self::$mingled) {
+        if ((self::$mingled) && (self::$htaccessDir == 'uploads')) {
             // TODO:
             // Only write mingled rules for "uploads" dir.
             // - unless uploads dir is unwritable (in that case also write for wp-content / index)
@@ -164,6 +164,7 @@ class HTAccessRules
                 }
             }
 
+//            $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(" . self::$fileExtIncludingDot . ")$\n";
 
             $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(" . self::$fileExtIncludingDot . ")$\n";
             $rules .= "  RewriteCond %1" . (self::$appendWebP ? "%2" : "") . "\.webp -f\n";
@@ -216,7 +217,21 @@ class HTAccessRules
                     "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
 
             } else {
+                // Make sure source image exists
+                $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
+
+                // Find relative path of source (accessible as %2%3)
                 $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(" . self::$htaccessDirAbs . "/)(.*)(" . self::$fileExtIncludingDot . ")$\n";
+
+                // Make sure there is a webp in the cache-dir
+                $cacheDirForThisRoot = Paths::getCacheDirForImageRoot(
+                    self::$config['destination-folder'],
+                    self::$config['destination-structure'],
+                    self::$htaccessDir
+                );
+                $rules .= "  RewriteCond " . $cacheDirForThisRoot . "/%2%3.webp -f\n";
+                //RewriteCond /var/www/webp-express-tests/we0/wp-content-moved/webp-express/webp-images/uploads/%2%3.webp -f
+
                 $urlPath = '/' . Paths::getContentUrlPath() . "/webp-express/webp-images/" . self::$htaccessDir . "/%2" . (self::$appendWebP ? "%3" : "") . "\.webp";
                 //$rules .= "  RewriteCond %1" . (self::$appendWebP ? "%2" : "") . "\.webp -f\n";
                 $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ " . $urlPath .
@@ -538,6 +553,7 @@ class HTAccessRules
             'only-redirect-to-converter-on-cache-miss' => false,
             'destination-folder' => 'separate',
             'destination-extension' => 'append',
+            'destination-structure' => 'doc-root',
             'success-response' => 'converted',
         ];
         $config = array_merge($defaults, $config);
