@@ -71,13 +71,18 @@ class HTAccess
             'cache-control-max-age' => 'one-week',
             'cache-control-public' => true,
             'enable-redirection-to-webp-realizer' => false,
-            'enable-redirection-to-converter' => true
+            'enable-redirection-to-converter' => true,
+            'destination-folder' => 'separate',
+            'destination-extension' => 'append',
+            'destination-structure' => 'doc-root'
         ];
 
+        /*
         if (isset($newConfig['redirect-to-existing-in-htaccess']) && $newConfig['redirect-to-existing-in-htaccess']) {
             $propsToCompare['destination-folder'] = 'separate';
             $propsToCompare['destination-extension'] = 'append';
-        }
+            $propsToCompare['destination-structure'] = 'doc-root';
+        }*/
 
         foreach ($propsToCompare as $prop => $behaviourBeforeIntroduced) {
             if (!isset($newConfig[$prop])) {
