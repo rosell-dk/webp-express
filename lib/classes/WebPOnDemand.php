@@ -145,7 +145,7 @@ class WebPOnDemand extends WodConfigLoader
             $wodOptions['destination-extension'],
             self::$webExpressContentDirAbs,
             $uploadDirAbs,
-            $usingDocRoot,
+            self::$usingDocRoot,
             self::getImageRoots()
         );
         //echo 'dest:' . $destination; exit;
