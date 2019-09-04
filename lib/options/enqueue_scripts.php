@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use \WebPExpress\Paths;
 use \WebPExpress\Config;
 
-$ver = '4';             // note: Minimum 1
+$ver = '7';             // note: Minimum 1
 $jsDir = 'js/0.14.23';   // We change dir when it is critical that no-one gets the cached version (there is a plugin that strips version strings out there...)
 
 if (!function_exists('webp_express_add_inline_script')) {
@@ -74,6 +74,10 @@ if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conv
     wp_register_script('bulkconvert', plugins_url($jsDir . '/bulk-convert.js', __FILE__), ['escapehtml'], $ver);
     wp_enqueue_script('bulkconvert');
 
+    // selftest
+    wp_register_script('webpexpress_selftest', plugins_url($jsDir . '/self-test.js', __FILE__), ['escapehtml'], $ver);
+    wp_enqueue_script('webpexpress_selftest');
+
     // test convert
     wp_register_script('testconvert', plugins_url($jsDir . '/test-convert.js', __FILE__), ['escapehtml'], $ver);
     $canDisplayWebp = (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false ));
@@ -113,6 +117,7 @@ $javascriptVars = [
         'list-unconverted-files' => wp_create_nonce('webpexpress-ajax-list-unconverted-files-nonce'),
         'purge-cache' => wp_create_nonce('webpexpress-ajax-purge-cache-nonce'),
         'view-log' => wp_create_nonce('webpexpress-ajax-view-log-nonce'),
+        'self-test' => wp_create_nonce('webpexpress-ajax-self-test-nonce'),
     ],
     'can-use-doc-root-for-structuring' => Paths::canUseDocRootForRelPaths()
 ];

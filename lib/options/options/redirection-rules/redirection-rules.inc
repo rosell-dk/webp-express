@@ -46,6 +46,23 @@
                     break;
             }
             ?>
+
+            <tr>
+                <th scope="row">
+                    Self test
+                    <?php echo helpIcon(
+                        '<p>Test if the redirection are working by making HTTP requests and examining the responses</p>'
+                    ); ?>
+                </th>
+                <td>
+                    <button onclick="WebPExpress.SelfTest.openPopup('redirectTests')" class="button button-secondary" type="button">Test redirection</button>
+                    <button onclick="WebPExpress.SelfTest.openPopup('systemInfo')" class="button button-secondary" type="button">System info</button>
+                    <div id="webpexpress_test_redirection_popup" style="display:none;">
+                        <div id="webpexpress_test_redirection_content"></div>
+                    </div>
+                </td>
+            </tr>
+
         </tbody>
     </table>
 </fieldset>
