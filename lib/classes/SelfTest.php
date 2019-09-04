@@ -200,6 +200,7 @@ class SelfTest
         // TODO: Also test if we get the Vary: Accept header
         // TODO: If options have never been saved (and .htaccess never saved), tell the user so
         // TODO: If no cache control header is set, advise the user to set it
+        // TODO: Add notice that only images placed in uploads have been tested. And no PNG either (yet)
 
         self::$next = 'done';
 
@@ -220,6 +221,10 @@ class SelfTest
             return $result;
         }
 
+        if (!($config['image-types'] & 1)) {
+            $result[] = 'Sorry, the test is currently only designed to work with jpeg but you have not enabled jpeg. Exiting';
+            return $result;
+        }
         if ($config['image-types'] & 1) {
 
             // Copy test image (jpeg)
