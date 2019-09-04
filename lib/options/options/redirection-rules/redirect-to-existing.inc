@@ -24,6 +24,9 @@
             echo ($config['redirect-to-existing-in-htaccess'] ? 'checked="checked"' : '')
         ?> >
 
+
+        <button style="margin-left: 30px;" onclick="WebPExpress.SelfTest.openPopup('redirectTests')" class="button button-secondary" type="button">Test redirection</button>
+
         <?php
         /*if ($config['operation-mode'] == 'no-conversion') {
             // Cache control header
