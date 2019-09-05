@@ -23,6 +23,7 @@ class SelfTest
     public static function configInfo()
     {
         $config = Config::loadConfigAndFix(false);
+        $result = [];
         $result[] = '# Configuration info';
         $result[] = 'Destination folder: ' . $config['destination-folder'];
         $result[] = 'Destination extension: ' . $config['destination-extension'];
@@ -51,7 +52,7 @@ class SelfTest
     {
         $config = Config::loadConfigAndFix(false);
         $capTests = $config['base-htaccess-on-these-capability-tests'];
-
+        $result = [];
         $result[] = '# .htaccess capability tests';
         $result[] = 'Exactly what you can do in a .htaccess depends on the server setup. WebP Express ' .
             'makes some blind tests to verify if a certain feature in fact works. This is done by creating ' .

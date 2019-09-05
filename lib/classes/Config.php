@@ -64,7 +64,7 @@ class Config
             'image-types' => 3,
             'destination-folder' => 'separate',
             'destination-extension' => 'append',
-            'destination-structure' => 'doc-root',  /* can be "doc-root" or "image-roots"
+            'destination-structure' => 'doc-root',  /* can be "doc-root" or "image-roots" */
             'cache-control' => 'no-header',     /* can be "no-header", "set" or "custom" */
             'cache-control-custom' => 'public, max-age=31536000, stale-while-revalidate=604800, stale-if-error=604800',
             'cache-control-max-age' => 'one-week',
