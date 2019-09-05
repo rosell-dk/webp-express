@@ -106,7 +106,13 @@ class SelfTestRedirectToExisting
                 $result[] = 'The test FAILED.';
                 return [false, $result, $createdTestFiles];
             } else {
-                $result[] = 'Alrighty. We got a webp. Just what we wanted. Great!';
+                $result[] = 'Alrighty. We got a webp. Just what we wanted. **Great!**{: .ok}';
+            }
+            if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
+                $result[count($result) - 1] .= '. **BUT!**';
+                $result[] = '**Warning: We did not receive a Vary:Accept header. ' .
+                    'That header should be set in order to tell proxies that the response varies depending on the ' .
+                    'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
             }
             $result[] = '';
             $result[] = 'Now lets check that browsers *not* supporting webp gets the jpeg';
@@ -143,11 +149,12 @@ class SelfTestRedirectToExisting
                 $result[] = 'The test FAILED.';
                 return [false, $result, $createdTestFiles];
             }
-            $result[] = 'Alrighty. We got the jpeg. Everything is great.';
+            $result[] = 'Alrighty. We got the jpeg. **Everything is great**{: .ok}.';
 
-            $result[] = 'However, notice that this test only tested an image which was placed in the uploads folder. ' .
-                'The theme images have not been tested (it is on the TODO). Also on the TODO: Test PNG image and test that ' .
-                'redirection to webp only is triggered when the webp exists';
+            $result[] = 'However, notice that this test only tested an image which was placed in the uploads ' .
+                'folder. The theme images have not been tested (it is on the TODO). Also on the TODO: Test PNG ' .
+                'image and if PNG is disabled, that PNG does not redirect to webp. And test that redirection ' .
+                'to webp only is triggered when the webp exists. These things probably work, though.';
 
             SelfTestHelper::deleteTestImagesInUploadFolder();
         }

@@ -131,6 +131,30 @@ class SelfTestHelper
         return [true, $result, $return['headers']];
     }
 
+    public static function hasVaryAcceptHeader($headers)
+    {
+        if (!isset($headers['vary'])) {
+            return false;
+        }
+
+        // There may be multiple Vary headers. Or they might be combined in one.
+        // Both are acceptable, according to https://stackoverflow.com/a/28799169/842756
+        if (gettype($headers['vary']) == 'string') {
+            $varyHeaders = [$headers['vary']];
+        } else {
+            $varyHeaders = $headers['vary'];
+        }
+        foreach ($varyHeaders as $headerValue) {
+            $values = explode(',', $headerValue);
+            foreach ($values as $value) {
+                if (strtolower($value) == 'accept') {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static function printHeaders($headers)
     {
         $result = [];

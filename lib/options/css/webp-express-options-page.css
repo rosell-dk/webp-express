@@ -9,6 +9,16 @@
     word-wrap: break-word;
 }
 
+/* Classes used in our pseudo markdown. */
+.md.warn {
+    background-color: yellow;
+}
+.md.ok {
+    color: green;
+}
+.md.error {
+    color: red;
+}
 
 
 
