@@ -23,7 +23,7 @@ class SelfTestRedirectToExisting
 
         if (!$config['redirect-to-existing-in-htaccess']) {
             $result[] = 'Turned off, nothing to test';
-            //return $result;
+            return $result;
         }
 
         if ($config['image-types'] == 0) {
@@ -37,6 +37,8 @@ class SelfTestRedirectToExisting
         }
         if ($config['image-types'] & 1) {
 
+            SelfTestHelper::deleteTestImagesInUploadFolder();
+
             // Copy test image (jpeg)
             list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToUploadFolder('jpeg');
             $result = array_merge($result, $subResult);
@@ -44,19 +46,20 @@ class SelfTestRedirectToExisting
                 $result[] = 'The test cannot be completed';
                 return $result;
             }
-/*
+
             // Copy dummy webp
             list($subResult, $success, $destinationFile) = SelfTestHelper::copyDummyWebPToCacheFolderUpload(
                 $config['destination-folder'],
                 $config['destination-extension'],
                 $config['destination-structure'],
+                preg_replace('#\.jpeg#', '', $sourceFileName),
                 'jpeg'
             );
             $result = array_merge($result, $subResult);
             if (!$success) {
                 $result[] = 'The test cannot be completed';
                 return $result;
-            }*/
+            }
 
             $requestUrl = Paths::getUploadUrl() . '/' . $sourceFileName;
             $result[] = 'Making a HTTP request for the test image (pretending to be a client that supports webp, by setting the "Accept" header to "image/webp")';
@@ -119,7 +122,6 @@ class SelfTestRedirectToExisting
             //$result[count($result) - 1] .= '. ok!';
             $result[] = '*' . $requestUrl . '*';
 
-            $result[] = '';
             $result = array_merge($result, SelfTestHelper::printHeaders($headers));
 
             if (!isset($headers['content-type'])) {

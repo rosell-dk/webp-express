@@ -7,6 +7,15 @@ use \WebPExpress\Paths;
 class SelfTestHelper
 {
 
+    public static function deleteTestImagesInUploadFolder()
+    {
+        $destDir = Paths::getAbsDirById('uploads');
+        foreach (glob($destDir . DIRECTORY_SEPARATOR . "webp-express-test-image-*") as $filename) {
+            unlink($filename);
+        }
+    }
+
+
     public static function copyFile($source, $destination)
     {
         $result = [];
@@ -28,6 +37,17 @@ class SelfTestHelper
         }
     }
 
+    public static function randomDigitsAndLetters($length)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
     public static function copyTestImageToUploadFolder($imageType = 'jpeg')
     {
         $result = [];
@@ -39,9 +59,10 @@ class SelfTestHelper
                 $fileNameToCopy = 'alphatest.png';
                 break;
         }
-        $result[] = 'Copying test image to upload folder (' . $imageType . ')';
         $testSource = Paths::getPluginDirAbs() . '/webp-express/test/' . $fileNameToCopy;
-        $filenameOfDestination = 'webp-express-test-image.' . $imageType;
+        $filenameOfDestination = 'webp-express-test-image-' . self::randomDigitsAndLetters(6) . '.' . $imageType;
+        $result[] = 'Copying ' . strtoupper($imageType) . ' to upload folder (*' . $filenameOfDestination . '*)';
+
         $destDir = Paths::getAbsDirById('uploads');
         $destination = $destDir . '/' . $filenameOfDestination;
 
@@ -58,7 +79,7 @@ class SelfTestHelper
         return [$result, true, $filenameOfDestination];
     }
 
-    public static function copyDummyWebPToCacheFolderUpload($destinationFolder, $destinationExtension, $destinationStructure, $imageType = 'jpeg')
+    public static function copyDummyWebPToCacheFolderUpload($destinationFolder, $destinationExtension, $destinationStructure, $destinationFileNameNoExt, $imageType = 'jpeg')
     {
         $result = [];
         $dummyWebP = Paths::getPluginDirAbs() . '/webp-express/test/test.jpg.webp';
@@ -72,7 +93,7 @@ class SelfTestHelper
                 return [$result, false, ''];
             }
         }
-        $filenameOfDestination = 'webp-express-test-image' . ($destinationExtension == 'append' ? '.' . $imageType : '') . '.webp';
+        $filenameOfDestination = $destinationFileNameNoExt . ($destinationExtension == 'append' ? '.' . $imageType : '') . '.webp';
         $destination = $destDir . '/' . $filenameOfDestination;
 
         list($success, $errors) = self::copyFile($dummyWebP, $destination);
@@ -82,7 +103,7 @@ class SelfTestHelper
             return [$result, false, ''];
         } else {
             $result[count($result) - 1] .= '. ok!';
-            $result[] = 'We now have a file here:';
+            $result[] = 'We now have a webp file stored here:';
             $result[] = '*' . $destination . '*';
             $result[] = '';
         }
