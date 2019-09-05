@@ -6,8 +6,7 @@ class SelfTestRedirectToExisting
 {
     private static function doRunTest($config)
     {
-        // TODO: Also test if we get the Vary: Accept header
-        // TODO: If no cache control header is set, advise the user to set it
+        // TODO: Check vary header for jpeg response too
 
         $result = [];
 
@@ -114,6 +113,10 @@ class SelfTestRedirectToExisting
                     'That header should be set in order to tell proxies that the response varies depending on the ' .
                     'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
             }
+            if (!SelfTestHelper::hasCacheControlOrExpiresHeader($headers)) {
+                $result[] = '**Notice: No cache-control or expires header has been set. ' .
+                    'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression comprimise.**{: .warn}';
+            }
             $result[] = '';
             $result[] = 'Now lets check that browsers *not* supporting webp gets the jpeg';
             $result[] = 'Making a HTTP request for the test image (without setting the "Accept" header)';
@@ -150,6 +153,14 @@ class SelfTestRedirectToExisting
                 return [false, $result, $createdTestFiles];
             }
             $result[] = 'Alrighty. We got the jpeg. **Everything is great**{: .ok}.';
+
+            if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
+                $result[count($result) - 1] .= '. **BUT!**';
+                $result[] = '**We did not receive a Vary:Accept header. ' .
+                    'That header should be set in order to tell proxies that the response varies depending on the ' .
+                    'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+            }
+
 
             $result[] = 'However, notice that this test only tested an image which was placed in the uploads ' .
                 'folder. The theme images have not been tested (it is on the TODO). Also on the TODO: Test PNG ' .

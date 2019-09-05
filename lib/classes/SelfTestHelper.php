@@ -155,6 +155,18 @@ class SelfTestHelper
         return false;
     }
 
+    public static function hasCacheControlOrExpiresHeader($headers)
+    {
+        if (isset($headers['cache-control'])) {
+            return true;
+        }
+        if (isset($headers['expires'])) {
+            return true;
+        }
+        return false;
+    }
+
+
     public static function printHeaders($headers)
     {
         $result = [];
