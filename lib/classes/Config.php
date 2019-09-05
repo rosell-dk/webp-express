@@ -15,7 +15,7 @@ class Config
 {
 
     /**
-     *  Return object or false, if config file does not exist, or read error
+     *  @return  object|false   Returns parsed file the file exists and can be read. Otherwise it returns false
      */
     public static function loadJSONOptions($filename)
     {
@@ -41,6 +41,9 @@ class Config
     }
 
 
+    /**
+     *  @return  object|false   Returns config object if config file exists and can be read. Otherwise it returns false
+     */
     public static function loadConfig()
     {
         return self::loadJSONOptions(Paths::getConfigFileName());
