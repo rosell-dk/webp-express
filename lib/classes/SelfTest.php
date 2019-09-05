@@ -71,7 +71,8 @@ class SelfTest
     public static function redirectToExisting()
     {
         self::$next = 'done';
-        return SelfTestRedirectToExisting::runTest();
+        list ($success, $result) = SelfTestRedirectToExisting::runTest();
+        return $result;
         /*
         $result = [];
         $result[] = '# Redirection tests';

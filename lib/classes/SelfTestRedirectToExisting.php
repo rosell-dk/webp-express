@@ -4,48 +4,47 @@ namespace WebPExpress;
 
 class SelfTestRedirectToExisting
 {
-
-    public static function runTest()
+    private static function doRunTest($config)
     {
-        // TODO: Delete test images after test
         // TODO: Also test if we get the Vary: Accept header
-        // TODO: If options have never been saved (and .htaccess never saved), tell the user so
         // TODO: If no cache control header is set, advise the user to set it
-        // TODO: Add notice that only images placed in uploads have been tested. And no PNG either (yet)
-        // TODO: Test that response is not from webp-on-demand
 
-        $config = Config::loadConfigAndFix(false);
         $result = [];
 
         //$result[] = '*hello* with *you* and **you**. ok! FAILED';
         $result[] = '# Testing redirection to existing webp';
         //$result[] = 'This test examines image responses "from the outside".';
 
+        $createdTestFiles = false;
+        if (!file_exists(Paths::getConfigFileName())) {
+            $result[] = 'Hold on. You need to save options before you can run this test. There is no config file yet.';
+            return [true, $result, $createdTestFiles];
+        }
+
         if (!$config['redirect-to-existing-in-htaccess']) {
             $result[] = 'Turned off, nothing to test';
-            return $result;
+            return [true, $result, $createdTestFiles];
         }
 
         if ($config['image-types'] == 0) {
             $result[] = 'No image types have been activated, nothing to test';
-            return $result;
+            return [true, $result, $createdTestFiles];
         }
 
         if (!($config['image-types'] & 1)) {
             $result[] = 'Sorry, the test is currently only designed to work with jpeg but you have not enabled jpeg. Exiting';
-            return $result;
+            return [true, $result, $createdTestFiles];
         }
+
         if ($config['image-types'] & 1) {
-
-            SelfTestHelper::deleteTestImagesInUploadFolder();
-
             // Copy test image (jpeg)
             list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToUploadFolder('jpeg');
             $result = array_merge($result, $subResult);
             if (!$success) {
                 $result[] = 'The test cannot be completed';
-                return $result;
+                return [false, $result, $createdTestFiles];
             }
+            $createdTestFiles = true;
 
             // Copy dummy webp
             list($subResult, $success, $destinationFile) = SelfTestHelper::copyDummyWebPToCacheFolderUpload(
@@ -58,7 +57,7 @@ class SelfTestRedirectToExisting
             $result = array_merge($result, $subResult);
             if (!$success) {
                 $result[] = 'The test cannot be completed';
-                return $result;
+                return [false, $result, $createdTestFiles];
             }
 
             $requestUrl = Paths::getUploadUrl() . '/' . $sourceFileName;
@@ -75,7 +74,7 @@ class SelfTestRedirectToExisting
                 $result = array_merge($result, $errors);
                 $result[] = 'The test cannot be completed';
                 //$result[count($result) - 1] .= '. FAILED';
-                return $result;
+                return [false, $result, $createdTestFiles];
             }
             //$result[count($result) - 1] .= '. ok!';
             $result[] = '*' . $requestUrl . '*';
@@ -84,19 +83,20 @@ class SelfTestRedirectToExisting
 
             if (!isset($headers['content-type'])) {
                 $result[] = 'Bummer. There is no "content-type" response header. The test FAILED';
-                return $result;
+                return [false, $result, $createdTestFiles];
             }
 
             if ($headers['content-type'] == 'image/jpeg') {
                 $result[] = 'Bummer. As the "content-type" header reveals, we got the jpeg. So the redirection to the webp is not working.';
                 $result[] = 'The test FAILED.';
-                return $result;
+                return [false, $result, $createdTestFiles];
             }
 
             if ($headers['content-type'] != 'image/webp') {
                 $result[] = 'Bummer. As the "content-type" header reveals, we did not get a webp' .
                     'Surprisingly we got: "' . $headers['content-type'] . '"';
                 $result[] = 'The test FAILED.';
+                return [false, $result, $createdTestFiles];
             }
 
             if (isset($headers['x-webp-convert-log'])) {
@@ -104,6 +104,7 @@ class SelfTestRedirectToExisting
                     'redirection. This webp was returned by the PHP script. Although this works, it takes more ' .
                     'resources to ignite the PHP engine for each image request than redirecting directly to the image.';
                 $result[] = 'The test FAILED.';
+                return [false, $result, $createdTestFiles];
             } else {
                 $result[] = 'Alrighty. We got a webp. Just what we wanted. Great!';
             }
@@ -117,7 +118,7 @@ class SelfTestRedirectToExisting
                 $result = array_merge($result, $errors);
                 $result[] = 'The test cannot be completed';
                 //$result[count($result) - 1] .= '. FAILED';
-                return $result;
+                return [false, $result, $createdTestFiles];
             }
             //$result[count($result) - 1] .= '. ok!';
             $result[] = '*' . $requestUrl . '*';
@@ -126,24 +127,31 @@ class SelfTestRedirectToExisting
 
             if (!isset($headers['content-type'])) {
                 $result[] = 'Bummer. There is no "content-type" response header. The test FAILED';
-                return $result;
+                return [false, $result, $createdTestFiles];
             }
 
             if ($headers['content-type'] == 'image/webp') {
                 $result[] = 'Bummer. As the "content-type" header reveals, we got the webp. ' .
                     'So even browsers not supporting webp gets webp. Not good!';
                 $result[] = 'The test FAILED.';
-                return $result;
+                return [false, $result, $createdTestFiles];
             }
 
             if ($headers['content-type'] != 'image/jpeg') {
                 $result[] = 'Bummer. As the "content-type" header reveals, we did not get the jpeg' .
                     'Surprisingly we got: "' . $headers['content-type'] . '"';
                 $result[] = 'The test FAILED.';
+                return [false, $result, $createdTestFiles];
             }
             $result[] = 'Alrighty. We got the jpeg. Everything is great.';
 
+            $result[] = 'However, notice that this test only tested an image which was placed in the uploads folder. ' .
+                'The theme images have not been tested (it is on the TODO). Also on the TODO: Test PNG image and test that ' .
+                'redirection to webp only is triggered when the webp exists';
+
+            SelfTestHelper::deleteTestImagesInUploadFolder();
         }
+        return [true, $result, $createdTestFiles];
         /*
         $result[] = 'Copying test image to upload folder';
         $testSourceJpg = Paths::getPluginDirAbs() . "/webp-express/test/focus.jpg";
@@ -185,7 +193,40 @@ class SelfTestRedirectToExisting
             $result[] = 'More tests will come in future versions!';
         }*/
 
-        return $result;
+    }
+
+    private static function cleanUpTestImages($config)
+    {
+
+        // Clean up test images in upload folder
+        SelfTestHelper::deleteTestImagesInUploadFolder();
+
+        // Clean up dummy webp images in cache folder for uploads
+        $uploadCacheDir = Paths::getCacheDirForImageRoot(
+            $config['destination-folder'],
+            $config['destination-structure'],
+            'uploads'
+        );
+        SelfTestHelper::deleteFilesInDir($uploadCacheDir, 'webp-express-test-image-*');
+
+    }
+
+    public static function runTest()
+    {
+        $config = Config::loadConfigAndFix(false);
+
+        self::cleanUpTestImages($config);
+
+        // Run the actual test
+        list($success, $result, $createdTestFiles) = self::doRunTest($config);
+
+        // Clean up test images again. We are very tidy around here
+        if ($createdTestFiles) {
+            $result[] = 'Deleting test images';
+            self::cleanUpTestImages($config);
+        }
+
+        return [$success, $result];
     }
 
 

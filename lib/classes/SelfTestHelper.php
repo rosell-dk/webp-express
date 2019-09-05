@@ -7,14 +7,17 @@ use \WebPExpress\Paths;
 class SelfTestHelper
 {
 
-    public static function deleteTestImagesInUploadFolder()
+    public static function deleteFilesInDir($dir, $filePattern = "*")
     {
-        $destDir = Paths::getAbsDirById('uploads');
-        foreach (glob($destDir . DIRECTORY_SEPARATOR . "webp-express-test-image-*") as $filename) {
+        foreach (glob($dir . DIRECTORY_SEPARATOR . $filePattern) as $filename) {
             unlink($filename);
         }
     }
 
+    public static function deleteTestImagesInUploadFolder()
+    {
+        self::deleteFilesInDir(Paths::getAbsDirById('uploads'), "webp-express-test-image-*");
+    }
 
     public static function copyFile($source, $destination)
     {
