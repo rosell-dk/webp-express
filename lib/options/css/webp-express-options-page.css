@@ -10,13 +10,30 @@
 }
 
 /* Classes used in our pseudo markdown. */
-.md.warn {
+.webpexpress.md h1 {
+    margin: 1em 0 1em;
+    font-size: 2em;
+    font-weight: normal;
+}
+.webpexpress.md h2 {
+    margin: 1em 0 0.5em;
+    font-size: 1.4em;
+    font-weight: normal;
+}
+.webpexpress.md h3 {
+    font-size: 1.0em;
+    margin: 1em 0 0.5em;
+    /*font-weight: 500;*/
+    font-weight: normal;
+    font-style: italic;
+}
+.webpexpress.md .warn {
     background-color: yellow;
 }
-.md.ok {
+.webpexpress.md .ok {
     color: green;
 }
-.md.error {
+.webpexpress.md .error {
     color: red;
 }
 

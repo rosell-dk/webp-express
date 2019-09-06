@@ -9,64 +9,22 @@ class SelfTest
 
     public static function systemInfo()
     {
-        $result = [];
-        $result[] = '# System info';
-        $result[] = 'PHP version: ' . phpversion();
-        $result[] = 'OS: ' . PHP_OS;
-        $result[] = 'Server software: ' . $_SERVER["SERVER_SOFTWARE"];
-        $result[] = 'Document Root: ' . Paths::docRootStatusText();
-
         self::$next = 'configInfo';
-        return $result;
+        return SelfTestHelper::systemInfo();
     }
 
     public static function configInfo()
     {
-        $config = Config::loadConfigAndFix(false);
-        $result = [];
-        $result[] = '# Configuration info';
-        $result[] = 'Destination folder: ' . $config['destination-folder'];
-        $result[] = 'Destination extension: ' . $config['destination-extension'];
-        $result[] = 'Destination structure: ' . $config['destination-structure'];
-        //$result[] = 'Image types: ' . ;
-        $result[] = '';
-        $result[] = 'To view all configuration, take a look at the config file, which is stored in *' . Paths::getConfigFileName() . '*';
-
         self::$next = 'capabilityTests';
-
-        return $result;
-    }
-
-    private static function trueFalseNullString($var)
-    {
-        if ($var === true) {
-            return 'yes';
-        }
-        if ($var === false) {
-            return 'no';
-        }
-        return 'could not be determined';
+        $config = Config::loadConfigAndFix(false);
+        return SelfTestHelper::systemInfo($config);
     }
 
     public static function capabilityTests()
     {
-        $config = Config::loadConfigAndFix(false);
-        $capTests = $config['base-htaccess-on-these-capability-tests'];
-        $result = [];
-        $result[] = '# .htaccess capability tests';
-        $result[] = 'Exactly what you can do in a .htaccess depends on the server setup. WebP Express ' .
-            'makes some blind tests to verify if a certain feature in fact works. This is done by creating ' .
-            'test files (.htaccess files and php files) in a dir inside the content dir and running these. ' .
-            'These test results are used when creating the rewrite rules. Here are the results:';
-
-        $result[] = '';
-        $result[] = '- mod_header working?: ' . self::trueFalseNullString($capTests['modHeaderWorking']);
-        /*$result[] = '- pass variable from .htaccess to script through header working?: ' .
-            self::trueFalseNullString($capTests['passThroughHeaderWorking']);*/
-        $result[] = '- passing variables from .htaccess to PHP script through environment variable working?: ' . self::trueFalseNullString($capTests['passThroughEnvWorking']);
-
         self::$next = 'done';
-        return $result;
+        $config = Config::loadConfigAndFix(false);
+        return SelfTestHelper::capabilityTests($config);
     }
 
     public static function redirectToExisting()

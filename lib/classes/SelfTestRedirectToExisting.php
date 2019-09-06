@@ -14,6 +14,7 @@ class SelfTestRedirectToExisting
     {
         $result = [];
         $createdTestFiles = false;
+        $noWarningsYet = true;
 
         // Copy test image (jpeg)
         list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToUploadFolder($imageType);
@@ -39,6 +40,7 @@ class SelfTestRedirectToExisting
         }
 
         $requestUrl = Paths::getUploadUrl() . '/' . $sourceFileName;
+        $result[] = '## Lets check that browsers supporting webp gets the WEBP';
         $result[] = 'Making a HTTP request for the test image (pretending to be a client that supports webp, by setting the "Accept" header to "image/webp")';
         $requestArgs = [
             'headers' => [
@@ -68,6 +70,9 @@ class SelfTestRedirectToExisting
             $result[] = 'Bummer. As the "content-type" header reveals, we got the ' . $imageType . '. ' .
                 'So the redirection to the webp is not working.';
             $result[] = 'The test FAILED.';
+
+            $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
+
             return [false, $result, $createdTestFiles];
         }
 
@@ -92,13 +97,14 @@ class SelfTestRedirectToExisting
             $result[] = '**Warning: We did not receive a Vary:Accept header. ' .
                 'That header should be set in order to tell proxies that the response varies depending on the ' .
                 'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+            $noWarningsYet = false;
         }
         if (!SelfTestHelper::hasCacheControlOrExpiresHeader($headers)) {
             $result[] = '**Notice: No cache-control or expires header has been set. ' .
                 'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression comprimise.**{: .warn}';
         }
         $result[] = '';
-        $result[] = 'Now lets check that browsers *not* supporting webp gets the ' . $imageType;
+        $result[] = '## Now lets check that browsers *not* supporting webp gets the ' . strtoupper($imageType);
         $result[] = 'Making a HTTP request for the test image (without setting the "Accept" header)';
         list($success, $errors, $headers) = SelfTestHelper::remoteGet($requestUrl);
 
@@ -132,20 +138,23 @@ class SelfTestRedirectToExisting
             $result[] = 'The test FAILED.';
             return [false, $result, $createdTestFiles];
         }
-        $result[] = 'Alrighty. We got the ' . $imageType . '. **Everything is great**{: .ok}.';
+        $result[] = 'Alrighty. We got the ' . $imageType . '. **Great!**{: .ok}.';
 
         if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
             $result[count($result) - 1] .= '. **BUT!**';
             $result[] = '**We did not receive a Vary:Accept header. ' .
                 'That header should be set in order to tell proxies that the response varies depending on the ' .
                 'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+            $noWarningsYet = false;
         }
 
-        return [true, $result, $createdTestFiles];
+        return [$noWarningsYet, $result, $createdTestFiles];
     }
 
     private static function doRunTest($config)
     {
+//        return [false, SelfTestHelper::diagnoseFailedRewrite($config), false];
+
         $result = [];
 
         //$result[] = '*hello* with *you* and **you**. ok! FAILED';
@@ -172,16 +181,18 @@ class SelfTestRedirectToExisting
             list($success, $subResult, $createdTestFiles) = self::runTestForImageType($config, 'jpeg');
             $result = array_merge($result, $subResult);
 
-            if ($config['image-types'] & 2) {
-                $result[] = '';
-                $result[] = 'Performing same tests for PNG';
-                list($success, $subResult, $createdTestFiles2) = self::runTestForImageType($config, 'png');
-                $createdTestFiles = $createdTestFiles || $createdTestFiles2;
-                if ($success) {
-                    $result[count($result) - 1] .= '. **ok**{: .ok}';
-                    $result[] = 'As the PNG tests all passed, I shall spare you for the report, which is almost identical to the one above';
-                } else {
-                    $result = array_merge($result, $subResult);
+            if ($success) {
+                if ($config['image-types'] & 2) {
+                    $result[] = '## Performing same tests for PNG';
+                    list($success, $subResult, $createdTestFiles2) = self::runTestForImageType($config, 'png');
+                    $createdTestFiles = $createdTestFiles || $createdTestFiles2;
+                    if ($success) {
+                        //$result[count($result) - 1] .= '. **ok**{: .ok}';
+                        $result[] .= 'All tests passed for PNG as well.';
+                        $result[] = '(I shall spare you for the report, which is almost identical to the one above)';
+                    } else {
+                        $result = array_merge($result, $subResult);
+                    }
                 }
             }
         } else {
@@ -189,11 +200,13 @@ class SelfTestRedirectToExisting
             $result = array_merge($result, $subResult);
         }
 
-        $result[] = '';
-        $result[] = 'Notice that this test only tested an image which was placed in the *uploads* ' .
-            'folder. The theme images have not been tested (it is on the TODO). Also on the TODO: If one ' .
-            'image type is disabled, chack that it does not redirect to webp. And test that redirection ' .
-            'to webp only is triggered when the webp exists. These things probably work, though.';
+        if ($success) {
+            $result[] = '## Conclusion';
+            $result[] = 'Everything **seems to work**{: .ok} as it should. However, notice that this test only tested an image which was placed in the *uploads* ' .
+                'folder. The theme images have not been tested (it is on the TODO). Also on the TODO: If one ' .
+                'image type is disabled, check that it does not redirect to webp. And test that redirection ' .
+                'to webp only is triggered when the webp exists. These things probably work, though.';
+        }
 
 
         return [true, $result, $createdTestFiles];

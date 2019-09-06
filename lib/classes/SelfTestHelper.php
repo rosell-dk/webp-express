@@ -170,8 +170,7 @@ class SelfTestHelper
     public static function printHeaders($headers)
     {
         $result = [];
-        $result[] = '';
-        $result[] = 'Response headers:';
+        $result[] = '### Response headers:';
         foreach ($headers as $headerName => $headerValue) {
             if (gettype($headerValue) == 'array') {
                 foreach ($headerValue as $i => $value) {
@@ -186,4 +185,135 @@ class SelfTestHelper
         return $result;
     }
 
+    private static function trueFalseNullString($var)
+    {
+        if ($var === true) {
+            return 'yes';
+        }
+        if ($var === false) {
+            return 'no';
+        }
+        return 'could not be determined';
+    }
+
+    public static function systemInfo()
+    {
+        $result = [];
+        $result[] = '### System info:';
+        $result[] = '- PHP version: ' . phpversion();
+        $result[] = '- OS: ' . PHP_OS;
+        $result[] = '- Server software: ' . $_SERVER["SERVER_SOFTWARE"];
+        $result[] = '- Document Root: ' . Paths::docRootStatusText();
+        $result[] = '- Apache module "mod_rewrite" enabled?: ' . self::trueFalseNullString(PlatformInfo::gotApacheModule('mod_rewrite'));
+        $result[] = '- Apache module "mod_headers" enabled?: ' . self::trueFalseNullString(PlatformInfo::gotApacheModule('mod_headers'));
+        return $result;
+    }
+
+    public static function configInfo($config)
+    {
+        $result = [];
+        $result[] = '### Configuration info:';
+        $result[] = '- Destination folder: ' . $config['destination-folder'];
+        $result[] = '- Destination extension: ' . $config['destination-extension'];
+        $result[] = '- Destination structure: ' . $config['destination-structure'];
+        //$result[] = 'Image types: ' . ;
+        //$result[] = '';
+        $result[] = '(To view all configuration, take a look at the config file, which is stored in *' . Paths::getConfigFileName() . '*)';
+        return $result;
+    }
+
+    public static function htaccessInfo($config)
+    {
+        $result = [];
+        //$result[] = '*.htaccess info:*';
+        //$result[] = '- Image roots with WebP Express rules: ' . implode(', ', HTAccess::getRootsWithWebPExpressRulesIn());
+        $result[] = '### .htaccess files that WebP Express have placed rules in:';
+        $rootIds = HTAccess::getRootsWithWebPExpressRulesIn();
+        foreach ($rootIds as $imageRootId) {
+            $result[] = '- ' . Paths::getAbsDirById($imageRootId) . '/.htaccess';
+        }
+        return $result;
+    }
+
+    public static function capabilityTests($config)
+    {
+        $capTests = $config['base-htaccess-on-these-capability-tests'];
+        $result = [];
+        $result[] = '### Live tests of .htaccess capabilities:';
+        /*$result[] = 'Exactly what you can do in a *.htaccess* depends on the server setup. WebP Express ' .
+            'makes some live tests to verify if a certain feature in fact works. This is done by creating ' .
+            'test files (*.htaccess* files and php files) in a dir inside the content dir and running these. ' .
+            'These test results are used when creating the rewrite rules. Here are the results:';*/
+
+//        $result[] = '';
+        $result[] = '- mod_rewrite working?: ' . self::trueFalseNullString(CapabilityTest::modRewriteWorking());
+        $result[] = '- mod_header working?: ' . self::trueFalseNullString($capTests['modHeaderWorking']);
+        /*$result[] = '- pass variable from *.htaccess* to script through header working?: ' .
+            self::trueFalseNullString($capTests['passThroughHeaderWorking']);*/
+        $result[] = '- passing variables from *.htaccess* to PHP script through environment variable working?: ' . self::trueFalseNullString($capTests['passThroughEnvWorking']);
+        return $result;
+    }
+
+    public static function diagnoseFailedRewrite($config)
+    {
+        $result[] = '# Hi!';
+        $result[] = '## Diagnosing';
+        if (stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') !== false) {
+            // Nginx
+            $result[] = 'Notice that you are on Nginx and the rules that WebP Express stores in the *.htaccess* files probably does not ' .
+                'have any effect. ';
+            $result[] = 'Please read the "I am on Nginx" section in the FAQ (https://wordpress.org/plugins/webp-express/)';
+            $result[] = 'And did you remember to restart the nginx service after updating the configuration?';
+            return $result;
+        }
+
+        $modRewriteWorking = CapabilityTest::modRewriteWorking();
+        if ($modRewriteWorking !== null) {
+            $result[] = 'Running a special designed capability test to test if rewriting works with *.htaccess* files';
+        }
+        if ($modRewriteWorking === true) {
+            $result[] = 'Result: Yes, rewriting works.';
+            $result[] = 'It seems something is wrong with the *.htaccess* rules then. ';
+            $result[] = 'Or perhaps the server has cached the confuration a while. Some servers ' .
+                'does that. In that case, simply give it a few minutes and try again.';
+        } elseif ($modRewriteWorking === false) {
+            $result[] = 'Result: No, rewriting does not seem to work within *.htaccess* rules.';
+            if (PlatformInfo::definitelyNotGotModRewrite()) {
+                $result[] = 'It actually seems "mod_write" is disabled on your server. ' .
+                    '**You must enable mod_rewrite on the server**';
+            } elseif (PlatformInfo::definitelyGotApacheModule('mod_rewrite')) {
+                $result[] = 'However, "mod_write" *is* enabled on your server. This seems to indicate that ' .
+                    '*.htaccess* files has been disabled for configuration on your server. ' .
+                    'In that case, you need to copy the WebP Express rules from the *.htaccess* files into your virtual host configuration files. ' .
+                    '(WebP Express generates multiple *.htaccess* files. Look in the upload folder, the wp-content folder, etc).';
+                $result[] = 'It could however alse simply be that your server simply needs some time. ' .
+                    'Some servers caches the *.htaccess* rules for a bit. In that case, simply give it a few minutes and try again.';
+            } else {
+                $result[] = 'However, this could be due to your server being a bit slow on picking up changes in *.htaccess*.' .
+                    'Give it a few minutes and try again.';
+                $result[] = 'If that does not help, ';
+            }
+        } else {
+            // The mod_rewrite test could not conclude anything.
+            if (PlatformInfo::definitelyNotGotApacheModule('mod_rewrite')) {
+                $result[] = 'It actually seems "mod_write" is disabled on your server. ' .
+                    '**You must enable mod_rewrite on the server**';
+            } elseif (PlatformInfo::definitelyGotApacheModule('mod_rewrite')) {
+                $result[] = '"mod_write" is enabled on your server, so rewriting ought to work. ' .
+                    'However, it could be that your server setup has disabled *.htaccess* files for configuration. ' .
+                    'In that case, you need to copy the WebP Express rules from the *.htaccess* files into your virtual host configuration files. ' .
+                    '(WebP Express generates multiple *.htaccess* files. Look in the upload folder, the wp-content folder, etc). ';
+            } else {
+                $result[] = 'It seems something is wrong with the *.htaccess* rules. ';
+                $result[] = 'Or perhaps the server has cached the confuration a while. Some servers ' .
+                    'does that. In that case, simply give it a few minutes and try again.';
+            }
+        }
+        $result[] = '## Info for manually diagnosing';
+        $result = array_merge($result, self::systemInfo());
+        $result = array_merge($result, self::configInfo($config));
+        $result = array_merge($result, self::htaccessInfo($config));
+        $result = array_merge($result, self::capabilityTests($config));
+        return $result;
+    }
 }

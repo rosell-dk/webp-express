@@ -194,6 +194,20 @@ class HTAccess
         }
     }
 
+    public static function getRootsWithWebPExpressRulesIn()
+    {
+        $allIds = Paths::getImageRootIds();
+        $result = [];
+        foreach ($allIds as $imageRootId) {
+            $filename = Paths::getAbsDirById($imageRootId) . '/.htaccess';
+            if (self::haveWeRulesInThisHTAccessBestGuess($filename)) {
+                $result[] = $imageRootId;
+            }
+
+        }
+        return $result;
+    }
+
     public static function saveHTAccessRulesToFile($filename, $rules, $createIfMissing = false) {
         if (!@file_exists($filename)) {
             if (!$createIfMissing) {

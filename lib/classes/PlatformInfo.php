@@ -29,32 +29,76 @@ class PlatformInfo
     }
 
     /**
+     * Check if an Apache module is available.
+     *
+     * If apache_get_modules() exists, it is used. That function is however only available in mod_php installs.
+     * Otherwise the Wordpress function "apache_mod_loaded" is tried, which examines phpinfo() output.
+     * However, it seems there is no module output on php-fpm setups.
+     * So on php-fpm, we cannot come with an answer.
+     * https://stackoverflow.com/questions/9021425/how-to-check-if-mod-rewrite-is-enabled-in-php
+     *
+     * @param   string  $mod  Name of module - ie "mod_rewrite"
+     * @return  boolean|null  Return if module is available, or null if indeterminate
+     */
+    public static function gotApacheModule($mod)
+    {
+        if (function_exists('apache_get_modules')) {
+            return in_array($mod, apache_get_modules());
+        }
+
+        // Revert to Wordpress method, which examines output from phpinfo as well
+        if (function_exists('apache_mod_loaded')) {
+            $result = apache_mod_loaded($mod, null);
+
+            // If we got a real result, return it.
+            if ($result != null) {
+                return $result;
+            }
+        }
+
+        // We could run shell_exec("apachectl -l"), as suggested here:
+        // https://stackoverflow.com/questions/9021425/how-to-check-if-mod-rewrite-is-enabled-in-php
+        // But it does not seem to return all modules in my php-fpm setup.
+
+        // Currently we got no more tools.
+        return null;
+
+    }
+
+    /**
      *  It is not always possible to determine if apache has a given module...
      *  We shall not fool anyone into thinking otherwise by providing a "got" method like Wordpress does...
      */
-    public static function definitelyNotGotApacheModule($mod)
-    {
-        if (function_exists( 'apache_get_modules')) {
-            $mods = apache_get_modules();
-            if (!in_array($mod, $mods)) {
-                return true;
-            }
-        }
-        // TODO: Perhaps also try looking at phpinfo, like Wordpress does in apache_mod_loaded
-
-        return false;
-    }
-
     public static function definitelyGotApacheModule($mod)
     {
-        if (function_exists( 'apache_get_modules')) {
-            $mods = apache_get_modules();
-            if (in_array($mod, $mods)) {
-                return true;
-            }
-        }
-        return false;
+        return (self::gotApacheModule($mod) === true);
     }
+
+    public static function definitelyNotGotApacheModule($mod)
+    {
+        return (self::gotApacheModule($mod) === false);
+    }
+
+    /**
+     * Check if mod_rewrite or IIS rewrite is available.
+     *
+     * @return  boolean|null  Return bool if it can be determined, or null if not
+     */
+    public static function gotRewriteModule()
+    {
+        $gotModRewrite = self::gotApacheModule('mod_rewrite');
+        if (!is_null($gotModRewrite)) {
+            return $gotModRewrite;
+        }
+
+        // Got the IIS check here: https://stackoverflow.com/a/21249745/842756
+        // but have not tested it...
+        if (isset($_SERVER['IIS_UrlRewriteModule'])) {
+            return true;
+        }
+        return null;
+    }
+
 
     public static function definitelyNotGotModRewrite()
     {
