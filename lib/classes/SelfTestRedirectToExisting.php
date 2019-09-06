@@ -203,7 +203,7 @@ class SelfTestRedirectToExisting
         if ($success) {
             $result[] = '## Conclusion';
             $result[] = 'Everything **seems to work**{: .ok} as it should. However, notice that this test only tested an image which was placed in the *uploads* ' .
-                'folder. The theme images have not been tested (it is on the TODO). Also on the TODO: If one ' .
+                'folder. The rest of the image roots (such as theme images) have not been tested (it is on the TODO). Also on the TODO: If one ' .
                 'image type is disabled, check that it does not redirect to webp. And test that redirection ' .
                 'to webp only is triggered when the webp exists. These things probably work, though.';
         }
