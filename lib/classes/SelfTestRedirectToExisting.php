@@ -4,10 +4,148 @@ namespace WebPExpress;
 
 class SelfTestRedirectToExisting
 {
+    /**
+     * Run test for either jpeg or png
+     *
+     * @param  array   $config
+     * @param  string  $imageType  ("jpeg" or "png")
+     */
+    private static function runTestForImageType($config, $imageType)
+    {
+        $result = [];
+        $createdTestFiles = false;
+
+        // Copy test image (jpeg)
+        list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToUploadFolder($imageType);
+        $result = array_merge($result, $subResult);
+        if (!$success) {
+            $result[] = 'The test cannot be completed';
+            return [false, $result, $createdTestFiles];
+        }
+        $createdTestFiles = true;
+
+        // Copy dummy webp
+        list($subResult, $success, $destinationFile) = SelfTestHelper::copyDummyWebPToCacheFolderUpload(
+            $config['destination-folder'],
+            $config['destination-extension'],
+            $config['destination-structure'],
+            preg_replace('#\.' . $imageType . '#', '', $sourceFileName),
+            $imageType
+        );
+        $result = array_merge($result, $subResult);
+        if (!$success) {
+            $result[] = 'The test cannot be completed';
+            return [false, $result, $createdTestFiles];
+        }
+
+        $requestUrl = Paths::getUploadUrl() . '/' . $sourceFileName;
+        $result[] = 'Making a HTTP request for the test image (pretending to be a client that supports webp, by setting the "Accept" header to "image/webp")';
+        $requestArgs = [
+            'headers' => [
+                'ACCEPT' => 'image/webp'
+            ]
+        ];
+        list($success, $errors, $headers) = SelfTestHelper::remoteGet($requestUrl, $requestArgs);
+
+        if (!$success) {
+            $result[count($result) - 1] .= '. FAILED';
+            $result = array_merge($result, $errors);
+            $result[] = 'The test cannot be completed';
+            //$result[count($result) - 1] .= '. FAILED';
+            return [false, $result, $createdTestFiles];
+        }
+        //$result[count($result) - 1] .= '. ok!';
+        $result[] = '*' . $requestUrl . '*';
+
+        $result = array_merge($result, SelfTestHelper::printHeaders($headers));
+
+        if (!isset($headers['content-type'])) {
+            $result[] = 'Bummer. There is no "content-type" response header. The test FAILED';
+            return [false, $result, $createdTestFiles];
+        }
+
+        if ($headers['content-type'] == 'image/' . $imageType) {
+            $result[] = 'Bummer. As the "content-type" header reveals, we got the ' . $imageType . '. ' .
+                'So the redirection to the webp is not working.';
+            $result[] = 'The test FAILED.';
+            return [false, $result, $createdTestFiles];
+        }
+
+        if ($headers['content-type'] != 'image/webp') {
+            $result[] = 'Bummer. As the "content-type" header reveals, we did not get a webp' .
+                'Surprisingly we got: "' . $headers['content-type'] . '"';
+            $result[] = 'The test FAILED.';
+            return [false, $result, $createdTestFiles];
+        }
+
+        if (isset($headers['x-webp-convert-log'])) {
+            $result[] = 'Bummer. Although we did get a webp, we did not get it as a result of a direct ' .
+                'redirection. This webp was returned by the PHP script. Although this works, it takes more ' .
+                'resources to ignite the PHP engine for each image request than redirecting directly to the image.';
+            $result[] = 'The test FAILED.';
+            return [false, $result, $createdTestFiles];
+        } else {
+            $result[] = 'Alrighty. We got a webp. Just what we wanted. **Great!**{: .ok}';
+        }
+        if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
+            $result[count($result) - 1] .= '. **BUT!**';
+            $result[] = '**Warning: We did not receive a Vary:Accept header. ' .
+                'That header should be set in order to tell proxies that the response varies depending on the ' .
+                'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+        }
+        if (!SelfTestHelper::hasCacheControlOrExpiresHeader($headers)) {
+            $result[] = '**Notice: No cache-control or expires header has been set. ' .
+                'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression comprimise.**{: .warn}';
+        }
+        $result[] = '';
+        $result[] = 'Now lets check that browsers *not* supporting webp gets the ' . $imageType;
+        $result[] = 'Making a HTTP request for the test image (without setting the "Accept" header)';
+        list($success, $errors, $headers) = SelfTestHelper::remoteGet($requestUrl);
+
+        if (!$success) {
+            $result[count($result) - 1] .= '. FAILED';
+            $result = array_merge($result, $errors);
+            $result[] = 'The test cannot be completed';
+            //$result[count($result) - 1] .= '. FAILED';
+            return [false, $result, $createdTestFiles];
+        }
+        //$result[count($result) - 1] .= '. ok!';
+        $result[] = '*' . $requestUrl . '*';
+
+        $result = array_merge($result, SelfTestHelper::printHeaders($headers));
+
+        if (!isset($headers['content-type'])) {
+            $result[] = 'Bummer. There is no "content-type" response header. The test FAILED';
+            return [false, $result, $createdTestFiles];
+        }
+
+        if ($headers['content-type'] == 'image/webp') {
+            $result[] = 'Bummer. As the "content-type" header reveals, we got the webp. ' .
+                'So even browsers not supporting webp gets webp. Not good!';
+            $result[] = 'The test FAILED.';
+            return [false, $result, $createdTestFiles];
+        }
+
+        if ($headers['content-type'] != 'image/' . $imageType) {
+            $result[] = 'Bummer. As the "content-type" header reveals, we did not get the ' . $imageType .
+                'Surprisingly we got: "' . $headers['content-type'] . '"';
+            $result[] = 'The test FAILED.';
+            return [false, $result, $createdTestFiles];
+        }
+        $result[] = 'Alrighty. We got the ' . $imageType . '. **Everything is great**{: .ok}.';
+
+        if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
+            $result[count($result) - 1] .= '. **BUT!**';
+            $result[] = '**We did not receive a Vary:Accept header. ' .
+                'That header should be set in order to tell proxies that the response varies depending on the ' .
+                'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+        }
+
+        return [true, $result, $createdTestFiles];
+    }
+
     private static function doRunTest($config)
     {
-        // TODO: Check vary header for jpeg response too
-
         $result = [];
 
         //$result[] = '*hello* with *you* and **you**. ok! FAILED';
@@ -30,145 +168,34 @@ class SelfTestRedirectToExisting
             return [true, $result, $createdTestFiles];
         }
 
-        if (!($config['image-types'] & 1)) {
-            $result[] = 'Sorry, the test is currently only designed to work with jpeg but you have not enabled jpeg. Exiting';
-            return [true, $result, $createdTestFiles];
-        }
-
         if ($config['image-types'] & 1) {
-            // Copy test image (jpeg)
-            list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToUploadFolder('jpeg');
+            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($config, 'jpeg');
             $result = array_merge($result, $subResult);
-            if (!$success) {
-                $result[] = 'The test cannot be completed';
-                return [false, $result, $createdTestFiles];
-            }
-            $createdTestFiles = true;
 
-            // Copy dummy webp
-            list($subResult, $success, $destinationFile) = SelfTestHelper::copyDummyWebPToCacheFolderUpload(
-                $config['destination-folder'],
-                $config['destination-extension'],
-                $config['destination-structure'],
-                preg_replace('#\.jpeg#', '', $sourceFileName),
-                'jpeg'
-            );
+            if ($config['image-types'] & 2) {
+                $result[] = '';
+                $result[] = 'Performing same tests for PNG';
+                list($success, $subResult, $createdTestFiles2) = self::runTestForImageType($config, 'png');
+                $createdTestFiles = $createdTestFiles || $createdTestFiles2;
+                if ($success) {
+                    $result[count($result) - 1] .= '. **ok**{: .ok}';
+                    $result[] = 'As the PNG tests all passed, I shall spare you for the report, which is almost identical to the one above';
+                } else {
+                    $result = array_merge($result, $subResult);
+                }
+            }
+        } else {
+            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($config, 'png');
             $result = array_merge($result, $subResult);
-            if (!$success) {
-                $result[] = 'The test cannot be completed';
-                return [false, $result, $createdTestFiles];
-            }
-
-            $requestUrl = Paths::getUploadUrl() . '/' . $sourceFileName;
-            $result[] = 'Making a HTTP request for the test image (pretending to be a client that supports webp, by setting the "Accept" header to "image/webp")';
-            $requestArgs = [
-                'headers' => [
-                    'ACCEPT' => 'image/webp'
-                ]
-            ];
-            list($success, $errors, $headers) = SelfTestHelper::remoteGet($requestUrl, $requestArgs);
-
-            if (!$success) {
-                $result[count($result) - 1] .= '. FAILED';
-                $result = array_merge($result, $errors);
-                $result[] = 'The test cannot be completed';
-                //$result[count($result) - 1] .= '. FAILED';
-                return [false, $result, $createdTestFiles];
-            }
-            //$result[count($result) - 1] .= '. ok!';
-            $result[] = '*' . $requestUrl . '*';
-
-            $result = array_merge($result, SelfTestHelper::printHeaders($headers));
-
-            if (!isset($headers['content-type'])) {
-                $result[] = 'Bummer. There is no "content-type" response header. The test FAILED';
-                return [false, $result, $createdTestFiles];
-            }
-
-            if ($headers['content-type'] == 'image/jpeg') {
-                $result[] = 'Bummer. As the "content-type" header reveals, we got the jpeg. So the redirection to the webp is not working.';
-                $result[] = 'The test FAILED.';
-                return [false, $result, $createdTestFiles];
-            }
-
-            if ($headers['content-type'] != 'image/webp') {
-                $result[] = 'Bummer. As the "content-type" header reveals, we did not get a webp' .
-                    'Surprisingly we got: "' . $headers['content-type'] . '"';
-                $result[] = 'The test FAILED.';
-                return [false, $result, $createdTestFiles];
-            }
-
-            if (isset($headers['x-webp-convert-log'])) {
-                $result[] = 'Bummer. Although we did get a webp, we did not get it as a result of a direct ' .
-                    'redirection. This webp was returned by the PHP script. Although this works, it takes more ' .
-                    'resources to ignite the PHP engine for each image request than redirecting directly to the image.';
-                $result[] = 'The test FAILED.';
-                return [false, $result, $createdTestFiles];
-            } else {
-                $result[] = 'Alrighty. We got a webp. Just what we wanted. **Great!**{: .ok}';
-            }
-            if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
-                $result[count($result) - 1] .= '. **BUT!**';
-                $result[] = '**Warning: We did not receive a Vary:Accept header. ' .
-                    'That header should be set in order to tell proxies that the response varies depending on the ' .
-                    'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
-            }
-            if (!SelfTestHelper::hasCacheControlOrExpiresHeader($headers)) {
-                $result[] = '**Notice: No cache-control or expires header has been set. ' .
-                    'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression comprimise.**{: .warn}';
-            }
-            $result[] = '';
-            $result[] = 'Now lets check that browsers *not* supporting webp gets the jpeg';
-            $result[] = 'Making a HTTP request for the test image (without setting the "Accept" header)';
-            list($success, $errors, $headers) = SelfTestHelper::remoteGet($requestUrl);
-
-            if (!$success) {
-                $result[count($result) - 1] .= '. FAILED';
-                $result = array_merge($result, $errors);
-                $result[] = 'The test cannot be completed';
-                //$result[count($result) - 1] .= '. FAILED';
-                return [false, $result, $createdTestFiles];
-            }
-            //$result[count($result) - 1] .= '. ok!';
-            $result[] = '*' . $requestUrl . '*';
-
-            $result = array_merge($result, SelfTestHelper::printHeaders($headers));
-
-            if (!isset($headers['content-type'])) {
-                $result[] = 'Bummer. There is no "content-type" response header. The test FAILED';
-                return [false, $result, $createdTestFiles];
-            }
-
-            if ($headers['content-type'] == 'image/webp') {
-                $result[] = 'Bummer. As the "content-type" header reveals, we got the webp. ' .
-                    'So even browsers not supporting webp gets webp. Not good!';
-                $result[] = 'The test FAILED.';
-                return [false, $result, $createdTestFiles];
-            }
-
-            if ($headers['content-type'] != 'image/jpeg') {
-                $result[] = 'Bummer. As the "content-type" header reveals, we did not get the jpeg' .
-                    'Surprisingly we got: "' . $headers['content-type'] . '"';
-                $result[] = 'The test FAILED.';
-                return [false, $result, $createdTestFiles];
-            }
-            $result[] = 'Alrighty. We got the jpeg. **Everything is great**{: .ok}.';
-
-            if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
-                $result[count($result) - 1] .= '. **BUT!**';
-                $result[] = '**We did not receive a Vary:Accept header. ' .
-                    'That header should be set in order to tell proxies that the response varies depending on the ' .
-                    'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
-            }
-
-
-            $result[] = 'However, notice that this test only tested an image which was placed in the uploads ' .
-                'folder. The theme images have not been tested (it is on the TODO). Also on the TODO: Test PNG ' .
-                'image and if PNG is disabled, that PNG does not redirect to webp. And test that redirection ' .
-                'to webp only is triggered when the webp exists. These things probably work, though.';
-
-            SelfTestHelper::deleteTestImagesInUploadFolder();
         }
+
+        $result[] = '';
+        $result[] = 'Notice that this test only tested an image which was placed in the *uploads* ' .
+            'folder. The theme images have not been tested (it is on the TODO). Also on the TODO: If one ' .
+            'image type is disabled, chack that it does not redirect to webp. And test that redirection ' .
+            'to webp only is triggered when the webp exists. These things probably work, though.';
+
+
         return [true, $result, $createdTestFiles];
         /*
         $result[] = 'Copying test image to upload folder';
