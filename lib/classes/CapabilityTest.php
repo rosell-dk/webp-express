@@ -1,5 +1,11 @@
 <?php
+/*
+This functionality will be moved to a separate project.
 
+Btw:
+Seems someone else got similar idea:
+http://christian.roy.name/blog/detecting-modrewrite-using-php
+*/
 namespace WebPExpress;
 
 use \WebPExpress\FileHelper;
