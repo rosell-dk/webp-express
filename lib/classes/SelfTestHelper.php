@@ -235,6 +235,30 @@ class SelfTestHelper
         return $result;
     }
 
+    public static function rulesInUpload($config)
+    {
+        $result = [];
+        $result[] = '### WebP rules in the .htaccess placed in *uploads*:';
+        $file = Paths::getAbsDirById('uploads') . '/.htaccess';
+        if (!HTAccess::haveWeRulesInThisHTAccess($file)) {
+            $result[] = 'NONE!';
+        } else {
+            $result[] = '```' . HTAccess::extractWebPExpressRulesFromHTAccess($file) . '```';
+        }
+        return $result;
+    }
+
+    public static function allInfo($config)
+    {
+        $result = [];
+        $result = array_merge($result, self::systemInfo());
+        $result = array_merge($result, self::configInfo($config));
+        $result = array_merge($result, self::htaccessInfo($config));
+        $result = array_merge($result, self::capabilityTests($config));
+        $result = array_merge($result, self::rulesInUpload($config));
+        return $result;
+    }
+
     public static function capabilityTests($config)
     {
         $capTests = $config['base-htaccess-on-these-capability-tests'];
@@ -256,9 +280,8 @@ class SelfTestHelper
 
     public static function diagnoseFailedRewrite($config)
     {
-        $result[] = '# Hi!';
         $result[] = '## Diagnosing';
-        if (stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') !== false) {
+        if (PlatformInfo::isNginx()) {
             // Nginx
             $result[] = 'Notice that you are on Nginx and the rules that WebP Express stores in the *.htaccess* files probably does not ' .
                 'have any effect. ';
@@ -310,10 +333,7 @@ class SelfTestHelper
             }
         }
         $result[] = '## Info for manually diagnosing';
-        $result = array_merge($result, self::systemInfo());
-        $result = array_merge($result, self::configInfo($config));
-        $result = array_merge($result, self::htaccessInfo($config));
-        $result = array_merge($result, self::capabilityTests($config));
+        $result = array_merge($result, self::allInfo());
         return $result;
     }
 }

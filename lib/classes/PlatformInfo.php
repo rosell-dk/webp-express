@@ -23,6 +23,11 @@ class PlatformInfo
         return ( strpos( $server, 'litespeed') !== false );
     }
 
+    public static function isNginx()
+    {
+        return (stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') !== false);
+    }
+
     public static function isApacheOrLiteSpeed()
     {
         return self::isApache() || self::isLiteSpeed();

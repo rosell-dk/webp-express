@@ -147,15 +147,13 @@ class HTAccess
 
 
     /**
-     *  Sneak peak into .htaccess to see if we have rules in it
-     *  This may not be possible (it requires read permission)
-     *  Return true, false, or null if we just can't tell
+     * @return  string|false  Rules, or false if no rules found or file does not exist.
      */
-    public static function haveWeRulesInThisHTAccess($filename) {
+    public static function extractWebPExpressRulesFromHTAccess($filename) {
         if (FileHelper::fileExists($filename)) {
             $content = FileHelper::loadFile($filename);
             if ($content === false) {
-                return null;
+                return false;
             }
 
             $pos1 = strpos($content, '# BEGIN WebP Express');
@@ -166,11 +164,29 @@ class HTAccess
             if ($pos2 === false) {
                 return false;
             }
+            return substr($content, $pos1, $pos2 - $pos1);
+        } else {
+            // the .htaccess isn't even there. So there are no rules.
+            return false;
+        }
+    }
 
-            $weRules = substr($content, $pos1, $pos2 - $pos1);
-
+    /**
+     *  Sneak peak into .htaccess to see if we have rules in it
+     *  This may not be possible (it requires read permission)
+     *  Return true, false, or null if we just can't tell
+     */
+    public static function haveWeRulesInThisHTAccess($filename) {
+        if (FileHelper::fileExists($filename)) {
+            $content = FileHelper::loadFile($filename);
+            if ($content === false) {
+                return null;
+            }
+            $weRules = (self::extractWebPExpressRulesFromHTAccess($filename));
+            if ($weRules === false) {
+                return false;
+            }
             return (strpos($weRules, '<IfModule mod_rewrite.c>') !== false);
-
         } else {
             // the .htaccess isn't even there. So there are no rules.
             return false;

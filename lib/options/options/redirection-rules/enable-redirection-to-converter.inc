@@ -18,8 +18,9 @@
             value="true"
             type="checkbox"
         >
+        <!--
         <button style="margin-left: 30px;" onclick="WebPExpress.SelfTest.openPopup('redirectToConverter')" class="button button-secondary" type="button">
             Live test
-        </button>
+        </button>-->
     </td>
 </tr>
