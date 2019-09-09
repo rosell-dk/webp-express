@@ -131,6 +131,26 @@ class SelfTestHelper
         return [true, $result, $return['headers']];
     }
 
+    public static function hasHeaderContaining($headers, $headerToInspect, $containString)
+    {
+        if (!isset($headers[$headerToInspect])) {
+            return false;
+        }
+
+        // If there are multiple headers, check all
+        if (gettype($headers[$headerToInspect]) == 'string') {
+            $h = [$headers[$headerToInspect]];
+        } else {
+            $h = $headers[$headerToInspect];
+        }
+        foreach ($h as $headerValue) {
+            if (stripos($headerValue, $containString) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function hasVaryAcceptHeader($headers)
     {
         if (!isset($headers['vary'])) {
@@ -166,7 +186,6 @@ class SelfTestHelper
         return false;
     }
 
-
     public static function printHeaders($headers)
     {
         $result = [];
@@ -179,7 +198,6 @@ class SelfTestHelper
             } else {
                 $result[] = '- ' . $headerName . ': ' . $headerValue;
             }
-
         }
         $result[] = '';
         return $result;
@@ -243,7 +261,10 @@ class SelfTestHelper
         if (!HTAccess::haveWeRulesInThisHTAccess($file)) {
             $result[] = 'NONE!';
         } else {
-            $result[] = '```' . HTAccess::extractWebPExpressRulesFromHTAccess($file) . '```';
+            $weRules = HTAccess::extractWebPExpressRulesFromHTAccess($file);
+            // remove unindented comments
+            $weRules = preg_replace('/^\#\s[^\n\r]*[\n\r]+/ms', '', $weRules);
+            $result[] = '```' . $weRules . '```';
         }
         return $result;
     }
@@ -280,7 +301,7 @@ class SelfTestHelper
 
     public static function diagnoseFailedRewrite($config)
     {
-        $result[] = '## Diagnosing';
+        //$result[] = '## Diagnosing';
         if (PlatformInfo::isNginx()) {
             // Nginx
             $result[] = 'Notice that you are on Nginx and the rules that WebP Express stores in the *.htaccess* files probably does not ' .
@@ -333,7 +354,7 @@ class SelfTestHelper
             }
         }
         $result[] = '## Info for manually diagnosing';
-        $result = array_merge($result, self::allInfo());
+        $result = array_merge($result, self::allInfo($config));
         return $result;
     }
 }

@@ -54,6 +54,13 @@ class SelfTest
         return [$result, 'done'];*/
     }
 
+    public static function redirectToConverter()
+    {
+        self::$next = 'done';
+        list ($success, $result) = SelfTestRedirectToConverter::runTest();
+        return $result;
+    }
+
     public static function processAjax()
     {
         if (!check_ajax_referer('webpexpress-ajax-self-test-nonce', 'nonce', false)) {

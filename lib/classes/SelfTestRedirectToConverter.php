@@ -2,8 +2,9 @@
 
 namespace WebPExpress;
 
-class SelfTestRedirectToExisting
+class SelfTestRedirectToConverter
 {
+
     /**
      * Run test for either jpeg or png
      *
@@ -26,22 +27,9 @@ class SelfTestRedirectToExisting
         }
         $createdTestFiles = true;
 
-        // Copy dummy webp
-        list($subResult, $success, $destinationFile) = SelfTestHelper::copyDummyWebPToCacheFolderUpload(
-            $config['destination-folder'],
-            $config['destination-extension'],
-            $config['destination-structure'],
-            preg_replace('#\.' . $imageType . '#', '', $sourceFileName),
-            $imageType
-        );
-        $result = array_merge($result, $subResult);
-        if (!$success) {
-            $result[] = 'The test cannot be completed';
-            return [false, $result, $createdTestFiles];
-        }
-
         $requestUrl = Paths::getUploadUrl() . '/' . $sourceFileName;
-        $result[] = '## Lets check that browsers supporting webp gets the WEBP';
+        $result[] = '## Lets check that browsers supporting webp gets a freshly converted WEBP ' .
+            'when the ' . $imageType . ' is requested';
         $result[] = 'Making a HTTP request for the test image (pretending to be a client that supports webp, by setting the "Accept" header to "image/webp")';
         $requestArgs = [
             'headers' => [
@@ -68,33 +56,38 @@ class SelfTestRedirectToExisting
         }
 
         if ($headers['content-type'] == 'image/' . $imageType) {
-            $result[] = 'Bummer. As the "content-type" header reveals, we got the ' . $imageType . '. ' .
-                'So the redirection to the webp is not working.';
-            $result[] = 'The test FAILED.';
+            $result[] = 'Bummer. As the "content-type" header reveals, we got the ' . $imageType . '.';
+            $result[] = 'The test **failed**{: .error}.';
+            $result[] = 'Now, what went wrong?';
 
-            $result[] = '## Diagnosing';
+            if (isset($headers['x-webp-convert-log'])) {
+                //$result[] = 'Inspect the "x-webp-convert-log" headers above, and you ' .
+                //    'should have your answer (it is probably because you do not have any conversion methods working).';
+                if (SelfTestHelper::hasHeaderContaining($headers, 'x-webp-convert-log', 'Performing fail action: original')) {
+                    $result[] = 'The answer lies in the "x-convert-log" response headers: ' .
+                        '**The conversion failed**{: .error}. ';
+                }
+            } else {
+                $result[] = 'Well, there is indication that the redirection isnt working. ' .
+                    'The PHP script should set "x-webp-convert-log" response headers, but there are none. ';
+                    'While these headers could have been eaten in a Cloudflare-like setup, the problem is ';
+                    'probably that the redirection simply failed';
 
-            $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
-
+                    $result[] = '## Diagnosing redirection problems';
+                    $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
+            }
             return [false, $result, $createdTestFiles];
         }
 
         if ($headers['content-type'] != 'image/webp') {
-            $result[] = 'Bummer. As the "content-type" header reveals, we did not get a webp' .
+            $result[] = 'However. As the "content-type" header reveals, we did not get a webp' .
                 'Surprisingly we got: "' . $headers['content-type'] . '"';
             $result[] = 'The test FAILED.';
             return [false, $result, $createdTestFiles];
         }
 
-        if (isset($headers['x-webp-convert-log'])) {
-            $result[] = 'Bummer. Although we did get a webp, we did not get it as a result of a direct ' .
-                'redirection. This webp was returned by the PHP script. Although this works, it takes more ' .
-                'resources to ignite the PHP engine for each image request than redirecting directly to the image.';
-            $result[] = 'The test FAILED.';
-            return [false, $result, $createdTestFiles];
-        } else {
-            $result[] = 'Alrighty. We got a webp. Just what we wanted. **Great!**{: .ok}';
-        }
+        $result[] = 'Alrighty. We got a webp, and we got it from the PHP script. **Great!**{: .ok}';
+
         if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
             $result[count($result) - 1] .= '. **BUT!**';
             $result[] = '**Warning: We did not receive a Vary:Accept header. ' .
@@ -185,13 +178,8 @@ class SelfTestRedirectToExisting
 
     private static function doRunTest($config)
     {
-//        return [false, SelfTestHelper::diagnoseFailedRewrite($config), false];
-
         $result = [];
-
-        //$result[] = '*hello* with *you* and **you**. ok! FAILED';
-        $result[] = '# Testing redirection to existing webp';
-        //$result[] = 'This test examines image responses "from the outside".';
+        $result[] = '# Testing redirection to converter';
 
         $createdTestFiles = false;
         if (!file_exists(Paths::getConfigFileName())) {
@@ -199,7 +187,7 @@ class SelfTestRedirectToExisting
             return [true, $result, $createdTestFiles];
         }
 
-        if (!$config['redirect-to-existing-in-htaccess']) {
+        if (!$config['enable-redirection-to-converter']) {
             $result[] = 'Turned off, nothing to test';
             return [true, $result, $createdTestFiles];
         }
@@ -237,54 +225,12 @@ class SelfTestRedirectToExisting
             $result[] = 'Everything **seems to work**{: .ok} as it should. ' .
                 'However, notice that this test only tested an image which was placed in the *uploads* folder. ' .
                 'The rest of the image roots (such as theme images) have not been tested (it is on the TODO). ' .
-                'Also on the TODO: If one image type is disabled, check that it does not redirect to webp. ' .
-                'And test that redirection to webp only is triggered when the webp exists. ' .
+                'Also on the TODO: If one image type is disabled, check that it does not redirect to the conversion script. ' .
                 'These things probably work, though.';
         }
 
 
         return [true, $result, $createdTestFiles];
-        /*
-        $result[] = 'Copying test image to upload folder';
-        $testSourceJpg = Paths::getPluginDirAbs() . "/webp-express/test/focus.jpg";
-        $testDestinationJpg = Paths::getAbsDirById('uploads') . "/webp-express-test-image.jpg";
-
-        if (!@copy($testSourceJpg, $testDestinationJpg)) {
-            $result[count($result) - 1] .= '. FAILED';
-        } else {
-            $result[count($result) - 1] .= '. ok!';
-
-            $result[] = 'Making a HTTP request for the image to verify that we get a jpeg back (there is no webp yet)';
-            $requestUrl = Paths::getUploadUrl() . "/webp-express-test-image.jpg";
-            $return = wp_remote_request($requestUrl);
-            if (is_wp_error($return)) {
-                $result[count($result) - 1] .= '. FAILED';
-                $result[] = 'Request URL: ' . $requestUrl;
-            } else {
-                if ($return['response']['code'] != '200') {
-                    $result[count($result) - 1] .= '. FAILED';
-                    $result[] = 'Unexpected response: ' . $return['response']['code'] . ' ' . $return['response']['message'];
-                    $result[] = 'Request URL: ' . $requestUrl;
-                }
-                if ((isset($return['headers']['content-type']) == 'image/jpeg') && ($return['headers']['content-type'] == 'image/jpeg')) {
-                    $result[count($result) - 1] .= '. ok!';
-                } else {
-                    $result[count($result) - 1] .= '. FAILED';
-                    if (!isset($return['headers']['content-type'])) {
-                        $result[] = 'Hm - expected a "content-type" response header, but it is missing';
-                    } else {
-                        $result[] = 'The content-type header is NOT "image/jpeg"';
-                    }
-                    $result[] = 'Response headers:';
-                    foreach ($return['headers'] as $headerName => $headerValue) {
-                        $result[] = '- ' . $headerName . ': ' . $headerValue;
-                    }
-                }
-
-            }
-            $result[] = 'More tests will come in future versions!';
-        }*/
-
     }
 
     private static function cleanUpTestImages($config)
@@ -320,6 +266,5 @@ class SelfTestRedirectToExisting
 
         return [$success, $result];
     }
-
 
 }
