@@ -147,10 +147,11 @@ class HTAccessRules
         $rules = '';
 
 
-        if ((self::$mingled) && (self::$htaccessDir == 'uploads')) {
+        if (self::$mingled) {
             // TODO:
             // Only write mingled rules for "uploads" dir.
-            // - unless uploads dir is unwritable (in that case also write for wp-content / index)
+            // - UNLESS no .htaccess has been placed in uploads dir (is unwritable) (in that case also write for wp-content / index)
+            // (self::$htaccessDir == 'uploads')
             $rules .= "  # Redirect to existing converted image in same dir (if browser supports webp)\n";
             $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
 
@@ -166,9 +167,13 @@ class HTAccessRules
 
 //            $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(" . self::$fileExtIncludingDot . ")$\n";
 
+            // self::$appendWebP cannot be used, we need this:
+            // (because we are not sure there are a .htaccess in the uploads folder)
+            $appendWebP = !(self::$config['destination-extension'] == 'set');
+
             $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(" . self::$fileExtIncludingDot . ")$\n";
-            $rules .= "  RewriteCond %1" . (self::$appendWebP ? "%2" : "") . "\.webp -f\n";
-            $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ %1" . (self::$appendWebP ? "%2" : "") .
+            $rules .= "  RewriteCond %1" . ($appendWebP ? "%2" : "") . "\.webp -f\n";
+            $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ %1" . ($appendWebP ? "%2" : "") .
                 "\.webp [T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
 
 /*
@@ -331,7 +336,14 @@ class HTAccessRules
                 $params[] = 'xwp-content-rel-to-plugin-dir=x' . Paths::getContentDirRelToPluginDir();
             }
 
-            $rules .= "  RewriteRule (?i).*" . (self::$appendWebP ? "(" . self::$fileExtIncludingDot . ")" : "") . "\.webp$ " .
+            // self::$appendWebP cannot be used, we need the following in order for
+            // it to work for uploads in: Mingled, "Set to WebP", "Image roots".
+            // TODO! Will it work for ie theme images?
+            // - well, it should, because the script is passed $0. Not matching the ".png" part of the filename
+            // only means it is a bit more greedy than it has to
+            $appendWebP = !(self::$config['destination-extension'] == 'set');
+
+            $rules .= "  RewriteRule (?i).*" . ($appendWebP ? "(" . self::$fileExtIncludingDot . ")" : "") . "\.webp$ " .
                 "/" . Paths::getWebPRealizerUrlPath() .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n\n";
