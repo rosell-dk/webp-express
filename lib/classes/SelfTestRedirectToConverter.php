@@ -97,7 +97,7 @@ class SelfTestRedirectToConverter
         }
         if (!SelfTestHelper::hasCacheControlOrExpiresHeader($headers)) {
             $result[] = '**Notice: No cache-control or expires header has been set. ' .
-                'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression comprimise.**{: .warn}';
+                'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression compromise.**{: .warn}';
         }
         $result[] = '';
 

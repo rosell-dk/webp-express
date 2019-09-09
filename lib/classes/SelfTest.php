@@ -7,6 +7,14 @@ class SelfTest
 
     private static $next;
 
+    public static function allInfo()
+    {
+        self::$next = 'done';
+        $config = Config::loadConfigAndFix(false);
+        return SelfTestHelper::allInfo($config);
+    }
+
+
     public static function systemInfo()
     {
         self::$next = 'configInfo';
@@ -17,7 +25,7 @@ class SelfTest
     {
         self::$next = 'capabilityTests';
         $config = Config::loadConfigAndFix(false);
-        return SelfTestHelper::systemInfo($config);
+        return SelfTestHelper::configInfo($config);
     }
 
     public static function capabilityTests()

@@ -73,7 +73,6 @@ class SelfTestRedirectToExisting
             $result[] = 'The test FAILED.';
 
             $result[] = '## Diagnosing';
-
             $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
 
             return [false, $result, $createdTestFiles];
@@ -91,6 +90,11 @@ class SelfTestRedirectToExisting
                 'redirection. This webp was returned by the PHP script. Although this works, it takes more ' .
                 'resources to ignite the PHP engine for each image request than redirecting directly to the image.';
             $result[] = 'The test FAILED.';
+
+            $result[] = 'It seems something went wrong with the redirection.';
+            $result[] = '## Diagnosing redirects';
+            $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
+
             return [false, $result, $createdTestFiles];
         } else {
             $result[] = 'Alrighty. We got a webp. Just what we wanted. **Great!**{: .ok}';
@@ -104,7 +108,7 @@ class SelfTestRedirectToExisting
         }
         if (!SelfTestHelper::hasCacheControlOrExpiresHeader($headers)) {
             $result[] = '**Notice: No cache-control or expires header has been set. ' .
-                'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression comprimise.**{: .warn}';
+                'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression compromise.**{: .warn}';
         }
         $result[] = '';
 

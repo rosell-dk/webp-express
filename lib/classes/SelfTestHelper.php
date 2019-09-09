@@ -118,17 +118,17 @@ class SelfTestHelper
         $result = [];
         $return = wp_remote_get($requestUrl, $args);
         if (is_wp_error($return)) {
-            $result[] = 'The remote request errored!';
             $result[] = 'Request URL: ' . $requestUrl;
-            return [false, $result];
+            $result[] = 'The remote request errored!';
+            return [false, $result, [], $return];
         }
         if ($return['response']['code'] != '200') {
             //$result[count($result) - 1] .= '. FAILED';
-            $result[] = 'Unexpected response: ' . $return['response']['code'] . ' ' . $return['response']['message'];
             $result[] = 'Request URL: ' . $requestUrl;
-            return [false, $result];
+            $result[] = 'Response: ' . $return['response']['code'] . ' ' . $return['response']['message'];
+            return [false, $result, [], $return];
         }
-        return [true, $result, $return['headers']];
+        return [true, $result, $return['headers'], $return];
     }
 
     public static function hasHeaderContaining($headers, $headerToInspect, $containString)
@@ -253,20 +253,25 @@ class SelfTestHelper
         return $result;
     }
 
-    public static function rulesInUpload($config)
+    public static function rulesInImageRoot($config, $imageRootId)
     {
         $result = [];
-        $result[] = '### WebP rules in the .htaccess placed in *uploads*:';
-        $file = Paths::getAbsDirById('uploads') . '/.htaccess';
+        $result[] = '### WebP rules in the .htaccess placed in *' . $imageRootId . '*:';
+        $file = Paths::getAbsDirById($imageRootId) . '/.htaccess';
         if (!HTAccess::haveWeRulesInThisHTAccess($file)) {
-            $result[] = 'NONE!';
+            $result[] = '**NONE!**{: .warn}';
         } else {
             $weRules = HTAccess::extractWebPExpressRulesFromHTAccess($file);
             // remove unindented comments
-            $weRules = preg_replace('/^\#\s[^\n\r]*[\n\r]+/ms', '', $weRules);
+            //$weRules = preg_replace('/^\#\s[^\n\r]*[\n\r]+/ms', '', $weRules);
             $result[] = '```' . $weRules . '```';
         }
         return $result;
+    }
+
+    public static function rulesInUpload($config)
+    {
+        return self::rulesInImageRoot($config, 'uploads');
     }
 
     public static function allInfo($config)
@@ -277,6 +282,7 @@ class SelfTestHelper
         $result = array_merge($result, self::htaccessInfo($config));
         $result = array_merge($result, self::capabilityTests($config));
         $result = array_merge($result, self::rulesInUpload($config));
+        $result = array_merge($result, self::rulesInImageRoot($config, 'wp-content'));
         return $result;
     }
 

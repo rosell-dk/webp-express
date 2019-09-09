@@ -46,19 +46,31 @@ class SelfTestRedirectToWebPRealizer
 
 
         $result[] = '## Lets check that browsers supporting webp gets a freshly converted WEBP ' .
-            'when a non-existing WEBP is requested';
+            'when a non-existing WEBP is requested, which has a corresponding source';
         $result[] = 'Making a HTTP request for the test image (pretending to be a client that supports webp, by setting the "Accept" header to "image/webp")';
         $requestArgs = [
             'headers' => [
                 'ACCEPT' => 'image/webp'
             ]
         ];
-        list($success, $errors, $headers) = SelfTestHelper::remoteGet($requestUrl, $requestArgs);
+        list($success, $errors, $headers, $return) = SelfTestHelper::remoteGet($requestUrl, $requestArgs);
 
         if (!$success) {
-            $result[count($result) - 1] .= '. FAILED';
+            //$result[count($result) - 1] .= '. FAILED';
+            //$result[] = '*' . $requestUrl . '*';
+
             $result = array_merge($result, $errors);
-            $result[] = 'The test cannot be completed';
+            $result[] = 'The test **failed**{: .error}';
+
+            $result[] = 'Why did it fail? It could either be that the redirection rule did not trigger ' .
+                'or it could be that the PHP script could not locate a source image corresponding to the destination URL. ' .
+                'Currently, this analysis cannot dertermine which was the case and it cannot be helpful ' .
+                'if the latter is the case (sorry!). However, if the redirection rules are the problem, here is some info:';
+
+            $result[] = '## Diagnosing redirection problems (presuming it is the redirection to the script that is failing)';
+            $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
+
+
             //$result[count($result) - 1] .= '. FAILED';
             return [false, $result, $createdTestFiles];
         }
@@ -121,7 +133,7 @@ class SelfTestRedirectToWebPRealizer
         }
         if (!SelfTestHelper::hasCacheControlOrExpiresHeader($headers)) {
             $result[] = '**Notice: No cache-control or expires header has been set. ' .
-                'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression comprimise.**{: .warn}';
+                'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression compromise.**{: .warn}';
         }
         $result[] = '';
 
