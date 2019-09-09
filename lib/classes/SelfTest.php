@@ -61,6 +61,14 @@ class SelfTest
         return $result;
     }
 
+    public static function redirectToWebPRealizer()
+    {
+        self::$next = 'done';
+        list ($success, $result) = SelfTestRedirectToWebPRealizer::runTest();
+        return $result;
+    }
+
+
     public static function processAjax()
     {
         if (!check_ajax_referer('webpexpress-ajax-self-test-nonce', 'nonce', false)) {

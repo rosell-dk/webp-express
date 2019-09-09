@@ -142,7 +142,7 @@ class AlterHtmlHelper
      *  @param  string  $baseUrl     Base url of source image (ie http://example.com/wp-content)
      *  @param  string  $baseDir     Base dir of source image (ie /var/www/example.com/wp-content)
      */
-    private static function getWebPUrlInBase($sourceUrl, $rootId, $baseUrl, $baseDir)
+    public static function getWebPUrlInBase($sourceUrl, $rootId, $baseUrl, $baseDir)
     {
         //error_log('getWebPUrlInBase:' . $sourceUrl . ':' . $baseUrl . ':' . $baseDir);
 
