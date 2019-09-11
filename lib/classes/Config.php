@@ -69,6 +69,7 @@ class Config
             'cache-control-custom' => 'public, max-age=31536000, stale-while-revalidate=604800, stale-if-error=604800',
             'cache-control-max-age' => 'one-week',
             'cache-control-public' => false,
+            'scope' => ['themes', 'uploads'],
 
             // redirection rules
             'enable-redirection-to-converter' => true,
@@ -210,12 +211,20 @@ class Config
             $config['environment-when-config-was-saved'] = array_replace_recursive($defaultConfig['environment-when-config-was-saved'], $config['environment-when-config-was-saved']);
         }
 
-
         if (!isset($config['base-htaccess-on-these-capability-tests'])) {
             self::runAndStoreCapabilityTests($config);
         }
 
         $config = self::applyOperationMode($config);
+
+        // Fix scope: Remove invalid and put in correct order
+        $fixedScope = [];
+        foreach (Paths::getImageRootIds() as $rootId) {
+            if (in_array($rootId, $config['scope'])) {
+                $fixedScope[] = $rootId;
+            }
+        }
+        $config['scope'] = $fixedScope;
 
         if (!isset($config['web-service'])) {
             $config['web-service'] = [
@@ -443,6 +452,16 @@ class Config
         $obj['destination-extension'] = $config['destination-extension'];
         $obj['destination-structure'] = $config['destination-structure'];
 
+
+        $obj['bases'] = [];
+        foreach ($config['scope'] as $rootId) {
+            $obj['bases'][$rootId] = [
+                Paths::getAbsDirById($rootId),
+                Paths::getUrlById($rootId)
+            ];
+        }
+
+        /*
         // TODO!
         // Instead of "bases", use image root ids.
         // Its a numeric array and there is no id called "content"
@@ -466,7 +485,8 @@ class Config
                     Paths::getUrlById($rootId)
                 ];
             }
-        }
+        }*/
+
 
         $obj['image-types'] = $config['image-types'];   // 0=none,1=jpg, 2=png, 3=both
 
@@ -640,7 +660,7 @@ class Config
             'destination-folder' => $config['destination-folder'],
             'forward-query-string' => $config['forward-query-string'],
             //'method-for-passing-source' => $config['method-for-passing-source'],
-            'image-roots' => Paths::getImageRoots(),
+            'image-roots' => Paths::getImageRootsDef(),
             'success-response' => $config['success-response'],
         ];
 

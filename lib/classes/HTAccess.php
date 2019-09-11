@@ -10,16 +10,10 @@ use \WebPExpress\State;
 
 class HTAccess
 {
-    // (called from this file only. BUT our saveRules methods calls it, and it is called from several classes)
-    public static function generateHTAccessRulesFromConfigObj($config, $htaccessDir = 'index')
-    {
-        return HTAccessRules::generateHTAccessRulesFromConfigObj($config, $htaccessDir);
-    }
-
     /* only called from page-messages.inc, but commented out there... */
     public static function generateHTAccessRulesFromConfigFile($htaccessDir = '') {
         if (Config::isConfigFileThereAndOk()) {
-            return self::generateHTAccessRulesFromConfigObj(Config::loadConfig(), $htaccessDir);
+            return HTAccessRules::generateHTAccessRulesFromConfigObj(Config::loadConfig(), $htaccessDir);
         } else {
             return false;
         }
@@ -74,7 +68,8 @@ class HTAccess
             'enable-redirection-to-converter' => true,
             'destination-folder' => 'separate',
             'destination-extension' => 'append',
-            'destination-structure' => 'doc-root'
+            'destination-structure' => 'doc-root',
+            'scope' => ['themes', 'uploads']
         ];
 
         /*
@@ -286,6 +281,11 @@ class HTAccess
         return $success;
     }
 
+    public static function saveHTAccessRules($rootId, $rules, $createIfMissing = true) {
+        $filename = Paths::getAbsDirById($rootId) . '/.htaccess';
+        return self::saveHTAccessRulesToFile($filename, $rules, $createIfMissing);
+    }
+
     /* only called in this file */
     public static function saveHTAccessRulesToFirstWritableHTAccessDir($dirs, $rules)
     {
@@ -302,36 +302,35 @@ class HTAccess
      *  Try to deactivate all .htaccess rules.
      *  If success, we return true.
      *  If we fail, we return an array of filenames that have problems
+     *  @return  true|array
      */
-    public static function deactivateHTAccessRules() {
-        //return self::saveHTAccessRules('# Plugin is deactivated');
-        $indexDir = Paths::getIndexDirAbs();
-        $homeDir = Paths::getHomeDirAbs();
-        $wpContentDir = Paths::getContentDirAbs();
-        $pluginDir = Paths::getPluginDirAbs();
-        $uploadDir = Paths::getUploadDirAbs();
-        $themesDir = Paths::getThemesDirAbs();
+    public static function deactivateHTAccessRules($comment = '# Plugin is deactivated') {
 
-        $dirsToClean = [$indexDir, $homeDir, $wpContentDir, $pluginDir, $uploadDir, $themesDir];
-
+        $rootsToClean = Paths::getImageRootIds();
+        $rootsToClean[] = 'home';
         $failures = [];
+        $successes = [];
 
-        foreach ($dirsToClean as $dir) {
+        foreach ($rootsToClean as $imageRootId) {
+            $dir = Paths::getAbsDirById($imageRootId);
             $filename = $dir . '/.htaccess';
             if (!FileHelper::fileExists($filename)) {
+                //error_log('exists not:' . $filename);
                 continue;
             } else {
                 if (self::haveWeRulesInThisHTAccessBestGuess($filename)) {
-                    if (!self::saveHTAccessRulesToFile($filename, '# Plugin is deactivated', false)) {
-                        $failures[] = $filename;
+                    if (self::saveHTAccessRulesToFile($filename, $comment, false)) {
+                        $successes[] = $imageRootId;
+                    } else {
+                        $failures[] = $imageRootId;
                     }
+                } else {
+                    //error_log('no rules:' . $filename);
                 }
             }
         }
-        if (count($failures) == 0) {
-            return true;
-        }
-        return $failures;
+        $success =  (count($failures) == 0);
+        return [$success, $failures, $successes];
     }
 
     public static function testLinks($config) {
@@ -392,25 +391,64 @@ class HTAccess
         ];
     }
 
+    public static function saveRules($config) {
+        list($success, $failedDeactivations, $successfulDeactivations) = self::deactivateHTAccessRules('# The rules have left the building');
+
+        $rootIds = $config['scope'];
+        if ($config['destination-structure'] == 'doc-root') {
+            $rootIds = Paths::filterOutSubRoots($rootIds);
+        }
+
+        $failedWrites = [];
+        $successfullWrites = [];
+        foreach ($rootIds as $rootId) {
+            $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, $rootId);
+            $success = self::saveHTAccessRules(
+                $rootId,
+                $rules,
+                true
+            );
+            if ($success) {
+                $successfullWrites[] = $rootId;
+
+                // Remove it from $successfulDeactivations (if it is there)
+                if (($key = array_search($rootId, $successfulDeactivations)) !== false) {
+                    unset($successfulDeactivations[$key]);
+                }
+            } else {
+                $failedWrites[] = $rootId;
+
+                // Remove it from $failedDeactivations (if it is there)
+                if (($key = array_search($rootId, $failedDeactivations)) !== false) {
+                    unset($failedDeactivations[$key]);
+                }
+            }
+        }
+
+        $success = ((count($failedDeactivations) == 0) && (count($failedWrites) == 0));
+        return [$success, $successfullWrites, $successfulDeactivations, $failedWrites, $failedDeactivations];
+    }
+
+
     /**
      *  Try to save the rules.
      *  Returns many details
-     *  (called from migrate1.php, reactivate.php, Config.php and this file)
+     *  (called from migrate1.php, migrate7.php, PluginActivate.php, Config.php and this file)
      */
-    public static function saveRules($config) {
+    public static function saveRulesOld($config) {
 
 
         list($minRequired, $pluginToo, $uploadToo) = self::getHTAccessDirRequirements();
 
-        $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'wp-content');
+        $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, 'wp-content');
         $wpContentDir = Paths::getContentDirAbs();
-        $wpContentFailed = !(HTAccess::saveHTAccessRulesToFile($wpContentDir . '/.htaccess', $rules, true));
+        $wpContentFailed = !(self::saveHTAccessRulesToFile($wpContentDir . '/.htaccess', $rules, true));
 
         $overidingRulesInWpContentWarning = false;
         if ($wpContentFailed) {
             if ($minRequired == 'index') {
-                $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'index');
-                $indexFailed = !(HTAccess::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', $rules, true));
+                $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, 'index');
+                $indexFailed = !(self::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', $rules, true));
 
                 if ($indexFailed) {
                     $mainResult = 'failed';
@@ -423,7 +461,7 @@ class HTAccess
             $mainResult = 'wp-content';
             // TODO: Change to something like "The rules are placed in the .htaccess file in your wp-content dir."
             //       BUT! - current text is searched for in page-messages.php
-            HTAccess::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false);
+            self::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false);
         }
 
         /* plugin */
@@ -439,9 +477,9 @@ class HTAccess
         $pluginFailed = false;
         $pluginFailedBadly = true;
         if ($pluginToo == 'yes') {
-            $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'plugin');
+            $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, 'plugin');
             $pluginDir = Paths::getPluginDirAbs();
-            $pluginFailed = !(HTAccess::saveHTAccessRulesToFile($pluginDir . '/.htaccess', $rules, true));
+            $pluginFailed = !(self::saveHTAccessRulesToFile($pluginDir . '/.htaccess', $rules, true));
             if ($pluginFailed) {
                 $pluginFailedBadly = self::haveWeRulesInThisHTAccessBestGuess($pluginDir . '/.htaccess');
             }
@@ -461,15 +499,15 @@ class HTAccess
         $uploadFailedBadly = true;
         if ($uploadToo == 'yes') {
             $uploadDir = Paths::getUploadDirAbs();
-            $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'uploads');
-            $uploadFailed = !(HTAccess::saveHTAccessRulesToFile($uploadDir . '/.htaccess', $rules, true));
+            $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, 'uploads');
+            $uploadFailed = !(self::saveHTAccessRulesToFile($uploadDir . '/.htaccess', $rules, true));
             if ($uploadFailed) {
                 $uploadFailedBadly = self::haveWeRulesInThisHTAccessBestGuess($uploadDir . '/.htaccess');
             }
         }
 
-        $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'themes');
-        $themesFailed = !(HTAccess::saveHTAccessRulesToFile(Paths::getThemesDirAbs() . '/.htaccess', $rules, true));
+        $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, 'themes');
+        $themesFailed = !(self::saveHTAccessRulesToFile(Paths::getThemesDirAbs() . '/.htaccess', $rules, true));
 
         /*
         if ($config['destination-structure'] == 'image-roots') {

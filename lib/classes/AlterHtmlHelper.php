@@ -81,7 +81,7 @@ class AlterHtmlHelper
 
     /**
      *  Looks if $imageUrl is rooted in $baseUrl and if the file is there
-     *
+     *  PS: NOT USED ANYMORE!
      *
      *  @param $imageUrl    (ie http://example.com/wp-content/image.jpg)
      *  @param $baseUrl     (ie http://example.com/wp-content)
@@ -109,7 +109,7 @@ class AlterHtmlHelper
 
     }
 
-
+    // NOT USED ANYMORE
     public static function isSourceInUpload($src)
     {
         /* $src is ie http://we0/wp-content-moved/themes/twentyseventeen/assets/images/header.jpg */
@@ -152,81 +152,43 @@ class AlterHtmlHelper
             return false;
         }
 
-        // Calculate file path to src
+        // Calculate file path to source
         $srcPathAbs = $baseDir . $srcPathRel;
 
-        // Check that src file exists
+        // Check that source file exists
         if (!@file_exists($srcPathAbs)) {
             return false;
         }
 
+        // Calculate destination of webp (both path and url)
+        // ----------------------------------------
 
-        // Calculate $destPathAbs and $destUrl
-        // -------------------------------------
-        $inUpload = self::isSourceInUpload($sourceUrl);
+        // We are calculating: $destPathAbs and $destUrl.
 
-        if ((self::$options['destination-folder'] == 'mingled') && $inUpload) {
-            // mingled
-            if (self::$options['destination-extension'] == 'append') {
-                $destPathAbs = $srcPathAbs . '.webp';
-                $destUrl = $sourceUrl . '.webp';
-            } else {
-                $destPathAbs = preg_replace('/\\.(png|jpe?g)$/', '', $srcPathAbs) . '.webp';
-                $destUrl = preg_replace('/\\.(png|jpe?g)$/', '', $sourceUrl) . '.webp';
-            }
-        } else {
-            // separate (images that are not in upload are always put in separate)
-
-            if ((self::$options['destination-structure'] == 'doc-root')) {
-                $relPathFromDocRoot = '/webp-express/webp-images/doc-root/';
-                $relPathFromDocRoot .= PathHelper::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), realpath($baseDir)) . $srcPathRel;
-
-                // hm, we dont need $contentDirAbs and $contentUrl, do we? They are passed to this function as
-                // $baseDir and $baseUrl aren't they?
-                list($contentDirAbs, $contentUrl) = self::$options['bases']['content'];
-
-                // PS: we always append ".webp" in separate dir
-                $destPathAbs = $contentDirAbs . $relPathFromDocRoot . '.webp';
-                $destUrl = $contentUrl . $relPathFromDocRoot . '.webp';
-
-            } else {
-                $destinationRoot = Paths::destinationRoot(
-                    $rootId,
-                    self::$options['destination-folder'],
-                    self::$options['destination-structure']
-                );
-                //error_log('look:' . $destinationRoot['url']);
-
-                $relPathFromImageRootToSource = PathHelper::getRelDir(
-                    realpath(Paths::getAbsDirById($rootId)),
-                    realpath($srcPathAbs)
-                );
-                $relPathFromImageRootToDest = ConvertHelperIndependent::appendOrSetExtension(
-                    $relPathFromImageRootToSource,
-                    self::$options['destination-extension'],
-                    ($rootId == 'uploads')
-                );
-                $result['destination-url'] = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
-
-                $destPathAbs = $destinationRoot['abs-path'] . '/' . $relPathFromImageRootToDest;
-                $destUrl = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
-
-                /*
-                $relPathToDestinationFromBaseDir = '/webp-express/webp-images/doc-root/';
-                $relPathFromBaseDir .= PathHelper::getRelDir(
-                    realpath($_SERVER['DOCUMENT_ROOT']),
-                    realpath($baseDir)
-                ) . $srcPathRel;
-
-                foreach ()
-                list($contentDirAbs, $contentUrl) = self::$options['bases']['content'];
-
-                $destPathAbs = $baseDir . $relPathFromDocRoot . '.webp';
-                $destUrl = $contentUrl . $relPathFromDocRoot . '.webp';
-                */
-
-            }
+        if (!isset(self::$options['bases'][$rootId])) {
+            return false;
         }
+
+        $destinationRoot = Paths::destinationRoot(
+            $rootId,
+            self::$options['destination-folder'],
+            self::$options['destination-structure']
+        );
+
+        $relPathFromImageRootToSource = PathHelper::getRelDir(
+            realpath(Paths::getAbsDirById($rootId)),
+            realpath($srcPathAbs)
+        );
+        $relPathFromImageRootToDest = ConvertHelperIndependent::appendOrSetExtension(
+            $relPathFromImageRootToSource,
+            self::$options['destination-folder'],
+            self::$options['destination-extension'],
+            ($rootId == 'uploads')
+        );
+        $result['destination-url'] = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
+
+        $destPathAbs = $destinationRoot['abs-path'] . '/' . $relPathFromImageRootToDest;
+        $destUrl = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
 
         $webpMustExist = self::$options['only-for-webps-that-exists'];
         if ($webpMustExist && (!@file_exists($destPathAbs))) {

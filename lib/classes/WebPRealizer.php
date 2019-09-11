@@ -68,7 +68,7 @@ class WebPRealizer extends WodConfigLoader
             if ($destinationRelImageRoot !== false) {
                 $destinationRelImageRoot = SanityCheck::pathWithoutDirectoryTraversal($destinationRelImageRoot);
             }
-            $imageRoots = self::getImageRoots();
+            $imageRoots = self::getImageRootsDef();
             return $imageRoots->byId($imageRootId)->getAbsPath() . '/' . $destinationRelImageRoot;
         }
 
@@ -79,7 +79,7 @@ class WebPRealizer extends WodConfigLoader
             $imageRootId = SanityCheck::noControlChars($_GET['image-root-id']);
             SanityCheck::pregMatch('#^[a-z\-]+$#', $imageRootId, 'Not a valid root-id');
 
-            $imageRoots = self::getImageRoots();
+            $imageRoots = self::getImageRootsDef();
             return $imageRoots->byId($imageRootId)->getAbsPath() . '/' . $destinationRelImageRoot;
         }
 
@@ -154,7 +154,7 @@ class WebPRealizer extends WodConfigLoader
             $wodOptions['destination-extension'],
             self::$usingDocRoot ? 'doc-root' : 'image-roots',
             self::$webExpressContentDirAbs,
-            self::getImageRoots()
+            self::getImageRootsDef()
         );
 
         //echo '<h3>destination:</h3> ' . $destination . '<h3>source:</h3>' . $source; exit;

@@ -2,27 +2,11 @@
 
 namespace WebPExpress;
 
-use \WebPExpress\ConvertHelperIndependent;
-use \WebPExpress\ImageRoots;
-use \WebPExpress\Paths;
-use \WebPExpress\PathHelper;
-
 class BulkConvert
 {
 
-    public static function getUploadFolder($destinationFolder)
-    {
-        switch ($destinationFolder) {
-            case 'mingled':
-                return Paths::getUploadDirAbs();
-            case 'separate':
-                return Paths::getCacheDirAbs() . '/doc-root/' . Paths::getUploadDirRel();
-        }
-    }
-
     public static function getList($config)
     {
-        //$cacheDir = self::getUploadFolder($config['destination-folder']);
 
 
         /*
@@ -35,13 +19,12 @@ class BulkConvert
 
         $listOptions = [
             //'root' => Paths::getUploadDirAbs(),
-            //'image-root' => self::getUploadFolder($config['destination-folder']),
             'ext' => $config['destination-extension'],
             'destination-folder' => $config['destination-folder'],  /* hm, "destination-folder" is a bad name... */
             'webExpressContentDirAbs' => Paths::getWebPExpressContentDirAbs(),
             'uploadDirAbs' => Paths::getUploadDirAbs(),
             'useDocRootForStructuringCacheDir' => (($config['destination-structure'] == 'doc-root') && (Paths::canUseDocRootForStructuringCacheDir())),
-            'imageRoots' => new ImageRoots(Paths::getImageRoots()),
+            'imageRoots' => new ImageRoots(Paths::getImageRootsDefForSelectedIds($config['scope'])),   // (Paths::getImageRootsDef()
             'filter' => [
                 'only-converted' => false,
                 'only-unconverted' => true,
@@ -49,9 +32,42 @@ class BulkConvert
             ]
         ];
 
+        //$dirs = $config['scope'];
+
+        $rootIds = Paths::filterOutSubRoots($config['scope']);
+
         $groups = [];
+        foreach ($rootIds as $rootId) {
+            $groups[] = [
+                'groupName' => $rootId,
+                'root' => Paths::getAbsDirById($rootId)
+            ];
+        }
 
+/*
+        if (in_array('index', $config['scope'])) {
+            if (Paths::isWPContentDirMovedOutOfAbsPath()) {
 
+            }
+        } elseif (in_array('wp-content', $config['scope'])) {
+            $dirs[] = 'wp-content';
+            if (in_array('uploads', $config['scope']) && Paths::isUploadDirMovedOutOfWPContentDir()) {
+                $dirs[] = 'uploads';
+            }
+            if (in_array('plugins', $config['scope']) && Paths::isPluginDirMovedOutOfWpContent()) {
+                $dirs[] = 'plugins';
+            }
+            // ps: themes is always below wp-content
+        } else {
+            if (in_array('uploads', $config['scope'])) {
+                $dirs[] = 'uploads';
+            }
+            if (in_array('plugins', $config['scope'])) {
+                $dirs[] = 'plugins';
+            }
+        }
+
+/*
         if (Paths::isUploadDirMovedOutOfWPContentDir()) {
             $groups[] = [
                 'groupName' => 'uploads',
@@ -74,7 +90,7 @@ class BulkConvert
                 'groupName' => 'plugins',
                 'root' => Paths::getPluginDirAbs(),
             ];
-        }
+        }*/
 
         foreach ($groups as $i => &$group) {
             $listOptions['root'] = $group['root'];
@@ -90,8 +106,6 @@ class BulkConvert
             $group['files'] = self::getListRecursively('.', $listOptions);
             //'image-root' => ConvertHelperIndependent::getDestinationFolder()
         }
-
-
 
         return $groups;
         //self::moveRecursively($toDir, $fromDir, $srcDir, $fromExt, $toExt);

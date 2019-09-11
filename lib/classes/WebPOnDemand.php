@@ -131,7 +131,7 @@ class WebPOnDemand extends WodConfigLoader
 
         //echo $source; exit;
 
-        $imageRoots = self::getImageRoots();
+        $imageRoots = self::getImageRootsDef();
 
         // Get upload dir
         $uploadDirAbs = $imageRoots->byId('uploads')->getAbsPath();
@@ -146,7 +146,7 @@ class WebPOnDemand extends WodConfigLoader
             self::$webExpressContentDirAbs,
             $uploadDirAbs,
             self::$usingDocRoot,
-            self::getImageRoots()
+            self::getImageRootsDef()
         );
         //echo 'dest:' . $destination; exit;
 

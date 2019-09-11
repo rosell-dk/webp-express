@@ -26,7 +26,7 @@ class Convert
             Paths::getWebPExpressContentDirAbs(),
             Paths::getUploadDirAbs(),
             (($config['destination-structure'] == 'doc-root') && (Paths::canUseDocRootForStructuringCacheDir())),
-            new ImageRoots(Paths::getImageRoots())
+            new ImageRoots(Paths::getImageRootsDef())
         );
     }
 
@@ -153,7 +153,7 @@ class Convert
             $config['destination-extension'],
             $config['destination-structure'],
             Paths::getWebPExpressContentDirAbs(),
-            new ImageRoots(Paths::getImageRoots())
+            new ImageRoots(Paths::getImageRootsDef())
         );
     }
 

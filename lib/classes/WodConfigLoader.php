@@ -117,7 +117,7 @@ class WodConfigLoader
         return $webExpressContentDirAbs;
     }
 
-    protected static function getImageRoots()
+    protected static function getImageRootsDef()
     {
         if (!isset(self::$wodOptions['image-roots'])) {
             throw new \Exception('No image roots defined in config.');

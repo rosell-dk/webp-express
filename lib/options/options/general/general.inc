@@ -4,6 +4,7 @@
     <table class="form-table">
         <tbody>
             <?php
+            include_once 'scope.inc';
             include_once 'image-types.inc';
 
             if (($config['operation-mode'] != 'no-conversion')) {

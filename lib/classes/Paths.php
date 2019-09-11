@@ -140,6 +140,7 @@ class Paths
             case 'index':
                 return self::getIndexDirAbs();
             case 'home':
+                // "home" is still needed (used in PluginDeactivate.php)
                 return self::getHomeDirAbs();
             case 'plugins':
                 return self::getPluginDirAbs();
@@ -164,13 +165,11 @@ class Paths
         return false;
     }
 
-
-    public static function getImageRoots() {
-
+    public static function getImageRootsDefForSelectedIds($ids) {
         $canUseDocRootForRelPaths = self::canUseDocRootForRelPaths();
 
         $mapping = [];
-        foreach (self::getImageRootIds() as $rootId) {
+        foreach ($ids as $rootId) {
             $obj = [
                 'id' => $rootId,
             ];
@@ -184,6 +183,42 @@ class Paths
             $mapping[] = $obj;
         }
         return $mapping;
+    }
+
+    public static function getImageRootsDef()
+    {
+        return self::getImageRootsDefForSelectedIds(self::getImageRootIds());
+    }
+
+    public static function filterOutSubRoots($rootIds)
+    {
+        // Get dirs of enabled roots
+        $dirs = [];
+        foreach ($rootIds as $rootId) {
+            $dirs[] = self::getAbsDirById($rootId);
+        }
+
+        // Filter out dirs which are below other dirs
+        $dirsToSkip = [];
+        foreach ($dirs as $dirToExamine) {
+            foreach ($dirs as $dirToCompareAgainst) {
+                if ($dirToExamine == $dirToCompareAgainst) {
+                    continue;
+                }
+                if (self::isDirInsideDir($dirToExamine, $dirToCompareAgainst)) {
+                    $dirsToSkip[] = $dirToExamine;
+                    break;
+                }
+            }
+        }
+        $dirs = array_diff($dirs, $dirsToSkip);
+
+        // back to ids
+        $result = [];
+        foreach ($dirs as $dir) {
+            $result[] = self::getAbsDirId($dir);
+        }
+        return $result;
     }
 
     public static function createDirIfMissing($dir)
@@ -547,8 +582,8 @@ APACHE
                     self::getAbsDirById($rootId)
                 );
                 return [
-                    'url' => $destUrl . '/' . $relPathFromDocRootToSourceImageRoot,
-                    'abs-path' => $destPath  . '/' . $relPathFromDocRootToSourceImageRoot
+                    'url' => $destUrl . '/doc-root/' . $relPathFromDocRootToSourceImageRoot,
+                    'abs-path' => $destPath  . '/doc-root/' . $relPathFromDocRootToSourceImageRoot
                 ];
             } else {
                 return [

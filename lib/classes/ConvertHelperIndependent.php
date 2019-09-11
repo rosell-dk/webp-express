@@ -52,9 +52,9 @@ class ConvertHelperIndependent
 
     }
 
-    public static function appendOrSetExtension($path, $destinationExt, $inUploadFolder)
+    public static function appendOrSetExtension($path, $destinationFolder, $destinationExt, $inUploadFolder)
     {
-        if (($destinationExt == 'mingled') && $inUploadFolder) {
+        if (($destinationFolder == 'mingled') && ($destinationExt == 'set') && $inUploadFolder) {
             return preg_replace('/\\.(jpe?g|png)$/', '', $path) . '.webp';
         } else {
             return $path . '.webp';
@@ -99,7 +99,7 @@ class ConvertHelperIndependent
             // Calculate destination and check that the result is sane
             // -------------------------------------------------------
             if (self::storeMingledOrNot($source, $destinationFolder, $uploadDirAbs)) {
-                $destination = self::appendOrSetExtension($source, $destinationExt, true);
+                $destination = self::appendOrSetExtension($source, $destinationFolder, $destinationExt, true);
             } else {
 
                 if ($useDocRootForStructuringCacheDir) {
@@ -162,7 +162,7 @@ class ConvertHelperIndependent
 
                     $sourceRel = substr(realpath($source), strlen($docRoot) + 1);
                     $destination = $imageRoot . '/doc-root/' . $sourceRel;
-                    $destination = self::appendOrSetExtension($destination, $destinationExt, false);
+                    $destination = self::appendOrSetExtension($destination, $destinationFolder, $destinationExt, false);
 
 
                     // TODO: make this check work with symlinks
@@ -196,7 +196,7 @@ class ConvertHelperIndependent
                         // So: Resolve both! and test if the resolved source begins with the resolved rootPath.
                         if (strpos($sourceResolved, realpath($rootPath)) !== false) {
                             $relPath = substr($sourceResolved, strlen(realpath($rootPath)) + 1);
-                            $relPath = self::appendOrSetExtension($relPath, $destinationExt, false);
+                            $relPath = self::appendOrSetExtension($relPath, $destinationFolder, $destinationExt, false);
 
                             $destination = $webExpressContentDirAbs . '/webp-images/' . $imageRoot->id . '/' . $relPath;
                             break;
