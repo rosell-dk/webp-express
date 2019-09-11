@@ -221,16 +221,38 @@ class SelfTestHelper
         $result[] = '- PHP version: ' . phpversion();
         $result[] = '- OS: ' . PHP_OS;
         $result[] = '- Server software: ' . $_SERVER["SERVER_SOFTWARE"];
+        $result[] = '- Document Root status: ' . Paths::docRootStatusText();
+        if (PathHelper::isDocRootAvailable()) {
+            $result[] = '- Document Root: ' . $_SERVER['DOCUMENT_ROOT'];
+        }
+        if (PathHelper::isDocRootAvailableAndResolvable()) {
+            if ($_SERVER['DOCUMENT_ROOT'] != realpath($_SERVER['DOCUMENT_ROOT'])) {
+                $result[] = '- Document Root (symlinked resolved): ' . realpath($_SERVER['DOCUMENT_ROOT']);
+            }
+        }
+
         $result[] = '- Document Root: ' . Paths::docRootStatusText();
         $result[] = '- Apache module "mod_rewrite" enabled?: ' . self::trueFalseNullString(PlatformInfo::gotApacheModule('mod_rewrite'));
         $result[] = '- Apache module "mod_headers" enabled?: ' . self::trueFalseNullString(PlatformInfo::gotApacheModule('mod_headers'));
         return $result;
     }
 
+    public static function wordpressInfo()
+    {
+        $result = [];
+        $result[] = '### Wordpress info:';
+        $result[] = '- Version: ' . get_bloginfo('version');
+        $result[] = '- Multisite?: ' . self::trueFalseNullString(is_multisite());
+        $result[] = '- Is wp-content moved?: ' . self::trueFalseNullString(Paths::isWPContentDirMoved());
+        $result[] = '- Is uploads moved out of wp-content?: ' . self::trueFalseNullString(Paths::isUploadDirMovedOutOfWPContentDir());
+        $result[] = '- Is plugins moved out of wp-content?: ' . self::trueFalseNullString(Paths::isPluginDirMovedOutOfWpContent());
+        return $result;
+    }
+
     public static function configInfo($config)
     {
         $result = [];
-        $result[] = '### Configuration info:';
+        $result[] = '### WebP Express configuration info:';
         $result[] = '- Destination folder: ' . $config['destination-folder'];
         $result[] = '- Destination extension: ' . $config['destination-extension'];
         $result[] = '- Destination structure: ' . $config['destination-structure'];
@@ -278,6 +300,7 @@ class SelfTestHelper
     {
         $result = [];
         $result = array_merge($result, self::systemInfo());
+        $result = array_merge($result, self::wordpressInfo());
         $result = array_merge($result, self::configInfo($config));
         $result = array_merge($result, self::htaccessInfo($config));
         $result = array_merge($result, self::capabilityTests($config));
@@ -307,6 +330,23 @@ class SelfTestHelper
 
     public static function diagnoseFailedRewrite($config)
     {
+        if (($config['destination-structure'] == 'image-roots') && (!PathHelper::isDocRootAvailableAndResolvable())) {
+            $result[] = 'The problem is probably this combination:';
+            if (!PathHelper::isDocRootAvailable()) {
+                $result[] = '1. Your document root isn`t available';
+            } else {
+                $result[] = '1. Your document root isn`t resolvable for symlinks (it is probably subject to open_basedir restriction)';
+            }
+            $result[] = '2. Your document root is symlinked';
+            $result[] = '3. The wordpress function that tells the path of the uploads folder returns the symlink resolved path';
+
+            $result[] = 'I cannot check if your document root is in fact symlinked (as document root isnt resolvable). ' .
+                'But if it is, there you have it. The line beginning with "RewriteCond %{REQUEST_FILENAME}"" points to your resolved root, ' .
+                'but it should point to your symlinked root. WebP Express cannot do that for you because it cannot discover what the symlink is. ' .
+                'Try changing the line manually. When it works, you can move the rules outside the WebP Express block so they dont get ' .
+                'overwritten. OR you can change your server configuration (document root / open_basedir restrictions)';
+        }
+
         //$result[] = '## Diagnosing';
         if (PlatformInfo::isNginx()) {
             // Nginx
@@ -314,6 +354,8 @@ class SelfTestHelper
                 'have any effect. ';
             $result[] = 'Please read the "I am on Nginx" section in the FAQ (https://wordpress.org/plugins/webp-express/)';
             $result[] = 'And did you remember to restart the nginx service after updating the configuration?';
+
+            $result[] = 'PS: If you cannot get the redirect to work, you can simply rely on Alter HTML as described in the FAQ.';
             return $result;
         }
 
@@ -341,7 +383,6 @@ class SelfTestHelper
             } else {
                 $result[] = 'However, this could be due to your server being a bit slow on picking up changes in *.htaccess*.' .
                     'Give it a few minutes and try again.';
-                $result[] = 'If that does not help, ';
             }
         } else {
             // The mod_rewrite test could not conclude anything.
@@ -359,6 +400,12 @@ class SelfTestHelper
                     'does that. In that case, simply give it a few minutes and try again.';
             }
         }
+        $result[] = 'Note that if you cannot get redirection to work, you can switch to "CDN friendly" mode and ' .
+            'rely on the "Alter HTML" functionality to point to the webp images. If you do a bulk conversion ' .
+            'and make sure that "Convert upon upload" is activated, you should be all set. Alter HTML even handles ' .
+            'inline css (unless you select "picture tag" syntax). It does however not handle images in external css or ' .
+            'which is added dynamically with javascript.';
+
         $result[] = '## Info for manually diagnosing';
         $result = array_merge($result, self::allInfo($config));
         return $result;

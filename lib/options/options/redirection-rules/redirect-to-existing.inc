@@ -27,6 +27,9 @@
         <button style="margin-left: 30px;" onclick="WebPExpress.SelfTest.openPopup('redirectToExisting')" class="button button-secondary" type="button">
             Live test
         </button>
+        <button onclick="WebPExpress.SelfTest.openPopup('allInfo')" class="button button-secondary" type="button">
+            System info
+        </button>
 
         <?php
         /*if ($config['operation-mode'] == 'no-conversion') {

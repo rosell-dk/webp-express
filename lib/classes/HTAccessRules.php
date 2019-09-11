@@ -234,6 +234,8 @@ class HTAccessRules
                     self::$config['destination-structure'],
                     self::$htaccessDir
                 );
+                $cacheDirForThisRoot = PathHelper::fixAbsPathToUseUnresolvedDocRoot($cacheDirForThisRoot);
+
                 $rules .= "  RewriteCond " . $cacheDirForThisRoot . "/%2%3.webp -f\n";
                 //RewriteCond /var/www/webp-express-tests/we0/wp-content-moved/webp-express/webp-images/uploads/%2%3.webp -f
 
@@ -554,6 +556,13 @@ class HTAccessRules
                 self::$htaccessDirAbs
             );
         }
+
+        // When using the absolute dir, the rewrite rules needs document root and does not work
+        // if the symlinks have been resolved.
+        // We can fix this - but only if document root is available and resolvable.
+        // - which is sad, because the image-roots was introduced in order to get it to work on setups
+        // where it isn't.
+        self::$htaccessDirAbs = PathHelper::fixAbsPathToUseUnresolvedDocRoot(self::$htaccessDirAbs);
 
         // Fix config.
         $defaults = [

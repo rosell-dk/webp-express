@@ -43,6 +43,15 @@ class PathHelper
         );
     }
 
+    public static function fixAbsPathToUseUnresolvedDocRoot($absPath) {
+        if (self::isDocRootAvailableAndResolvable()) {
+            if (strpos($absPath, realpath($_SERVER['DOCUMENT_ROOT'])) === 0) {
+                return $_SERVER['DOCUMENT_ROOT'] . substr($absPath, strlen(realpath($_SERVER['DOCUMENT_ROOT'])));
+            }
+        }
+        return $absPath;
+    }
+
     /**
      * Calculate relative path from document root to a given absolute path (must exist and be resolvable) - if possible AND
      * if it can be done without directory traversal.

@@ -380,6 +380,11 @@ class HTAccess
             $uploadToo = 'depends';
         }
 
+        // We need upload too for rewrite rules when destination structure is image-roots.
+        // but it is also good otherwise. So lets always do it.
+
+        $uploadToo = 'yes';
+
         return [
             $minRequired,
             $pluginToo,      // 'yes', 'no' or 'depends'
@@ -465,6 +470,14 @@ class HTAccess
 
         $rules = HTAccess::generateHTAccessRulesFromConfigObj($config, 'themes');
         $themesFailed = !(HTAccess::saveHTAccessRulesToFile(Paths::getThemesDirAbs() . '/.htaccess', $rules, true));
+
+        /*
+        if ($config['destination-structure'] == 'image-roots') {
+
+        }*/
+        // We need upload too for rewrite rules when destination structure is image-roots.
+        // but it is also good otherwise. So lets always do it.
+        //$uploadToo = 'yes';
 
         return [
             'mainResult' => $mainResult,                // 'index', 'wp-content' or 'failed'
