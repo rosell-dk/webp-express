@@ -237,7 +237,7 @@ class SelfTestRedirectToConverter
     {
 
         // Clean up test images in upload folder
-        SelfTestHelper::deleteTestImagesInUploadFolder();
+        SelfTestHelper::deleteTestImagesInFolder('uploads');
 
         // Clean up dummy webp images in cache folder for uploads
         $uploadCacheDir = Paths::getCacheDirForImageRoot(

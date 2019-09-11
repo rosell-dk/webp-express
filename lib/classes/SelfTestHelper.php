@@ -14,9 +14,23 @@ class SelfTestHelper
         }
     }
 
-    public static function deleteTestImagesInUploadFolder()
+    public static function deleteTestImagesInFolder($rootId)
     {
-        self::deleteFilesInDir(Paths::getAbsDirById('uploads'), "webp-express-test-image-*");
+        self::deleteFilesInDir(Paths::getAbsDirById($rootId), "webp-express-test-image-*");
+    }
+
+    public static function cleanUpTestImages($rootId, $config)
+    {
+        // Clean up test images in source folder
+        self::deleteTestImagesInFolder($rootId);
+
+        // Clean up dummy webp images in cache folder for the root
+        $cacheDirForRoot = Paths::getCacheDirForImageRoot(
+            $config['destination-folder'],
+            $config['destination-structure'],
+            $rootId
+        );
+        self::deleteFilesInDir($cacheDirForRoot, 'webp-express-test-image-*');
     }
 
     public static function copyFile($source, $destination)
@@ -51,7 +65,7 @@ class SelfTestHelper
         return $randomString;
     }
 
-    public static function copyTestImageToUploadFolder($imageType = 'jpeg')
+    public static function copyTestImageToRoot($rootId, $imageType = 'jpeg')
     {
         $result = [];
         switch ($imageType) {
@@ -64,9 +78,9 @@ class SelfTestHelper
         }
         $testSource = Paths::getPluginDirAbs() . '/webp-express/test/' . $fileNameToCopy;
         $filenameOfDestination = 'webp-express-test-image-' . self::randomDigitsAndLetters(6) . '.' . $imageType;
-        $result[] = 'Copying ' . strtoupper($imageType) . ' to upload folder (*' . $filenameOfDestination . '*)';
+        $result[] = 'Copying ' . strtoupper($imageType) . ' to ' . $rootId . ' folder (*' . $filenameOfDestination . '*)';
 
-        $destDir = Paths::getAbsDirById('uploads');
+        $destDir = Paths::getAbsDirById($rootId);
         $destination = $destDir . '/' . $filenameOfDestination;
 
         list($success, $errors) = self::copyFile($testSource, $destination);
@@ -76,19 +90,24 @@ class SelfTestHelper
             return [$result, false, ''];
         } else {
             $result[count($result) - 1] .= '. ok!';
-//            $result[] = 'We now have a file here:';
-//            $result[] = '*' . $destination . '*';
+            $result[] = 'We now have a ' . $imageType . ' stored here:';
+            $result[] = '*' . $destination . '*';
         }
         return [$result, true, $filenameOfDestination];
     }
 
-    public static function copyDummyWebPToCacheFolderUpload($destinationFolder, $destinationExtension, $destinationStructure, $destinationFileNameNoExt, $imageType = 'jpeg')
+    public static function copyTestImageToUploadFolder($imageType = 'jpeg')
+    {
+        return self::copyTestImageToRoot('uploads', $imageType);
+    }
+
+    public static function copyDummyWebPToCacheFolder($rootId, $destinationFolder, $destinationExtension, $destinationStructure, $sourceFileName, $imageType = 'jpeg')
     {
         $result = [];
         $dummyWebP = Paths::getPluginDirAbs() . '/webp-express/test/test.jpg.webp';
 
-        $result[] = 'Copying dummy webp to the cache root for uploads';
-        $destDir = Paths::getCacheDirForImageRoot($destinationFolder, $destinationStructure, 'uploads');
+        $result[] = 'Copying dummy webp to the cache root for ' . $rootId;
+        $destDir = Paths::getCacheDirForImageRoot($destinationFolder, $destinationStructure, $rootId);
         if (!file_exists($destDir)) {
             $result[] = 'The folder did not exist. Creating folder at: ' . $destinationDir;
             if (!mkdir($destDir, 0777, true)) {
@@ -96,7 +115,15 @@ class SelfTestHelper
                 return [$result, false, ''];
             }
         }
-        $filenameOfDestination = $destinationFileNameNoExt . ($destinationExtension == 'append' ? '.' . $imageType : '') . '.webp';
+
+        $filenameOfDestination = ConvertHelperIndependent::appendOrSetExtension(
+            $sourceFileName,
+            $destinationFolder,
+            $destinationExtension,
+            ($rootId == 'uploads')
+        );
+
+        //$filenameOfDestination = $destinationFileNameNoExt . ($destinationExtension == 'append' ? '.' . $imageType : '') . '.webp';
         $destination = $destDir . '/' . $filenameOfDestination;
 
         list($success, $errors) = self::copyFile($dummyWebP, $destination);
@@ -366,7 +393,7 @@ class SelfTestHelper
         if ($modRewriteWorking === true) {
             $result[] = 'Result: Yes, rewriting works.';
             $result[] = 'It seems something is wrong with the *.htaccess* rules then. ';
-            $result[] = 'Or perhaps the server has cached the confuration a while. Some servers ' .
+            $result[] = 'Or perhaps the server has cached the configuration a while. Some servers ' .
                 'does that. In that case, simply give it a few minutes and try again.';
         } elseif ($modRewriteWorking === false) {
             $result[] = 'Result: No, rewriting does not seem to work within *.htaccess* rules.';
@@ -396,7 +423,7 @@ class SelfTestHelper
                     '(WebP Express generates multiple *.htaccess* files. Look in the upload folder, the wp-content folder, etc). ';
             } else {
                 $result[] = 'It seems something is wrong with the *.htaccess* rules. ';
-                $result[] = 'Or perhaps the server has cached the confuration a while. Some servers ' .
+                $result[] = 'Or perhaps the server has cached the configuration a while. Some servers ' .
                     'does that. In that case, simply give it a few minutes and try again.';
             }
         }

@@ -7,18 +7,19 @@ class SelfTestRedirectToExisting
     /**
      * Run test for either jpeg or png
      *
+     * @param  string  $rootId    (ie "uploads" or "themes")
      * @param  array   $config
      * @param  string  $imageType  ("jpeg" or "png")
      * @return array   [$success, $result, $createdTestFiles]
      */
-    private static function runTestForImageType($config, $imageType)
+    private static function runTestForImageType($rootId, $config, $imageType)
     {
         $result = [];
         $createdTestFiles = false;
         $noWarningsYet = true;
 
-        // Copy test image (jpeg)
-        list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToUploadFolder($imageType);
+        // Copy test image
+        list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToRoot($rootId, $imageType);
         $result = array_merge($result, $subResult);
         if (!$success) {
             $result[] = 'The test cannot be completed';
@@ -26,12 +27,15 @@ class SelfTestRedirectToExisting
         }
         $createdTestFiles = true;
 
+        $result[] = '';
+
         // Copy dummy webp
-        list($subResult, $success, $destinationFile) = SelfTestHelper::copyDummyWebPToCacheFolderUpload(
+        list($subResult, $success, $destinationFile) = SelfTestHelper::copyDummyWebPToCacheFolder(
+            $rootId,
             $config['destination-folder'],
             $config['destination-extension'],
             $config['destination-structure'],
-            preg_replace('#\.' . $imageType . '#', '', $sourceFileName),
+            $sourceFileName,
             $imageType
         );
         $result = array_merge($result, $subResult);
@@ -40,8 +44,8 @@ class SelfTestRedirectToExisting
             return [false, $result, $createdTestFiles];
         }
 
-        $requestUrl = Paths::getUploadUrl() . '/' . $sourceFileName;
-        $result[] = '## Lets check that browsers supporting webp gets the WEBP';
+        $requestUrl = Paths::getUrlById($rootId) . '/' . $sourceFileName;
+        $result[] = '## Lets check that browsers supporting webp gets the WEBP when the ' . strtoupper($imageType) . ' is requested';
         $result[] = 'Making a HTTP request for the test image (pretending to be a client that supports webp, by setting the "Accept" header to "image/webp")';
         $requestArgs = [
             'headers' => [
@@ -187,7 +191,7 @@ class SelfTestRedirectToExisting
         return [$noWarningsYet, $result, $createdTestFiles];
     }
 
-    private static function doRunTest($config)
+    private static function doRunTestForRoot($rootId, $config)
     {
 //        return [false, SelfTestHelper::diagnoseFailedRewrite($config), false];
 
@@ -198,29 +202,15 @@ class SelfTestRedirectToExisting
         //$result[] = 'This test examines image responses "from the outside".';
 
         $createdTestFiles = false;
-        if (!file_exists(Paths::getConfigFileName())) {
-            $result[] = 'Hold on. You need to save options before you can run this test. There is no config file yet.';
-            return [true, $result, $createdTestFiles];
-        }
-
-        if (!$config['redirect-to-existing-in-htaccess']) {
-            $result[] = 'Turned off, nothing to test';
-            return [true, $result, $createdTestFiles];
-        }
-
-        if ($config['image-types'] == 0) {
-            $result[] = 'No image types have been activated, nothing to test';
-            return [true, $result, $createdTestFiles];
-        }
 
         if ($config['image-types'] & 1) {
-            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($config, 'jpeg');
+            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($rootId, $config, 'jpeg');
             $result = array_merge($result, $subResult);
 
             if ($success) {
                 if ($config['image-types'] & 2) {
                     $result[] = '## Performing same tests for PNG';
-                    list($success, $subResult, $createdTestFiles2) = self::runTestForImageType($config, 'png');
+                    list($success, $subResult, $createdTestFiles2) = self::runTestForImageType($rootId, $config, 'png');
                     $createdTestFiles = $createdTestFiles || $createdTestFiles2;
                     if ($success) {
                         //$result[count($result) - 1] .= '. **ok**{: .ok}';
@@ -232,12 +222,12 @@ class SelfTestRedirectToExisting
                 }
             }
         } else {
-            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($config, 'png');
+            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($rootId, $config, 'png');
             $result = array_merge($result, $subResult);
         }
 
         if ($success) {
-            $result[] = '## Conclusion';
+            $result[] = '## Results for: ' . $rootId;
             $result[] = 'Everything **seems to work**{: .ok} as it should. ' .
                 'However, notice that this test only tested an image which was placed in the *uploads* folder. ' .
                 'The rest of the image roots (such as theme images) have not been tested (it is on the TODO). ' .
@@ -291,39 +281,45 @@ class SelfTestRedirectToExisting
 
     }
 
-    private static function cleanUpTestImages($config)
+    public static function runTestForRoot($rootId, $config)
     {
+        SelfTestHelper::cleanUpTestImages($rootId, $config);
 
-        // Clean up test images in upload folder
-        SelfTestHelper::deleteTestImagesInUploadFolder();
+        // Run the actual test
+        list($success, $result, $createdTestFiles) = self::doRunTestForRoot($rootId, $config);
 
-        // Clean up dummy webp images in cache folder for uploads
-        $uploadCacheDir = Paths::getCacheDirForImageRoot(
-            $config['destination-folder'],
-            $config['destination-structure'],
-            'uploads'
-        );
-        SelfTestHelper::deleteFilesInDir($uploadCacheDir, 'webp-express-test-image-*');
+        // Clean up test images again. We are very tidy around here
+        if ($createdTestFiles) {
+            $result[] = 'Deleting test images';
+            //SelfTestHelper::cleanUpTestImages($rootId, $config);
+        }
 
+        return [$success, $result];
     }
 
     public static function runTest()
     {
         $config = Config::loadConfigAndFix(false);
 
-        self::cleanUpTestImages($config);
-
-        // Run the actual test
-        list($success, $result, $createdTestFiles) = self::doRunTest($config);
-
-        // Clean up test images again. We are very tidy around here
-        if ($createdTestFiles) {
-            $result[] = 'Deleting test images';
-            self::cleanUpTestImages($config);
+        $result = [];
+        if (!file_exists(Paths::getConfigFileName())) {
+            $result[] = 'Hold on. You need to save options before you can run this test. There is no config file yet.';
+            return [true, $result];
         }
+
+        if (!$config['redirect-to-existing-in-htaccess']) {
+            $result[] = 'Turned off, nothing to test';
+            return [true, $result];
+        }
+
+        if ($config['image-types'] == 0) {
+            $result[] = 'No image types have been activated, nothing to test';
+            return [true, $result];
+        }
+
+        //list($success, $result) = self::runTestForRoot('uploads', $config);
+        list($success, $result) = self::runTestForRoot('themes', $config);
 
         return [$success, $result];
     }
-
-
 }

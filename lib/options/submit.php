@@ -782,7 +782,7 @@ if (!$result['saved-both-config']) {
         if (count($failedWrites) > 0) {
             $msg = '<p>Failed writing rewrite rules to the following files:</p>';
             foreach ($failedWrites as $rootId) {
-                $msg .= '<i>' . Paths::getAbsDirId($rootId) . '/.htaccess</i><br>';
+                $msg .= '<i>' . Paths::getAbsDirById($rootId) . '/.htaccess</i> (' . $rootId . ')<br>';
             }
             $msg .= 'You need to change the file permissions to allow WebP Express to save the rules.';
             Messenger::addMessage('error', $msg);
@@ -790,7 +790,7 @@ if (!$result['saved-both-config']) {
             if (count($failedDeactivations) > 0) {
                 $msg = '<p>Failed deleting unused rewrite rules in the following files:</p>';
                 foreach ($failedDeactivations as $rootId) {
-                    $msg .= '<i>' . Paths::getAbsDirById($rootId) . '/.htaccess</i><br>';
+                    $msg .= '<i>' . Paths::getAbsDirById($rootId) . '/.htaccess</i> (' . $rootId . ')<br>';
                 }
                 $msg .= 'You need to change the file permissions to allow WebP Express to remove the rules or ' .
                     'remove them manually';

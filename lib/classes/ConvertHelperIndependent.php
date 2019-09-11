@@ -52,6 +52,18 @@ class ConvertHelperIndependent
 
     }
 
+    /**
+     * Append ".webp" to path or replace extension with "webp", depending on what is appropriate.
+     *
+     * If destination-folder is set to mingled and destination-extension is set to "set" and
+     * the path is inside upload folder, the appropriate thing is to SET the extension.
+     * Otherwise, it is to APPEND.
+     *
+     * @param  string  $path
+     * @param  string  $destinationFolder
+     * @param  string  $destinationExt
+     * @param  boolean $inUploadFolder
+     */
     public static function appendOrSetExtension($path, $destinationFolder, $destinationExt, $inUploadFolder)
     {
         if (($destinationFolder == 'mingled') && ($destinationExt == 'set') && $inUploadFolder) {

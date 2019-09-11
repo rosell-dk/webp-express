@@ -219,7 +219,7 @@ class HTAccessRules
                 $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
                 $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . self::$htaccessDirRelToDocRoot . "/$1.$2.webp -f\n";
                 $rules .= "  RewriteRule ^/?(.+)\.(" . self::$fileExt . ")$ /" . $cacheDirRel . "/" . self::$htaccessDirRelToDocRoot .
-                    "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
+                    "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
 
             } else {
                 // Make sure source image exists
