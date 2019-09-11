@@ -111,7 +111,8 @@ class Convert
             );
             $relPathFromImageRootToDest = ConvertHelperIndependent::appendOrSetExtension(
                 $relPathFromImageRootToSource,
-                $config['destination-extension'], 
+                $config['destination-folder'], 
+                $config['destination-extension'],
                 ($rootId == 'uploads')
             );
 
