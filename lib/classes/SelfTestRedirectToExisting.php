@@ -317,8 +317,8 @@ class SelfTestRedirectToExisting
             return [true, $result];
         }
 
-        //list($success, $result) = self::runTestForRoot('uploads', $config);
-        list($success, $result) = self::runTestForRoot('themes', $config);
+        list($success, $result) = self::runTestForRoot('uploads', $config);
+        //list($success, $result) = self::runTestForRoot('themes', $config);
 
         return [$success, $result];
     }
