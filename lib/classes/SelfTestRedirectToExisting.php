@@ -2,17 +2,16 @@
 
 namespace WebPExpress;
 
-class SelfTestRedirectToExisting
+class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
 {
     /**
      * Run test for either jpeg or png
      *
      * @param  string  $rootId    (ie "uploads" or "themes")
-     * @param  array   $config
      * @param  string  $imageType  ("jpeg" or "png")
      * @return array   [$success, $result, $createdTestFiles]
      */
-    private static function runTestForImageType($rootId, $config, $imageType)
+    protected function runTestForImageType($rootId, $imageType)
     {
         $result = [];
         $createdTestFiles = false;
@@ -34,9 +33,9 @@ class SelfTestRedirectToExisting
         // Copy dummy webp
         list($subResult, $success, $destinationFile) = SelfTestHelper::copyDummyWebPToCacheFolder(
             $rootId,
-            $config['destination-folder'],
-            $config['destination-extension'],
-            $config['destination-structure'],
+            $this->config['destination-folder'],
+            $this->config['destination-extension'],
+            $this->config['destination-structure'],
             $sourceFileName,
             $imageType
         );
@@ -98,7 +97,7 @@ class SelfTestRedirectToExisting
                         $result[] = "```<IfModule mod_mime.c>\n  AddType image/webp .webp\n</IfModule>```";
 
                         $result[] = '### .htaccess status';
-                        $result = array_merge($result, SelfTestHelper::htaccessInfo($config, true));
+                        $result = array_merge($result, SelfTestHelper::htaccessInfo($this->config, true));
                     }
 
                     $result[] = 'The test **FAILED**{: .error}.';
@@ -108,14 +107,14 @@ class SelfTestRedirectToExisting
                         'So we can conclude that the rewrite did not happen';
                     $result[] = 'The test **FAILED**{: .error}.';
                     $result[] = '#### Diagnosing rewrites';
-                    $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
+                    $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($this->config));
                 }
             } else {
                 $result[] = 'In addition, we did not get a *content-length* header either.' .
                 $result[] = 'It seems we can conclude that the rewrite did not happen.';
                 $result[] = 'The test **FAILED**{: .error}.';
                 $result[] = '#### Diagnosing rewrites';
-                $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
+                $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($this->config));
             }
 
             return [false, $result, $createdTestFiles];
@@ -129,7 +128,7 @@ class SelfTestRedirectToExisting
 
             $result[] = 'It seems something went wrong with the redirection.';
             $result[] = '#### Diagnosing redirects';
-            $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
+            $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($this->config));
 
             return [false, $result, $createdTestFiles];
         } else {
@@ -198,7 +197,7 @@ class SelfTestRedirectToExisting
             }
 
             $result[] = '### System info (for manual diagnosing):';
-            $result = array_merge($result, SelfTestHelper::allInfo($config));
+            $result = array_merge($result, SelfTestHelper::allInfo($this->config));
 
 
             return [false, $result, $createdTestFiles];
@@ -223,137 +222,20 @@ class SelfTestRedirectToExisting
         return [$noWarningsYet, $result, $createdTestFiles];
     }
 
-    private static function doRunTestForRoot($rootId, $config)
+    public function startupTests()
     {
-//        return [false, SelfTestHelper::diagnoseFailedRewrite($config), false];
-
-        $result = [];
-
-        //$result[] = '*hello* with *you* and **you**. ok! FAILED';
-        $result[] = '## ' . $rootId;
-        //$result[] = 'This test examines image responses "from the outside".';
-
-        $createdTestFiles = false;
-
-        if ($config['image-types'] & 1) {
-            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($rootId, $config, 'jpeg');
-            $result = array_merge($result, $subResult);
-
-            if ($success) {
-                if ($config['image-types'] & 2) {
-                    $result[] = '### Performing same tests for PNG';
-                    list($success, $subResult, $createdTestFiles2) = self::runTestForImageType($rootId, $config, 'png');
-                    $createdTestFiles = $createdTestFiles || $createdTestFiles2;
-                    if ($success) {
-                        //$result[count($result) - 1] .= '. **ok**{: .ok}';
-                        $result[] .= 'All tests passed for PNG as well.';
-                        $result[] = '(I shall spare you for the report, which is almost identical to the one above)';
-                    } else {
-                        $result = array_merge($result, $subResult);
-                    }
-                }
-            }
-        } else {
-            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($rootId, $config, 'png');
-            $result = array_merge($result, $subResult);
+        $result[] = '# Testing redirection to existing webp';
+        if (!$this->config['redirect-to-existing-in-htaccess']) {
+            $result[] = 'Turned off, nothing to test';
+            return [false, $result];
         }
-
-        if ($success) {
-            $result[] = '### Results for ' . strtoupper($rootId);
-            $result[] = 'Everything **seems to work**{: .ok} as it should. ' .
-                'However, a couple of things were not tested (it is on the TODO). ' .
-                'TODO 1: If one image type is disabled, check that it does not redirect to webp (unless redirection to converter is set up). ' .
-                'TODO 2: Test that redirection to webp only is triggered when the webp exists. ';
-        }
-
-
-        return [true, $result, $createdTestFiles];
-        /*
-        $result[] = 'Copying test image to upload folder';
-        $testSourceJpg = Paths::getPluginDirAbs() . "/webp-express/test/focus.jpg";
-        $testDestinationJpg = Paths::getAbsDirById('uploads') . "/webp-express-test-image.jpg";
-
-        if (!@copy($testSourceJpg, $testDestinationJpg)) {
-            $result[count($result) - 1] .= '. FAILED';
-        } else {
-            $result[count($result) - 1] .= '. ok!';
-
-            $result[] = 'Making a HTTP request for the image to verify that we get a jpeg back (there is no webp yet)';
-            $requestUrl = Paths::getUploadUrl() . "/webp-express-test-image.jpg";
-            $return = wp_remote_request($requestUrl);
-            if (is_wp_error($return)) {
-                $result[count($result) - 1] .= '. FAILED';
-                $result[] = 'Request URL: ' . $requestUrl;
-            } else {
-                if ($return['response']['code'] != '200') {
-                    $result[count($result) - 1] .= '. FAILED';
-                    $result[] = 'Unexpected response: ' . $return['response']['code'] . ' ' . $return['response']['message'];
-                    $result[] = 'Request URL: ' . $requestUrl;
-                }
-                if ((isset($return['headers']['content-type']) == 'image/jpeg') && ($return['headers']['content-type'] == 'image/jpeg')) {
-                    $result[count($result) - 1] .= '. ok!';
-                } else {
-                    $result[count($result) - 1] .= '. FAILED';
-                    if (!isset($return['headers']['content-type'])) {
-                        $result[] = 'Hm - expected a "content-type" response header, but it is missing';
-                    } else {
-                        $result[] = 'The content-type header is NOT "image/jpeg"';
-                    }
-                    $result[] = 'Response headers:';
-                    foreach ($return['headers'] as $headerName => $headerValue) {
-                        $result[] = '- ' . $headerName . ': ' . $headerValue;
-                    }
-                }
-
-            }
-            $result[] = 'More tests will come in future versions!';
-        }*/
-
-    }
-
-    public static function runTestForRoot($rootId, $config)
-    {
-        SelfTestHelper::cleanUpTestImages($rootId, $config);
-
-        // Run the actual test
-        list($success, $result, $createdTestFiles) = self::doRunTestForRoot($rootId, $config);
-
-        // Clean up test images again. We are very tidy around here
-        if ($createdTestFiles) {
-            $result[] = 'Deleting test images';
-            //SelfTestHelper::cleanUpTestImages($rootId, $config);
-        }
-
-        return [$success, $result];
+        return [true, $result];
     }
 
     public static function runTest()
     {
         $config = Config::loadConfigAndFix(false);
-
-        $result = [];
-        if (!file_exists(Paths::getConfigFileName())) {
-            $result[] = 'Hold on. You need to save options before you can run this test. There is no config file yet.';
-            return [true, $result];
-        }
-
-        if (!$config['redirect-to-existing-in-htaccess']) {
-            $result[] = 'Turned off, nothing to test';
-            return [true, $result];
-        }
-
-        if ($config['image-types'] == 0) {
-            $result[] = 'No image types have been activated, nothing to test';
-            return [true, $result];
-        }
-
-        $result[] = '# Testing redirection to existing webp';
-        foreach ($config['scope'] as $rootId) {
-            list($success, $subResult) = self::runTestForRoot($rootId, $config);
-            $result = array_merge($result, $subResult);
-        }
-        //list($success, $result) = self::runTestForRoot('uploads', $config);
-
-        return [$success, $result];
+        $me = new SelfTestRedirectToExisting($config);
+        return $me->startTest();
     }
 }
