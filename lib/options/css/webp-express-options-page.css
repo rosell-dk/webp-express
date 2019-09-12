@@ -17,10 +17,19 @@
 }
 .webpexpress.md h2 {
     margin: 1em 0 0.5em;
+    font-size: 1.6em;
+    font-weight: normal;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 10px 0;
+    background-color: #ccc;
+}
+.webpexpress.md h3 {
+    margin: 1em 0 0.5em;
     font-size: 1.4em;
     font-weight: normal;
 }
-.webpexpress.md h3 {
+.webpexpress.md h4 {
     font-size: 1.0em;
     margin: 1em 0 0.5em;
     /*font-weight: 500;*/

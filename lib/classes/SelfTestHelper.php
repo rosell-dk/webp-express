@@ -216,7 +216,7 @@ class SelfTestHelper
     public static function printHeaders($headers)
     {
         $result = [];
-        $result[] = '### Response headers:';
+        $result[] = '#### Response headers:';
         foreach ($headers as $headerName => $headerValue) {
             if (gettype($headerValue) == 'array') {
                 foreach ($headerValue as $i => $value) {
@@ -244,7 +244,7 @@ class SelfTestHelper
     public static function systemInfo()
     {
         $result = [];
-        $result[] = '### System info:';
+        $result[] = '#### System info:';
         $result[] = '- PHP version: ' . phpversion();
         $result[] = '- OS: ' . PHP_OS;
         $result[] = '- Server software: ' . $_SERVER["SERVER_SOFTWARE"];
@@ -267,7 +267,7 @@ class SelfTestHelper
     public static function wordpressInfo()
     {
         $result = [];
-        $result[] = '### Wordpress info:';
+        $result[] = '#### Wordpress info:';
         $result[] = '- Version: ' . get_bloginfo('version');
         $result[] = '- Multisite?: ' . self::trueFalseNullString(is_multisite());
         $result[] = '- Is wp-content moved?: ' . self::trueFalseNullString(Paths::isWPContentDirMoved());
@@ -279,7 +279,7 @@ class SelfTestHelper
     public static function configInfo($config)
     {
         $result = [];
-        $result[] = '### WebP Express configuration info:';
+        $result[] = '#### WebP Express configuration info:';
         $result[] = '- Destination folder: ' . $config['destination-folder'];
         $result[] = '- Destination extension: ' . $config['destination-extension'];
         $result[] = '- Destination structure: ' . $config['destination-structure'];
@@ -289,30 +289,35 @@ class SelfTestHelper
         return $result;
     }
 
-    public static function htaccessInfo($config)
+    public static function htaccessInfo($config, $printRules = true)
     {
         $result = [];
         //$result[] = '*.htaccess info:*';
         //$result[] = '- Image roots with WebP Express rules: ' . implode(', ', HTAccess::getRootsWithWebPExpressRulesIn());
-        $result[] = '### .htaccess files that WebP Express have placed rules in:';
+        $result[] = '#### .htaccess files that WebP Express have placed rules in the following files:';
         $rootIds = HTAccess::getRootsWithWebPExpressRulesIn();
         foreach ($rootIds as $imageRootId) {
             $result[] = '- ' . Paths::getAbsDirById($imageRootId) . '/.htaccess';
         }
+
+        foreach ($rootIds as $imageRootId) {
+            $result = array_merge($result, self::rulesInImageRoot($config, $imageRootId));
+        }
+
         return $result;
     }
 
     public static function rulesInImageRoot($config, $imageRootId)
     {
         $result = [];
-        $result[] = '### WebP rules in the .htaccess placed in *' . $imageRootId . '*:';
+        $result[] = '#### WebP rules in *' . $imageRootId . '*:';
         $file = Paths::getAbsDirById($imageRootId) . '/.htaccess';
         if (!HTAccess::haveWeRulesInThisHTAccess($file)) {
             $result[] = '**NONE!**{: .warn}';
         } else {
             $weRules = HTAccess::extractWebPExpressRulesFromHTAccess($file);
             // remove unindented comments
-            //$weRules = preg_replace('/^\#\s[^\n\r]*[\n\r]+/ms', '', $weRules);
+            $weRules = preg_replace('/^\#\s[^\n\r]*[\n\r]+/ms', '', $weRules);
             $result[] = '```' . $weRules . '```';
         }
         return $result;
@@ -329,10 +334,10 @@ class SelfTestHelper
         $result = array_merge($result, self::systemInfo());
         $result = array_merge($result, self::wordpressInfo());
         $result = array_merge($result, self::configInfo($config));
-        $result = array_merge($result, self::htaccessInfo($config));
         $result = array_merge($result, self::capabilityTests($config));
-        $result = array_merge($result, self::rulesInUpload($config));
-        $result = array_merge($result, self::rulesInImageRoot($config, 'wp-content'));
+        $result = array_merge($result, self::htaccessInfo($config, true));
+        //$result = array_merge($result, self::rulesInImageRoot($config, 'upload'));
+        //$result = array_merge($result, self::rulesInImageRoot($config, 'wp-content'));
         return $result;
     }
 
@@ -340,7 +345,7 @@ class SelfTestHelper
     {
         $capTests = $config['base-htaccess-on-these-capability-tests'];
         $result = [];
-        $result[] = '### Live tests of .htaccess capabilities:';
+        $result[] = '#### Live tests of .htaccess capabilities:';
         /*$result[] = 'Exactly what you can do in a *.htaccess* depends on the server setup. WebP Express ' .
             'makes some live tests to verify if a certain feature in fact works. This is done by creating ' .
             'test files (*.htaccess* files and php files) in a dir inside the content dir and running these. ' .

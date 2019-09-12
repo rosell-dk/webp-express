@@ -18,6 +18,8 @@ class SelfTestRedirectToExisting
         $createdTestFiles = false;
         $noWarningsYet = true;
 
+        $result[] = '### Copying files for testing';
+
         // Copy test image
         list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToRoot($rootId, $imageType);
         $result = array_merge($result, $subResult);
@@ -45,7 +47,7 @@ class SelfTestRedirectToExisting
         }
 
         $requestUrl = Paths::getUrlById($rootId) . '/' . $sourceFileName;
-        $result[] = '## Lets check that browsers supporting webp gets the WEBP when the ' . strtoupper($imageType) . ' is requested';
+        $result[] = '### Lets check that browsers supporting webp gets the WEBP when the ' . strtoupper($imageType) . ' is requested';
         $result[] = 'Making a HTTP request for the test image (pretending to be a client that supports webp, by setting the "Accept" header to "image/webp")';
         $requestArgs = [
             'headers' => [
@@ -71,21 +73,51 @@ class SelfTestRedirectToExisting
             return [false, $result, $createdTestFiles];
         }
 
-        if ($headers['content-type'] == 'image/' . $imageType) {
-            $result[] = 'Bummer. As the "content-type" header reveals, we got the ' . $imageType . '. ' .
-                'So the redirection to the webp is not working.';
-            $result[] = 'The test FAILED.';
-
-            $result[] = '## Diagnosing';
-            $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
-
-            return [false, $result, $createdTestFiles];
-        }
-
         if ($headers['content-type'] != 'image/webp') {
-            $result[] = 'Bummer. As the "content-type" header reveals, we did not get a webp' .
-                'Surprisingly we got: "' . $headers['content-type'] . '"';
-            $result[] = 'The test FAILED.';
+
+            if ($headers['content-type'] == 'image/' . $imageType) {
+                $result[] = 'Bummer. As the "content-type" header reveals, we got the ' . $imageType . '. ';
+            } else {
+                $result[] = 'Bummer. As the "content-type" header reveals, we did not get a webp' .
+                    'Surprisingly we got: "' . $headers['content-type'] . '"';
+            }
+
+            if (isset($headers['content-length'])) {
+                if ($headers['content-length'] == '6964') {
+                    $result[] = 'However, the content-length reveals that we actually GOT the webp ' .
+                        '(we know that the file we put is exactly 6964 bytes). ' .
+                        'So it is "just" the content-type header that was not set correctly.';
+
+                    if (PlatformInfo::isNginx()) {
+                        $result[] = 'As you are on Nginx, you probably need to add the following line ' .
+                            'in your *mime.types* configuration file: ';
+                        $result[] = '```image/webp webp;```';
+                    } else {
+                        $result[] = 'Perhaps you dont have *mod_mime* installed, or the following lines are not in a *.htaccess* ' .
+                        'in the folder containing the webp (or a parent):';
+                        $result[] = "```<IfModule mod_mime.c>\n  AddType image/webp .webp\n</IfModule>```";
+
+                        $result[] = '### .htaccess status';
+                        $result = array_merge($result, SelfTestHelper::htaccessInfo($config, true));
+                    }
+
+                    $result[] = 'The test **FAILED**{: .error}.';
+                } else {
+                    $result[] = 'Additionally, the content-length reveals that we did not get the webp ' .
+                        '(we know that the file we put is exactly 6964 bytes). ' .
+                        'So we can conclude that the rewrite did not happen';
+                    $result[] = 'The test **FAILED**{: .error}.';
+                    $result[] = '#### Diagnosing rewrites';
+                    $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
+                }
+            } else {
+                $result[] = 'In addition, we did not get a *content-length* header either.' .
+                $result[] = 'It seems we can conclude that the rewrite did not happen.';
+                $result[] = 'The test **FAILED**{: .error}.';
+                $result[] = '#### Diagnosing rewrites';
+                $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
+            }
+
             return [false, $result, $createdTestFiles];
         }
 
@@ -96,7 +128,7 @@ class SelfTestRedirectToExisting
             $result[] = 'The test FAILED.';
 
             $result[] = 'It seems something went wrong with the redirection.';
-            $result[] = '## Diagnosing redirects';
+            $result[] = '#### Diagnosing redirects';
             $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
 
             return [false, $result, $createdTestFiles];
@@ -119,7 +151,7 @@ class SelfTestRedirectToExisting
 
         // Check browsers NOT supporting webp
         // -----------------------------------
-        $result[] = '## Now lets check that browsers *not* supporting webp gets the ' . strtoupper($imageType);
+        $result[] = '### Now lets check that browsers *not* supporting webp gets the ' . strtoupper($imageType);
         $result[] = 'Making a HTTP request for the test image (without setting the "Accept" header)';
         list($success, $errors, $headers) = SelfTestHelper::remoteGet($requestUrl);
 
@@ -145,7 +177,7 @@ class SelfTestRedirectToExisting
                 'So even browsers not supporting webp gets webp. Not good!';
             $result[] = 'The test FAILED.';
 
-            $result[] = '## What to do now?';
+            $result[] = '#### What to do now?';
             // TODO: We could examine the headers for common CDN responses
 
             $result[] = 'First, examine the response headers above. Is there any indication that ' .
@@ -165,7 +197,7 @@ class SelfTestRedirectToExisting
                     'in the *.htaccess* rules generated by WebP Express that are not working.';
             }
 
-            $result[] = '## System info (for manual diagnosing):';
+            $result[] = '### System info (for manual diagnosing):';
             $result = array_merge($result, SelfTestHelper::allInfo($config));
 
 
@@ -198,7 +230,7 @@ class SelfTestRedirectToExisting
         $result = [];
 
         //$result[] = '*hello* with *you* and **you**. ok! FAILED';
-        $result[] = '# Testing redirection to existing webp';
+        $result[] = '## ' . $rootId;
         //$result[] = 'This test examines image responses "from the outside".';
 
         $createdTestFiles = false;
@@ -209,7 +241,7 @@ class SelfTestRedirectToExisting
 
             if ($success) {
                 if ($config['image-types'] & 2) {
-                    $result[] = '## Performing same tests for PNG';
+                    $result[] = '### Performing same tests for PNG';
                     list($success, $subResult, $createdTestFiles2) = self::runTestForImageType($rootId, $config, 'png');
                     $createdTestFiles = $createdTestFiles || $createdTestFiles2;
                     if ($success) {
@@ -227,7 +259,7 @@ class SelfTestRedirectToExisting
         }
 
         if ($success) {
-            $result[] = '## Results for: ' . $rootId;
+            $result[] = '### Results for: ' . $rootId;
             $result[] = 'Everything **seems to work**{: .ok} as it should. ' .
                 'However, notice that this test only tested an image which was placed in the *uploads* folder. ' .
                 'The rest of the image roots (such as theme images) have not been tested (it is on the TODO). ' .
@@ -317,8 +349,12 @@ class SelfTestRedirectToExisting
             return [true, $result];
         }
 
-        list($success, $result) = self::runTestForRoot('uploads', $config);
-        //list($success, $result) = self::runTestForRoot('themes', $config);
+        $result[] = '# Testing redirection to existing webp';
+        foreach ($config['scope'] as $rootId) {
+            list($success, $subResult) = self::runTestForRoot($rootId, $config);
+            $result = array_merge($result, $subResult);
+        }
+        //list($success, $result) = self::runTestForRoot('uploads', $config);
 
         return [$success, $result];
     }
