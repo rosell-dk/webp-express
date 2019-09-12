@@ -222,6 +222,14 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
         return [$noWarningsYet, $result, $createdTestFiles];
     }
 
+    protected function getSuccessMessage()
+    {
+        return 'Everything **seems to work**{: .ok} as it should. ' .
+            'However, a couple of things were not tested (it is on the TODO). ' .
+            'TODO 1: If one image type is disabled, check that it does not redirect to webp (unless redirection to converter is set up). ' .
+            'TODO 2: Test that redirection to webp only is triggered when the webp exists. ';
+    }
+
     public function startupTests()
     {
         $result[] = '# Testing redirection to existing webp';

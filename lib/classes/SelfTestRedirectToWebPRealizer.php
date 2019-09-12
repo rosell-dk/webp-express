@@ -2,24 +2,24 @@
 
 namespace WebPExpress;
 
-class SelfTestRedirectToWebPRealizer
+class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
 {
 
     /**
      * Run test for either jpeg or png
      *
-     * @param  array   $config
+     * @param  string  $rootId    (ie "uploads" or "themes")
      * @param  string  $imageType  ("jpeg" or "png")
      * @return array   [$success, $result, $createdTestFiles]
      */
-    private static function runTestForImageType($config, $imageType)
+    protected function runTestForImageType($rootId, $imageType)
     {
         $result = [];
         $createdTestFiles = false;
         $noWarningsYet = true;
 
-        // Copy test image (jpeg)
-        list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToUploadFolder($imageType);
+        // Copy test image
+        list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToRoot($rootId, $imageType);
         $result = array_merge($result, $subResult);
         if (!$success) {
             $result[] = 'The test cannot be completed';
@@ -33,19 +33,21 @@ class SelfTestRedirectToWebPRealizer
         // AlterHtmlHelper was not meant to be used like this, but it is the only place where we currently
         // have logic for finding destination url from source url.
 
-        $sourceUrl = Paths::getUploadUrl() . '/' . $sourceFileName;
+        //$sourceUrl = Paths::getUploadUrl() . '/' . $sourceFileName;
+        $sourceUrl = Paths::getUrlById($rootId) . '/' . $sourceFileName;
+
         AlterHtmlHelper::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
         AlterHtmlHelper::$options['only-for-webps-that-exists'] = false;
 
         $requestUrl = AlterHtmlHelper::getWebPUrlInBase(
             $sourceUrl,
-            'uploads',
-            Paths::getUploadUrl(),
-            Paths::getAbsDirById('uploads')
+            $rootId,
+            Paths::getUrlById($rootId),
+            Paths::getAbsDirById($rootId)
         );
 
 
-        $result[] = '## Lets check that browsers supporting webp gets a freshly converted WEBP ' .
+        $result[] = '### Lets check that browsers supporting webp gets a freshly converted WEBP ' .
             'when a non-existing WEBP is requested, which has a corresponding source';
         $result[] = 'Making a HTTP request for the test image (pretending to be a client that supports webp, by setting the "Accept" header to "image/webp")';
         $requestArgs = [
@@ -67,8 +69,8 @@ class SelfTestRedirectToWebPRealizer
                 'Currently, this analysis cannot dertermine which was the case and it cannot be helpful ' .
                 'if the latter is the case (sorry!). However, if the redirection rules are the problem, here is some info:';
 
-            $result[] = '## Diagnosing redirection problems (presuming it is the redirection to the script that is failing)';
-            $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
+            $result[] = '### Diagnosing redirection problems (presuming it is the redirection to the script that is failing)';
+            $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($this->config));
 
 
             //$result[count($result) - 1] .= '. FAILED';
@@ -102,8 +104,8 @@ class SelfTestRedirectToWebPRealizer
                     'While these headers could have been eaten in a Cloudflare-like setup, the problem is ';
                     'probably that the redirection simply failed';
 
-                    $result[] = '## Diagnosing redirection problems';
-                    $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($config));
+                    $result[] = '### Diagnosing redirection problems';
+                    $result = array_merge($result, SelfTestHelper::diagnoseFailedRewrite($this->config));
             }
             return [false, $result, $createdTestFiles];
         }
@@ -140,7 +142,8 @@ class SelfTestRedirectToWebPRealizer
         return [$noWarningsYet, $result, $createdTestFiles];
     }
 
-    private static function doRunTest($config)
+/*
+    private static function doRunTest($this->config)
     {
         $result = [];
         $result[] = '# Testing redirection to converter';
@@ -151,24 +154,20 @@ class SelfTestRedirectToWebPRealizer
             return [true, $result, $createdTestFiles];
         }
 
-        if (!$config['enable-redirection-to-webp-realizer']) {
-            $result[] = 'Turned off, nothing to test';
-            return [true, $result, $createdTestFiles];
-        }
 
-        if ($config['image-types'] == 0) {
+        if ($this->config['image-types'] == 0) {
             $result[] = 'No image types have been activated, nothing to test';
             return [true, $result, $createdTestFiles];
         }
 
-        if ($config['image-types'] & 1) {
-            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($config, 'jpeg');
+        if ($this->config['image-types'] & 1) {
+            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($this->config, 'jpeg');
             $result = array_merge($result, $subResult);
 
             if ($success) {
-                if ($config['image-types'] & 2) {
-                    $result[] = '## Performing same tests for PNG';
-                    list($success, $subResult, $createdTestFiles2) = self::runTestForImageType($config, 'png');
+                if ($this->config['image-types'] & 2) {
+                    $result[] = '### Performing same tests for PNG';
+                    list($success, $subResult, $createdTestFiles2) = self::runTestForImageType($this->config, 'png');
                     $createdTestFiles = $createdTestFiles || $createdTestFiles2;
                     if ($success) {
                         //$result[count($result) - 1] .= '. **ok**{: .ok}';
@@ -180,12 +179,12 @@ class SelfTestRedirectToWebPRealizer
                 }
             }
         } else {
-            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($config, 'png');
+            list($success, $subResult, $createdTestFiles) = self::runTestForImageType($this->config, 'png');
             $result = array_merge($result, $subResult);
         }
 
         if ($success) {
-            $result[] = '## Conclusion';
+            $result[] = '### Conclusion';
             $result[] = 'Everything **seems to work**{: .ok} as it should. ' .
                 'However, notice that this test only tested an image which was placed in the *uploads* folder. ' .
                 'The rest of the image roots (such as theme images) have not been tested (it is on the TODO). ' .
@@ -195,40 +194,31 @@ class SelfTestRedirectToWebPRealizer
 
 
         return [true, $result, $createdTestFiles];
+    }*/
+
+    protected function getSuccessMessage()
+    {
+        return 'Everything **seems to work**{: .ok} as it should. ' .
+            'However, a couple of things were not tested (it is on the TODO). ' .
+            'TODO: If one image type is disabled, check that it does not redirect to webp (unless redirection to converter is set up). ';
     }
 
-    private static function cleanUpTestImages($config)
+    public function startupTests()
     {
-
-        // Clean up test images in upload folder
-        SelfTestHelper::deleteTestImagesInFolder('uploads');
-
-        // Clean up dummy webp images in cache folder for uploads
-        $uploadCacheDir = Paths::getCacheDirForImageRoot(
-            $config['destination-folder'],
-            $config['destination-structure'],
-            'uploads'
-        );
-        SelfTestHelper::deleteFilesInDir($uploadCacheDir, 'webp-express-test-image-*');
-
+        $result[] = '# Testing redirection to converter';
+        if (!$this->config['enable-redirection-to-webp-realizer']) {
+            $result[] = 'Turned off, nothing to test';
+            return [true, $result];
+        }
+        return [true, $result];
     }
 
     public static function runTest()
     {
         $config = Config::loadConfigAndFix(false);
-
-        self::cleanUpTestImages($config);
-
-        // Run the actual test
-        list($success, $result, $createdTestFiles) = self::doRunTest($config);
-
-        // Clean up test images again. We are very tidy around here
-        if ($createdTestFiles) {
-            $result[] = 'Deleting test images';
-            self::cleanUpTestImages($config);
-        }
-
-        return [$success, $result];
+        $me = new SelfTestRedirectToWebPRealizer($config);
+        return $me->startTest();
     }
+
 
 }

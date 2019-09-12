@@ -19,7 +19,7 @@ class SelfTestRedirectToConverter extends SelfTestRedirectAbstract
         $noWarningsYet = true;
 
         // Copy test image (jpeg)
-        list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToUploadFolder($imageType);
+        list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToRoot($rootId, $imageType);
         $result = array_merge($result, $subResult);
         if (!$success) {
             $result[] = 'The test cannot be completed';
@@ -27,7 +27,8 @@ class SelfTestRedirectToConverter extends SelfTestRedirectAbstract
         }
         $createdTestFiles = true;
 
-        $requestUrl = Paths::getUploadUrl() . '/' . $sourceFileName;
+        $requestUrl = Paths::getUrlById($rootId) . '/' . $sourceFileName;
+
         $result[] = '### Lets check that browsers supporting webp gets a freshly converted WEBP ' .
             'when the ' . $imageType . ' is requested';
         $result[] = 'Making a HTTP request for the test image (pretending to be a client that supports webp, by setting the "Accept" header to "image/webp")';
@@ -174,6 +175,14 @@ class SelfTestRedirectToConverter extends SelfTestRedirectAbstract
         }
 
         return [$noWarningsYet, $result, $createdTestFiles];
+    }
+
+    protected function getSuccessMessage()
+    {
+        return 'Everything **seems to work**{: .ok} as it should. ' .
+            'However, a couple of things were not tested (it is on the TODO). ' .
+            'TODO 1: If one image type is disabled, check that it does not redirect to webp (unless redirection to converter is set up). ' .
+            'TODO 2: Test that redirection to webp only is triggered when the webp exists. ';
     }
 
     public function startupTests()
