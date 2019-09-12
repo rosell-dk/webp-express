@@ -10,15 +10,6 @@ use \WebPExpress\State;
 
 class HTAccess
 {
-    /* only called from page-messages.inc, but commented out there... */
-    public static function generateHTAccessRulesFromConfigFile($htaccessDir = '') {
-        if (Config::isConfigFileThereAndOk()) {
-            return HTAccessRules::generateHTAccessRulesFromConfigObj(Config::loadConfig(), $htaccessDir);
-        } else {
-            return false;
-        }
-    }
-
     public static function arePathsUsedInHTAccessOutdated() {
         if (!Config::isConfigFileThere()) {
             // this properly means that rewrite rules have never been generated
@@ -181,7 +172,8 @@ class HTAccess
             if ($weRules === false) {
                 return false;
             }
-            return (strpos($weRules, '<IfModule mod_rewrite.c>') !== false);
+
+            return (strpos($weRules, '<IfModule ') !== false);
         } else {
             // the .htaccess isn't even there. So there are no rules.
             return false;
@@ -208,6 +200,7 @@ class HTAccess
     public static function getRootsWithWebPExpressRulesIn()
     {
         $allIds = Paths::getImageRootIds();
+        $allIds[] = 'cache';
         $result = [];
         foreach ($allIds as $imageRootId) {
             $filename = Paths::getAbsDirById($imageRootId) . '/.htaccess';
@@ -394,15 +387,31 @@ class HTAccess
     public static function saveRules($config) {
         list($success, $failedDeactivations, $successfulDeactivations) = self::deactivateHTAccessRules('# The rules have left the building');
 
-        $rootIds = $config['scope'];
+        $rootsToPutRewritesIn = $config['scope'];
         if ($config['destination-structure'] == 'doc-root') {
-            $rootIds = Paths::filterOutSubRoots($rootIds);
+            $rootsToPutRewritesIn = Paths::filterOutSubRoots($rootsToPutRewritesIn);
         }
+
+        $dirsContainingWebps = [];
+        $mingled = ($config['destination-folder'] == 'mingled');
+        if ($mingled) {
+            $dirsContainingWebps[] = 'uploads';
+        }
+        $scopeOtherThanUpload = (str_replace('uploads', '', implode(',', $config['scope'])) != '');
+
+        if ($scopeOtherThanUpload || (!$mingled)) {
+            $dirsContainingWebps[] = 'cache';
+        }
+
+        $dirsToPutRewritesIn = array_merge($rootsToPutRewritesIn, $dirsContainingWebps);
 
         $failedWrites = [];
         $successfullWrites = [];
-        foreach ($rootIds as $rootId) {
-            $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, $rootId);
+        foreach ($dirsToPutRewritesIn as $rootId) {
+            $dirContainsSourceImages = in_array($rootId, $rootsToPutRewritesIn);
+            $dirContainsWebPImages = in_array($rootId, $dirsContainingWebps);
+
+            $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, $rootId, $dirContainsSourceImages, $dirContainsWebPImages);
             $success = self::saveHTAccessRules(
                 $rootId,
                 $rules,
@@ -429,105 +438,4 @@ class HTAccess
         return [$success, $successfullWrites, $successfulDeactivations, $failedWrites, $failedDeactivations];
     }
 
-
-    /**
-     *  Try to save the rules.
-     *  Returns many details
-     *  (called from migrate1.php, migrate7.php, PluginActivate.php, Config.php and this file)
-     */
-    public static function saveRulesOld($config) {
-
-
-        list($minRequired, $pluginToo, $uploadToo) = self::getHTAccessDirRequirements();
-
-        $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, 'wp-content');
-        $wpContentDir = Paths::getContentDirAbs();
-        $wpContentFailed = !(self::saveHTAccessRulesToFile($wpContentDir . '/.htaccess', $rules, true));
-
-        $overidingRulesInWpContentWarning = false;
-        if ($wpContentFailed) {
-            if ($minRequired == 'index') {
-                $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, 'index');
-                $indexFailed = !(self::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', $rules, true));
-
-                if ($indexFailed) {
-                    $mainResult = 'failed';
-                } else {
-                    $mainResult = 'index';
-                    $overidingRulesInWpContentWarning = self::haveWeRulesInThisHTAccessBestGuess($wpContentDir . '/.htaccess');
-                }
-            }
-        } else {
-            $mainResult = 'wp-content';
-            // TODO: Change to something like "The rules are placed in the .htaccess file in your wp-content dir."
-            //       BUT! - current text is searched for in page-messages.php
-            self::saveHTAccessRulesToFile(Paths::getIndexDirAbs() . '/.htaccess', '# WebP Express has placed its rules in your wp-content dir. Go there.', false);
-        }
-
-        /* plugin */
-        if ($pluginToo == 'depends') {
-            if ($mainResult == 'wp-content') {
-                $pluginToo = (Paths::isPluginDirMovedOutOfWpContent() ? 'yes' : 'no');
-            } elseif ($mainResult == 'index') {
-                $pluginToo = (Paths::isPluginDirMovedOutOfAbsPath() ? 'yes' : 'no');
-            } else {
-                // $result must be false. So $pluginToo should still be 'depends'
-            }
-        }
-        $pluginFailed = false;
-        $pluginFailedBadly = true;
-        if ($pluginToo == 'yes') {
-            $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, 'plugin');
-            $pluginDir = Paths::getPluginDirAbs();
-            $pluginFailed = !(self::saveHTAccessRulesToFile($pluginDir . '/.htaccess', $rules, true));
-            if ($pluginFailed) {
-                $pluginFailedBadly = self::haveWeRulesInThisHTAccessBestGuess($pluginDir . '/.htaccess');
-            }
-        }
-
-        /* upload */
-        if ($uploadToo == 'depends') {
-            if ($mainResult == 'wp-content') {
-                $uploadToo = (Paths::isUploadDirMovedOutOfWPContentDir() ? 'yes' : 'no');
-            } elseif ($mainResult == 'index') {
-                $uploadToo = (Paths::isUploadDirMovedOutOfAbsPath() ? 'yes' : 'no');
-            } else {
-                // $result must be false. So $uploadToo should still be 'depends'
-            }
-        }
-        $uploadFailed = false;
-        $uploadFailedBadly = true;
-        if ($uploadToo == 'yes') {
-            $uploadDir = Paths::getUploadDirAbs();
-            $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, 'uploads');
-            $uploadFailed = !(self::saveHTAccessRulesToFile($uploadDir . '/.htaccess', $rules, true));
-            if ($uploadFailed) {
-                $uploadFailedBadly = self::haveWeRulesInThisHTAccessBestGuess($uploadDir . '/.htaccess');
-            }
-        }
-
-        $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, 'themes');
-        $themesFailed = !(self::saveHTAccessRulesToFile(Paths::getThemesDirAbs() . '/.htaccess', $rules, true));
-
-        /*
-        if ($config['destination-structure'] == 'image-roots') {
-
-        }*/
-        // We need upload too for rewrite rules when destination structure is image-roots.
-        // but it is also good otherwise. So lets always do it.
-        //$uploadToo = 'yes';
-
-        return [
-            'mainResult' => $mainResult,                // 'index', 'wp-content' or 'failed'
-            'minRequired' => $minRequired,              // 'index' or 'wp-content'
-            'overidingRulesInWpContentWarning' => $overidingRulesInWpContentWarning,  // true if main result is 'index' but we cannot remove those in wp-content
-            'rules' => $rules,                          // The rules we generated
-            'pluginToo' => $pluginToo,                  // 'yes', 'no' or 'depends'
-            'pluginFailed' => $pluginFailed,            // true if failed to write to plugin folder (it only tries that, if pluginToo == 'yes')
-            'pluginFailedBadly' => $pluginFailedBadly,  // true if plugin failed AND it seems we have rewrite rules there
-            'uploadToo' => $uploadToo,                  // 'yes', 'no' or 'depends'
-            'uploadFailed' => $uploadFailed,
-            'uploadFailedBadly' => $uploadFailedBadly,
-        ];
-    }
 }

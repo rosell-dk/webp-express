@@ -2,10 +2,6 @@
 
 namespace WebPExpress;
 
-use \WebPExpress\Config;
-use \WebPExpress\Paths;
-use \WebPExpress\PathHelper;
-
 class HTAccessRules
 {
     private static $useDocRootForStructuringCacheDir;
@@ -26,6 +22,8 @@ class HTAccessRules
     private static $passThroughEnvVarDefinitelyAvailable;
     private static $capTests;
     private static $addVary;
+    private static $dirContainsSourceImages;
+    private static $dirContainsWebPImages;
 
 
     /**
@@ -58,6 +56,10 @@ class HTAccessRules
                 (self::$capTests['passThroughHeaderWorking'] === true ? 'yes' : (self::$capTests['passThroughHeaderWorking'] === false ? 'no' : 'could not be determined')) . "\n" .
             "# - pass variable from .htaccess to script through environment variable working?: " .
                 (self::$capTests['passThroughEnvWorking'] === true ? 'yes' : (self::$capTests['passThroughEnvWorking'] === false ? 'no' : 'could not be determined')) . "\n" .
+
+            "#\n# Role of the dir that this .htaccess is located in:\n" .
+            '# - Is this .htaccess in a dir containing source images?: ' . (self::$dirContainsSourceImages ? 'yes' : 'no') . "\n" .
+            '# - Is this .htaccess in a dir containing webp images?: ' . (self::$dirContainsWebPImages ? 'yes' : 'no') . "\n" .
             "\n";
     }
 
@@ -70,25 +72,14 @@ class HTAccessRules
         $ccRules = '';
         $cacheControlHeader = Config::getCacheControlHeader(self::$config);
         if ($cacheControlHeader != '') {
-
-            if (self::$config['redirect-to-existing-in-htaccess']) {
-                $ccRules .= "  # Set Cache-Control header so these direct redirections also get the header set\n";
-                if (self::$config['enable-redirection-to-webp-realizer']) {
-                    $ccRules .= "  # (and also webp-realizer.php)\n";
-                }
-            } else {
-                if (self::$config['enable-redirection-to-webp-realizer']) {
-                    $ccRules .= "  # Set Cache-Control header for requests to webp images\n";
-                }
-            }
-            $ccRules .= "  <IfModule mod_headers.c>\n";
-            $ccRules .= "    <FilesMatch \"\.webp$\">\n";
-            $ccRules .= "      Header set Cache-Control \"" . $cacheControlHeader . "\"\n";
-            $ccRules .= "    </FilesMatch>\n";
-            $ccRules .= "  </IfModule>\n\n";
+            $ccRules .= "# Set Cache-Control header for requests to webp images\n";
+            $ccRules .= "<IfModule mod_headers.c>\n";
+            $ccRules .= "  <FilesMatch \"\.webp$\">\n";
+            $ccRules .= "    Header set Cache-Control \"" . $cacheControlHeader . "\"\n";
+            $ccRules .= "  </FilesMatch>\n";
+            $ccRules .= "</IfModule>\n\n";
 
             // Fall back to mod_expires if mod_headers is unavailable
-
             if (self::$modHeaderDefinitelyUnavailable) {
                 $cacheControl = self::$config['cache-control'];
 
@@ -126,13 +117,13 @@ class HTAccessRules
 
                 if ($expires != '') {
                     // in case mod_headers is missing, try mod_expires
-                    $ccRules .= "  # Fall back to mod_expires if mod_headers is unavailable\n";
-                    $ccRules .= "  <IfModule !mod_headers.c>\n";
-                    $ccRules .= "    <IfModule mod_expires.c>\n";
-                    $ccRules .= "      ExpiresActive On\n";
-                    $ccRules .= "      ExpiresByType image/webp \"access plus " . $expires . "\"\n";
-                    $ccRules .= "    </IfModule>\n";
-                    $ccRules .= "  </IfModule>\n\n";
+                    $ccRules .= "# Fall back to mod_expires if mod_headers is unavailable\n";
+                    $ccRules .= "<IfModule !mod_headers.c>\n";
+                    $ccRules .= "  <IfModule mod_expires.c>\n";
+                    $ccRules .= "    ExpiresActive On\n";
+                    $ccRules .= "    ExpiresByType image/webp \"access plus " . $expires . "\"\n";
+                    $ccRules .= "  </IfModule>\n";
+                    $ccRules .= "</IfModule>\n\n";
                 }
             }
         }
@@ -248,13 +239,22 @@ class HTAccessRules
             //$rules .= "  RewriteRule ^\/?(.*)\.(" . self::$fileExt . ")$ /" . $cacheDirRel . "/" . self::$htaccessDirRelToDocRoot . "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
         }
 
-        if (self::$addVary) {
-            $rules .= "  # Make sure that browsers which does not support webp also gets the Vary:Accept header\n" .
-                "  # when requesting images that would be redirected to existing webp on browsers that does.\n" .
-                "  <IfModule mod_setenvif.c>\n" .
-                "    SetEnvIf Request_URI \"\.(" . self::$fileExt . ")$\" ADDVARY\n" .
-                "  </IfModule>\n\n";
-        }
+        //if (self::$addVary) {
+        $rules .= "  # Make sure that browsers which does not support webp also gets the Vary:Accept header\n" .
+            "  # when requesting images that would be redirected to existing webp on browsers that does.\n";
+
+        $rules .= "  <IfModule mod_headers.c>\n";
+        $rules .= '    <FilesMatch "\.(jpe?g|png)$">' . "\n";
+        $rules .= '      Header append "Vary" "Accept"' . "\n";
+        $rules .= "    </FilesMatch>\n";
+        $rules .= "  </IfModule>\n\n";
+
+        /*
+        "  <IfModule mod_setenvif.c>\n" .
+        "    SetEnvIf Request_URI \"\.(" . self::$fileExt . ")$\" ADDVARY\n" .
+        "  </IfModule>\n\n";
+        */
+
         return $rules;
     }
 
@@ -394,9 +394,9 @@ class HTAccessRules
             */
         }
 
-        if (!self::$config['redirect-to-existing-in-htaccess']) {
+        /*if (!self::$config['redirect-to-existing-in-htaccess']) {
             $rules .= self::cacheRules();
-        }
+        }*/
         return $rules;
     }
 
@@ -406,6 +406,24 @@ class HTAccessRules
         $passRelativePathToSourceInQS = !(self::$passThroughEnvVarDefinitelyAvailable || self::$passThroughHeaderDefinitelyAvailable);
 
         $rules = '';
+
+        // Do not add header magic if passing through env is definitely working
+        // Do not add either, if we definitily know it isn't working
+        /*
+        if ((!self::$passThroughEnvVarDefinitelyAvailable) && (!self::$passThroughHeaderDefinitelyUnavailable)) {
+            if (self::$config['enable-redirection-to-converter']) {
+                $rules .= "  # Pass REQUEST_FILENAME to webp-on-demand.php in request header\n";
+                //$rules .= $basicConditions;
+                //$rules .= "  RewriteRule ^(.*)\.(" . self::$fileExt . ")$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
+                $rules .= "  <IfModule mod_headers.c>\n" .
+                    "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
+                    "  </IfModule>\n\n";
+
+            }
+            if (self::$config['enable-redirection-to-webp-realizer']) {
+                // We haven't implemented a clever way to pass through header for webp-realizer yet
+            }
+        }*/
         $rules .= "  # Redirect images to webp-on-demand.php ";
         if (self::$config['only-redirect-to-converter-for-webp-enabled-browsers']) {
             $rules .= "(if browser supports webp)\n";
@@ -610,10 +628,52 @@ class HTAccessRules
         self::$appendWebP = !$setWebPExt;
     }
 
+    public static function addVaryHeaderEnvRules($indent = 0)
+    {
+        $rules = [];
+        $rules[] = "# Set Vary:Accept header if we came here by way of our redirect, which set the ADDVARY environment variable";
+        $rules[] = "# The purpose is to make proxies and CDNs aware that the response varies with the Accept header";
+        $rules[] = "<IfModule mod_headers.c>";
+        $rules[] = "  <IfModule mod_setenvif.c>";
+        $rules[] = "    # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not";
+        $rules[] = "    # So, the next lines are for Apache, in order to set environment variables without \"REDIRECT_\"";
+        $rules[] = "    SetEnvIf REDIRECT_EXISTING 1 EXISTING=1";
+        $rules[] = "    SetEnvIf REDIRECT_ADDVARY 1 ADDVARY=1";
+        $rules[] = "";
+        $rules[] = "    Header append \"Vary\" \"Accept\" env=ADDVARY";
+        $rules[] = "";
+
+        if (self::$config['redirect-to-existing-in-htaccess']) {
+            $rules[] = "    # Set X-WebP-Express header for diagnose purposes";
+                //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
+                //"  # Set the debug header\n" .
+                $rules[] = "    Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING";
+                //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
+        }
+        $rules[] = "  </IfModule>";
+        $rules[] = "</IfModule>";
+        $rules[] = "";
+
+        if ($indent > 0) {
+            $indentStr = '';
+            for ($x=0; $x<$indent; $x++) {
+                $indentStr .= ' ';
+            }
+            foreach ($rules as $i => $rule) {
+                if ($rule != '') {
+                    $rules[$i] = $indentStr . $rule;
+                }
+            }
+        }
+        return implode("\n", $rules);
+    }
+
     // https://stackoverflow.com/questions/34124819/mod-rewrite-set-custom-header-through-htaccess
-    public static function generateHTAccessRulesFromConfigObj($config, $htaccessDir = 'index')
+    public static function generateHTAccessRulesFromConfigObj($config, $htaccessDir = 'index', $dirContainsSourceImages = true, $dirContainsWebPImages = true)
     {
         self::setInternalProperties($config, $htaccessDir);
+        self::$dirContainsSourceImages = $dirContainsSourceImages;
+        self::$dirContainsWebPImages = $dirContainsWebPImages;
 
         if (
             (!self::$config['enable-redirection-to-converter']) &&
@@ -634,95 +694,61 @@ class HTAccessRules
         }
 
         /* Build rules */
-
-        /* When .htaccess is placed in root (index), the rules needs to be confined only to work in
-           content folder (if uploads folder is moved, perhaps also that)
-           Rules needs to start with ie "^/?(wp-content/.+)" rather than "^/?(.+)"
-           In the case that upload folder is in root too, rules needs to apply to both.
-           We do it like this: "^/?((?:wp-content|uploads)/.+)"   (using non capturing group)
-        */
-
-        $rewriteRuleStart = '^/?(.+)';
-        if (self::$htaccessDir == 'index') {
-            // Get relative path between index dir and wp-content dir / uploads
-            // Because we want to restrict the rule so it doesn't work on wp-admin, but only those two.
-
-            $wpContentRel = PathHelper::getRelDir(Paths::getIndexDirAbs(), Paths::getContentDirAbs());
-            $uploadsRel = PathHelper::getRelDir(Paths::getIndexDirAbs(), Paths::getUploadDirAbs());
-
-            //$rules .= '# rel: ' . $uploadsRel . "\n";
-
-            if (strpos($wpContentRel, '.') !== 0) {
-
-                if (strpos($uploadsRel, $wpContentRel) === 0) {
-                    $rewriteRuleStart = '^/?(' . $wpContentRel . '/.+)';
-                } else {
-                    $rewriteRuleStart = '^/?((?:' . $wpContentRel . '|' . $uploadsRel . '/.+)';
-                }
-            }
-        }
-
         $rules = '';
         $rules .= self::infoRules();
-        $rules .= "<IfModule mod_rewrite.c>\n" .
-        "  RewriteEngine On\n\n";
 
-        if (self::$config['redirect-to-existing-in-htaccess']) {
-            $rules .= self::redirectToExistingRules();
-            $rules .= self::cacheRules();
-        }
-
-        // Do not add header magic if passing through env is definitely working
-        // Do not add either, if we definitily know it isn't working
-        if ((!self::$passThroughEnvVarDefinitelyAvailable) && (!self::$passThroughHeaderDefinitelyUnavailable)) {
-            if (self::$config['enable-redirection-to-converter']) {
-                $rules .= "  # Pass REQUEST_FILENAME to webp-on-demand.php in request header\n";
-                //$rules .= $basicConditions;
-                //$rules .= "  RewriteRule ^(.*)\.(" . self::$fileExt . ")$ - [E=REQFN:%{REQUEST_FILENAME}]\n" .
-                $rules .= "  <IfModule mod_headers.c>\n" .
-                    "    RequestHeader set REQFN \"%{REQFN}e\" env=REQFN\n" .
-                    "  </IfModule>\n\n";
-
-            }
-            if (self::$config['enable-redirection-to-webp-realizer']) {
-                // We haven't implemented a clever way to pass through header for webp-realizer yet
-            }
-        }
-
-        if (self::$config['enable-redirection-to-webp-realizer']) {
-            $rules .= self::webpRealizerRules();
-        }
-
-        if (self::$config['enable-redirection-to-converter']) {
-            $rules .= self::webpOnDemandRules();
-        }
-
-        //self::$addVary = (self::$config['enable-redirection-to-converter'] && (self::$config['success-response'] == 'converted')) || (self::$config['redirect-to-existing-in-htaccess']);
-
-        if (self::$addVary) {
-            $rules .= "  <IfModule mod_headers.c>\n";
-            $rules .= "    <IfModule mod_setenvif.c>\n";
-
-            $rules .= "      # Apache appends \"REDIRECT_\" in front of the environment variables defined in mod_rewrite, but LiteSpeed does not.\n" .
-                "      # So, the next lines are for Apache, in order to set environment variables without \"REDIRECT_\"\n" .
-                "      SetEnvIf REDIRECT_EXISTING 1 EXISTING=1\n" .
-                "      SetEnvIf REDIRECT_ADDVARY 1 ADDVARY=1\n\n";
-
-            $rules .= "      # Set Vary:Accept header for the image types handled by WebP Express.\n" .
-                "      # The purpose is to make proxies and CDNs aware that the response varies with the Accept header. \n" .
-                "      Header append \"Vary\" \"Accept\" env=ADDVARY\n\n";
+        if ($dirContainsSourceImages) {
+            $rules .= "# Rules for handling requests for source images\n";
+            $rules .= "# ---------------------------------------------\n\n";
+            $rules .= "<IfModule mod_rewrite.c>\n" .
+                "  RewriteEngine On\n\n";
 
             if (self::$config['redirect-to-existing-in-htaccess']) {
-                $rules .= "      # Set X-WebP-Express header for diagnose purposes\n" .
-                    //"  SetEnvIf REDIRECT_WOD 1 WOD=1\n\n" .
-                    //"  # Set the debug header\n" .
-                    "      Header set \"X-WebP-Express\" \"Redirected directly to existing webp\" env=EXISTING\n";
-                    //"  Header set \"X-WebP-Express\" \"Redirected to image converter\" env=WOD\n" .
+                $rules .= self::redirectToExistingRules();
             }
-            $rules .= "    </IfModule>\n" .
-            "  </IfModule>\n\n";
+
+            if (self::$config['enable-redirection-to-converter']) {
+                $rules .= self::webpOnDemandRules();
+            }
+
+            //self::$addVary = (self::$config['enable-redirection-to-converter'] && (self::$config['success-response'] == 'converted')) || (self::$config['redirect-to-existing-in-htaccess']);
+
+            /*
+            if (self::$addVary) {
+                if ($dirContainsWebPImages) {
+                    $rules .= self::addVaryHeaderEnvRules(2);
+                }
+            }*/
+            $rules .= "</IfModule>\n";
+        } /*else {
+            if ($dirContainsWebPImages) {
+                $rules .= self::addVaryHeaderEnvRules();
+            }
+        }*/
+        if ($dirContainsWebPImages) {
+            $rules .= "\n# Rules for handling requests for webp images\n";
+            $rules .= "# ---------------------------------------------\n\n";
+            if (self::$config['enable-redirection-to-webp-realizer']) {
+                $rules .= "<IfModule mod_rewrite.c>\n" .
+                    "  RewriteEngine On\n\n";
+                $rules .= self::webpRealizerRules();
+                $rules .= "</IfModule>\n\n";
+            }
+            $rules .= self::cacheRules();
+
+            /*
+            if (
+                (self::$config['enable-redirection-to-webp-realizer']) ||
+                (self::$config['redirect-to-existing-in-htaccess'])
+            ) {
+            }*/
+            $rules .= self::addVaryHeaderEnvRules();
+
+            $rules .= "\n# Register webp mime type \n";
+            $rules .= "<IfModule mod_mime.c>\n";
+            $rules .= "  AddType image/webp .webp\n";
+            $rules .= "</IfModule>\n";
         }
-        $rules .= "</IfModule>\n";
 
         /*if (self::$config['redirect-to-existing-in-htaccess']) {
             $rules .=
@@ -741,9 +767,6 @@ class HTAccessRules
             "</IfModule>\n\n";
         }*/
 
-        $rules .= "<IfModule mod_mime.c>\n";
-        $rules .= "  AddType image/webp .webp\n";
-        $rules .= "</IfModule>\n";
         return $rules;
     }
 }

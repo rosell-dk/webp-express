@@ -129,6 +129,8 @@ class Paths
                 return 'uploads';
             case self::getThemesDirAbs():
                 return 'themes';
+            case self::getCacheDirAbs():
+                return 'cache';
         }
         return false;
     }
@@ -148,6 +150,8 @@ class Paths
                 return self::getUploadDirAbs();
             case 'themes':
                 return self::getThemesDirAbs();
+            case 'cache':
+                return self::getCacheDirAbs();
         }
         return false;
     }
