@@ -239,22 +239,6 @@ class HTAccessRules
             //$rules .= "  RewriteRule ^\/?(.*)\.(" . self::$fileExt . ")$ /" . $cacheDirRel . "/" . self::$htaccessDirRelToDocRoot . "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1,L]\n\n";
         }
 
-        //if (self::$addVary) {
-        $rules .= "  # Make sure that browsers which does not support webp also gets the Vary:Accept header\n" .
-            "  # when requesting images that would be redirected to existing webp on browsers that does.\n";
-
-        $rules .= "  <IfModule mod_headers.c>\n";
-        $rules .= '    <FilesMatch "\.(jpe?g|png)$">' . "\n";
-        $rules .= '      Header append "Vary" "Accept"' . "\n";
-        $rules .= "    </FilesMatch>\n";
-        $rules .= "  </IfModule>\n\n";
-
-        /*
-        "  <IfModule mod_setenvif.c>\n" .
-        "    SetEnvIf Request_URI \"\.(" . self::$fileExt . ")$\" ADDVARY\n" .
-        "  </IfModule>\n\n";
-        */
-
         return $rules;
     }
 
@@ -710,6 +694,27 @@ class HTAccessRules
             if (self::$config['enable-redirection-to-converter']) {
                 $rules .= self::webpOnDemandRules();
             }
+
+            //if (self::$addVary) {
+            if (
+                (self::$config['redirect-to-existing-in-htaccess']) ||
+                (self::$config['enable-redirection-to-converter'])
+            ) {
+                $rules .= "  # Make sure that browsers which does not support webp also gets the Vary:Accept header\n" .
+                    "  # when requesting images that would be redirected to webp on browsers that does.\n";
+
+                $rules .= "  <IfModule mod_headers.c>\n";
+                $rules .= '    <FilesMatch "\.(jpe?g|png)$">' . "\n";
+                $rules .= '      Header append "Vary" "Accept"' . "\n";
+                $rules .= "    </FilesMatch>\n";
+                $rules .= "  </IfModule>\n\n";
+            }
+
+            /*
+            "  <IfModule mod_setenvif.c>\n" .
+            "    SetEnvIf Request_URI \"\.(" . self::$fileExt . ")$\" ADDVARY\n" .
+            "  </IfModule>\n\n";
+            */
 
             //self::$addVary = (self::$config['enable-redirection-to-converter'] && (self::$config['success-response'] == 'converted')) || (self::$config['redirect-to-existing-in-htaccess']);
 
