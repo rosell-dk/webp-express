@@ -44,23 +44,11 @@
                     include_once 'enable-redirection-to-converter.inc';
                     include_once 'enable-redirection-to-webp-realizer.inc';
                     break;
+                default:
+                    echo 'Error: unknown operation mode! Try saving, it should fix it';
+                    break;
             }
             ?>
-
-            <tr>
-                <!--
-                <th scope="row">
-                    Self test
-                    <?php echo helpIcon(
-                        '<p>Test if the redirection are working by making HTTP requests and examining the responses</p>'
-                    ); ?>
-                </th>
-                <td>
-                    <button onclick="WebPExpress.SelfTest.openPopup('systemInfo')" class="button button-secondary" type="button">System info</button>
-                </td>
-            -->
-            </tr>
-
         </tbody>
     </table>
     <div id="webpexpress_test_redirection_popup" style="display:none;">

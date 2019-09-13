@@ -215,6 +215,18 @@ class Config
             self::runAndStoreCapabilityTests($config);
         }
 
+        // Apparently, migrate7 did not fix old "operation-mode" values for all.
+        // So fix here
+        if ($config['operation-mode'] == 'just-redirect') {
+            $config['operation-mode'] = 'no-conversion';
+        }
+        if ($config['operation-mode'] == 'no-varied-responses') {
+            $config['operation-mode'] = 'cdn-friendly';
+        }
+        if ($config['operation-mode'] == 'varied-responses') {
+            $config['operation-mode'] = 'varied-image-responses';
+        }
+
         $config = self::applyOperationMode($config);
 
         // Fix scope: Remove invalid and put in correct order
