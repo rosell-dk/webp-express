@@ -83,6 +83,7 @@ class HTAccessRules
             if (self::$modHeaderDefinitelyUnavailable) {
                 $cacheControl = self::$config['cache-control'];
 
+                $expires = '';
                 if ($cacheControl == 'custom') {
                     $expires = '';
 
