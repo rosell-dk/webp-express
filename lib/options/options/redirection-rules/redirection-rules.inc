@@ -1,14 +1,14 @@
 <fieldset class="block">
-    <?php  if ($config['operation-mode'] == 'no-conversion') : ?>
+<?php  if ($config['operation-mode'] == 'no-conversion') : ?>
     <h2>Redirecting jpeg/png to existing webp (varied image response)</h2>
     <p>
         Enabling this adds rules to the <i>.htaccess</i> which internally redirects jpg/pngs to webp
         and sets the <i>Vary:Accept</i> response header.
         <i>Beware that special attention is needed if you are using a CDN (see FAQ).</i>
     </p>
-    <?php elseif ($config['operation-mode'] == 'cdn-friendly') : ?>
+<?php elseif ($config['operation-mode'] == 'cdn-friendly') : ?>
     <h2><i>.htaccess</i> rules for webp generation</h2>
-    <?php else : ?>
+<?php else : ?>
     <h3>Redirection rules</h3>
     <div><i>The options here affects the rules created in the .htaccess. <?php
         echo helpIcon('Note: The general options also affects the rules.');

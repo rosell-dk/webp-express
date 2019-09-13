@@ -28,10 +28,5 @@
         <button style="margin-left: 30px;" onclick="WebPExpress.SelfTest.openPopup('redirectToWebPRealizer')" class="button button-secondary" type="button">
             Live test
         </button>
-        <button onclick="WebPExpress.SelfTest.openPopup('allInfo')" class="button button-secondary" type="button" style="float:right">
-            System info
-        </button>
-
-
     </td>
 </tr>
