@@ -199,13 +199,13 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
     protected function getSuccessMessage()
     {
         return 'Everything **seems to work**{: .ok} as it should. ' .
-            'However, a couple of things were not tested (it is on the TODO). ' .
-            'TODO: If one image type is disabled, check that it does not redirect to webp (unless redirection to converter is set up). ';
+            'However, a check is on the TODO: ' .
+            'TODO: Check that disabled image types does not get converted. ';
     }
 
     public function startupTests()
     {
-        $result[] = '# Testing redirection to converter';
+        $result[] = '# Testing "WebP Realizer" functionality';
         if (!$this->config['enable-redirection-to-webp-realizer']) {
             $result[] = 'Turned off, nothing to test';
             return [true, $result];
