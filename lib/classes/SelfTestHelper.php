@@ -373,7 +373,15 @@ class SelfTestHelper
         } else {
             $weRules = HTAccess::extractWebPExpressRulesFromHTAccess($file);
             // remove unindented comments
-            $weRules = preg_replace('/^\#\s[^\n\r]*[\n\r]+/ms', '', $weRules);
+            //$weRules = preg_replace('/^\#\s[^\n\r]*[\n\r]+/ms', '', $weRules);
+
+            // remove comments in the beginning
+            $weRulesArr = preg_split("/\r\n|\n|\r/", $weRules);  // https://stackoverflow.com/a/11165332/842756
+            while ((strlen($weRulesArr[0]) > 0) && ($weRulesArr[0][0] == '#')) {
+                array_shift($weRulesArr);
+            }
+            $weRules = implode("\n", $weRulesArr);
+
             $result[] = '```' . $weRules . '```';
         }
         return $result;
