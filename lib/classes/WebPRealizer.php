@@ -60,7 +60,60 @@ class WebPRealizer extends WodConfigLoader
 
     private static function getDestinationNoDocRoot() {
 
-        $imageRootId = self::getEnvPassedInRewriteRule('WE_IMAGE_ROOT_ID');
+        $dirIdOfHtaccess = self::getEnvPassedInRewriteRule('WE_HTACCESS_ID');
+        if ($dirIdOfHtaccess === false) {
+            $dirIdOfHtaccess = SanityCheck::noControlChars($_GET['htaccess-id']);
+        }
+
+        if (!in_array($dirIdOfHtaccess, ['uploads', 'cache'])) {
+            throw new \Exception('invalid htaccess directory id argument. It must be either "uploads" or "cache".');
+        }
+
+
+        // First try ENV
+        $destinationRelHtaccess = self::getEnvPassedInRewriteRule('WE_DESTINATION_REL_HTACCESS');
+
+        // Otherwise use query-string
+        if ($destinationRelHtaccess === false) {
+            if (isset($_GET['xdestination-rel-htaccess'])) {
+                $x = SanityCheck::noControlChars($_GET['xdestination-rel-htaccess']);
+                $destinationRelHtaccess = SanityCheck::pathWithoutDirectoryTraversal(substr($x, 1));
+            } else {
+                throw new \Exception('Argument for destination path is missing');
+            }
+        }
+
+        $destinationRelHtaccess = SanityCheck::pathWithoutDirectoryTraversal($destinationRelHtaccess);
+
+        $imageRoots = self::getImageRootsDef();
+        if ($dirIdOfHtaccess == 'uploads') {
+            return $imageRoots->byId('uploads')->getAbsPath() . '/' . $destinationRelHtaccess;
+        } elseif ($dirIdOfHtaccess == 'cache') {
+            return $imageRoots->byId('wp-content')->getAbsPath() . '/webp-express/webp-images/' . $destinationRelHtaccess;
+        }
+        /*
+        $pathTokens = explode('/', $destinationRelCacheRoot);
+        $imageRootId = array_shift($pathTokens);
+        $destinationRelSpecificCacheRoot = implode('/', $pathTokens);
+
+        $imageRootId = SanityCheck::pregMatch(
+            '#^[a-z\-]+$#',
+            $imageRootId,
+            'The image root ID is not a valid root id'
+        );
+
+        // TODO: Validate that the root id is in scope
+
+        if (count($pathTokens) == 0) {
+            throw new \Exception('invalid destination argument. It must contain dashes.');
+        }
+
+        return $imageRoots->byId($imageRootId)->getAbsPath() . '/' . $destinationRelSpecificCacheRoot;
+
+/*
+        if ($imageRootId !== false) {
+
+        //$imageRootId = self::getEnvPassedInRewriteRule('WE_IMAGE_ROOT_ID');
         if ($imageRootId !== false) {
             $imageRootId = SanityCheck::pregMatch('#^[a-z\-]+$#', $imageRootId, 'The image root ID passed in ENV is not a valid root-id');
 
@@ -84,7 +137,7 @@ class WebPRealizer extends WodConfigLoader
         }
 
         throw new \Exception('Argument for destination file missing');
-        //WE_DESTINATION_REL_IMG_ROOT
+        //WE_DESTINATION_REL_IMG_ROOT*/
 
         /*
         $destAbs = SanityCheck::noControlChars(self::getEnvPassedInRewriteRule('WEDESTINATIONABS'));
@@ -138,12 +191,12 @@ class WebPRealizer extends WodConfigLoader
             }
         }
 
-        // Check source (the image to be converted)
+        // Get destination
         // --------------------------------------------
         self::$checking = 'destination';
         $destination = self::getDestination();
 
-        self::exitWithError($destination);
+        //self::exitWithError($destination);
 
         // Validate source path
         // --------------------------------------------

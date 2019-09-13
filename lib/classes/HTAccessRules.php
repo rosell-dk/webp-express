@@ -299,9 +299,48 @@ class HTAccessRules
             /*
             Generate something like this:
             RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule (?i).*(\.jpe?g|\.png)\.webp$ /plugins-moved/webp-express/wod/webp-realizer.php [E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:../wp-content-moved,E=WE_DESTINATION_REL_HTACCESS:$0,E=WE_HTACCESS_ID:cache,NC,L]
+            */
+            // Add condition for making sure the webp does not already exist
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
+
+            $params = [];
+            $flags = [];
+
+            if (!self::$passThroughEnvVarDefinitelyUnavailable) {
+                $flags[] = 'E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:' . Paths::getContentDirRelToPluginDir();
+                $flags[] = 'E=WE_DESTINATION_REL_HTACCESS:$0';
+                $flags[] = 'E=WE_HTACCESS_ID:' . self::$htaccessDir;    // this will btw either be "uploads" or "cache"
+            }
+            $flags[] = 'NC';  // case-insensitive match (so file extension can be jpg, JPG or even jPg)
+            $flags[] = 'L';
+
+            if (!self::$passThroughEnvVarDefinitelyAvailable) {
+                $params[] = 'xwp-content-rel-to-plugin-dir=x' . Paths::getContentDirRelToPluginDir();
+                $params[] = 'xdestination-rel-htaccess=x$0';
+                $params[] = 'htaccess-id=' . self::$htaccessDir;
+            }
+
+            // self::$appendWebP cannot be used, we need the following in order for
+            // it to work for uploads in: Mingled, "Set to WebP", "Image roots".
+            // TODO! Will it work for ie theme images?
+            // - well, it should, because the script is passed $0. Not matching the ".png" part of the filename
+            // only means it is a bit more greedy than it has to
+            $appendWebP = !(self::$config['destination-extension'] == 'set');
+
+            $rules .= "  RewriteRule (?i).*" . ($appendWebP ? "(" . self::$fileExtIncludingDot . ")" : "") . "\.webp$ " .
+                "/" . Paths::getWebPRealizerUrlPath() .
+                (count($params) > 0 ? "?" . implode('&', $params) : "") .
+                " [" . implode(',', $flags) . "]\n\n";
+
+
+
+            /*
+            Generate something like this:
+            RewriteCond %{REQUEST_FILENAME} !-f
             RewriteRule (?i).*\.webp$ /plugins-moved/webp-express/wod/webp-realizer.php [E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:../wp-content-moved,E=WE_DESTINATION_REL_IMAGE_ROOT:$0,E=WE_IMAGE_ROOT_ID:wp-content,NC,L]
             */
-
+/*
             // Add condition for making sure the webp does not already exist
             $rules .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
 
@@ -333,7 +372,7 @@ class HTAccessRules
                 "/" . Paths::getWebPRealizerUrlPath() .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n\n";
-
+*/
 
 
             /*
