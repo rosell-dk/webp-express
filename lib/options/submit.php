@@ -119,6 +119,9 @@ function webpexpress_getSanitizedQuality($keyInPOST, $fallback = 75) {
 
 function webpexpress_getSanitizedScope() {
     $scopeText = webpexpress_getSanitizedText('scope');
+    if ($scopeText == '') {
+        $scopeText = 'uploads';
+    }
     $scope = explode(',', $scopeText);
     $allowed = Paths::getImageRootIds();
     $result = [];

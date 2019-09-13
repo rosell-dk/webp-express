@@ -181,6 +181,7 @@ class Config
             ]);
             $config['alter-html']['only-for-webps-that-exists'] = true;
             $config['web-service']['enabled'] = false;
+            $config['scope'] = ['uploads'];
 
         }
 

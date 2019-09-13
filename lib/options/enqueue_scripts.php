@@ -30,6 +30,9 @@ wp_enqueue_script('escapehtml');
 
 $config = Config::getConfigForOptionsPage();
 
+// selftest
+wp_register_script('webpexpress_selftest', plugins_url($jsDir . '/self-test.js', __FILE__), ['escapehtml'], $ver);
+wp_enqueue_script('webpexpress_selftest');
 
 // Add converter, bulk convert and whitelist script, EXCEPT for "no conversion" mode
 if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conversion'))) {
@@ -73,10 +76,6 @@ if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conv
     // bulk convert
     wp_register_script('bulkconvert', plugins_url($jsDir . '/bulk-convert.js', __FILE__), ['escapehtml'], $ver);
     wp_enqueue_script('bulkconvert');
-
-    // selftest
-    wp_register_script('webpexpress_selftest', plugins_url($jsDir . '/self-test.js', __FILE__), ['escapehtml'], $ver);
-    wp_enqueue_script('webpexpress_selftest');
 
     // test convert
     wp_register_script('testconvert', plugins_url($jsDir . '/test-convert.js', __FILE__), ['escapehtml'], $ver);
