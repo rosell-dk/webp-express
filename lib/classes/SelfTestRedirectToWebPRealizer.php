@@ -207,7 +207,7 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
     {
         $result[] = '# Testing "WebP Realizer" functionality';
         if (!$this->config['enable-redirection-to-webp-realizer']) {
-            $result[] = 'Turned off, nothing to test';
+            $result[] = 'Turned off, nothing to test (if you just turned it on without saving, remember: this is a live test so you need to save settings)';
             return [true, $result];
         }
         return [true, $result];

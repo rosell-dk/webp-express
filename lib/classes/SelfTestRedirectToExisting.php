@@ -234,7 +234,7 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
     {
         $result[] = '# Testing redirection to existing webp';
         if (!$this->config['redirect-to-existing-in-htaccess']) {
-            $result[] = 'Turned off, nothing to test';
+            $result[] = 'Turned off, nothing to test (if you just turned it on without saving, remember: this is a live test so you need to save settings)';
             return [false, $result];
         }
         return [true, $result];
