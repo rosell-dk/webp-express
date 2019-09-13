@@ -260,8 +260,11 @@ class HTAccessRules
         */
 
         $rules = '';
-        $rules .= "  # WebP Realizer: Redirect non-existing webp images to webp-realizer.php, which will locate corresponding jpg/png, \n" .
-                  "  # convert it, and deliver the webp (if possible) \n";
+        $rules .= "# WebP Realizer: Redirect non-existing webp images to webp-realizer.php, which will locate corresponding jpg/png, \n" .
+            "# convert it, and deliver the freshly converted webp\n";
+        $rules .= "<IfModule mod_rewrite.c>\n" .
+            "  RewriteEngine On\n";
+
 
         if (self::$useDocRootForStructuringCacheDir) {
             /*
@@ -331,9 +334,7 @@ class HTAccessRules
             $rules .= "  RewriteRule (?i).*" . ($appendWebP ? "(" . self::$fileExtIncludingDot . ")" : "") . "\.webp$ " .
                 "/" . Paths::getWebPRealizerUrlPath() .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
-                " [" . implode(',', $flags) . "]\n\n";
-
-
+                " [" . implode(',', $flags) . "]\n";
 
             /*
             Generate something like this:
@@ -420,6 +421,8 @@ class HTAccessRules
         /*if (!self::$config['redirect-to-existing-in-htaccess']) {
             $rules .= self::cacheRules();
         }*/
+        $rules .= "</IfModule>\n\n";
+
         return $rules;
     }
 
@@ -773,10 +776,7 @@ class HTAccessRules
             $rules .= "\n# Rules for handling requests for webp images\n";
             $rules .= "# ---------------------------------------------\n\n";
             if (self::$config['enable-redirection-to-webp-realizer']) {
-                $rules .= "<IfModule mod_rewrite.c>\n" .
-                    "  RewriteEngine On\n\n";
                 $rules .= self::webpRealizerRules();
-                $rules .= "</IfModule>\n\n";
             }
             $rules .= self::cacheRules();
 
