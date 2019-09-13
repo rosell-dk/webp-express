@@ -189,7 +189,7 @@ class SelfTestRedirectToConverter extends SelfTestRedirectAbstract
         $result[] = '# Testing redirection to converter';
         if (!$this->config['enable-redirection-to-converter']) {
             $result[] = 'Turned off, nothing to test (if you just turned it on without saving, remember: this is a live test so you need to save settings)';
-            return [true, $result];
+            return [false, $result];
         }
         return [true, $result];
     }
