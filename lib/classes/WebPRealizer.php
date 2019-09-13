@@ -143,7 +143,7 @@ class WebPRealizer extends WodConfigLoader
         self::$checking = 'destination';
         $destination = self::getDestination();
 
-        //echo $destination; exit;
+        self::exitWithError($destination);
 
         // Validate source path
         // --------------------------------------------

@@ -45,7 +45,7 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
             return [false, $result, $createdTestFiles];
         }
 
-        $requestUrl = Paths::getUrlById($rootId) . '/' . $sourceFileName;
+        $requestUrl = Paths::getUrlById($rootId) . '/webp-express-test-images/' . $sourceFileName;
         $result[] = '### Lets check that browsers supporting webp gets the WEBP when the ' . strtoupper($imageType) . ' is requested';
         $result[] = 'Making a HTTP request for the test image (pretending to be a client that supports webp, by setting the "Accept" header to "image/webp")';
         $requestArgs = [

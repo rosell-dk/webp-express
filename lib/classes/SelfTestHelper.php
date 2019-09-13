@@ -14,9 +14,22 @@ class SelfTestHelper
         }
     }
 
+    /**
+     * Remove files in dir and the dir. Does not remove files recursively.
+     */
+    public static function deleteDir($dir)
+    {
+        if (@file_exists($dir)) {
+            self::deleteFilesInDir($dir);
+            rmdir($dir);
+        }
+    }
+
+
     public static function deleteTestImagesInFolder($rootId)
     {
-        self::deleteFilesInDir(Paths::getAbsDirById($rootId), "webp-express-test-image-*");
+        $testDir = Paths::getAbsDirById($rootId) . '/webp-express-test-images';
+        self::deleteDir($testDir);
     }
 
     public static function cleanUpTestImages($rootId, $config)
@@ -30,7 +43,9 @@ class SelfTestHelper
             $config['destination-structure'],
             $rootId
         );
-        self::deleteFilesInDir($cacheDirForRoot, 'webp-express-test-image-*');
+
+        $testDir = $cacheDirForRoot . '/webp-express-test-images';
+        self::deleteDir($testDir);
     }
 
     public static function copyFile($source, $destination)
@@ -47,7 +62,7 @@ class SelfTestHelper
                     $result[] = 'The destination folder does not exist!';
                 } else {
                     $result[] = 'This is probably a permission issue. Check that your webserver has permission to ' .
-                        'write files in the upload directory (*' . dirname($destination) . '*)';
+                        'write files in the directory (*' . dirname($destination) . '*)';
                 }
             }
             return [false, $result];
@@ -67,6 +82,8 @@ class SelfTestHelper
 
     public static function copyTestImageToRoot($rootId, $imageType = 'jpeg')
     {
+        // TODO: Copy to a subfolder instead
+        // TODO: Use smaller jpeg / pngs please.
         $result = [];
         switch ($imageType) {
             case 'jpeg':
@@ -77,11 +94,19 @@ class SelfTestHelper
                 break;
         }
         $testSource = Paths::getPluginDirAbs() . '/webp-express/test/' . $fileNameToCopy;
-        $filenameOfDestination = 'webp-express-test-image-' . self::randomDigitsAndLetters(6) . '.' . $imageType;
-        $result[] = 'Copying ' . strtoupper($imageType) . ' to ' . $rootId . ' folder (*' . $filenameOfDestination . '*)';
+        $filenameOfDestination = self::randomDigitsAndLetters(6) . '.' . $imageType;
+        $result[] = 'Copying ' . strtoupper($imageType) . ' to ' . $rootId . ' folder (*webp-express-test-images/' . $filenameOfDestination . '*)';
 
-        $destDir = Paths::getAbsDirById($rootId);
+        $destDir = Paths::getAbsDirById($rootId) . '/webp-express-test-images';
         $destination = $destDir . '/' . $filenameOfDestination;
+
+        if (!@file_exists($destDir)) {
+            if (!@mkdir($destDir)) {
+                $result[count($result) - 1] .= '. FAILED';
+                $result[] = 'Failed to create folder for test images: ' . $destDir;
+                return [$result, false, ''];
+            }
+        }
 
         list($success, $errors) = self::copyFile($testSource, $destination);
         if (!$success) {
@@ -112,6 +137,15 @@ class SelfTestHelper
             $result[] = 'The folder did not exist. Creating folder at: ' . $destinationDir;
             if (!mkdir($destDir, 0777, true)) {
                 $result[] = 'Failed creating folder!';
+                return [$result, false, ''];
+            }
+        }
+        $destDir .= '/webp-express-test-images';
+        if (!file_exists($destDir)) {
+            if (!mkdir($destDir, 0755, false)) {
+                $result[] = 'Failed creating the folder for the test images:';
+                $result[] = $destDir;
+                $result[] = 'To run this test, you must grant write permissions';
                 return [$result, false, ''];
             }
         }
@@ -153,7 +187,13 @@ class SelfTestHelper
             //$result[count($result) - 1] .= '. FAILED';
             $result[] = 'Request URL: ' . $requestUrl;
             $result[] = 'Response: ' . $return['response']['code'] . ' ' . $return['response']['message'];
-            return [false, $result, [], $return];
+
+            if (isset($return['headers'])) {
+                $result = array_merge($result, SelfTestHelper::printHeaders($return['headers']));
+            } else {
+                $return['headers'] = [];
+            }
+            return [false, $result, $return['headers'], $return];
         }
         return [true, $result, $return['headers'], $return];
     }
@@ -213,18 +253,34 @@ class SelfTestHelper
         return false;
     }
 
+
+    public static function flattenHeaders($headers)
+    {
+        $result = [];
+        foreach ($headers as $headerName => $headerValue) {
+            if (gettype($headerValue) == 'array') {
+                foreach ($headerValue as $i => $value) {
+                    $result[] = [$headerName, $value];
+                }
+            } else {
+                $result[] = [$headerName, $headerValue];
+            }
+        }
+        return $result;
+    }
+
     public static function printHeaders($headers)
     {
         $result = [];
         $result[] = '#### Response headers:';
-        foreach ($headers as $headerName => $headerValue) {
-            if (gettype($headerValue) == 'array') {
-                foreach ($headerValue as $i => $value) {
-                    $result[] = '- ' . $headerName . ': ' . $value;
-                }
-            } else {
-                $result[] = '- ' . $headerName . ': ' . $headerValue;
+
+        $headersFlat = self::flattenHeaders($headers);
+        //
+        foreach ($headersFlat as $i => list($headerName, $headerValue)) {
+            if ($headerName == 'x-webp-express-error') {
+                $headerValue = '**' . $headerValue . '**{: .error}';
             }
+            $result[] = '- ' . $headerName . ': ' . $headerValue;
         }
         $result[] = '';
         return $result;

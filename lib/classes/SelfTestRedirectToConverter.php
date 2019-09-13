@@ -27,7 +27,7 @@ class SelfTestRedirectToConverter extends SelfTestRedirectAbstract
         }
         $createdTestFiles = true;
 
-        $requestUrl = Paths::getUrlById($rootId) . '/' . $sourceFileName;
+        $requestUrl = Paths::getUrlById($rootId) . '/webp-express-test-images/' . $sourceFileName;
 
         $result[] = '### Lets check that browsers supporting webp gets a freshly converted WEBP ' .
             'when the ' . $imageType . ' is requested';

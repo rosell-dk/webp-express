@@ -76,7 +76,7 @@ abstract class SelfTestRedirectAbstract
         // Clean up test images again. We are very tidy around here
         if ($createdTestFiles) {
             $result[] = 'Deleting test images';
-            //SelfTestHelper::cleanUpTestImages($rootId, $this->config);
+            SelfTestHelper::cleanUpTestImages($rootId, $this->config);
         }
 
         return [$success, $result];

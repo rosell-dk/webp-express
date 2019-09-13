@@ -156,6 +156,9 @@ class Paths
         return false;
     }
 
+    /**
+     * Get ids for folders where SOURCE images may reside
+     */
     public static function getImageRootIds() {
         return ['uploads', 'themes', 'plugins', 'wp-content', 'index'];
     }

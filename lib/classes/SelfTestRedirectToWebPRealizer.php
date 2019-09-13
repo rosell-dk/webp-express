@@ -34,7 +34,7 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
         // have logic for finding destination url from source url.
 
         //$sourceUrl = Paths::getUploadUrl() . '/' . $sourceFileName;
-        $sourceUrl = Paths::getUrlById($rootId) . '/' . $sourceFileName;
+        $sourceUrl = Paths::getUrlById($rootId) . '/webp-express-test-images/' . $sourceFileName;
 
         AlterHtmlHelper::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
         AlterHtmlHelper::$options['only-for-webps-that-exists'] = false;
