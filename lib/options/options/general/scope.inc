@@ -30,8 +30,28 @@
                 ['index,plugins,themes,uploads,wp-content', 'Everything (including wp-admin)'],
             ];
 
+            $otherValidOptions = ['index', 'wp-content'];
+
+            if (in_array($imageTypesString, $otherValidOptions)) {
+                $options[] = [$imageTypesString, $imageTypesString];
+            }
+
+            $hasSelected = false;
             foreach ($options as list($optionId, $optionName)) {
-                echo '<option value="' . $optionId . '"' . ($imageTypesString == $optionId ? ' selected' : '') . '>' . $optionName . '</option>';
+                $selected = ($imageTypesString == $optionId);
+                if ($selected) {
+                    $hasSelected = true;
+                }
+                echo '<option value="' . $optionId . '"' . ($selected ? ' selected' : '') . '>' . $optionName . '</option>';
+            }
+
+            if (!$hasSelected) {
+                // Non-default option is "selected".
+                // This can be done in migrate11.php or user could have edited config.php manually.
+                // PS: We can rest assure that scope is sanitized - any invalid rootId is filtered out in Config::fix.
+                echo '<option value="' . $imageTypesString . '" selected>' .
+                    'Custom: ' . implode(', ', explode(',', $imageTypesString)) . 
+                '</option>';
             }
             ?>
         </select>
