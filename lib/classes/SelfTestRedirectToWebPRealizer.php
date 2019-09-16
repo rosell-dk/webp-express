@@ -114,6 +114,10 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
             $result[] = 'However. As the "content-type" header reveals, we did not get a webp' .
                 'Surprisingly we got: "' . $headers['content-type'] . '"';
             $result[] = 'The test FAILED.';
+            if (strpos($headers['content-type'], 'text/html') !== false) {
+                $result[] = 'Body:';
+                $result[] = print_r($return['body'], true);
+            }
             return [false, $result, $createdTestFiles];
         }
 
