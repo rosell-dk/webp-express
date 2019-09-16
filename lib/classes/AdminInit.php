@@ -38,7 +38,7 @@ class AdminInit
         }
 
         // uncomment next line to test-run a migration
-        //include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate10.php';
+        //include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate11.php';
     }
 
     public static function adminInitHandler()
