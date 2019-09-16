@@ -310,7 +310,6 @@ class FileHelper
      */
     public static function removeEmptySubFolders($path, $removeEmptySelfToo = false)
     {
-        error_log(':' .$path);
         if (!file_exists($path)) {
             return;
         }
