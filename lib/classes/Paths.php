@@ -308,6 +308,10 @@ class Paths
         return FileHelper::canEditOrCreateFileHere($dirName . '/.htaccess');
     }
 
+    public static function canWriteHTAccessRulesInDir($dirId) {
+        return self::canWriteHTAccessRulesHere(self::getAbsDirById($dirId));
+    }
+
     public static function returnFirstWritableHTAccessDir($dirs)
     {
         foreach ($dirs as $dir) {

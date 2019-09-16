@@ -18,6 +18,10 @@ check_admin_referer('webpexpress-save-settings-nonce');
 
 DismissableMessages::dismissMessage('0.14.0/say-hello-to-vips');
 
+DismissableMessages::dismissMessage('0.15.0/new-scope-setting-no-uploads');
+DismissableMessages::dismissMessage('0.15.0/new-scope-setting-index');
+DismissableMessages::dismissMessage('0.15.0/new-scope-setting-content');
+
 /*
 --------------------------------
 Custom functions for sanitizing
