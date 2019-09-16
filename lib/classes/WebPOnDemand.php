@@ -20,8 +20,8 @@ use \WebPExpress\WodConfigLoader;
 
 class WebPOnDemand extends WodConfigLoader
 {
+    private static function getSourceDocRoot() {
 
-    private static function getSource() {
 
         //echo 't:' . $_GET['test'];exit;
         // Check if it is in an environment variable
@@ -103,6 +103,48 @@ class WebPOnDemand extends WodConfigLoader
         }
     }
 
+    private static function getSourceNoDocRoot()
+    {
+        $dirIdOfHtaccess = self::getEnvPassedInRewriteRule('WE_HTACCESS_ID');
+        if ($dirIdOfHtaccess === false) {
+            $dirIdOfHtaccess = SanityCheck::noControlChars($_GET['htaccess-id']);
+        }
+
+        if (!in_array($dirIdOfHtaccess, ['uploads', 'themes', 'wp-content', 'plugins', 'index'])) {
+            throw new \Exception('invalid htaccess directory id argument.');
+        }
+
+        // First try ENV
+        $sourceRelHtaccess = self::getEnvPassedInRewriteRule('WE_SOURCE_REL_HTACCESS');
+
+        // Otherwise use query-string
+        if ($sourceRelHtaccess === false) {
+            if (isset($_GET['xsource-rel-htaccess'])) {
+                $x = SanityCheck::noControlChars($_GET['xsource-rel-htaccess']);
+                $sourceRelHtaccess = SanityCheck::pathWithoutDirectoryTraversal(substr($x, 1));
+            } else {
+                throw new \Exception('Argument for source path is missing');
+            }
+        }
+
+        $sourceRelHtaccess = SanityCheck::pathWithoutDirectoryTraversal($sourceRelHtaccess);
+
+
+        $imageRoots = self::getImageRootsDef();
+
+        $source = $imageRoots->byId($dirIdOfHtaccess)->getAbsPath() . '/' . $sourceRelHtaccess;
+        return $source;
+    }
+
+    private static function getSource() {
+        if (self::$usingDocRoot) {
+            $source = self::getSourceDocRoot();
+        } else {
+            $source = self::getSourceNoDocRoot();
+        }
+        return $source;
+    }
+
     private static function processRequestNoTryCatch() {
 
         self::loadConfig();
@@ -129,7 +171,7 @@ class WebPOnDemand extends WodConfigLoader
         self::$checking = 'source';
         $source = self::getSource();
 
-        //echo $source; exit;
+        //self::exitWithError($source);
 
         $imageRoots = self::getImageRootsDef();
 
@@ -148,11 +190,11 @@ class WebPOnDemand extends WodConfigLoader
             self::$usingDocRoot,
             self::getImageRootsDef()
         );
-        //echo 'dest:' . $destination; exit;
 
         //$destination = SanityCheck::absPathIsInDocRoot($destination);
         $destination = SanityCheck::pregMatch('#\.webp$#', $destination, 'Does not end with .webp');
 
+        //self::exitWithError($destination);
 
         // Done with sanitizing, lets get to work!
         // ---------------------------------------

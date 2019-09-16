@@ -494,77 +494,115 @@ class HTAccessRules
                 " [" . implode(',', $flags) . "]\n";
 
         } else {
+
+            /*
+            Create something like this:
+
+            RewriteCond %{REQUEST_FILENAME} -f
+            RewriteRule (?i).*(\.jpe?g|\.png)$ /plugins-moved/webp-express/wod/webp-on-demand.php [E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:../../we0-content,E=WE_SOURCE_REL_HTACCESS:$0,E=WE_HTACCESS_ID:themes,NC,L]
+            */
+
+            // Making sure the source exists
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
+
+            $params = [];
+            $flags = [];
+
+            if (!self::$passThroughEnvVarDefinitelyUnavailable) {
+                $flags[] = 'E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:' . Paths::getContentDirRelToPluginDir();
+                $flags[] = 'E=WE_SOURCE_REL_HTACCESS:$0';
+                $flags[] = 'E=WE_HTACCESS_ID:' . self::$htaccessDir;    // this will btw be one of the image roots. It will not be "cache"
+            }
+            $flags[] = 'NC';  // case-insensitive match (so file extension can be jpg, JPG or even jPg)
+            $flags[] = 'L';
+
+            if (!self::$passThroughEnvVarDefinitelyAvailable) {
+                $params[] = 'xwp-content-rel-to-plugin-dir=x' . Paths::getContentDirRelToPluginDir();
+                $params[] = 'xsource-rel-htaccess=x$0';
+                $params[] = 'htaccess-id=' . self::$htaccessDir;
+            }
+
+            // self::$appendWebP cannot be used, we need the following in order for
+            // it to work for uploads in: Mingled, "Set to WebP", "Image roots".
+            // TODO! Will it work for ie theme images?
+            // - well, it should, because the script is passed $0. Not matching the ".png" part of the filename
+            // only means it is a bit more greedy than it has to
+            $appendWebP = !(self::$config['destination-extension'] == 'set');
+
+            $rules .= "  RewriteRule (?i).*" . ($appendWebP ? "(" . self::$fileExtIncludingDot . ")" : "") . "$ " .
+                "/" . Paths::getWodUrlPath() .
+                (count($params) > 0 ? "?" . implode('&', $params) : "") .
+                " [" . implode(',', $flags) . "]\n";
+
+
+            /*
+*/
+
+            /*
+            Create something like this (for wp-content):
+
+            # Redirect to existing converted image in cache-dir (if browser supports webp)
+            RewriteCond %{HTTP_ACCEPT} image/webp
+            RewriteCond %{REQUEST_FILENAME} (?i)(/var/www/webp-express-tests/we0/wp-content-moved/)(.*)(\.jpe?g|\.png)$
+            RewriteRule (?i)(.*)(\.jpe?g|\.png)$ /plugins-moved/webp-express/wod/webp-on-demand.php?root-id=wp-content&xsource-rel-to-root-id=%2%3
+
+            PS: Actually, the whole REQUEST_FILENAME could be passed in querystring by adding "&req-fn=%0" to above.
+            */
+            /*
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(" .
+                self::$htaccessDirAbs . "/)(.*)(" . self::$fileExtIncludingDot . ")$\n";
+
+            $params = [];
+            $flags = [];
+
+            if (!self::$passThroughEnvVarDefinitelyUnavailable) {
+                $flags[] = 'E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:' . Paths::getContentDirRelToPluginDir();
+                $flags[] = 'E=REQFN:%{REQUEST_FILENAME}';
+            }
+            $flags[] = 'NC';  // case-insensitive match (so file extension can be jpg, JPG or even jPg)
+            $flags[] = 'L';
+
+            $params[] = 'root-id=' . self::$htaccessDir;
+            $params[] = 'xsource-rel-to-root-id=x%2' . (self::$appendWebP ? "%3" : "");
+
+            $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ " .
+                "/" . Paths::getWodUrlPath() .
+                (count($params) > 0 ? "?" . implode('&', $params) : "") .
+                " [" . implode(',', $flags) . "]\n";
+            */
+
             /*
             TODO: NO, this will not do on systems that cannot pass through ENV.
             (Or is REQUEST_FILENAME useable at all? If it is, then we could perhaps
             catch the whole %{REQUEST_FILENAME} and pass it in %1)
 
-            */
-            //
-            /*
-*/
+            $params = [];
+            $flags = ['NC', 'L'];
 
-            if (false) {
-                /*
-                $params = [];
-                $flags = ['NC', 'L'];
-
-                if ($passRelativePathToSourceInQS) {
-                    $params[] = 'xsource-rel-to-plugin-dir=x' . self::$htaccessDirRelToDocRoot . '/$1.$2';
-                }
-                if (!self::$passThroughEnvVarDefinitelyAvailable) {
-                    $params[] = "xwp-content-rel-to-plugin-dir=x" . Paths::getContentDirRelToPluginDir();
-                }
+            if ($passRelativePathToSourceInQS) {
+                $params[] = 'xsource-rel-to-plugin-dir=x' . self::$htaccessDirRelToDocRoot . '/$1.$2';
+            }
+            if (!self::$passThroughEnvVarDefinitelyAvailable) {
+                $params[] = "xwp-content-rel-to-plugin-dir=x" . Paths::getContentDirRelToPluginDir();
+            }
 
 //                $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
-                $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(" .
-                    self::$htaccessDirAbs . "/)(.*)(" . self::$fileExtIncludingDot . ")$\n";
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(" .
+                self::$htaccessDirAbs . "/)(.*)(" . self::$fileExtIncludingDot . ")$\n";
 
-                $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ " .
-                    "/" . Paths::getWodUrlPath() .
-                    (count($params) > 0 ? "?" . implode('&', $params) : "") .
-                    " [" . implode(',', $flags) . "]\n";     */
+            $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ " .
+                "/" . Paths::getWodUrlPath() .
+                (count($params) > 0 ? "?" . implode('&', $params) : "") .
+                " [" . implode(',', $flags) . "]\n";
 
-                //$urlPath = '/' . Paths::getUrlPathById('plugins') . "/%2" . (self::$appendWebP ? "%3" : "") . "\.webp";
-                //            $urlPath = '/' . Paths::getUrlPathById(self::$htaccessDir) . "/%2" . (self::$appendWebP ? "%3" : "") . "\.webp";
-                //$urlPath = '/' . Paths::getContentUrlPath() . "/webp-express/webp-images/" . self::$htaccessDir . "/%2" . (self::$appendWebP ? "%3" : "") . "\.webp";
-                //$rules .= "  RewriteCond %1" . (self::$appendWebP ? "%2" : "") . "\.webp -f\n";
-                //$rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ " . $urlPath ." [T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
+            //$urlPath = '/' . Paths::getUrlPathById('plugins') . "/%2" . (self::$appendWebP ? "%3" : "") . "\.webp";
+            //            $urlPath = '/' . Paths::getUrlPathById(self::$htaccessDir) . "/%2" . (self::$appendWebP ? "%3" : "") . "\.webp";
+            //$urlPath = '/' . Paths::getContentUrlPath() . "/webp-express/webp-images/" . self::$htaccessDir . "/%2" . (self::$appendWebP ? "%3" : "") . "\.webp";
+            //$rules .= "  RewriteCond %1" . (self::$appendWebP ? "%2" : "") . "\.webp -f\n";
+            //$rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ " . $urlPath ." [T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
+            */
 
-            } else {
-                /*
-                Create something like this (for wp-content):
 
-                # Redirect to existing converted image in cache-dir (if browser supports webp)
-                RewriteCond %{HTTP_ACCEPT} image/webp
-                RewriteCond %{REQUEST_FILENAME} (?i)(/var/www/webp-express-tests/we0/wp-content-moved/)(.*)(\.jpe?g|\.png)$
-                RewriteRule (?i)(.*)(\.jpe?g|\.png)$ /plugins-moved/webp-express/wod/webp-on-demand.php?root-id=wp-content&xsource-rel-to-root-id=%2%3
-
-                PS: Actually, the whole REQUEST_FILENAME could be passed in querystring by adding "&req-fn=%0" to above.
-
-                */
-
-                $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(" .
-                    self::$htaccessDirAbs . "/)(.*)(" . self::$fileExtIncludingDot . ")$\n";
-
-                $params = [];
-                $flags = [];
-
-                if (!self::$passThroughEnvVarDefinitelyUnavailable) {
-                    $flags[] = 'E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:' . Paths::getContentDirRelToPluginDir();
-                    $flags[] = 'E=REQFN:%{REQUEST_FILENAME}';
-                }
-                $flags[] = 'NC';  // case-insensitive match (so file extension can be jpg, JPG or even jPg)
-                $flags[] = 'L';
-
-                $params[] = 'root-id=' . self::$htaccessDir;
-                $params[] = 'xsource-rel-to-root-id=x%2' . (self::$appendWebP ? "%3" : "");
-
-                $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ " .
-                    "/" . Paths::getWodUrlPath() .
-                    (count($params) > 0 ? "?" . implode('&', $params) : "") .
-                    " [" . implode(',', $flags) . "]\n";
-            }
 
 
 
