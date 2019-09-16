@@ -668,20 +668,23 @@ APACHE
         // ---------------------------------------------
         try {
 
-            // Check that source path is sane, exists, is a file and is inside document root
+            // Check that source path is sane, exists, is a file.
             // -------------------------------------------------------
-            $source = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
+            //$source = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
+            $source = SanityCheck::absPathExistsAndIsFile($source);
 
 
-            // Check that destination path is sane and is inside document root
+            // Check that destination path is sane
             // -------------------------------------------------------
-            $destination = SanityCheck::absPathIsInDocRoot($destination);
+            //$destination = SanityCheck::absPathIsInDocRoot($destination);
+            $destination = SanityCheck::absPath($destination);
             $destination = SanityCheck::pregMatch('#\.webp$#', $destination, 'Destination does not end with .webp');
 
 
-            // Check that log path is sane and inside document root
+            // Check that log path is sane
             // -------------------------------------------------------
-            $logDir = SanityCheck::absPathIsInDocRoot($logDir);
+            //$logDir = SanityCheck::absPathIsInDocRoot($logDir);
+            $logDir = SanityCheck::absPath($logDir);
 
 
             // PS: No need to check $logMsgTop. Log files are markdown and stored as ".md". They can do no harm.

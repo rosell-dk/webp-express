@@ -209,7 +209,7 @@ class WebPRealizer extends WodConfigLoader
             self::$webExpressContentDirAbs,
             self::getImageRootsDef()
         );
-
+        //self::exitWithError('source:' . $source);
         //echo '<h3>destination:</h3> ' . $destination . '<h3>source:</h3>' . $source; exit;
 
         if ($source === false) {
@@ -220,8 +220,7 @@ class WebPRealizer extends WodConfigLoader
             die();
             //echo 'destination requested:<br><i>' . $destination . '</i>';
         }
-        $source = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
-
+        //$source = SanityCheck::absPathExistsAndIsFileInDocRoot($source);
 
         // Done with sanitizing, lets get to work!
         // ---------------------------------------
