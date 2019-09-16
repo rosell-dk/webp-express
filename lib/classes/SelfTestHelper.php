@@ -329,6 +329,31 @@ class SelfTestHelper
         $result[] = '- Is wp-content moved?: ' . self::trueFalseNullString(Paths::isWPContentDirMoved());
         $result[] = '- Is uploads moved out of wp-content?: ' . self::trueFalseNullString(Paths::isUploadDirMovedOutOfWPContentDir());
         $result[] = '- Is plugins moved out of wp-content?: ' . self::trueFalseNullString(Paths::isPluginDirMovedOutOfWpContent());
+
+        $result[] = '';
+
+        $result[] = '#### Image roots:';
+        foreach (Paths::getImageRootIds() as $rootId) {
+            $absDir = Paths::getAbsDirById($rootId);
+
+            if (PathHelper::pathExistsAndIsResolvable($absDir) && ($absDir != realpath($absDir))) {
+                $result[] = '*' . $rootId . '*: ' . $absDir . ' (resolved for symlinks: ' .  realpath($absDir) . ')';
+            } else {
+                $result[] = '*' . $rootId . '*: ' . $absDir;
+
+            }
+        }
+
+        $result[] = '#### Image roots (relative to document root)';
+        foreach (Paths::getImageRootIds() as $rootId) {
+            $absPath = Paths::getAbsDirById($rootId);
+            if (PathHelper::canCalculateRelPathFromDocRootToDir($absPath)) {
+                $result[] = '*' . $rootId . '*: ' . PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed($absPath);
+            } else {
+                $result[] = '*' . $rootId . '*: ' . 'n/a (not within document root)';
+            }
+        }
+
         return $result;
     }
 

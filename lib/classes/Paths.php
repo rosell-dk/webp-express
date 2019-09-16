@@ -249,22 +249,25 @@ class Paths
 
     /**
      *  Return absolute dir.
-     *  - realpath() is used to resolve soft links and resolve '../' and './'
+     *
+     *  - Path is canonicalized (without resolving symlinks)
      *  - trailing dash is removed - we don't use that around here.
      *
-     *  realpath() only works on existing dirs.
-     *  If realpath fails, PathHelper::canonicalize() will be used insead.
-     *  (this takes care of resolving '../' and './', but does NOT resolve soft links)
+     *  We do not resolve symlinks anymore. Information was lost that way.
+     *  And in some cases we needed the unresolved path - for example in the .htaccess.
      */
     public static function getAbsDir($dir)
     {
+        $dir = PathHelper::canonicalize($dir);
+        return rtrim($dir, '/');
+        /*
         $result = realpath($dir);
         if ($result === false) {
             $dir = PathHelper::canonicalize($dir);
         } else {
             $dir = $result;
-        }
-        return rtrim($dir, '/');
+        }*/
+
     }
 
     // ------------ Home Dir -------------
@@ -497,10 +500,6 @@ APACHE
         return self::getAbsDir(WP_PLUGIN_DIR);
     }
 
-    public static function getPluginDirRel()
-    {
-        return PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed(self::getPluginDirAbs());
-    }
 
     public static function isPluginDirMovedOutOfAbsPath()
     {

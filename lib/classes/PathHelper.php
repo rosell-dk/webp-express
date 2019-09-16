@@ -53,6 +53,21 @@ class PathHelper
     }
 
     /**
+    *  Find out if path is below - or equal to a path.
+    *
+    *  "/var/www" below/equal to "/var"? :  Yes
+    *  "/var/www" below/equal to "/var/www"? :  Yes
+    *  "/var/www2" below/equal to "/var/www"? :  No
+    */
+    /*
+    public static function isPathBelowOrEqualToPath($path1, $path2)
+    {
+        return (strpos($path1 . '/', $path2 . '/') === 0);
+        //$rel = self::getRelDir($path2, $path1);
+        //return (substr($rel, 0, 3) != '../');
+    }*/
+
+    /**
      * Calculate relative path from document root to a given absolute path (must exist and be resolvable) - if possible AND
      * if it can be done without directory traversal.
      *
@@ -68,17 +83,109 @@ class PathHelper
         if (!self::isDocRootAvailable()) {
             throw new \Exception('Cannot calculate relative path from document root to dir, as document root is not available');
         }
-        if (self::isDocRootAvailableAndResolvable()) {
 
+        // First try unresolved.
+        // This will even work when ie wp-content is symlinked to somewhere outside document root, while the symlink itself is within document root)
+        $relPath = self::getRelDir($_SERVER['DOCUMENT_ROOT'], $dir);
+        if (strpos($relPath, '../') !== 0) {  // Check if relPath starts with "../" (if it does, we cannot use it)
+            return $relPath;
+        }
+
+        if (self::isDocRootAvailableAndResolvable()) {
+            if (self::pathExistsAndIsResolvable($dir)) {
+                // Try with both resolved
+                $relPath = self::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), realpath($dir));
+                if (strpos($relPath, '../') !== 0) {
+                    return $relPath;
+                }
+            }
+
+            // Try with just document root resolved
+            $relPath = self::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), $dir);
+            if (strpos($relPath, '../') !== 0) {
+                return $relPath;
+            }
+        }
+
+        if (self::pathExistsAndIsResolvable($dir)) {
+            // Try with dir resolved
+            $relPath = self::getRelDir($_SERVER['DOCUMENT_ROOT'], realpath($dir));
+            if (strpos($relPath, '../') !== 0) {
+                return $relPath;
+            }
+        }
+
+        // Problem:
+        // - dir is already resolved (ie: /disk/the-content)
+        // - document root is ie. /var/www/website/wordpress
+        // - the unresolved symlink is ie. /var/www/website/wordpress/wp-content
+        // - we do not know what the unresolved symlink is
+        // The result should be "wp-content". But how do we get to that result?
+        // I guess we must check out all folders below document root to see if anyone resolves to dir
+        // we could start out trying usual suspects such as "wp-content" and "wp-content/uploads"
+        //foreach (glob($dir . DIRECTORY_SEPARATOR . $filePattern) as $filename)
+        $iter = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($_SERVER['DOCUMENT_ROOT'], \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::SELF_FIRST,
+            \RecursiveIteratorIterator::CATCH_GET_CHILD // Ignore "Permission denied"
+        );
+
+        foreach ($iter as $path => $dirObj) {
+            if ($dirObj->isDir()) {
+                if (realpath($path) == $dir) {
+                    //return $path;
+                    $relPath = self::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), $path);
+                    if (strpos($relPath, '../') !== 0) {
+                        return $relPath;
+                    }
+                }
+            }
+        }
+
+        // Ok, the above works - but when subfolders to the symlink is referenced. Ie referencing uploads when wp-content is symlinked
+        // - dir is already resolved (ie: /disk/the-content/uploads)
+        // - document root is ie. /var/www/website/wordpress
+        // - the unresolved symlink is ie. /var/www/website/wordpress/wp-content/uploads
+        // - we do not know what the unresolved symlink is
+        // The result should be "wp-content/uploads". But how do we get to that result?
+
+        // What if we collect all symlinks below document root in a assoc array?
+        // ['/disk/the-content' => 'wp-content']
+        // Input is: '/disk/the-content/uploads'
+        // 1. We check the symlinks and substitute. We get: 'wp-content/uploads'.
+        // 2. We test if realpath($_SERVER['DOCUMENT_ROOT'] . '/' . 'wp-content/uploads') equals input.
+        // It seems I have a solution!
+        // - I shall continue work tomorrow! (test instance #26)
+        // PS: cache the result of the symlinks in docroot collector.
+
+        throw new \Exception(
+            'Cannot get relative path from document root to dir without resolving to directory traversal. ' .
+                'It seems the dir is not below document root'
+        );
+
+/*
             if (!self::pathExistsAndIsResolvable($dir)) {
                 throw new \Exception('Cannot calculate relative path from document root to dir. The path given is not resolvable (realpath fails)');
             }
-            $relPath = self::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), realpath($dir));
 
-            // Check if relPath starts with "../" (it may not)
+
+            // Check if relPath starts with "../"
             if (strpos($relPath, '../') === 0) {
-                throw new \Exception('Cannot calculate relative path from document root to dir. The path given is not within document root');
+
+                // Unresolved failed. Try with document root resolved
+                $relPath = self::getRelDir(realpath($_SERVER['DOCUMENT_ROOT']), $dir);
+
+                if (strpos($relPath, '../') === 0) {
+
+                    // Try with both resolved
+                    $relPath = self::getRelDir($dir, $dir);
+                        throw new \Exception('Cannot calculate relative path from document root to dir. The path given is not within document root');
+                    }
+                }
+
+
             }
+
             return $relPath;
         } else {
             // We cannot get the resolved doc-root.
@@ -106,7 +213,7 @@ class PathHelper
                 }
             }
             return $relPath;
-        }
+        }*/
     }
 
     public static function canCalculateRelPathFromDocRootToDir($dir)

@@ -53,7 +53,7 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
                 'ACCEPT' => 'image/webp'
             ]
         ];
-        list($success, $errors, $headers) = SelfTestHelper::remoteGet($requestUrl, $requestArgs);
+        list($success, $errors, $headers, $return) = SelfTestHelper::remoteGet($requestUrl, $requestArgs);
 
         if (!$success) {
             $result[count($result) - 1] .= '. FAILED';
@@ -79,6 +79,10 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
             } else {
                 $result[] = 'Bummer. As the "content-type" header reveals, we did not get a webp' .
                     'Surprisingly we got: "' . $headers['content-type'] . '"';
+                if (strpos($headers['content-type'], 'text/html') !== false) {
+                    $result[] = 'Body:';
+                    $result[] = print_r($return['body'], true);
+                }
             }
 
             if (isset($headers['content-length'])) {
