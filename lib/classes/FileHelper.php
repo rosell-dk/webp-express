@@ -306,24 +306,29 @@ class FileHelper
      *
      *  Got it here: https://stackoverflow.com/a/1833681/842756
      *
-     *  @return  boolean  If folder is empty and can be deleted
+     *  @return  boolean  If folder is (was) empty
      */
-    public static function removeEmptySubFolders($path)
+    public static function removeEmptySubFolders($path, $removeEmptySelfToo = false)
     {
+        error_log(':' .$path);
         if (!file_exists($path)) {
             return;
         }
         $empty = true;
-        foreach (glob($path . DIRECTORY_SEPARATOR . "*") as $file) {
+        foreach (scandir($path) as $file) {
+            if (($file == '.') || ($file == '..')) {
+                continue;
+            }
+            $file = $path . DIRECTORY_SEPARATOR . $file;
             if (is_dir($file)) {
-                if (!self::removeEmptySubFolders($file)) {
+                if (!self::removeEmptySubFolders($file, true)) {
                     $empty=false;
                 }
             } else {
                 $empty=false;
             }
         }
-        if ($empty) {
+        if ($empty && $removeEmptySelfToo) {
             rmdir($path);
         }
         return $empty;
