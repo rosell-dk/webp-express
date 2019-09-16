@@ -27,8 +27,10 @@ class HTAccess
         }
 
         foreach ($config['paths-used-in-htaccess'] as $prop => $value) {
-            if ($value != $pathsGoingToBeUsedInHtaccess[$prop]) {
-                return true;
+            if (isset($pathsGoingToBeUsedInHtaccess[$prop])) {
+                if ($value != $pathsGoingToBeUsedInHtaccess[$prop]) {
+                    return true;
+                }                
             }
         }
     }
