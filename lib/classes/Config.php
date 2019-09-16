@@ -33,7 +33,10 @@ class Config
 
     public static function saveJSONOptions($filename, $obj)
     {
-        $result = @file_put_contents($filename, json_encode($obj, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT));
+        $result = @file_put_contents(
+            $filename,
+            json_encode($obj, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT)
+        );
         /*if ($result === false) {
             echo 'COULD NOT' . $filename;
         }*/
