@@ -74,7 +74,7 @@ class HTAccessRules
         if ($cacheControlHeader != '') {
             $ccRules .= "# Set Cache-Control header for requests to webp images\n";
             $ccRules .= "<IfModule mod_headers.c>\n";
-            $ccRules .= "  <FilesMatch \"\.webp$\">\n";
+            $ccRules .= "  <FilesMatch \"(?i)\.webp$\">\n";
             $ccRules .= "    Header set Cache-Control \"" . $cacheControlHeader . "\"\n";
             $ccRules .= "  </FilesMatch>\n";
             $ccRules .= "</IfModule>\n\n";
@@ -161,37 +161,44 @@ class HTAccessRules
 
             // self::$appendWebP cannot be used, we need this:
             // (because we are not sure there are a .htaccess in the uploads folder)
-            $appendWebP = !(self::$config['destination-extension'] == 'set');
 
-            $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(" . self::$fileExtIncludingDot . ")$\n";
-            $rules .= "  RewriteCond %1" . ($appendWebP ? "%2" : "") . "\.webp -f\n";
-            $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ %1" . ($appendWebP ? "%2" : "") .
-                "\.webp [T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
+            if (self::$useDocRootForStructuringCacheDir) {
+                if (self::$config['destination-extension'] == 'append') {
+                    $rules .= "  RewriteCond %{REQUEST_FILENAME}.webp -f\n";
+                    //$rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . self::$htaccessDirRelToDocRoot . "/$1.$2.webp -f\n";
+                    $rules .= "  RewriteRule ^/?(.*)\.(" . self::$fileExt . ")$ $1.$2.webp [NC,T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
+                } else {
+                    // extension: set to webp
+
+                    //$rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . self::$htaccessDirRelToDocRoot . "/$1.webp -f\n";
+                    //$rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . self::$fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
+
+                    // Got these new rules here: https://www.digitalocean.com/community/tutorials/how-to-create-and-serve-webp-images-to-speed-up-your-website
+                    // (but are they actually better than the ones we use for append?)
+                    $rules .= "  RewriteCond %{REQUEST_URI} (?i)(.*)(" . self::$fileExtIncludingDot . ")$\n";
+                    $rules .= "  RewriteCond %{DOCUMENT_ROOT}%1\.webp -f\n";
+                    $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ %1\.webp [T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
+
+                    // Instead of using REQUEST_URI, I can use REQUEST_FILENAME and remove DOCUMENT_ROOT
+                    // I suppose REQUEST_URI is what was requested (ie "/wp-content/uploads/image.jpg").
+                    // REQUEST_FILENAME is the filesystem path. (ie "/var/www/example.com/uploads-moved/image.jpg")
+                    // But it cant be, because then the digitalocean solution would not work in above case.
+                    // TODO: investigate
+
+    //                    RewriteRule (?i)(.*)(\.jpe?g|\.png)$ %1\.webp [T=image/webp,E=EXISTING:1,E=ADDVARY:1,L]
+                }
+            } else {
+                $appendWebP = !(self::$config['destination-extension'] == 'set');
+
+                $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(" . self::$fileExtIncludingDot . ")$\n";
+                $rules .= "  RewriteCond %1" . ($appendWebP ? "%2" : "") . "\.webp -f\n";
+                $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ %1" . ($appendWebP ? "%2" : "") .
+                    "\.webp [T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
+
+            }
 
 /*
-            if (self::$config['destination-extension'] == 'append') {
-                $rules .= "  RewriteCond %{REQUEST_FILENAME}.webp -f\n";
-                //$rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . self::$htaccessDirRelToDocRoot . "/$1.$2.webp -f\n";
-                $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . self::$fileExt . ")$ $1.$2.webp [T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
-            } else {
-                // extension: set to webp
 
-                //$rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . self::$htaccessDirRelToDocRoot . "/$1.webp -f\n";
-                //$rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . self::$fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
-
-                // Got these new rules here: https://www.digitalocean.com/community/tutorials/how-to-create-and-serve-webp-images-to-speed-up-your-website
-                $rules .= "  RewriteCond %{REQUEST_URI} (?i)(.*)(" . self::$fileExtIncludingDot . ")$\n";
-                $rules .= "  RewriteCond %{DOCUMENT_ROOT}%1\.webp -f\n";
-                $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ %1\.webp [T=image/webp,E=EXISTING:1," . (self::$addVary ? 'E=ADDVARY:1,' : '') . "L]\n\n";
-
-                // Instead of using REQUEST_URI, I can use REQUEST_FILENAME and remove DOCUMENT_ROOT
-                // I suppose REQUEST_URI is what was requested (ie "/wp-content/uploads/image.jpg").
-                // REQUEST_FILENAME is the filesystem path. (ie "/var/www/example.com/uploads-moved/image.jpg")
-                // But it cant be, because then the digitalocean solution would not work in above case.
-                // TODO: investigate
-
-//                    RewriteRule (?i)(.*)(\.jpe?g|\.png)$ %1\.webp [T=image/webp,E=EXISTING:1,E=ADDVARY:1,L]
-            }
             */
         }
 
@@ -785,7 +792,7 @@ class HTAccessRules
                     "  # when requesting images that would be redirected to webp on browsers that does.\n";
 
                 $rules .= "  <IfModule mod_headers.c>\n";
-                $rules .= '    <FilesMatch "\.(jpe?g|png)$">' . "\n";
+                $rules .= '    <FilesMatch "(?i)\.(jpe?g|png)$">' . "\n";
                 $rules .= '      Header append "Vary" "Accept"' . "\n";
                 $rules .= "    </FilesMatch>\n";
                 $rules .= "  </IfModule>\n\n";

@@ -94,7 +94,7 @@ class SelfTestHelper
                 break;
         }
         $testSource = Paths::getPluginDirAbs() . '/webp-express/test/' . $fileNameToCopy;
-        $filenameOfDestination = self::randomDigitsAndLetters(6) . '.' . $imageType;
+        $filenameOfDestination = self::randomDigitsAndLetters(6) . '.' . strtoupper($imageType);
         $result[] = 'Copying ' . strtoupper($imageType) . ' to ' . $rootId . ' folder (*webp-express-test-images/' . $filenameOfDestination . '*)';
 
         $destDir = Paths::getAbsDirById($rootId) . '/webp-express-test-images';
