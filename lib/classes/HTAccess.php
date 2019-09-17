@@ -391,6 +391,7 @@ class HTAccess
 
         $rootsToPutRewritesIn = $config['scope'];
         if ($config['destination-structure'] == 'doc-root') {
+            // Commented out to quickfix #338
             // $rootsToPutRewritesIn = Paths::filterOutSubRoots($rootsToPutRewritesIn);
         }
 
