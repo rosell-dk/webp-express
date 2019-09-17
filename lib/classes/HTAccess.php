@@ -30,7 +30,7 @@ class HTAccess
             if (isset($pathsGoingToBeUsedInHtaccess[$prop])) {
                 if ($value != $pathsGoingToBeUsedInHtaccess[$prop]) {
                     return true;
-                }                
+                }
             }
         }
     }
@@ -332,7 +332,7 @@ class HTAccess
         if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
             if ($config['operation-mode'] != 'no-conversion') {
                 if ($config['image-types'] != 0) {
-                    $webpExpressRoot = Paths::getPluginUrlPath();
+                    $webpExpressRoot = Paths::getWebPExpressPluginUrlPath();
                     $links = '';
                     if ($config['enable-redirection-to-converter']) {
                         $links = '<br>';

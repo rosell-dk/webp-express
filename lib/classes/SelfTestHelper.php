@@ -332,7 +332,7 @@ class SelfTestHelper
 
         $result[] = '';
 
-        $result[] = '#### Image roots:';
+        $result[] = '#### Image roots (absolute paths)';
         foreach (Paths::getImageRootIds() as $rootId) {
             $absDir = Paths::getAbsDirById($rootId);
 
@@ -353,6 +353,13 @@ class SelfTestHelper
                 $result[] = '*' . $rootId . '*: ' . 'n/a (not within document root)';
             }
         }
+
+        $result[] = '#### Image roots (URLs)';
+        foreach (Paths::getImageRootIds() as $rootId) {
+            $url = Paths::getUrlById($rootId);
+            $result[] = '*' . $rootId . '*: ' . $url;
+        }
+
 
         return $result;
     }

@@ -553,7 +553,7 @@ APACHE
             case 'home':
                 return self::getHomeUrl();
             case 'plugins':
-                return self::getPluginUrl();
+                return self::getPluginsUrl();
             case 'uploads':
                 return self::getUploadUrl();
             case 'themes':
@@ -655,32 +655,40 @@ APACHE
     }
 
     /**
+     *  Get Url to plugins (base)
+     */
+    public static function getPluginsUrl()
+    {
+        return untrailingslashit(plugins_url());
+    }
+
+    /**
      *  Get Url to WebP Express plugin (this is in fact an incomplete URL, you need to append ie '/webp-on-demand.php' to get a full URL)
      */
-    public static function getPluginUrl()
+    public static function getWebPExpressPluginUrl()
     {
         return untrailingslashit(plugins_url(null, WEBPEXPRESS_PLUGIN));
     }
 
-    public static function getPluginUrlPath()
+    public static function getWebPExpressPluginUrlPath()
     {
-        return self::getUrlPathFromUrl(self::getPluginUrl());
+        return self::getUrlPathFromUrl(self::getWebPExpressPluginUrl());
     }
 
     public static function getWodUrlPath()
     {
-        return self::getPluginUrlPath() . '/wod/webp-on-demand.php';
+        return self::getWebPExpressPluginUrlPath() . '/wod/webp-on-demand.php';
         //return self::getHomeUrlPath() . '/webp-on-demand';
     }
 
     public static function getWebPRealizerUrlPath()
     {
-        return self::getPluginUrlPath() . '/wod/webp-realizer.php';
+        return self::getWebPExpressPluginUrlPath() . '/wod/webp-realizer.php';
     }
 
     public static function getWebServiceUrl()
     {
-        //return self::getPluginUrl() . '/wpc.php';
+        //return self::getWebPExpressPluginUrl() . '/wpc.php';
         //return self::getHomeUrl() . '/webp-express-server';
         return self::getHomeUrl() . '/webp-express-web-service';
     }
@@ -689,7 +697,7 @@ APACHE
     {
         return [
             'urls' => [
-                'webpExpressRoot' => self::getPluginUrlPath(),
+                'webpExpressRoot' => self::getWebPExpressPluginUrlPath(),
                 'content' => self::getContentUrlPath(),
             ],
             'filePaths' => [

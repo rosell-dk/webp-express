@@ -41,7 +41,7 @@ class CapabilityTest
         if (!@file_exists(Paths::getWebPExpressContentDirAbs() . '/htaccess-capability-tests/' . $testDir)) {
             $testUrl = Paths::getContentUrl() . '/' . 'webp-express/htaccess-capability-tests/' . $testDir . '/test.php';
         } else {
-            $testUrl = Paths::getPluginUrl() . '/' . 'htaccess-capability-tests/' . $testDir . '/test.php';
+            $testUrl = Paths::getWebPExpressPluginUrl() . '/' . 'htaccess-capability-tests/' . $testDir . '/test.php';
         }
 
         //echo 'test url: ' . $testUrl . '<br>';
