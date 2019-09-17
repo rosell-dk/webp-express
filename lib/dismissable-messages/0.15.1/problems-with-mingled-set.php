@@ -2,6 +2,7 @@
 
 namespace WebPExpress;
 
+/*
 DismissableMessages::printDismissableMessage(
     'error',
     'Sorry, due to a bug, the combination of having destination folder set to "mingled" and ' .
@@ -11,3 +12,4 @@ DismissableMessages::printDismissableMessage(
     '0.15.1/problems-with-mingled-set',
     'Got it!'
 );
+*/
