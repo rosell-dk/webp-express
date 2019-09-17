@@ -1,3 +1,164 @@
+= 0.15.0 =
+*(released: 17 sep 2019)*
+
+* Provided test-buttons for checking if the redirects works.
+* You can now choose which folders WebP Express is active in. Ie "Uploads and Themes".
+* You can now choose an alternative file structure for the webps which does not rely on DOCUMENT_ROOT being available.
+* WebP Express can now handle when wp-content is symlinked.
+* The .htaccess rules are now divided across folders. Some rules are needed where the source files are located, some where the webp files are located.
+* Added option to convert only PNG files
+* And a couple of bugfixes.
+
+For more info, see the closed issues on the 0.15.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/22?closed=1
+
+= 0.14.22 =
+*(released: 4 aug 2019)*
+
+* Fixed bug in Nginx rules in the FAQ (they did not take into account that the webp images outside upload folder are never stored "mingled")
+* Fixed bug: The extension setting was not respected - it was always appending ".webp", never setting. Thanks to Florian from Germany and Derrick Hammer from USA for reporting.
+* Fixed bug: It turns out that Imagick gives up quality detection for some images and returns 0. This resulted in very poor quality webps when the quality was set to same as jpeg. The 0 is now treated as a failure and the max-quality will be used for such images. Thanks to @sanjayojha303 from India for reporting that there were quality problems on some images.
+* Fixed bug-like behavior: The conversion scripts no longer requires that the respective setting is on for Nginx. Thanks to Mike from Russia for reporting this.
+* Fixed bug: The error handler in webp-convert for handling warnings could in some cases result in endless recursion. For some the result was that they could no longer upload images. Thanks to Tobias Keller from Germany for reporting this bug.
+* Fixed minor bug: Attempt to call private method in a rare scenario (when accessing one of the php scripts in the "wod" folder directly - which is not allowed). Thanks to Giacomo Lawrance from the U.K. for providing input that led to this discovery.
+* Fixed minor bug: It was not tested whether a corresponding webp existed before trying to deleting it when an image was deleted. This produced warnings in debug.log.
+* Security related: Added sanitizing of paths to avoid false positives on coderisk.com (there where no risk because already test the paths for sanity - but this is not detected by coderisk, as the variable is not modified). This was simply done in order get rid of the warnings at coderisk.
+* Security fix: Paths were not sanitized on Windows.
+
+= 0.14.21 =
+*(released: 30 jun 2019)*
+
+* Hopefully fixed WebP Express Error: "png" option is Object
+
+= 0.14.20 =
+*(released: 29 jun 2019)*
+
+* Fixed bug: Ewww api-key was forgot upon saving options
+
+= 0.14.19 =
+*(released: 28 jun 2019)*
+
+* Removed a line that might course Sanity Check to fail ("path not within document root")
+
+= 0.14.18 =
+*(released: 28 jun 2019)*
+
+* Fixed Sanity Error: Path is outside allowed path on systems using symlinked folders
+* Updated cache breaking token for javascript in order for the last fix for changing password with Remote WebP Express to take effect
+* Fixed undefined variable error in image_make_intermediate_size hook, which prevented webps thumbnails to be generated upon upload
+* Minor bug fix in cwebp converter (updated to webp-convert v.2.1.4)
+
+= 0.14.17 =
+*(released: 28 jun 2019)*
+
+* Relaxed abspath sanity check on Windows
+* Fixed updating password for Remote WebP Express
+
+= 0.14.16 =
+*(released: 26 jun 2019)*
+
+* Fixed conversion errors using Bulk convert or Test convert on systems with symlinked folders
+
+= 0.14.15 =
+*(released: 26 jun 2019)*
+
+* Fixed errors with "redirect to conversion script" on systems with symlinked folders
+* Fixed errors with "redirect to conversion script" on systems where the filename cannot be passed through an environment variable
+
+= 0.14.14 =
+*(released: 26 jun 2019)*
+
+* Fixed errors on systems with symlinked folders
+
+= 0.14.13 =
+*(released: 26 jun 2019)*
+
+* Fixed errors in conversion scripts
+
+= 0.14.12 =
+*(released: 26 jun 2019)*
+
+* Fixed critical bug
+
+= 0.14.11 =
+*(released: 24 jun 2019)*
+
+The following security fixes has been applied in 0.14.0 - 0.14.11:
+It is urged that you upgrade all of you WebP Express installations!
+
+– Security fix: Closed a security hole that could be used to view the content of any file on the server (provided that the full path is known or guessed). This is a very serious flaw, which unfortunately has been around for quite a while.
+– Security fix: Added capability checks to options page.
+– Security fix: Sanitized user input.
+– Security fix: Added checks for file paths and directories.
+– Security fix: Nonces and capability checks for AJAX calls.
+
+= 0.14.10 =
+*(released: 24 jun 2019)*
+
+* Security related
+
+= 0.14.9 =
+*(released: 22 jun 2019)*
+
+* Security related
+
+= 0.14.8 =
+*(released: 21 jun 2019)*
+
+* Security related
+
+= 0.14.7 =
+*(released: 20 jun 2019)*
+
+* Security related: Removed unneccesary files from webp-convert library
+
+= 0.14.6 =
+*(released: 20 jun 2019)*
+
+* Security related
+
+= 0.14.5 =
+*(released: 20 jun 2019)*
+
+* Security related
+
+= 0.14.4 =
+*(released: 18 jun 2019)*
+
+* Now bundles with multiple cwebp binaries for linux for systems where 1.0.2 fails.
+
+= 0.14.3 =
+*(released: 18 jun 2019)*
+
+* Fixed filename of supplied cwebp for linux (bug was introduced in 0.14.2)
+
+= 0.14.2 =
+*(released: 17 jun 2019)*
+
+* Fixed problem with older versions of cwebp
+* Fixed that images was not deleted
+* Fixed cache problem on options page on systems that disables cache busting (it resulted in "SyntaxError: JSON.parse")
+
+= 0.14.1 =
+*(released: 15 jun 2019)*
+
+* Security related
+
+= 0.14.0 =
+*(released: 15 jun 2019)*
+
+* Security fix: Closed a security hole that could be used to view the content of any file on the server (provided that the full path is known or guessed). This is a very serious flaw, which has been around for quite a while. I urge you to upgrade to 0.14.0.
+* Added new "encoding" option, which can be set to auto. This can in some cases dramatically reduce the size of the webp. It is supported by all converters except ewww and gd.
+* Added new "near-lossless" option (only for cwebp and vips). Using this is a good idea for reducing size of lossless webps with an acceptable loss of quality
+* Added new "alpha-quality" option (all converters, except ewww and gd). Using this is a good idea when images with transparency are converted to lossy webp - it has the potential to reduce the size up to 50% (depending on the source material) while keeping an acceptable level of quality
+* Added new conversion methods: Vips and GraphicsMagick
+* Imagick conversion method now supports webp options (finally cracked it!)
+* Using MimeType detection instead of relying on file extensions
+* In "test" converter you now change options and also test PNG files
+* Added conversion logs
+* PNGs are now enabled by default (with the new conversion features especially PNGs are compressed much better)
+
+For more info, see the closed issues on the 0.14.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/9?closed=1
+
 = 0.13.0 =
 *(released: 21 mar 2019)*
 * Bulk Conversion

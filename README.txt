@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.2
-Stable tag: 0.14.22
+Stable tag: 0.15.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -600,6 +600,19 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.15.0 =
+*(released: 17 sep 2019)*
+
+* Provided test-buttons for checking if the redirects works.
+* You can now choose which folders WebP Express is active in. Ie "Uploads and Themes".
+* You can now choose an alternative file structure for the webps which does not rely on DOCUMENT_ROOT being available.
+* WebP Express can now handle when wp-content is symlinked.
+* The .htaccess rules are now divided across folders. Some rules are needed where the source files are located, some where the webp files are located.
+* Added option to convert only PNG files
+* And a couple of bugfixes.
+
+For more info, see the closed issues on the 0.15.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/22?closed=1
+
 = 0.14.22 =
 *(released: 4 aug 2019)*
 
@@ -624,7 +637,14 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 * Fixed bug: Ewww api-key was forgot upon saving options
 
 = 0.14.19 =
-*(released: 28 jun 2019)*
+*(released: 28 jun 2019)** Provided test-buttons for checking if the redirects works.
+* You can now choose which folders WebP Express is active in. Ie "Uploads and Themes".
+* You can now choose an alternative file structure for the webps which does not rely on DOCUMENT_ROOT being available.
+* WebP Express can now handle when wp-content is symlinked.
+* The .htaccess rules are now divided across folders. Some rules are needed where the source files are located, some where the webp files are located.
+* And a couple of bugfixes.
+
+For more info, see the closed issues on the 0.15.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/22?closed=1
 
 * Removed a line that might course Sanity Check to fail ("path not within document root")
 

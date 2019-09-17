@@ -591,10 +591,14 @@ Here are my current plans ahead: 0.15 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
-## Changes in 0.15.0 (Ongoing)
-- New feature: Added option to convert only PNG files
-- Minor new feature: Sanitize errors are now written to debug.log (when debugging is enabled)
-- Minor bugfix: Bulk Convert now handles filenames containing quotes.
+## Changes in 0.15.0
+- Provided test-buttons for checking if the redirects works.
+- You can now choose which folders WebP Express is active in. Ie "Uploads and Themes".
+- You can now choose an alternative file structure for the webps which does not rely on DOCUMENT_ROOT being available.
+- WebP Express can now handle when wp-content is symlinked.
+- The .htaccess rules are now divided across folders. Some rules are needed where the source files are located, some where the webp files are located.
+- Added option to convert only PNG files
+- And a couple of bugfixes.
 
 ## Changes in 0.14.12 - 0.14.15
 - Fixed errors with "redirect to conversion script" on systems with symlinked folders
@@ -609,7 +613,6 @@ It is urged that you upgrade all of you WebP Express installations!
 - Security fix: Sanitized user input.
 - Security fix: Added checks for file paths and directories.
 - Security fix: Nonces and capability checks for AJAX calls.
-
 
 ## Changes in 0.14.4
 - Now bundles with multiple cwebp binaries for linux for systems where 1.0.2 fails.
