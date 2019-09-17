@@ -124,6 +124,7 @@ class PathHelper
         // I guess we must check out all folders below document root to see if anyone resolves to dir
         // we could start out trying usual suspects such as "wp-content" and "wp-content/uploads"
         //foreach (glob($dir . DIRECTORY_SEPARATOR . $filePattern) as $filename)
+        /*
         $iter = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($_SERVER['DOCUMENT_ROOT'], \RecursiveDirectoryIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::SELF_FIRST,
@@ -141,7 +142,7 @@ class PathHelper
                 }
             }
         }
-
+*/
         // Ok, the above works - but when subfolders to the symlink is referenced. Ie referencing uploads when wp-content is symlinked
         // - dir is already resolved (ie: /disk/the-content/uploads)
         // - document root is ie. /var/www/website/wordpress
@@ -155,7 +156,7 @@ class PathHelper
         // 1. We check the symlinks and substitute. We get: 'wp-content/uploads'.
         // 2. We test if realpath($_SERVER['DOCUMENT_ROOT'] . '/' . 'wp-content/uploads') equals input.
         // It seems I have a solution!
-        // - I shall continue work tomorrow! (test instance #26)
+        // - I shall continue work soon! - for a 0.15.1 release (test instance #26)
         // PS: cache the result of the symlinks in docroot collector.
 
         throw new \Exception(
