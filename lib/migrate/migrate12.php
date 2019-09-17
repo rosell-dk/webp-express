@@ -6,6 +6,7 @@ function webpexpress_migrate12() {
 
     $config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
 
+/*
     if (($config['destination-extension'] == 'set') && ($config['destination-folder'] == 'mingled')) {
         DismissableMessages::addDismissableMessage('0.15.1/problems-with-mingled-set');
 
@@ -15,7 +16,7 @@ function webpexpress_migrate12() {
                 'Please <a href="' . Paths::getSettingsUrl() . '">go to the settings page</a> to fix.'
         );
 
-    }
+    }*/
 
     $forceHtaccessRegeneration = true;
     $result = Config::saveConfigurationAndHTAccess($config, $forceHtaccessRegeneration);
