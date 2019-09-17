@@ -95,6 +95,7 @@ class SelfTestHelper
         }
         $testSource = Paths::getPluginDirAbs() . '/webp-express/test/' . $fileNameToCopy;
         $filenameOfDestination = self::randomDigitsAndLetters(6) . '.' . strtoupper($imageType);
+        //$filenameOfDestination = self::randomDigitsAndLetters(6) . '.' . $imageType;
         $result[] = 'Copying ' . strtoupper($imageType) . ' to ' . $rootId . ' folder (*webp-express-test-images/' . $filenameOfDestination . '*)';
 
         $destDir = Paths::getAbsDirById($rootId) . '/webp-express-test-images';
@@ -180,7 +181,7 @@ class SelfTestHelper
         $return = wp_remote_get($requestUrl, $args);
         if (is_wp_error($return)) {
             $result[] = 'Request URL: ' . $requestUrl;
-            $result[] = 'The remote request errored!';
+            $result[] = 'The remote request errored';
             return [false, $result, [], $return];
         }
         if ($return['response']['code'] != '200') {
@@ -193,6 +194,14 @@ class SelfTestHelper
             } else {
                 $return['headers'] = [];
             }
+            if (isset($return['headers']['content-type'])) {
+                if (strpos($return['headers']['content-type'], 'text/html') !== false) {
+                    $result[] = 'Body:';
+                    $result[] = print_r($return['body'], true);
+                }
+
+            }
+
             return [false, $result, $return['headers'], $return];
         }
         return [true, $result, $return['headers'], $return];
