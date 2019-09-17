@@ -67,7 +67,7 @@ class ConvertHelperIndependent
     public static function appendOrSetExtension($path, $destinationFolder, $destinationExt, $inUploadFolder)
     {
         if (($destinationFolder == 'mingled') && ($destinationExt == 'set') && $inUploadFolder) {
-            return preg_replace('/\\.(jpe?g|png)$/', '', $path) . '.webp';
+            return preg_replace('/\\.(jpe?g|png)$/i', '', $path) . '.webp';
         } else {
             return $path . '.webp';
         }
@@ -405,11 +405,22 @@ class ConvertHelperIndependent
                 $source =  preg_replace('/\\.(webp)$/', '', $destination);
             } else {
                 $source =  preg_replace('#\\.webp$#', '.jpg', $destination);
+                // TODO!
+                // Also check for "Jpeg", "JpEg" etc.
                 if (!@file_exists($source)) {
                     $source =  preg_replace('/\\.webp$/', '.jpeg', $destination);
                 }
                 if (!@file_exists($source)) {
+                    $source =  preg_replace('/\\.webp$/', '.JPG', $destination);
+                }
+                if (!@file_exists($source)) {
+                    $source =  preg_replace('/\\.webp$/', '.JPEG', $destination);
+                }
+                if (!@file_exists($source)) {
                     $source =  preg_replace('/\\.webp$/', '.png', $destination);
+                }
+                if (!@file_exists($source)) {
+                    $source =  preg_replace('/\\.webp$/', '.PNG', $destination);
                 }
             }
             if ($destinationStructure == 'doc-root') {
