@@ -594,7 +594,10 @@ If you wish to affect priorities, it is certainly possible. You can try to argue
 ## Changes in 0.15.1
 *(released: 17 sep 2019)*
 
+- Bug alert: Added alert about a bug when destination folder is set to "mingled" and File extension is set to "Set to .webp"
 - Bugfix: Plugin URL pointed to webpexpress - it should point to parent. This gave trouble with images located in plugins. Thanks to Guillaume Meyer from Switzerland for discovering and reporting.
+- Bugfix: Images with uppercase chars in extension did not get Vary:Accept
+- Bugfix: There were issues with "All content" and destination:document-root when webp-realizer is activated
 
 
 ## Changes in 0.15.0
