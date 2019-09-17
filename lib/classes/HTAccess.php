@@ -391,7 +391,7 @@ class HTAccess
 
         $rootsToPutRewritesIn = $config['scope'];
         if ($config['destination-structure'] == 'doc-root') {
-            $rootsToPutRewritesIn = Paths::filterOutSubRoots($rootsToPutRewritesIn);
+            // $rootsToPutRewritesIn = Paths::filterOutSubRoots($rootsToPutRewritesIn);
         }
 
         $dirsContainingWebps = [];
