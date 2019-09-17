@@ -21,6 +21,7 @@ DismissableMessages::dismissMessage('0.14.0/say-hello-to-vips');
 DismissableMessages::dismissMessage('0.15.0/new-scope-setting-no-uploads');
 DismissableMessages::dismissMessage('0.15.0/new-scope-setting-index');
 DismissableMessages::dismissMessage('0.15.0/new-scope-setting-content');
+DismissableMessages::dismissMessage('0.15.1/problems-with-mingled-set');
 
 /*
 --------------------------------
