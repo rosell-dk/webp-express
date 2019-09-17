@@ -591,6 +591,12 @@ Here are my current plans ahead: 0.15 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.15.1
+*(released: 17 sep 2019)*
+
+- Bugfix: Plugin URL pointed to webpexpress - it should point to parent. This gave trouble with images located in plugins. Thanks to Guillaume Meyer from Switzerland for discovering and reporting.
+
+
 ## Changes in 0.15.0
 - Provided test-buttons for checking if the redirects works.
 - You can now choose which folders WebP Express is active in. Ie "Uploads and Themes".

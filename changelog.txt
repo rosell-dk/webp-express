@@ -1,3 +1,8 @@
+= 0.15.1 =
+*(released: 17 sep 2019)*
+
+* Bugfix: Plugin URL pointed to webpexpress - it should point to parent. This gave trouble with images located in plugins. Thanks to Guillaume Meyer from Switzerland for discovering and reporting.
+
 = 0.15.0 =
 *(released: 17 sep 2019)*
 
