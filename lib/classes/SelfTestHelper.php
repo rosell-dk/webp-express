@@ -87,10 +87,10 @@ class SelfTestHelper
         $result = [];
         switch ($imageType) {
             case 'jpeg':
-                $fileNameToCopy = 'focus.jpg';
+                $fileNameToCopy = 'very-small.jpg';
                 break;
             case 'png':
-                $fileNameToCopy = 'alphatest.png';
+                $fileNameToCopy = 'test.png';
                 break;
         }
         $testSource = Paths::getPluginDirAbs() . '/webp-express/test/' . $fileNameToCopy;
@@ -486,8 +486,9 @@ class SelfTestHelper
         }
         if ($modRewriteWorking === true) {
             $result[] = 'Result: Yes, rewriting works.';
-            $result[] = 'It seems something is wrong with the *.htaccess* rules then. ';
-            $result[] = 'Or perhaps the server has cached the configuration a while. Some servers ' .
+            $result[] = 'It seems something is wrong with the *.htaccess* rules then. You could try ' .
+                'to change "Destination structure" - the rules there are quite different.';
+            $result[] = 'It could also be that the server has cached the configuration a while. Some servers ' .
                 'does that. In that case, simply give it a few minutes and try again.';
         } elseif ($modRewriteWorking === false) {
             $result[] = 'Result: No, rewriting does not seem to work within *.htaccess* rules.';
