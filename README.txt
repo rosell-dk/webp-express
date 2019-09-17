@@ -945,6 +945,9 @@ For older releases, check out changelog.txt
 
 == Upgrade Notice ==
 
+= 0.15.0 =
+* New "Scope" and "destination structure" options, nice test buttons and a lot of work behind the surface
+
 = 0.14.22 =
 * A bundle of bug fixes and a security fix for Windows
 
