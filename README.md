@@ -150,6 +150,27 @@ Easy enough. Browsers looks at the *content type* header rather than the URL to 
 
 I am btw considering making an option to have the plugin redirect to the webp instead of serving immediately. That would remove the apparent mismatch between file extension and content type header. However, the cost of doing that will be an extra request for each image, which means extra time and worse performance. I believe you'd be ill advised to use that option, so I guess I will not implement it. But perhaps you have good reasons to use it? If you do, please let me know!
 
+### Blank images in Safari?
+WebP Express has three ways of distributing webp to webp-enabled browsers while still sending the originals to webp-disabled browsers.
+
+Method 1: Varied image responses
+This method adds rewrites to the .htaccess which redirects jpegs and pngs to the corresponding webps (if they exist). - but only when the browser supports webp images (this is established by examining the "accept" header).
+
+Method 2: Altering HTML to use picture tags
+IMG tags are replaced with PICTURE tags which has two sources. One of them points to the webp and has the "content-type" set to "image/webp". The other points to the original. The browser will select the webp source if it supports webp and the other source if it doesn't.
+
+Method 3: Altering HTML to point directly to webps in webp enabled browsers, but not altering for browsers not supporting webp. Again, the "accept" header is examined to determine if the browser supports webp.
+
+
+Can some of these go wrong?
+Yes. All!
+
+Method 1 can go wrong if you are using a CDN and it hasn't been set up to handle varied image responses. Check out the CDN section in this FAQ (PS: If your CDN has conflated the caches, it is critical that you purge the CDN cache!). I do not believe it can go wrong in other ways. To be certain, please check out [this test page](http://toste.dk/rh.php). When visiting the test-page with Safari, you should see two images with the “JPG” label over them. When visiting the test-page with a browser that supports webp, you should see two images with the “WEBP” label over them. If you do not see one of these things, please report! (no-one has yet experienced that)
+
+Method 2 can go wrong on old browser that doesn't support the picture tag syntax. However, simply enable the "Dynamically load picturefill.js on older browsers" option, and it will take care of that issue.
+
+Method 3 can go wrong if you are using a page caching plugin if that plugin does not create a separate webp cache for webp-enabled browsers. The *Cache Enabler* plugin handles this. I don't believe there are other page caching plugins that does. There is a FAQ section in this FAQ describing how to set *Cache Enabler* up to work in tandem with WebP Express.
+
 ### I am on NGINX or OpenResty
 
 #### The simple way (no redirecting rules)
