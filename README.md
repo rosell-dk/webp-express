@@ -151,25 +151,41 @@ Easy enough. Browsers looks at the *content type* header rather than the URL to 
 I am btw considering making an option to have the plugin redirect to the webp instead of serving immediately. That would remove the apparent mismatch between file extension and content type header. However, the cost of doing that will be an extra request for each image, which means extra time and worse performance. I believe you'd be ill advised to use that option, so I guess I will not implement it. But perhaps you have good reasons to use it? If you do, please let me know!
 
 ### Blank images in Safari?
-WebP Express has three ways of distributing webp to webp-enabled browsers while still sending the originals to webp-disabled browsers.
-
-Method 1: Varied image responses
-This method adds rewrites to the .htaccess which redirects jpegs and pngs to the corresponding webps (if they exist). - but only when the browser supports webp images (this is established by examining the "accept" header).
-
-Method 2: Altering HTML to use picture tags
-IMG tags are replaced with PICTURE tags which has two sources. One of them points to the webp and has the "content-type" set to "image/webp". The other points to the original. The browser will select the webp source if it supports webp and the other source if it doesn't.
-
-Method 3: Altering HTML to point directly to webps in webp enabled browsers, but not altering for browsers not supporting webp. Again, the "accept" header is examined to determine if the browser supports webp.
-
+WebP Express has three ways of distributing webp to webp-enabled browsers while still sending the originals to webp-disabled browsers. While method 1 can be combined with any of the other methods, you would usually just pick method 1 or one of the others if method 1 cannot be used for you.
 
 Can some of these go wrong?
 Yes. All!
 
-Method 1 can go wrong if you are using a CDN and it hasn't been set up to handle varied image responses. Check out the CDN section in this FAQ (PS: If your CDN has conflated the caches, it is critical that you purge the CDN cache!). I do not believe it can go wrong in other ways. To be certain, please check out [this test page](http://toste.dk/rh.php). When visiting the test-page with Safari, you should see two images with the “JPG” label over them. When visiting the test-page with a browser that supports webp, you should see two images with the “WEBP” label over them. If you do not see one of these things, please report! (no-one has yet experienced that)
+#### Method 1: Varied image responses
+The "Varied image responses" method adds rules to the `.htaccess` which redirects jpegs and pngs to the corresponding webps (if they exist). The rules have a condition that makes sure they only trigger for browsers supports webp images (this is established by examining the "accept" header).
+
+I the method "varied image responses" because the response on a given image URL *varies* (the webp is served on the same URL as the jpeg/png).
+
+In the cases where method 1 fails, it is due to systems that cache images by the URL alone. To prevent this from happening, the `.htaccess` rules adds a `Vary:Accept` response header. However, most CDNs does not respect that header unless they are configured to do so. Fortunately proxy servers respects it nicely (however often by throwing out the cached image if the accept header doesn't match)
+
+Method 1 can go wrong if:
+
+1. You are using a CDN and it hasn't been set up to handle varied image responses. If this has happened, it is critical that you purge the CDN cache! For information regarding CDN setups, check out the CDN section in this FAQ
+2. Your server doesn't support adding response headers in `.htaccess`. On Apache, the "mod_headers" module needs to be enabled. Otherwise the all important `Vary:Accept` response header will not be set on the response.
+3. Your server doesn't support SetEnv. However, that module is fortunately very common. I have posted a possible solution to make the rules work without SetEnv [here](https://wordpress.org/support/topic/setenv/).
+4. You are on Nginx and you haven't created rules that adds the `Vary:Accept` header.
+
+I do not believe it can go wrong in other ways. To be certain, please check out [this test page](http://toste.dk/rh.php). When visiting the test-page with Safari, you should see two images with the “JPG” label over them. When visiting the test-page with a browser that supports webp, you should see two images with the “WEBP” label over them. If you do not see one of these things, please report! (no-one has yet experienced that).
+
+Since WebP Express 0.15.0 you can use the "Live test" button to check that browsers not supporting webp gets the original files and that the Vary:Accept header is returned. Note however that it may not detect CDN caching problems if the CDN doesn't cache a new image immediately - and across all its nodes.
+
+#### Method 2: Altering HTML to use picture tags
+IMG tags are replaced with PICTURE tags which has two sources. One of them points to the webp and has the "content-type" set to "image/webp". The other points to the original. The browser will select the webp source if it supports webp and the other source if it doesn't.
 
 Method 2 can go wrong on old browser that doesn't support the picture tag syntax. However, simply enable the "Dynamically load picturefill.js on older browsers" option, and it will take care of that issue.
 
+#### Method 3: Altering HTML to point directly to webps in webp enabled browsers
+In this solution, the URLs in the HTML are modified for browsers that supports webp. Again, this is determined by examining the "accept" header. So, actually the complete page HTML varies with this method.
+
 Method 3 can go wrong if you are using a page caching plugin if that plugin does not create a separate webp cache for webp-enabled browsers. The *Cache Enabler* plugin handles this. I don't believe there are other page caching plugins that does. There is a FAQ section in this FAQ describing how to set *Cache Enabler* up to work in tandem with WebP Express.
+
+Note that Firefox 66+ unfortunately stopped including "image/webp" in the "accept" header it sends when requesting *the page*. While Firefox 66+ fortunately still includes "image/webp" in its accept header *for images*. That will however not get it webp images when using method 3.
+
 
 ### I am on NGINX or OpenResty
 
