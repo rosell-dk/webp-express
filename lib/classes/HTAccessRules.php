@@ -636,7 +636,10 @@ class HTAccessRules
 
     private static function setInternalProperties($config, $htaccessDir = 'index')
     {
-        self::$useDocRootForStructuringCacheDir = (($config['destination-structure'] == 'doc-root') && Paths::canUseDocRootForStructuringCacheDir());
+        self::$useDocRootForStructuringCacheDir = (
+            ($config['destination-structure'] == 'doc-root') &&
+            Paths::canUseDocRootForStructuringCacheDir()
+        );
         self::$htaccessDir = $htaccessDir;
         self::$htaccessDirAbs = Paths::getAbsDirById(self::$htaccessDir);
 

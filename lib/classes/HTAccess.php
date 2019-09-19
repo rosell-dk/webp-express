@@ -414,7 +414,12 @@ class HTAccess
             $dirContainsSourceImages = in_array($rootId, $rootsToPutRewritesIn);
             $dirContainsWebPImages = in_array($rootId, $dirsContainingWebps);
 
-            $rules = HTAccessRules::generateHTAccessRulesFromConfigObj($config, $rootId, $dirContainsSourceImages, $dirContainsWebPImages);
+            $rules = HTAccessRules::generateHTAccessRulesFromConfigObj(
+                $config,
+                $rootId,
+                $dirContainsSourceImages,
+                $dirContainsWebPImages
+            );
             $success = self::saveHTAccessRules(
                 $rootId,
                 $rules,
