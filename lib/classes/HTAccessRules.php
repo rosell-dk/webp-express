@@ -230,7 +230,7 @@ class HTAccessRules
                 // Make sure there is a webp in the cache-dir
                 $cacheDirForThisRoot = Paths::getCacheDirForImageRoot(
                     self::$config['destination-folder'],
-                    self::$config['destination-structure'],
+                    'image-roots',
                     self::$htaccessDir
                 );
                 $cacheDirForThisRoot = PathHelper::fixAbsPathToUseUnresolvedDocRoot($cacheDirForThisRoot);
