@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.2
-Stable tag: 0.15.2
+Stable tag: 0.15.3
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -620,6 +620,11 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.15.3 =
+*(released: 19 sep 2019)*
+
+* Fixed fatal error upon activation for systems which cannot use document root for structuring (rare)
+
 = 0.15.2 =
 *(released: 17 sep 2019)*
 
@@ -979,6 +984,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.15.3 =
+* Fixed fatal error upon activation for systems which cannot use document root for structuring (rare)
 
 = 0.15.2 =
 * Fixed the bug when File extension was set to "Set to .webp". It was buggy when file extension contained uppercase letters.
