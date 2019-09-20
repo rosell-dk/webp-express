@@ -13,9 +13,15 @@ use \WebPExpress\Paths;
 use \WebPExpress\PlatformInfo;
 use \WebPExpress\State;
 
-if ((!State::getState('configured', false))) {
+if (!(State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
+
+    if (PlatformInfo::isNginx()) {
+        DismissableMessages::addDismissableMessage('0.16.0/nginx-link-to-faq');
+    }
+
 }
+
 
 /*
 if (CapabilityTest::modRewriteWorking()) {
