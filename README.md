@@ -128,8 +128,9 @@ Don't fret - you have options!
 
 - If you a controlling another WordPress site (where the local conversion methods DO work), you can set up WebP Express there, and then connect to it by configuring the “Remote WebP Express” conversion method.
 - You can also setup the ewww conversion method. To use it, you need to purchase an api key. They do not charge credits for webp conversions, so all you ever have to pay is the one dollar start-up fee 🙂 (unless they change their pricing – I have no control over that). You can buy an api key here: https://ewww.io/plans/
-- If you are up to it, you can try to get one of the local converters working. Check out [this page](https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters) on the webp-convert wiki
-- Finally, if you have access to a server and are comfortable with installing projects with composer, you can install [webp-convert-cloud-service](https://github.com/rosell-dk/webp-convert-cloud-service). It's open source.
+- I have written a [template letter](https://github.com/rosell-dk/webp-convert/wiki/A-template-letter-for-shared-hosts) which you can send to your webhost
+- You can try to get one of the local converters working. Check out [this page](https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters) on the webp-convert wiki. There is also this [test/troubleshooting script](https://github.com/rosell-dk/webp-convert/wiki/A-PHP-script-for-the-webhost) which is handy when messing around with this.
+- Finally, if you have access to another server and are comfortable with installing projects with composer, you can install [webp-convert-cloud-service](https://github.com/rosell-dk/webp-convert-cloud-service). It's open source.
 
 ### It doesn't work - Although test conversions work, it still serves jpeg images.
 Actually, you might be mistaking, so first, make sure that you didn't make the very common mistake of thinking that something with the URL *example.com/image.jpg* must be a jpeg image. The plugin serves webp images on same URL as the original (unconverted) images, so do not let appearances fool you! Confused? See next FAQ item.
