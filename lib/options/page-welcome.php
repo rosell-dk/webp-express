@@ -34,8 +34,9 @@ if ($weKnowThereAreNoWorkingConverters) {
         '<ol style="list-style-position:outside">' .
         '<li>You can install this plugin on another website, which supports a local conversion method and connect to that using the "Remote WebP Express" conversion method' .
         '<li>You can purchase a key for the <a target="_blank" href="https://ewww.io/plans/">ewww cloud converter</a>. They do not charge credits for webp conversions, so all you ever have to pay is the one dollar start-up fee :)</li>' .
+        '<li>I have written a <a target="_blank" href="https://github.com/rosell-dk/webp-convert/wiki/A-template-letter-for-shared-hosts">template letter</a> which you can try sending to your webhost</li>' .
         '<li>You can set up a <a target="_blank" href="https://github.com/rosell-dk/webp-convert-cloud-service">webp-convert-cloud-service</a> on another server and connect to that. Its open source.</li>' .
-        '<li>You can try to meet the server requirements of cwebp, gd, imagick or gmagick. Check out <a target="_blank" href="https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters">this wiki page</a> on how to do that</li>' .
+        '<li>You can try to meet the server requirements of cwebp, imagick, vips, gmagick or gd. Check out <a target="_blank" href="https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters">this wiki page</a> on how to do that</li>' .
         '</ol></p>' .
         "<p>Btw, don't worry, your images still works. The rewrite rules will not be saved until you click the " .
         '"Save settings" button (and you also have "Response on failure" set to "Original image", so they will work even if you click save)</p>';
