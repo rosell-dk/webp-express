@@ -1,13 +1,8 @@
 <?php
 
+namespace WebPExpress;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
-use \WebPExpress\Paths;
-use \WebPExpress\Config;
-use \WebPExpress\State;
-use \WebPExpress\Messenger;
-use \WebPExpress\PlatformInfo;
-
 
 $indexDir = Paths::getIndexDirAbs();
 $homeDir = Paths::getHomeDirAbs();
@@ -43,6 +38,7 @@ if ($weKnowThereAreNoWorkingConverters) {
 } else {
     echo '<p>The rewrite rules are not active yet. They will be activated the first time you click the "Save settings" button.</p>';
 }
+
 //echo 'working converters:';
 //print_r($workingConverters);
 
