@@ -248,6 +248,8 @@ __BEWARE:__
 
 - Beware that if you have moved wp-content to a non-standard place, you must change accordingly. Note that you must then also change the "wp-content" parameter to the script. It expects a relative path to wp-content (from document root) and is needed so the script can find the configuration file.
 
+- Beware that there is a hack out there for permalinks which is based on "rewrite" (rather than the usual solution which is based on try_files). If you are using that hack to redirect missing files to index.php, you need to modify it as specified [here](https://wordpress.org/support/topic/nginx-server-404-not-found-when-convert-test-images/page/2/#post-11952444)
+
 - I have put in an expires statement for caching. You might want to modify or disable that.
 
 - The rules contains all redirections (as if you enabled all three redirection options in settings). If you do not wish to redirect to converter, remove the last line in the try_files block. If you do not wish to create webp files upon request, remove the last location block.
@@ -310,6 +312,8 @@ __BEWARE:__
 - Beware that if you haven't enabled *png* conversion, you should replace "(png|jpe?g)" with "jpe?g".
 
 - Beware that if you have moved wp-content to a non-standard place, you must change accordingly. Note that you must then also change the "wp-content" parameter to the script. It expects a relative path to wp-content (from document root) and is needed so the script can find the configuration file.
+
+- Beware that there is a hack out there for permalinks which is based on "rewrite" (rather than the usual solution which is based on try_files). If you are using that hack to redirect missing files to index.php, you need to modify it as specified [here](https://wordpress.org/support/topic/nginx-server-404-not-found-when-convert-test-images/page/2/#post-11952444)
 
 - I have put in an expires statement for caching. You might want to modify or disable that.
 
