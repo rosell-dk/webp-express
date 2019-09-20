@@ -190,8 +190,10 @@ Note that Firefox 66+ unfortunately stopped including "image/webp" in the "accep
 
 ### I am on NGINX or OpenResty
 
+WebP Express works well on NGINX, however the UI is not streamlined NGINX yet. And of course, NGINX does not process the .htaccess files that WebP Express generates. WebP Express can be used without redirection, as it can alter HTML to use picture tags which links to the webp alternative. See "The simple way" below. Or, you can get your hands dirty and set up redirection in NGINX guided by the "The advanced way" section below. 
+
 #### The simple way (no redirecting rules)
-The easy solution is simply to use the plugin in "CDN friendly" mode, do a bulk conversion (takes care of converting existing images) and activate the "Convert on upload" option (takes care of converting new images in the media library).
+The easy solution is simply to use the plugin in "CDN friendly" mode, do a bulk conversion (takes care of converting existing images), activate the "Convert on upload" option (takes care of converting new images in the media library) and enable Alter HTML (takes care of delivering webp to webp enabled browsers while still delivering the original jpeg/png to browsers not supporting webp).
 
 *PRO*: Very easy to set up.
 *CON*: Images in external CSS and images being dynamically added with javascript will not be served as webp.
