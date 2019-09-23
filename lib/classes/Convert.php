@@ -44,7 +44,7 @@ class Convert
             $activeRootIds = Paths::getImageRootIds();  // Currently, root ids cannot be selected, so all root ids are active.
             $rootId = Paths::findImageRootOfPath($source, $activeRootIds);
             if ($rootId === false) {
-                throw new Exception('Path of source is not within a valid image root');
+                throw new \Exception('Path of source is not within a valid image root');
             }
 
             // Check config
@@ -111,7 +111,7 @@ class Convert
             );
             $relPathFromImageRootToDest = ConvertHelperIndependent::appendOrSetExtension(
                 $relPathFromImageRootToSource,
-                $config['destination-folder'], 
+                $config['destination-folder'],
                 $config['destination-extension'],
                 ($rootId == 'uploads')
             );
