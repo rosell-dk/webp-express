@@ -231,6 +231,14 @@ class Config
             $config['operation-mode'] = 'varied-image-responses';
         }
 
+        // In case doc root no longer can be used, use image-roots
+        // Or? No, changing here will not fix it for WebPOnDemand.php.
+        // An invalid setting requires that config is saved again and .htaccess files regenerated.
+        /*
+        if (($config['operation-mode'] == 'doc-root') && (!Paths::canUseDocRootForRelPaths())) {
+            $config['destination-structure'] = 'image-roots';
+        }*/
+
         $config = self::applyOperationMode($config);
 
         // Fix scope: Remove invalid and put in correct order

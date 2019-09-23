@@ -39,7 +39,7 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
         AlterHtmlHelper::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
         AlterHtmlHelper::$options['only-for-webps-that-exists'] = false;
 
-        $requestUrl = AlterHtmlHelper::getWebPUrlInBase(
+        $requestUrl = AlterHtmlHelper::getWebPUrlInImageRoot(
             $sourceUrl,
             $rootId,
             Paths::getUrlById($rootId),

@@ -142,9 +142,9 @@ class AlterHtmlHelper
      *  @param  string  $baseUrl     Base url of source image (ie http://example.com/wp-content)
      *  @param  string  $baseDir     Base dir of source image (ie /var/www/example.com/wp-content)
      */
-    public static function getWebPUrlInBase($sourceUrl, $rootId, $baseUrl, $baseDir)
+    public static function getWebPUrlInImageRoot($sourceUrl, $rootId, $baseUrl, $baseDir)
     {
-        //error_log('getWebPUrlInBase:' . $sourceUrl . ':' . $baseUrl . ':' . $baseDir);
+        //error_log('getWebPUrlInImageRoot:' . $sourceUrl . ':' . $baseUrl . ':' . $baseDir);
 
         $srcPathRel = self::getRelUrlPath($sourceUrl, $baseUrl);
 
@@ -208,16 +208,18 @@ class AlterHtmlHelper
      */
     public static function getWebPUrl($sourceUrl, $returnValueOnFail)
     {
-        if (!isset(self::$options)) {
-            self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
+
+        // Fail for webp-disabled  browsers (when "only-for-webp-enabled-browsers" is set)
+        if ((self::$options['only-for-webp-enabled-browsers']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') === false)) {
+            return $returnValueOnFail;
         }
 
-
-        // Currently we do not handle relative urls - so we skip
+        // Fail for relative urls. Wordpress doesn't use such very much anyway
         if (!preg_match('#^https?://#', $sourceUrl)) {
             return $returnValueOnFail;
         }
 
+        // Fail if the image type isn't enabled
         switch (self::$options['image-types']) {
             case 0:
                 return $returnValueOnFail;
@@ -238,21 +240,27 @@ class AlterHtmlHelper
                 break;
         }
 
-        if ((self::$options['only-for-webp-enabled-browsers']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') === false)) {
-            return $returnValueOnFail;
+        // Get the options
+        if (!isset(self::$options)) {
+            self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
         }
 
+        // Try all image roots
         foreach (self::$options['bases'] as $id => list($baseDir, $baseUrl)) {
             if (Multisite::isMultisite() && ($id == 'uploads')) {
                 $baseUrl = Paths::getUploadUrl();
                 $baseDir = Paths::getUploadDirAbs();
             }
 
-            $result = self::getWebPUrlInBase($sourceUrl, $id, $baseUrl, $baseDir);
+            $result = self::getWebPUrlInImageRoot($sourceUrl, $id, $baseUrl, $baseDir);
             if ($result !== false) {
                 return $result;
             }
         }
+
+        // try cdn urls
+         //$cdnUrls = ['http://cdn.we3'];
+
         return $returnValueOnFail;
     }
 

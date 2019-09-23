@@ -82,7 +82,7 @@ if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conv
     $canDisplayWebp = (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false ));
 
     /*
-    AlterHTMLHelper::getWebPUrlInBase(
+    AlterHTMLHelper::getWebPUrlInImageRoot(
         Paths::getPluginUrl() . '/webp-express',    // source url
         $baseId,
         Paths::getPluginUrl(),                    // base url
