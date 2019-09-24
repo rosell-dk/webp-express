@@ -162,7 +162,17 @@ class Convert
     {
 
         if (!check_ajax_referer('webpexpress-ajax-convert-nonce', 'nonce', false)) {
-            wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
+        //if (true) {
+            //wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
+            //wp_die();
+
+            $result = [
+                'success' => false,
+                'msg' => 'Invalid security nonce (it has probably expired - try refreshing)',
+                'stop' => true
+            ];
+
+            echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
             wp_die();
         }
 
@@ -253,6 +263,14 @@ class Convert
         } else {
             $result = self::convertFile($filename);
         }
+
+        $nonceTick = wp_verify_nonce($_REQUEST['nonce'], 'webpexpress-ajax-convert-nonce');
+        if ($nonceTick == 2) {
+            $result['new-convert-nonce'] = wp_create_nonce('webpexpress-ajax-convert-nonce');
+            //  wp_create_nonce('webpexpress-ajax-convert-nonce')
+        }
+
+        $result['nonce-tick'] = $nonceTick;
 
         echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
         wp_die();
