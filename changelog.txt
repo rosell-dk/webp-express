@@ -4,6 +4,7 @@
 * Added option to specify CDN urls in Alter HTML. Thanks to Gunnar Peipman from Estonia for suggesting this.
 * Added link to Optimole in the "Don't despair - You have options!" message
 * Fixed unexpected output upon reactivation
+* Direct Nginx users to Nginx FAQ section on welcome page
 
 = 0.15.3 =
 *(released: 19 sep 2019)*
