@@ -329,6 +329,7 @@ class HTAccess
     }
 
     public static function testLinks($config) {
+        /*
         if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false )) {
             if ($config['operation-mode'] != 'no-conversion') {
                 if ($config['image-types'] != 0) {
@@ -351,7 +352,7 @@ class HTAccess
                     return $links;
                 }
             }
-        }
+        }*/
         return '';
     }
 
