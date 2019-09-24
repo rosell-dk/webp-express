@@ -634,9 +634,27 @@ If you got any further questions, look at, or comment on [this topic](https://wo
 ### When is feature X coming? / Roadmap
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
 
-Here are my current plans ahead: 0.15 will probably be a file manager-like interface for converting / bulk converting / viewing conversion logs / comparing original vs webp visually - kind of a merge of current "test converter" and "bulk conversion" interfaces, and with an addition of a file explorer. 0.16 might be various improvements such as option to choose which folders webp express should process (Just uploads / Just uploads and templates / Whole wp-content / Whole system) and options to exclude certain files and folders. 0.17 could be supporting Save-Data header in Varied Image Responses mode (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.18 might be a diagnose tool – this should release some time spend in the forum. 0.18 might be displaying rules for NGINX. 0.19 might be an effort to allow webp for all browsers using [this javascript library](http://libwebpjs.hohenlimburg.org/v0.6.0/). Unfortunately, the javascript librare does not (currently) support srcset attributes, which is why I moved this item down the priority list. We need srcset to be supported for the feature to be useful. 0.20 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
+Here are my current plans ahead: 0.17 will probably be a file manager-like interface for converting / bulk converting / viewing conversion logs / comparing original vs webp visually - kind of a merge of current "test converter" and "bulk conversion" interfaces, and with an addition of a file explorer. 0.18 might allow excluding certain files and folders. 0.19 could be supporting Save-Data header in Varied Image Responses mode (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.19 might be displaying rules for NGINX. 0.20 might be an effort to allow webp for all browsers using [this javascript library](http://libwebpjs.hohenlimburg.org/v0.6.0/). Unfortunately, the javascript librare does not (currently) support srcset attributes, which is why I moved this item down the priority list. We need srcset to be supported for the feature to be useful. 0.21 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
+
+## Changes in 0.16.0 =
+*(released: 24 sep 2019)*
+
+- Added option to specify CDN urls in Alter HTML. Thanks to Gunnar Peipman from Estonia for suggesting this.
+- Direct Nginx users to Nginx FAQ section on welcome page
+- Fixed Bulk Conversion halting due to nonce expiry
+- Fixed unexpected output upon reactivation
+- Added affiliate link to [Optimole](https://optimole.pxf.io/20b0M) in the "Don't despair - You have options!" message
+
+## Changes in 0.15.3
+*(released: 19 sep 2019)*
+
+* Fixed fatal error upon activation for systems which cannot use document root for structuring (rare)
+
+## Changes in 0.15.2
+
+* Fixed the bug when File extension was set to "Set to .webp". It was buggy when file extension contained uppercase letters.
 
 ## Changes in 0.15.1
 *(released: 17 sep 2019)*
@@ -648,6 +666,8 @@ If you wish to affect priorities, it is certainly possible. You can try to argue
 
 
 ## Changes in 0.15.0
+*(released: 17 sep 2019)*
+
 - Provided test-buttons for checking if the redirects works.
 - You can now choose which folders WebP Express is active in. Ie "Uploads and Themes".
 - You can now choose an alternative file structure for the webps which does not rely on DOCUMENT_ROOT being available.

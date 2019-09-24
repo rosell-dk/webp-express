@@ -1,5 +1,5 @@
 = 0.16.0 =
-*(released: NOT YET!)*
+*(released: 24 sep 2019)*
 
 * Added option to specify CDN urls in Alter HTML. Thanks to Gunnar Peipman from Estonia for suggesting this.
 * Direct Nginx users to Nginx FAQ section on welcome page
