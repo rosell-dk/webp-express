@@ -130,7 +130,7 @@ class AlterHtmlHelper
 
 
     /**
-     *  Get url for webp, given a certain baseUrl / baseDir.
+     *  Get url for webp from source url,  (if ), given a certain baseUrl / baseDir.
      *  Base can for example be uploads or wp-content.
      *
      *  returns false
@@ -219,6 +219,11 @@ class AlterHtmlHelper
             return $returnValueOnFail;
         }
 
+        // Get the options
+        if (!isset(self::$options)) {
+            self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
+        }
+
         // Fail if the image type isn't enabled
         switch (self::$options['image-types']) {
             case 0:
@@ -240,26 +245,53 @@ class AlterHtmlHelper
                 break;
         }
 
-        // Get the options
-        if (!isset(self::$options)) {
-            self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
-        }
+        //error_log('source url:' . $sourceUrl);
 
         // Try all image roots
-        foreach (self::$options['bases'] as $id => list($baseDir, $baseUrl)) {
-            if (Multisite::isMultisite() && ($id == 'uploads')) {
+        foreach (self::$options['bases'] as $rootId => list($baseDir, $baseUrl)) {
+            //error_log('baseurl: ' . $baseUrl);
+            if (Multisite::isMultisite() && ($rootId == 'uploads')) {
                 $baseUrl = Paths::getUploadUrl();
                 $baseDir = Paths::getUploadDirAbs();
             }
 
-            $result = self::getWebPUrlInImageRoot($sourceUrl, $id, $baseUrl, $baseDir);
+            $result = self::getWebPUrlInImageRoot($sourceUrl, $rootId, $baseUrl, $baseDir);
             if ($result !== false) {
                 return $result;
             }
-        }
 
-        // try cdn urls
-         //$cdnUrls = ['http://cdn.we3'];
+            // Try the hostname aliases.
+            if (!isset(self::$options['hostname-aliases'])) {
+                continue;
+            }
+            $hostnameAliases = self::$options['hostname-aliases'];
+
+            $hostname = Paths::getHostNameOfUrl($baseUrl);
+            $baseUrlComponents = parse_url($baseUrl);
+            $sourceUrlComponents = parse_url($sourceUrl);
+            // ie: [scheme] => http, [host] => we0, [path] => /wordpress/uploads-moved
+
+            if ((!isset($baseUrlComponents['host'])) || (!isset($sourceUrlComponents['host']))) {
+                continue;
+            }
+
+            foreach ($hostnameAliases as $hostnameAlias) {
+
+                if ($sourceUrlComponents['host'] != $hostnameAlias) {
+                    continue;
+                }
+                //error_log('hostname alias:' . $hostnameAlias);
+
+                $baseUrlOnAlias = $baseUrlComponents['scheme'] . '://' . $hostnameAlias . $baseUrlComponents['path'];
+                //error_log('baseurl (alias):' . $baseUrlOnAlias);
+
+                $result = self::getWebPUrlInImageRoot($sourceUrl, $rootId, $baseUrlOnAlias, $baseDir);
+                if ($result !== false) {
+                    $resultUrlComponents = parse_url($result);
+                    return $sourceUrlComponents['scheme'] . '://' . $hostnameAlias . $resultUrlComponents['path'];
+                }
+            }
+        }
 
         return $returnValueOnFail;
     }

@@ -1,3 +1,6 @@
+<?php
+namespace WebPExpress;
+?>
 <tr>
     <th scope="row">Alter HTML?</span><?php echo helpIcon(
         '<p>Alter HTML to either use picture tag syntax for pointing to webp versions or point directly to webps.</p>' .
@@ -173,7 +176,7 @@
                     'Reference webps that hasn\'t been converted yet',
                     'If you enable this option, there will be references to webp files that doesnt exist yet. ' .
                         'And that will be ok! - Just make sure to enable the option to convert missing webp files ' .
-                        'upon request'
+                        'upon request in the "Redirection rules" section.'
                 );
                 echo '</div></div>';
             }
@@ -192,6 +195,28 @@
                 );
                 ?>
             </div>
+            <div style="margin-top: 20px">
+                <label>CDN hostname(s) / hostname alias(es) <?php echo helpIcon(
+                    '<p>If images can be reached on another hostname than that of your site' .
+                    (Multisite::isMultisite() ? '' : ' ("' . Paths::getHostNameOfUrl(Paths::getHomeUrl()) . '")') .
+                    ', you should specify that hostname here. ' .
+                    'This ensures that image URLs pointing to that hostname also gets replaced.</p>' .
+                    '<p>PS: If you wonder why your images URLs to your CDN gets processed by WebP Express even though you ' .
+                    'have not entered anything here, the answer is probably that you are using a plugin that changes ' .
+                    'your URLs to point to the CDN and that WebP Express gets to do the replacement before your plugin. ' .
+                    'Do not rely on this. A future update to your plugin could change that order.</p>'
+                );
+                ?></label>
+            </div>
+            <?php
+            $aliases = $config['alter-html']['hostname-aliases'];
+            $aliasInputs = array_merge($aliases, ['']);
+            foreach ($aliasInputs as $i => $alias) {
+                ?>
+                http(s)://<input name="alter-html-hostname-alias-<?php echo $i ?>" value="<?php echo esc_attr($alias); ?>"/><br>
+                <?php
+            }
+            ?>
 
         </div>
 

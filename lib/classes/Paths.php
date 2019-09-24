@@ -608,6 +608,21 @@ APACHE
         return self::getUrlPathFromUrl(self::getUrlById($dirId));
     }
 
+    public static function getHostNameOfUrl($url) {
+        $urlComponents = parse_url($url);
+        /* ie:
+        (
+            [scheme] => http
+            [host] => we0
+            [path] => /wordpress/uploads-moved
+        )*/
+
+        if (!isset($urlComponents['host'])) {
+            return '';
+        } else {
+            return $urlComponents['host'];
+        }
+    }
 
     // Get complete home url (no trailing slash). Ie: "http://example.com/blog"
     public static function getHomeUrl()

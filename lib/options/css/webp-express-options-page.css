@@ -543,7 +543,8 @@ input + .help {
 .form-table th.header-section p,
 .form-table th.header-section h2,
 fieldset.block p,
-fieldset.block div.p {
+fieldset.block div.p,
+input {
     max-width: 750px;
 }
 

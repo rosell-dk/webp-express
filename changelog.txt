@@ -1,3 +1,13 @@
+= 0.16.0 =
+*(released: NOT YET!)*
+
+* Added host aliases option in AlterHTML. Thanks to Gunnar Peipman from Estonia for suggesting this.
+
+= 0.15.3 =
+*(released: 19 sep 2019)*
+
+* Fixed fatal error upon activation for systems which cannot use document root for structuring (rare)
+
 = 0.15.2 =
 
 * Fixed the bug when File extension was set to "Set to .webp". It was buggy when file extension contained uppercase letters.

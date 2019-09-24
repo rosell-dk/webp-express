@@ -114,6 +114,7 @@ class Config
                 'only-for-webp-enabled-browsers' => true,     // If true, there will be two HTML versions of each page
                 'only-for-webps-that-exists' => false,
                 'alter-html-add-picturefill-js' => true,
+                'hostname-aliases' => []
             ],
 
             // web service
@@ -266,6 +267,10 @@ class Config
         if (($config['cache-control'] == 'set') && ($config['cache-control-max-age'] == '')) {
             $config['cache-control-max-age'] = 'one-week';
         }
+
+        /*if (is_null($config['alter-html']['hostname-aliases'])) {
+            $config['alter-html']['hostname-aliases'] = [];
+        }*/
 
         if (!is_array($config['converters'])) {
             $config['converters'] = [];
@@ -475,7 +480,6 @@ class Config
         $obj['destination-folder'] = $config['destination-folder'];
         $obj['destination-extension'] = $config['destination-extension'];
         $obj['destination-structure'] = $config['destination-structure'];
-
 
         $obj['bases'] = [];
         foreach ($config['scope'] as $rootId) {

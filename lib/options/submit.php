@@ -286,6 +286,26 @@ function webpexpress_getSanitizedConverters() {
     return $convertersSanitized;
 }
 
+/**
+ * Get sanitized converters.
+ *
+ * @return array  Sanitized array of the converters json array received in $_POST
+ */
+function webpexpress_getSanitizedAlterHtmlHostnameAliases() {
+    $index = 0;
+
+    $result = [];
+    while (isset($_POST['alter-html-hostname-alias-' . $index])) {
+        $alias = webpexpress_getSanitizedText('alter-html-hostname-alias-' . $index, '');
+        $alias = preg_replace('#^https?\\:\\/\\/#', '', $alias);
+        //$alias .= 'hm';
+        if ($alias != '') {
+            $result[] = $alias;
+        }
+        $index++;
+    }
+    return $result;
+}
 
 /*
 ------------------------------------------------------
@@ -369,6 +389,7 @@ $sanitized = [
     'only-redirect-to-converter-for-webp-enabled-browsers' => isset($_POST['only-redirect-to-converter-for-webp-enabled-browsers']),
     'only-redirect-to-converter-on-cache-miss' => isset($_POST['only-redirect-to-converter-on-cache-miss']),
     'do-not-pass-source-in-query-string' => isset($_POST['do-not-pass-source-in-query-string']),
+    'enable-redirection-to-webp-realizer' => isset($_POST['enable-redirection-to-webp-realizer']),
 
 
     // Conversion options
@@ -435,7 +456,7 @@ $sanitized = [
         'content-hooks',
         'ob'
     ]),
-    'enable-redirection-to-webp-realizer' => isset($_POST['enable-redirection-to-webp-realizer']),
+    'alter-html-hostname-aliases' => webpexpress_getSanitizedAlterHtmlHostnameAliases(),
 
 
     // Web service
@@ -507,6 +528,7 @@ if ($sanitized['operation-mode'] != 'no-conversion') {
 
 $config['alter-html']['replacement'] = $sanitized['alter-html-replacement'];
 $config['alter-html']['hooks'] = $sanitized['alter-html-hooks'];
+$config['alter-html']['hostname-aliases'] = $sanitized['alter-html-hostname-aliases'];
 
 
 // Set options that are available in all operation modes, except the "no-conversion" mode
