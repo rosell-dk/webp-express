@@ -9,7 +9,10 @@ class PluginDeactivate
 
         list($success, $failures, $successes) = HTAccess::deactivateHTAccessRules();
 
-        if (!$success) {
+        if ($success) {
+            // Oh, it would be nice to be able to add a goodbye message here...
+            // But well, that cannot be done here.
+        } else {
             // Oh no. We failed removing the rules
             $msg = "<b>Sorry, can't let you disable WebP Express!</b><br>" .
                 'There are rewrite rules in the <i>.htaccess</i> that could not be removed. If these are not removed, it would break all images.<br>' .

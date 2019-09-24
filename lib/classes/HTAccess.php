@@ -303,6 +303,7 @@ class HTAccess
 
         $rootsToClean = Paths::getImageRootIds();
         $rootsToClean[] = 'home';
+        $rootsToClean[] = 'cache';
         $failures = [];
         $successes = [];
 
