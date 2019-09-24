@@ -396,6 +396,7 @@ class HTAccess
         }
 
         $dirsContainingWebps = [];
+
         $mingled = ($config['destination-folder'] == 'mingled');
         if ($mingled) {
             $dirsContainingWebps[] = 'uploads';
@@ -406,7 +407,7 @@ class HTAccess
             $dirsContainingWebps[] = 'cache';
         }
 
-        $dirsToPutRewritesIn = array_merge($rootsToPutRewritesIn, $dirsContainingWebps);
+        $dirsToPutRewritesIn = array_unique(array_merge($rootsToPutRewritesIn, $dirsContainingWebps));
 
         $failedWrites = [];
         $successfullWrites = [];
