@@ -386,7 +386,7 @@ class HTAccess
         ];
     }
 
-    public static function saveRules($config) {
+    public static function saveRules($config, $showMessage = true) {
         list($success, $failedDeactivations, $successfulDeactivations) = self::deactivateHTAccessRules('# The rules have left the building');
 
         $rootsToPutRewritesIn = $config['scope'];
@@ -443,7 +443,58 @@ class HTAccess
         }
 
         $success = ((count($failedDeactivations) == 0) && (count($failedWrites) == 0));
-        return [$success, $successfullWrites, $successfulDeactivations, $failedWrites, $failedDeactivations];
+
+        $return = [$success, $successfullWrites, $successfulDeactivations, $failedWrites, $failedDeactivations];
+        if ($showMessage) {
+            self::showSaveRulesMessages($return);
+        }
+        return $return;
+    }
+
+    public static function showSaveRulesMessages($saveRulesResult)
+    {
+        list($success, $successfullWrites, $successfulDeactivations, $failedWrites, $failedDeactivations) = $saveRulesResult;
+
+        $msg = '';
+        if (count($successfullWrites) > 0) {
+            $msg .= '<p>Rewrite rules were saved to the following files:</p>';
+            foreach ($successfullWrites as $rootId) {
+                $msg .= '<i>' . Paths::getAbsDirById($rootId) . '/.htaccess</i> (' . $rootId . ')<br>';
+            }
+        }
+
+        if (count($successfulDeactivations) > 0) {
+            $msg .= '<p>Rewrite rules were removed from the following files:</p>';
+            foreach ($successfulDeactivations as $rootId) {
+                $msg .= '<i>' . Paths::getAbsDirById($rootId) . '/.htaccess</i> (' . $rootId . ')<br>';
+            }
+        }
+
+        if ($msg != '') {
+            Messenger::addMessage(
+                ($success ? 'success' : 'info'),
+                $msg
+            );
+        }
+
+        if (count($failedWrites) > 0) {
+            $msg = '<p>Failed writing rewrite rules to the following files:</p>';
+            foreach ($failedWrites as $rootId) {
+                $msg .= '<i>' . Paths::getAbsDirById($rootId) . '/.htaccess</i> (' . $rootId . ')<br>';
+            }
+            $msg .= 'You need to change the file permissions to allow WebP Express to save the rules.';
+            Messenger::addMessage('error', $msg);
+        } else {
+            if (count($failedDeactivations) > 0) {
+                $msg = '<p>Failed deleting unused rewrite rules in the following files:</p>';
+                foreach ($failedDeactivations as $rootId) {
+                    $msg .= '<i>' . Paths::getAbsDirById($rootId) . '/.htaccess</i> (' . $rootId . ')<br>';
+                }
+                $msg .= 'You need to change the file permissions to allow WebP Express to remove the rules or ' .
+                    'remove them manually';
+                Messenger::addMessage('error', $msg);
+            }
+        }
     }
 
 }

@@ -86,8 +86,13 @@ function webpexpress_migrate1_migrateOptions()
         $options = Config::generateWodOptionsFromConfigObj($config);
         if (Config::saveWodOptionsFile($options)) {
 
+            Messenger::addMessage(
+                'success',
+                'WebP Express has successfully migrated its configuration to 0.5.0'
+            );
+
             //Config::saveConfigurationAndHTAccessFilesWithMessages($config, 'migrate');
-            $rulesResult = HTAccess::saveRules($config);
+            //$rulesResult = HTAccess::saveRules($config);  // Commented out because rules are going to be saved in migrate12
             /*
             'mainResult'        // 'index', 'wp-content' or 'failed'
             'minRequired'       // 'index' or 'wp-content'
@@ -97,6 +102,7 @@ function webpexpress_migrate1_migrateOptions()
             'overidingRulesInWpContentWarning'  // true if main result is 'index' but we cannot remove those in wp-content
             'rules'             // the rules that were generated
             */
+            /*
             $mainResult = $rulesResult['mainResult'];
             $rules = $rulesResult['rules'];
 
@@ -115,6 +121,7 @@ function webpexpress_migrate1_migrateOptions()
                         'and try to save the settings there (it will provide more information about the problem)'
                 );
             }
+            */
         } else {
             Messenger::addMessage(
                 'error',

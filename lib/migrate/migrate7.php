@@ -39,7 +39,7 @@ function webpexpress_migrate7() {
         // The webp realizer rules where errornous, so recreate rules, if necessary. (see issue #195)
 
         if (($config['enable-redirection-to-webp-realizer']) && ($config['destination-folder'] != 'mingled')) {
-            HTAccess::saveRules($config);
+            //HTAccess::saveRules($config); // Commented out because rules are going to be saved in migrate12
             $msg .= 'Also fixed <a target="_blank" href="https://github.com/rosell-dk/webp-express/issues/195">buggy</a> <i>.htaccess</i> rules. ';
         }
 

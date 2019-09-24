@@ -37,20 +37,10 @@ class PluginActivate
                     '<a href="' . Paths::getSettingsUrl() . '">(here)</a>.'
             );
         } else {
-            $rulesResult = HTAccess::saveRules($config);
-            /*
-            'mainResult'        // 'index', 'wp-content' or 'failed'
-            'minRequired'       // 'index' or 'wp-content'
-            'pluginToo'         // 'yes', 'no' or 'depends'
-            'pluginFailed'      // true if failed to write to plugin folder (it only tries that, if pluginToo == 'yes')
-            'pluginFailedBadly' // true if plugin failed AND it seems we have rewrite rules there
-            'overidingRulesInWpContentWarning'  // true if main result is 'index' but we cannot remove those in wp-content
-            'rules'             // the rules that were generated
-            */
-            $mainResult = $rulesResult['mainResult'];
-            $rules = $rulesResult['rules'];
+            $rulesResult = HTAccess::saveRules($config, false);
 
-            if ($mainResult != 'failed') {
+            $rulesSaveSuccess = $rulesResult[0];
+            if ($rulesSaveSuccess) {
                 Messenger::addMessage(
                     'success',
                     'WebP Express re-activated successfully.<br>' .
@@ -67,8 +57,9 @@ class PluginActivate
                         '<a href="' . Paths::getSettingsUrl() . '">settings page</a> ' .
                         'and try to save the settings there (it will provide more information about the problem)'
                 );
-
             }
+
+            HTAccess::showSaveRulesMessages($rulesResult);
         }
     }
 

@@ -763,7 +763,7 @@ class Config
             $options = self::generateWodOptionsFromConfigObj($config);
             if (self::saveWodOptionsFile($options)) {
                 if ($rewriteRulesNeedsUpdate) {
-                    $rulesResult = HTAccess::saveRules($config);
+                    $rulesResult = HTAccess::saveRules($config, false);
                     return [
                         'saved-both-config' => true,
                         'saved-main-config' => true,
@@ -772,7 +772,7 @@ class Config
                     ];
                 }
                 else {
-                    $rulesResult = HTAccess::saveRules($config);
+                    $rulesResult = HTAccess::saveRules($config, false);
                     return [
                         'saved-both-config' => true,
                         'saved-main-config' => true,
