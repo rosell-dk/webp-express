@@ -24,21 +24,23 @@ echo '<h3>Welcome!</h3>';
 //}
 
 if ($weKnowThereAreNoWorkingConverters) {
-    echo '<p>Unfortunately none of the local conversion methods are available on your server. ' .
-        'but do not despear! - You have options!' .
+    echo '<p>Unfortunately none of the "local" conversion methods are available on your server. That is: ' .
+        'Your server cannot convert webp files in PHP without resorting to cloud conversion.</p>' .
+        '<p>But do not despear! - You have options!</p>' .
         '<ol style="list-style-position:outside">' .
         '<li>You can install this plugin on another website, which supports a local conversion method and connect to that using the "Remote WebP Express" conversion method' .
         '<li>You can purchase a key for the <a target="_blank" href="https://ewww.io/plans/">ewww cloud converter</a>. They do not charge credits for webp conversions, so all you ever have to pay is the one dollar start-up fee :)</li>' .
         '<li>I have written a <a target="_blank" href="https://github.com/rosell-dk/webp-convert/wiki/A-template-letter-for-shared-hosts">template letter</a> which you can try sending to your webhost</li>' .
         '<li>You can set up a <a target="_blank" href="https://github.com/rosell-dk/webp-convert-cloud-service">webp-convert-cloud-service</a> on another server and connect to that. Its open source.</li>' .
         '<li>You can try to meet the server requirements of cwebp, imagick, vips, gmagick or gd. Check out <a target="_blank" href="https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters">this wiki page</a> on how to do that</li>' .
-        '</ol></p>' .
-        '<p>Of course, there is also the option of using another plugin altogether.' .
+        '</ol>' .
+        '<p>Of course, there is also the option of using another plugin altogether. ' .
         'I can recommend ' .
         '<a href="https://optimole.pxf.io/20b0M">Optimole</a>. ' .
         '</p>' .
         "<p>Btw, don't worry, your images still works. The rewrite rules will not be saved until you click the " .
-        '"Save settings" button (and you also have "Response on failure" set to "Original image", so they will work even if you click save)</p>';
+        '"Save settings" button.</p>';
+        //'(and you also have "Response on failure" set to "Original image", so they will work even if you click save)</p>';
 } else {
     echo '<p>The rewrite rules are not active yet. They will be activated the first time you click the "Save settings" button.</p>';
 }
