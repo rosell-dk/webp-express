@@ -1,7 +1,8 @@
 = 0.16.0 =
 *(released: NOT YET!)*
 
-* Added host aliases option in AlterHTML. Thanks to Gunnar Peipman from Estonia for suggesting this.
+* Added option to specify CDN urls in Alter HTML. Thanks to Gunnar Peipman from Estonia for suggesting this.
+* Added link to Optimole in the "Don't despair - You have options!" message
 
 = 0.15.3 =
 *(released: 19 sep 2019)*

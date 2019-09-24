@@ -132,6 +132,9 @@ Don't fret - you have options!
 - You can try to get one of the local converters working. Check out [this page](https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters) on the webp-convert wiki. There is also this [test/troubleshooting script](https://github.com/rosell-dk/webp-convert/wiki/A-PHP-script-for-the-webhost) which is handy when messing around with this.
 - Finally, if you have access to another server and are comfortable with installing projects with composer, you can install [webp-convert-cloud-service](https://github.com/rosell-dk/webp-convert-cloud-service). It's open source.
 
+Of course, there is also the option of using another plugin altogether. I can recommend [Optimole](https://optimole.pxf.io/20b0M).
+
+
 ### It doesn't work - Although test conversions work, it still serves jpeg images.
 Actually, you might be mistaking, so first, make sure that you didn't make the very common mistake of thinking that something with the URL *example.com/image.jpg* must be a jpeg image. The plugin serves webp images on same URL as the original (unconverted) images, so do not let appearances fool you! Confused? See next FAQ item.
 
@@ -190,7 +193,7 @@ Note that Firefox 66+ unfortunately stopped including "image/webp" in the "accep
 
 ### I am on NGINX or OpenResty
 
-WebP Express works well on NGINX, however the UI is not streamlined NGINX yet. And of course, NGINX does not process the .htaccess files that WebP Express generates. WebP Express can be used without redirection, as it can alter HTML to use picture tags which links to the webp alternative. See "The simple way" below. Or, you can get your hands dirty and set up redirection in NGINX guided by the "The advanced way" section below. 
+WebP Express works well on NGINX, however the UI is not streamlined NGINX yet. And of course, NGINX does not process the .htaccess files that WebP Express generates. WebP Express can be used without redirection, as it can alter HTML to use picture tags which links to the webp alternative. See "The simple way" below. Or, you can get your hands dirty and set up redirection in NGINX guided by the "The advanced way" section below.
 
 #### The simple way (no redirecting rules)
 The easy solution is simply to use the plugin in "CDN friendly" mode, do a bulk conversion (takes care of converting existing images), activate the "Convert on upload" option (takes care of converting new images in the media library) and enable Alter HTML (takes care of delivering webp to webp enabled browsers while still delivering the original jpeg/png to browsers not supporting webp).
