@@ -25,6 +25,8 @@ class AdminInit
         }
 
         self::addHooks();
+
+
     }
 
     public static function runMigrationIfNeeded()
@@ -41,16 +43,31 @@ class AdminInit
         //include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate11.php';
     }
 
-    public static function adminInitHandler()
+    public static function pageNowIs($pageId)
+    {
+        global $pagenow;
+
+        if ((!isset($pagenow)) || (empty($pagenow))) {
+            return false;
+        }
+        return ($pageId == $pagenow);
+    }
+
+    public static function addHooksAfterAdminInit()
     {
 
         if (current_user_can('manage_options')) {
 
             // Hooks related to options page
+            if (self::pageNowIs('options-general.php') || self::pageNowIs('settings.php')) {
+                if (isset($_GET['page']) && ('webp_express_settings_page' === $_GET['page'])) {
+                    add_action('admin_enqueue_scripts', array('\WebPExpress\OptionsPage', 'enqueueScripts'));
+                }
+            }
 
-            global $pagenow;
-            if ((('options-general.php' === $pagenow) || (('settings.php' === $pagenow)))  && (isset($_GET['page'])) && ('webp_express_settings_page' === $_GET['page'])) {
-                add_action('admin_enqueue_scripts', array('\WebPExpress\OptionsPage', 'enqueueScripts'));
+            // Hooks related to plugins page
+            if (self::pageNowIs('plugins.php')) {
+                add_action('admin_enqueue_scripts', array('\WebPExpress\PluginPageScript', 'enqueueScripts'));
             }
 
             add_action("admin_post_webpexpress_settings_submit", array('\WebPExpress\OptionsPageHooks', 'submitHandler'));
@@ -82,7 +99,8 @@ class AdminInit
         register_deactivation_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginDeactivate', 'deactivate'));
         register_uninstall_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginUninstall', 'uninstall'));
 
-        add_action("admin_init", array('\WebPExpress\AdminInit', 'adminInitHandler'));
+        // Some hooks must be registered AFTER admin_init...
+        add_action("admin_init", array('\WebPExpress\AdminInit', 'addHooksAfterAdminInit'));
 
         if (Multisite::isNetworkActivated()) {
             add_action("network_admin_menu", array('\WebPExpress\AdminUi', 'networAdminMenuHook'));
