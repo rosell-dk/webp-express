@@ -135,7 +135,7 @@ class SelfTestHelper
         $result[] = 'Copying dummy webp to the cache root for ' . $rootId;
         $destDir = Paths::getCacheDirForImageRoot($destinationFolder, $destinationStructure, $rootId);
         if (!file_exists($destDir)) {
-            $result[] = 'The folder did not exist. Creating folder at: ' . $destinationDir;
+            $result[] = 'The folder did not exist. Creating folder at: ' . $destinationFolder;
             if (!mkdir($destDir, 0777, true)) {
                 $result[] = 'Failed creating folder!';
                 return [$result, false, ''];
