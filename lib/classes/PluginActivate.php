@@ -45,7 +45,8 @@ class PluginActivate
                     'success',
                     'WebP Express re-activated successfully.<br>' .
                         'The image redirections are in effect again.<br><br>' .
-                        'Just a quick reminder: If you at some point change the upload directory or move Wordpress, the <i>.htaccess</i> will need to be regenerated.<br>' .
+                        'Just a quick reminder: If you at some point change the upload directory or move Wordpress, ' .
+                        'the <i>.htaccess</i> files will need to be regenerated.<br>' .
                         'You do that by re-saving the settings ' .
                         '<a href="' . Paths::getSettingsUrl() . '">(here)</a>'
                 );

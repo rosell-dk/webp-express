@@ -24,11 +24,11 @@ echo '<h3>Welcome!</h3>';
 //}
 
 if ($weKnowThereAreNoWorkingConverters) {
-    echo '<p>Unfortunately none of the "local" conversion methods are available on your server. That is: ' .
-        'Your server cannot convert webp files in PHP without resorting to cloud conversion.</p>' .
+    // server does not meet the requirements for converting images to webp without resorting to cloud conversion
+    echo '<p>Unfortunately your server cannot convert webp files in PHP without resorting to cloud conversion.</p>' .
         '<p>But do not despear! - You have options!</p>' .
         '<ol style="list-style-position:outside">' .
-        '<li>You can install this plugin on another website, which supports a local conversion method and connect to that using the "Remote WebP Express" conversion method' .
+        '<li>You can install this plugin on another website, which supports a "local" webp conversion method and connect to that using the "Remote WebP Express" conversion method' .
         '<li>You can purchase a key for the <a target="_blank" href="https://ewww.io/plans/">ewww cloud converter</a>. They do not charge credits for webp conversions, so all you ever have to pay is the one dollar start-up fee :)</li>' .
         '<li>I have written a <a target="_blank" href="https://github.com/rosell-dk/webp-convert/wiki/A-template-letter-for-shared-hosts">template letter</a> which you can try sending to your webhost</li>' .
         '<li>You can set up a <a target="_blank" href="https://github.com/rosell-dk/webp-convert-cloud-service">webp-convert-cloud-service</a> on another server and connect to that. Its open source.</li>' .
