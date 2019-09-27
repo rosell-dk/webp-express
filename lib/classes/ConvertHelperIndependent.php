@@ -570,6 +570,7 @@ APACHE
 
         $text = preg_replace('#' . preg_quote($_SERVER["DOCUMENT_ROOT"]) . '#', '[doc-root]', $text);
 
+        // TODO: Put version number somewhere else. Ie \WebPExpress\VersionNumber::version
         $text = 'WebP Express 0.17.0. ' . $msgTop . ', ' . date("Y-m-d H:i:s") . "\n\r\n\r" . $text;
 
         $logFile = self::getLogFilename($source, $logDir);
