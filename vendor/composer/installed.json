@@ -115,17 +115,17 @@
     },
     {
         "name": "rosell-dk/webp-convert",
-        "version": "2.1.6",
-        "version_normalized": "2.1.6.0",
+        "version": "2.2.0",
+        "version_normalized": "2.2.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/rosell-dk/webp-convert.git",
-            "reference": "5cb744d2786468fb51883d1f3a90562166df3320"
+            "reference": "2a21fa89d8b4611cc03ebd125ae49299e0abd75e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/5cb744d2786468fb51883d1f3a90562166df3320",
-            "reference": "5cb744d2786468fb51883d1f3a90562166df3320",
+            "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/2a21fa89d8b4611cc03ebd125ae49299e0abd75e",
+            "reference": "2a21fa89d8b4611cc03ebd125ae49299e0abd75e",
             "shasum": ""
         },
         "require": {
@@ -143,7 +143,7 @@
             "ext-vips": "to use Vips extension for converting.",
             "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
         },
-        "time": "2019-08-10T22:04:08+00:00",
+        "time": "2019-09-26T10:26:45+00:00",
         "type": "library",
         "extra": {
             "scripts-descriptions": {
@@ -168,13 +168,13 @@
         "authors": [
             {
                 "name": "Bjørn Rosell",
-                "role": "Project Author",
-                "homepage": "https://www.bitwise-it.dk/contact"
+                "homepage": "https://www.bitwise-it.dk/contact",
+                "role": "Project Author"
             },
             {
                 "name": "Martin Folkers",
-                "role": "Collaborator",
-                "homepage": "https://twobrain.io"
+                "homepage": "https://twobrain.io",
+                "role": "Collaborator"
             }
         ],
         "description": "Convert JPEG & PNG to WebP with PHP",

@@ -49,9 +49,10 @@ class PathChecker
         }
 
         // Prevent directory traversal
+        /* Disabled. We DO allow it again (#203)
         if (preg_match('#\.\.\/#', $absFilePath)) {
             throw new InvalidInputException('Directory traversal is not allowed in ' . $text . ' path');
-        }
+        }*/
 
         // Prevent stream wrappers ("phar://", "php://" and the like)
         // https://www.php.net/manual/en/wrappers.phar.php
@@ -90,6 +91,17 @@ class PathChecker
             throw new InvalidInputException('Destination argument missing');
         }
         self::checkAbsolutePath($destination, 'destination');
+
+        if (!preg_match('#\.webp$#i', $destination)) {
+            // Prevent overriding important files.
+            // Overriding an .htaccess file would lay down the website.
+            throw new InvalidInputException(
+                'Destination file must end with ".webp". ' .
+                'If you deliberately want to store the webp files with another extension, you must rename ' .
+                'the file after successful conversion'
+            );
+        }
+
         if (@is_dir($destination)) {
             throw new InvalidInputException('Destination is a directory');
         }

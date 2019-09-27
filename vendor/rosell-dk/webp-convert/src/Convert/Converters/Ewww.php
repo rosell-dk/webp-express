@@ -9,6 +9,7 @@ use WebPConvert\Convert\Exceptions\ConversionFailedException;
 use WebPConvert\Convert\Exceptions\ConversionFailed\ConverterNotOperationalException;
 use WebPConvert\Convert\Exceptions\ConversionFailed\ConverterNotOperational\InvalidApiKeyException;
 use WebPConvert\Convert\Exceptions\ConversionFailed\ConverterNotOperational\SystemRequirementsNotMetException;
+use WebPConvert\Options\BooleanOption;
 use WebPConvert\Options\SensitiveStringOption;
 
 /**
@@ -22,6 +23,9 @@ class Ewww extends AbstractConverter
 {
     use CloudConverterTrait;
     use CurlTrait;
+
+    /** @var array  Array of invalid or exceeded api keys discovered during conversions (during the request)  */
+    public static $nonFunctionalApiKeysDiscoveredDuringConversion;
 
     protected function getUnsupportedDefaultOptions()
     {
@@ -39,7 +43,8 @@ class Ewww extends AbstractConverter
         parent::createOptions();
 
         $this->options2->addOptions(
-            new SensitiveStringOption('api-key', '')
+            new SensitiveStringOption('api-key', ''),
+            new BooleanOption('check-key-status-before-converting', true)
         );
     }
 
@@ -95,16 +100,18 @@ class Ewww extends AbstractConverter
         // Check for curl requirements
         $this->checkOperationalityForCurlTrait();
 
-        $keyStatus = self::getKeyStatus($apiKey);
-        switch ($keyStatus) {
-            case 'great':
-                break;
-            case 'exceeded':
-                throw new ConverterNotOperationalException('Quota has exceeded');
-                break;
-            case 'invalid':
-                throw new InvalidApiKeyException('Api key is invalid');
-                break;
+        if ($this->options['check-key-status-before-converting']) {
+            $keyStatus = self::getKeyStatus($apiKey);
+            switch ($keyStatus) {
+                case 'great':
+                    break;
+                case 'exceeded':
+                    throw new ConverterNotOperationalException('Quota has exceeded');
+                    break;
+                case 'invalid':
+                    throw new InvalidApiKeyException('Api key is invalid');
+                    break;
+            }
         }
     }
 
@@ -167,14 +174,28 @@ class Ewww extends AbstractConverter
             //echo curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
             curl_close($ch);
 
-            /* May return this: {"error":"invalid","t":"exceeded"} */
+            /*
+            For bogus or expired key it returns:  {"error":"invalid","t":"exceeded"}
+            For exceeded key it returns:          {"error":"exceeded"}
+            */
             $responseObj = json_decode($response);
             if (isset($responseObj->error)) {
-                //echo 'error:' . $responseObj->error . '<br>';
-                //echo $response;
-                //self::blacklistKey($key);
-                //throw new SystemRequirementsNotMetException('The key is invalid. Blacklisted it!');
-                throw new InvalidApiKeyException('The api key is invalid');
+                $this->logLn('We received the following error response: ' . $responseObj->error);
+                $this->logLn('Complete response: ' . json_encode($responseObj));
+
+                // Store the invalid key in array so it can be received once the Stack is completed
+                // (even when stack succeeds)
+                if (!isset(self::$nonFunctionalApiKeysDiscoveredDuringConversion)) {
+                    self::$nonFunctionalApiKeysDiscoveredDuringConversion = [];
+                }
+                if (!in_array($options['api-key'], self::$nonFunctionalApiKeysDiscoveredDuringConversion)) {
+                    self::$nonFunctionalApiKeysDiscoveredDuringConversion[] = $options['api-key'];
+                }
+                if ($responseObj->error == "invalid") {
+                    throw new InvalidApiKeyException('The api key is invalid (or expired)');
+                } else {
+                    throw new InvalidApiKeyException('The quota is exceeded for the api-key');
+                }
             }
 
             throw new ConversionFailedException(
@@ -274,20 +295,11 @@ class Ewww extends AbstractConverter
 
         curl_setopt($ch, CURLOPT_URL, "https://optimize.exactlywww.com/verify/");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt(
-            $ch,
-            CURLOPT_POSTFIELDS,
-            [
+        curl_setopt($ch, CURLOPT_POSTFIELDS, [
             'api_key' => $key
-            ]
-        );
+        ]);
 
-        // The 403 forbidden is avoided with this line.
-        curl_setopt(
-            $ch,
-            CURLOPT_USERAGENT,
-            'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)'
-        );
+        curl_setopt($ch, CURLOPT_USERAGENT, 'WebPConvert');
 
         $response = curl_exec($ch);
         // echo $response;
@@ -339,18 +351,10 @@ class Ewww extends AbstractConverter
 
         curl_setopt($ch, CURLOPT_URL, "https://optimize.exactlywww.com/quota/");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt(
-            $ch,
-            CURLOPT_POSTFIELDS,
-            [
+        curl_setopt($ch, CURLOPT_POSTFIELDS, [
             'api_key' => $key
-            ]
-        );
-        curl_setopt(
-            $ch,
-            CURLOPT_USERAGENT,
-            'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)'
-        );
+        ]);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'WebPConvert');
 
         $response = curl_exec($ch);
         return $response; // ie -830 23. Seems to return empty for invalid keys
