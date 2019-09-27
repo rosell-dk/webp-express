@@ -638,7 +638,13 @@ Here are my current plans ahead: 0.17 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
-## Changes in 0.16.0 =
+## Changes in 0.17.0
+*(released: 27 sep 2019)*
+
+* Cwebp conversion method runs on more systems (not subject to open_basedir restrictions and also tries "pure" cwebp command). Thanks to cng11 for reaching out so I spotted this.
+* Ewww conversion method no longer does a remote api-key check for each conversion - so it is faster. If an ewww conversions fails due to a non-functional key, the key will not be tried again (until next time the options are saved)
+
+## Changes in 0.16.0
 *(released: 24 sep 2019)*
 
 - Added option to specify CDN urls in Alter HTML. Thanks to Gunnar Peipman from Estonia for suggesting this.

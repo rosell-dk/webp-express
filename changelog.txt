@@ -1,3 +1,9 @@
+= 0.17.0 =
+*(released: 27 sep 2019)*
+
+* Cwebp conversion method runs on more systems (not subject to open_basedir restrictions and also tries "pure" cwebp command). Thanks to cng11 for reaching out so I spotted this.
+* Ewww conversion method no longer does a remote api-key check for each conversion - so it is faster. If an ewww conversions fails due to a non-functional key, the key will not be tried again (until next time the options are saved)
+
 = 0.16.0 =
 *(released: 24 sep 2019)*
 
