@@ -10,6 +10,7 @@ use \WebPConvert\WebPConvert;
 use \WebPConvert\Convert\ConverterFactory;
 use \WebPConvert\Exceptions\WebPConvertException;
 use \WebPConvert\Loggers\BufferLogger;
+
 use \WebPExpress\FileHelper;
 use \WebPExpress\SanityCheck;
 use \WebPExpress\SanityException;

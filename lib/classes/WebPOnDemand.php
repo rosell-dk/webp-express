@@ -213,6 +213,8 @@ class WebPOnDemand extends WodConfigLoader
             self::$webExpressContentDirAbs . '/log',
             'Conversion triggered with the conversion script (wod/webp-on-demand.php)'
         );
+
+        self::fixConfigIfEwwwDiscoveredNonFunctionalApiKeys();
     }
 
     public static function processRequest() {

@@ -10,6 +10,8 @@ Calling Wordpress functions will FAIL. Make sure not to do that in either this c
 
 namespace WebPExpress;
 
+use \WebPConvert\Convert\Converters\Ewww;
+
 use \WebPExpress\ImageRoots;
 use \WebPExpress\Sanitize;
 use \WebPExpress\SanityCheck;
@@ -177,4 +179,19 @@ class WodConfigLoader
         self::$wodOptions = self::$options['wod'];
     }
 
+    /**
+     *  Must be called after conversion.
+     */
+    protected static function fixConfigIfEwwwDiscoveredNonFunctionalApiKeys()
+    {
+        if (isset(Ewww::$nonFunctionalApiKeysDiscoveredDuringConversion)) {
+            // We got an invalid or exceeded api key (at least one).
+            //error_log('look:' . print_r(Ewww::$nonFunctionalApiKeysDiscoveredDuringConversion, true));
+            EwwwTools::markApiKeysAsNonFunctional(
+                Ewww::$nonFunctionalApiKeysDiscoveredDuringConversion,
+                self::$webExpressContentDirAbs . '/config'
+            );
+        }
+
+    }
 }

@@ -354,4 +354,33 @@ class FileHelper
         return preg_replace("#[\\\/]+#", $newSeparator, $path);
     }
 
+    /**
+     *  @return  object|false   Returns parsed file the file exists and can be read. Otherwise it returns false
+     */
+    public static function loadJSONOptions($filename)
+    {
+        $json = self::loadFile($filename);
+        if ($json === false) {
+            return false;
+        }
+
+        $options = json_decode($json, true);
+        if ($options === null) {
+            return false;
+        }
+        return $options;
+    }
+
+    public static function saveJSONOptions($filename, $obj)
+    {
+        $result = @file_put_contents(
+            $filename,
+            json_encode($obj, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT)
+        );
+        /*if ($result === false) {
+            echo 'COULD NOT' . $filename;
+        }*/
+        return ($result !== false);
+    }
+
 }

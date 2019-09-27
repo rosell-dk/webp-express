@@ -14,34 +14,6 @@ use \WebPExpress\Option;
 class Config
 {
 
-    /**
-     *  @return  object|false   Returns parsed file the file exists and can be read. Otherwise it returns false
-     */
-    public static function loadJSONOptions($filename)
-    {
-        $json = FileHelper::loadFile($filename);
-        if ($json === false) {
-            return false;
-        }
-
-        $options = json_decode($json, true);
-        if ($options === null) {
-            return false;
-        }
-        return $options;
-    }
-
-    public static function saveJSONOptions($filename, $obj)
-    {
-        $result = @file_put_contents(
-            $filename,
-            json_encode($obj, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT)
-        );
-        /*if ($result === false) {
-            echo 'COULD NOT' . $filename;
-        }*/
-        return ($result !== false);
-    }
 
 
     /**
@@ -49,7 +21,7 @@ class Config
      */
     public static function loadConfig()
     {
-        return self::loadJSONOptions(Paths::getConfigFileName());
+        return FileHelper::loadJSONOptions(Paths::getConfigFileName());
     }
 
     public static function getDefaultConfig($skipQualityAuto = false) {
@@ -285,53 +257,6 @@ class Config
         } else {
             // This is first time visit!
             $config['converters'] = ConvertersHelper::$defaultConverters;
-
-            /*
-            // This is first time visit!
-            // We must add converters.
-            // We want to order them according to which ones that are working,
-            // so we run
-            $testResult = TestRun::getConverterStatus();
-            $workingConverters = [];
-            if ($testResult) {
-                $workingConverters = $testResult['workingConverters'];
-                //print_r($testResult);
-            }
-
-            $defaultConverters = ConvertersHelper::$defaultConverters;
-
-
-            if (count($workingConverters) == 0) {
-                // No converters are working
-                // Send ewww converter to top
-                $resultPart1 = [];
-                $resultPart2 = [];
-                foreach ($defaultConverters as $converter) {
-                    $converterId = $converter['converter'];
-                    if ($converterId == 'ewww') {
-                        $resultPart1[] = $converter;
-                    } else {
-                        $resultPart2[] = $converter;
-                    }
-                }
-                $config['converters'] = array_merge($resultPart1, $resultPart2);
-            } else {
-                // Send converters not working to the bottom
-                // - and also deactivate them..
-                $resultPart1 = [];
-                $resultPart2 = [];
-                foreach ($defaultConverters as $converter) {
-                    $converterId = $converter['converter'];
-                    if (in_array($converterId, $workingConverters)) {
-                        $resultPart1[] = $converter;
-                    } else {
-                        $converter['deactivated'] = true;
-                        $resultPart2[] = $converter;
-                    }
-                }
-                $config['converters'] = array_merge($resultPart1, $resultPart2);
-            }
-            */
         }
 
 
@@ -456,7 +381,7 @@ class Config
 
     public static function loadWodOptions()
     {
-        return self::loadJSONOptions(Paths::getWodOptionsFileName());
+        return FileHelper::loadJSONOptions(Paths::getWodOptionsFileName());
     }
 
     /**
@@ -532,7 +457,7 @@ class Config
         ];
 
         if (Paths::createConfigDirIfMissing()) {
-            $success = self::saveJSONOptions(Paths::getConfigFileName(), $config);
+            $success = FileHelper::saveJSONOptions(Paths::getConfigFileName(), $config);
             if ($success) {
                 State::setState('configured', true);
                 self::updateAutoloadedOptions($config);
@@ -597,6 +522,10 @@ class Config
                     unset($c['options']['set-size']);
                     unset($c['options']['size-in-percentage']);
                 }
+            }
+
+            if ($c['converter'] == 'ewww') {
+                $c['options']['check-key-status-before-converting'] = false;
             }
 
             // 'id', 'working' and 'error' attributes are used internally in webp-express,
@@ -717,7 +646,7 @@ class Config
     public static function saveWodOptionsFile($options)
     {
         if (Paths::createConfigDirIfMissing()) {
-            return self::saveJSONOptions(Paths::getWodOptionsFileName(), $options);
+            return FileHelper::saveJSONOptions(Paths::getWodOptionsFileName(), $options);
         }
         return false;
     }

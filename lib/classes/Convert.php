@@ -2,6 +2,8 @@
 
 namespace WebPExpress;
 
+use \WebPConvert\Convert\Converters\Ewww;
+
 use \WebPExpress\ConvertHelperIndependent;
 use \WebPExpress\Config;
 use \WebPExpress\ConvertersHelper;
@@ -97,6 +99,20 @@ class Convert
         // ---------------------------------------
 //return false;
         $result = ConvertHelperIndependent::convert($source, $destination, $convertOptions, $logDir, $converter);
+
+//error_log('looki:' . $source . $converter);
+        // If we are using stack converter, check if Ewww discovered invalid api key
+        //if (is_null($converter)) {
+            if (isset(Ewww::$nonFunctionalApiKeysDiscoveredDuringConversion)) {
+                // We got an invalid or exceeded api key (at least one).
+                //error_log('look:' . print_r(Ewww::$nonFunctionalApiKeysDiscoveredDuringConversion, true));
+                EwwwTools::markApiKeysAsNonFunctional(
+                    Ewww::$nonFunctionalApiKeysDiscoveredDuringConversion,
+                    Paths::getConfigDirAbs()
+                );
+            }
+        //}
+
 
         if ($result['success'] === true) {
             $result['filesize-original'] = @filesize($source);

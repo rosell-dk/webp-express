@@ -237,6 +237,7 @@ class WebPRealizer extends WodConfigLoader
             'Conversion triggered with the conversion script (wod/webp-realizer.php)'
         );
 
+        self::fixConfigIfEwwwDiscoveredNonFunctionalApiKeys();
     }
 
     public static function processRequest() {
