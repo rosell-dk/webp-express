@@ -650,6 +650,7 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 * Cwebp conversion method runs on more systems (not subject to open_basedir restrictions and also tries "pure" cwebp command). Thanks to cng11 for reaching out so I spotted this.
 * Ewww conversion method no longer does a remote api-key check for each conversion - so it is faster. If an ewww conversions fails due to a non-functional key, the key will not be tried again (until next time the options are saved)
+* Updated cwebp binaries to version 1.0.3
 
 = 0.16.0 =
 *(released: 24 sep 2019)*
@@ -1026,7 +1027,7 @@ For older releases, check out changelog.txt
 == Upgrade Notice ==
 
 = 0.17.0 =
-* Improved Cwebp availability and Ewww performance
+* Improved Cwebp availability and Ewww performance. And updated cwebp binaries to version 1.0.3
 
 = 0.16.0 =
 * Various improvements and fixes
