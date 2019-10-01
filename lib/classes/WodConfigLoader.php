@@ -35,12 +35,33 @@ class WodConfigLoader
         exit;
     }
 
+    /**
+     *  Check if Apache handles the PHP requests (Note that duel setups are possible and ie Nginx could be handling the image requests).
+     */
+    public static function isApache()
+    {
+        return (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== false);
+    }
+
+    protected static function isNginxHandlingImages()
+    {
+        if (stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') !== false) {
+            return true;
+        }
+
+        // On WP Engine, SERVER_SOFTWARE is "Apache", but images are handled by NGINX.
+        if (isset($_SERVER['WPENGINE_ACCOUNT'])) {
+            return true;
+        };
+        return false;
+    }
+
     public static function preventDirectAccess($filename)
     {
         // Protect against directly accessing webp-on-demand.php
         // Only protect on Apache. We know for sure that the method is not reliable on nginx.
         // We have not tested on litespeed yet, so we dare not.
-        if (stripos($_SERVER["SERVER_SOFTWARE"], 'apache') !== false && stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') === false) {
+        if (self::isApache() && (!self::isNginxHandlingImages())) {
             if (strpos($_SERVER['REQUEST_URI'], $filename) !== false) {
                 self::exitWithError(
                     'It seems you are visiting this file (plugins/webp-express/wod/' . $filename . ') directly. We do not allow this.'

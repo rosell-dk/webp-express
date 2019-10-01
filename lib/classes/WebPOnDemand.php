@@ -19,7 +19,7 @@ use \WebPExpress\Validate;
 use \WebPExpress\WodConfigLoader;
 
 class WebPOnDemand extends WodConfigLoader
-{
+{    
     private static function getSourceDocRoot() {
 
 
@@ -82,7 +82,7 @@ class WebPOnDemand extends WodConfigLoader
         // Check querystring (full path)
         // - But only on Nginx (our Apache .htaccess rules never passes absolute url)
         if (
-            (stripos($_SERVER["SERVER_SOFTWARE"], 'nginx') !== false) &&
+            (self::isNginxHandlingImages()) &&
             (isset($_GET['source']) || isset($_GET['xsource']))
         ) {
             self::$checking = 'source (passed as absolute path on nginx)';
