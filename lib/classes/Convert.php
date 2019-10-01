@@ -79,12 +79,12 @@ class Convert
             $checking = 'destination';
             $destination = self::getDestination($source, $config);
 
-            $destination = SanityCheck::absPathIsInDocRoot($destination);
+            $destination = SanityCheck::absPath($destination);
 
             // Check log dir
             // -------------------------------
             $checking = 'conversion log dir';
-            $logDir = SanityCheck::absPathIsInDocRoot(Paths::getWebPExpressContentDirAbs() . '/log');
+            $logDir = SanityCheck::absPath(Paths::getWebPExpressContentDirAbs() . '/log');
 
 
         } catch (\Exception $e) {
