@@ -11,10 +11,12 @@ class PlatformInfo
         return ( strpos( $server, 'microsoft-iis') !== false );
     }
 
+    /**
+     *  Check if Apache handles the PHP requests (Note that duel setups are possible and ie Nginx could be handling the image requests).
+     */
     public static function isApache()
     {
-        $server = strtolower($_SERVER['SERVER_SOFTWARE']);
-        return ( strpos( $server, 'apache') !== false );
+        return (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== false);
     }
 
     public static function isLiteSpeed()
