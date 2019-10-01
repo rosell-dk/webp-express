@@ -52,8 +52,19 @@ class WebPRealizer extends WodConfigLoader
         }
 
         // Last resort is to use $_SERVER['REQUEST_URI'], well knowing that it does not give the
-        // correct result in all setups (ie "folder method 1")
+        // correct result in all setups (ie "folder method 1").
+        // On nginx, it can even return the path to webp-realizer.php. TODO: Handle that better than now
         $destRel = SanityCheck::pathWithoutDirectoryTraversal(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+        if ($destRel) {
+            if (preg_match('#webp-realizer\.php$#', $destRel)) {
+                throw new \Exception(
+                    'webp-realizer.php need to know the file path and cannot simply use $_SERVER["REQUEST_URI"] ' .
+                    'as that points to itself rather than the image requested. ' .
+                    'On Nginx, please add: "&xdestination=x$request_filename" to the URL in the rules in the nginx config ' .
+                    '(sorry, the parameter was missing in the rules in the README for a while, but it is back)'
+                );
+            }
+        }
         $destination = SanityCheck::absPath($docRoot . $destRel);
         return SanityCheck::absPathIsInDocRoot($destination);
     }
