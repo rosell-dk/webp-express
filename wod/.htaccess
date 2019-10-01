@@ -1,3 +1,4 @@
+# Grant access to webp-on-demand.php and webp-realizer.php
 <FilesMatch "(webp-on-demand|webp-realizer)\.php$">
   <IfModule !mod_authz_core.c>
     Order deny,allow
