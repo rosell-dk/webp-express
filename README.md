@@ -638,6 +638,16 @@ Here are my current plans ahead: 0.17 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.17.1
+*(released: 1 Oct 2019)*
+
+- Fixed NGINX rules in FAQ (added xdestination for the create webp upon request functionality)
+- Fixed issue with Alter HTML. Thanks to @jonathanernst for discovering issue and supplying the patch.
+- WebP Express now works on WPEngine. A test instance has been created to ensure it also works in future releases.
+- Miscellaneous bug fixes
+
+For more info, see the closed issues on the 0.17.1 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/27?closed=1
+
 ## Changes in 0.17.0
 *(released: 27 sep 2019)*
 

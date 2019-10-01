@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.2
-Stable tag: 0.17.0
+Stable tag: 0.17.1
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -645,6 +645,16 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.17.1 =
+*(released: 1 Oct 2019)*
+
+* Fixed NGINX rules in FAQ (added xdestination for the create webp upon request functionality)
+* Fixed issue with Alter HTML. Thanks to @jonathanernst for discovering issue and supplying the patch.
+* WebP Express now works on WPEngine. A test instance has been created to ensure it also works in future releases.
+* Miscellaneous bug fixes
+
+For more info, see the closed issues on the 0.17.1 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/27?closed=1
+
 = 0.17.0 =
 *(released: 27 sep 2019)*
 
@@ -1025,6 +1035,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.17.1 =
+* Miscellaneous bug fixes. Including the NGINX rules in the FAQ (added "xdestination" argument to webp-realizer.php)
 
 = 0.17.0 =
 * Improved Cwebp availability and Ewww performance. And updated cwebp binaries to version 1.0.3
