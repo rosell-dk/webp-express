@@ -12,7 +12,9 @@ class SanityCheck
     private static function fail($errorMsg, $input)
     {
         // sanitize input before calling error_log(), it might be sent to file, mail, syslog etc.
+        //error_log($errorMsg . '. input:' . Sanitize::removeNUL($input) . 'backtrace: ' . print_r(debug_backtrace(), true));
         error_log($errorMsg . '. input:' . Sanitize::removeNUL($input));
+
         //error_log(get_magic_quotes_gpc() ? 'on' :'off');
         throw new SanityException($errorMsg);   //  . '. Check debug.log for details (and make sure debugging is enabled)'
     }
@@ -268,7 +270,9 @@ class SanityCheck
 
 
     /**
-     * Test that absolute path is in document root.
+     * Test that path is an absolute path and it is in document root.
+     *
+     * If DOCUMENT_ROOT is not available, then only the absPath check will be done.
      *
      * TODO: Instead of this method, we shoud check
      *
@@ -279,26 +283,44 @@ class SanityCheck
     {
         self::absPath($input);
 
+        if (!isset($_SERVER["DOCUMENT_ROOT"])) {
+            return $input;
+        }
+        if ($_SERVER["DOCUMENT_ROOT"] == '') {
+            return $input;
+        }
+
         $docRoot = self::absPath($_SERVER["DOCUMENT_ROOT"]);
         $docRoot = rtrim($docRoot, '/');
-        $docRoot = self::absPathExistsAndIsDir($docRoot);
+
+        try {
+            $docRoot = self::absPathExistsAndIsDir($docRoot);
+        } catch (SanityException $e) {
+            return $input;
+        }
+
+        // See if $filePath begins with $dirPath + '/'. If it does, we are done and OK!
+        if (strpos($input, $docRoot . '/') === 0) {
+            return $input;
+        }
+
 
         // Use realpath to expand symbolic links and check if it exists
         $docRootSymLinksExpanded = @realpath($docRoot);
         if ($docRootSymLinksExpanded === false) {
-            $errorMsg = 'Cannot find document root';
-            self::fail($errorMsg, $input);
+            // probably outside open basedir restriction.
+            //$errorMsg = 'Cannot resolve document root';
+            //self::fail($errorMsg, $input);
+
+            // Cannot resolve document root, so cannot test if in document root
+            return $input;
         }
         $docRootSymLinksExpanded = rtrim($docRootSymLinksExpanded, '/');
         $docRootSymLinksExpanded = self::absPathExists($docRootSymLinksExpanded, 'Document root does not exist!');
         $docRootSymLinksExpanded = self::absPathExistsAndIsDir($docRootSymLinksExpanded, 'Document root is not a directory!');
 
-        try {
-            // try without symlinks expanded
-            self::pathBeginsWith($input, $docRoot . '/', $errorMsg);
-        } catch (SanityException $e) {
-            self::pathBeginsWithSymLinksExpanded($input, $docRootSymLinksExpanded . '/', $errorMsg);
-        }
+        $errorMsg = 'Path is outside resolved document root (' . $docRootSymLinksExpanded . ')';
+        self::pathBeginsWithSymLinksExpanded($input, $docRootSymLinksExpanded . '/', $errorMsg);
 
         return $input;
     }
