@@ -1,3 +1,13 @@
+= 0.17.1 =
+*(released: not yet)*
+
+* Fixed NGINX rules in FAQ (added xdestination for the create webp upon request functionality)
+* Fixed issue with Alter HTML. Thanks to @jonathanernst for discovering issue and supplying the patch.
+* WebP Express now works on WPEngine. A test instance has been created to ensure it also works in future releases.
+* Miscellaneous bug fixes
+
+For more info, see the closed issues on the 0.17.1 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/27?closed=1
+
 = 0.17.0 =
 *(released: 27 sep 2019)*
 
