@@ -491,6 +491,11 @@ To make *WebP Express* work on a free Cloudflare account, you have the following
 
 3. You can switch operation mode to "CDN friendly" and use HTML altering.
 
+### I am on WP Engine
+From version 0.17.1 on WebP Express works with WP engine and the combination is tested before each release. To make the redirection work, you must add the configuration found in the "I am on Nginx/OpenResty" section in this FAQ. Use the "try_files" variant.
+
+WebP Express tweaks the workings of "Redirect to converter" a bit for WP engine. The script usually serves the webp directly, along with a Vary:Accept header. This header is however overwritten by the caching machinery on WP engine. So instead of serving the image, WebP Express serves a redirect to itself. That is: The image request result redirects to itself. As the webp now exists, it will not be redirected to the converter script this time, but directly to the webp (provided you are using the rules!). You can hit the "Live test" button next to "Enable redirection to converter?" to verify that this works as just described.
+
 ### WebP Express / ShortPixel setup
 Here is a recipe for using WebP Express together with ShortPixel, such that WebP Express generates the webp's, and ShortPixel only is used to create `<picture>` tags, when it detects a webp image in the same folder as an original.
 
@@ -639,7 +644,7 @@ Here are my current plans ahead: 0.17 will probably be a file manager-like inter
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
 ## Changes in 0.17.1
-*(released: 1 Oct 2019)*
+*(released: 2 Oct 2019)*
 
 - Fixed NGINX rules in FAQ (added xdestination for the create webp upon request functionality)
 - Fixed issue with Alter HTML. Thanks to @jonathanernst for discovering issue and supplying the patch.

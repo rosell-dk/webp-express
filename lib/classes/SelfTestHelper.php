@@ -50,22 +50,22 @@ class SelfTestHelper
 
     public static function copyFile($source, $destination)
     {
-        $result = [];
+        $log = [];
         if (@copy($source, $destination)) {
-            return [true, $result];
+            return [true, $log];
         } else {
-            $result[] = 'Failed to copy *' . $source . '* to *' . $destination . '*';
+            $log[] = 'Failed to copy *' . $source . '* to *' . $destination . '*';
             if (!@file_exists($source)) {
-                $result[] = 'The source file was not found';
+                $log[] = 'The source file was not found';
             } else {
                 if (!@file_exists(dirname($destination))) {
-                    $result[] = 'The destination folder does not exist!';
+                    $log[] = 'The destination folder does not exist!';
                 } else {
-                    $result[] = 'This is probably a permission issue. Check that your webserver has permission to ' .
+                    $log[] = 'This is probably a permission issue. Check that your webserver has permission to ' .
                         'write files in the directory (*' . dirname($destination) . '*)';
                 }
             }
-            return [false, $result];
+            return [false, $log];
         }
     }
 
@@ -84,7 +84,7 @@ class SelfTestHelper
     {
         // TODO: Copy to a subfolder instead
         // TODO: Use smaller jpeg / pngs please.
-        $result = [];
+        $log = [];
         switch ($imageType) {
             case 'jpeg':
                 $fileNameToCopy = 'very-small.jpg';
@@ -96,30 +96,30 @@ class SelfTestHelper
         $testSource = Paths::getPluginDirAbs() . '/webp-express/test/' . $fileNameToCopy;
         $filenameOfDestination = self::randomDigitsAndLetters(6) . '.' . strtoupper($imageType);
         //$filenameOfDestination = self::randomDigitsAndLetters(6) . '.' . $imageType;
-        $result[] = 'Copying ' . strtoupper($imageType) . ' to ' . $rootId . ' folder (*webp-express-test-images/' . $filenameOfDestination . '*)';
+        $log[] = 'Copying ' . strtoupper($imageType) . ' to ' . $rootId . ' folder (*webp-express-test-images/' . $filenameOfDestination . '*)';
 
         $destDir = Paths::getAbsDirById($rootId) . '/webp-express-test-images';
         $destination = $destDir . '/' . $filenameOfDestination;
 
         if (!@file_exists($destDir)) {
             if (!@mkdir($destDir)) {
-                $result[count($result) - 1] .= '. FAILED';
-                $result[] = 'Failed to create folder for test images: ' . $destDir;
-                return [$result, false, ''];
+                $log[count($log) - 1] .= '. FAILED';
+                $log[] = 'Failed to create folder for test images: ' . $destDir;
+                return [$log, false, ''];
             }
         }
 
         list($success, $errors) = self::copyFile($testSource, $destination);
         if (!$success) {
-            $result[count($result) - 1] .= '. FAILED';
-            $result = array_merge($result, $errors);
-            return [$result, false, ''];
+            $log[count($log) - 1] .= '. FAILED';
+            $log = array_merge($log, $errors);
+            return [$log, false, ''];
         } else {
-            $result[count($result) - 1] .= '. ok!';
-            $result[] = 'We now have a ' . $imageType . ' stored here:';
-            $result[] = '*' . $destination . '*';
+            $log[count($log) - 1] .= '. ok!';
+            $log[] = 'We now have a ' . $imageType . ' stored here:';
+            $log[] = '*' . $destination . '*';
         }
-        return [$result, true, $filenameOfDestination];
+        return [$log, true, $filenameOfDestination];
     }
 
     public static function copyTestImageToUploadFolder($imageType = 'jpeg')
@@ -129,25 +129,25 @@ class SelfTestHelper
 
     public static function copyDummyWebPToCacheFolder($rootId, $destinationFolder, $destinationExtension, $destinationStructure, $sourceFileName, $imageType = 'jpeg')
     {
-        $result = [];
+        $log = [];
         $dummyWebP = Paths::getPluginDirAbs() . '/webp-express/test/test.jpg.webp';
 
-        $result[] = 'Copying dummy webp to the cache root for ' . $rootId;
+        $log[] = 'Copying dummy webp to the cache root for ' . $rootId;
         $destDir = Paths::getCacheDirForImageRoot($destinationFolder, $destinationStructure, $rootId);
         if (!file_exists($destDir)) {
-            $result[] = 'The folder did not exist. Creating folder at: ' . $destinationFolder;
+            $log[] = 'The folder did not exist. Creating folder at: ' . $destinationFolder;
             if (!mkdir($destDir, 0777, true)) {
-                $result[] = 'Failed creating folder!';
-                return [$result, false, ''];
+                $log[] = 'Failed creating folder!';
+                return [$log, false, ''];
             }
         }
         $destDir .= '/webp-express-test-images';
         if (!file_exists($destDir)) {
             if (!mkdir($destDir, 0755, false)) {
-                $result[] = 'Failed creating the folder for the test images:';
-                $result[] = $destDir;
-                $result[] = 'To run this test, you must grant write permissions';
-                return [$result, false, ''];
+                $log[] = 'Failed creating the folder for the test images:';
+                $log[] = $destDir;
+                $log[] = 'To run this test, you must grant write permissions';
+                return [$log, false, ''];
             }
         }
 
@@ -163,48 +163,84 @@ class SelfTestHelper
 
         list($success, $errors) = self::copyFile($dummyWebP, $destination);
         if (!$success) {
-            $result[count($result) - 1] .= '. FAILED';
-            $result = array_merge($result, $errors);
-            return [$result, false, ''];
+            $log[count($log) - 1] .= '. FAILED';
+            $log = array_merge($log, $errors);
+            return [$log, false, ''];
         } else {
-            $result[count($result) - 1] .= '. ok!';
-            $result[] = 'We now have a webp file stored here:';
-            $result[] = '*' . $destination . '*';
-            $result[] = '';
+            $log[count($log) - 1] .= '. ok!';
+            $log[] = 'We now have a webp file stored here:';
+            $log[] = '*' . $destination . '*';
+            $log[] = '';
         }
-        return [$result, true, $destination];
+        return [$log, true, $destination];
     }
 
-    public static function remoteGet($requestUrl, $args = [])
+    /**
+     *  Perform HTTP request.
+     *
+     *  @param  string  $requestUrl    URL
+     *  @param  array   $args          Args to pass to wp_remote_get. Note however that "redirection" is set to 0
+     *  @param  int     $maxRedirects  For internal use
+     *  @return array   The result
+     *                  $success (boolean):  If we got a 200 response in the end (after max 2 redirects)
+     *                  $log (array)      :  Message log
+     *                  $results          :  Array of results from wp_remote_get. If no redirection occured, it will only contain one item.
+     *
+     */
+    public static function remoteGet($requestUrl, $args = [], $maxRedirects = 2)
     {
-        $result = [];
-        $return = wp_remote_get($requestUrl, $args);
-        if (is_wp_error($return)) {
-            $result[] = 'Request URL: ' . $requestUrl;
-            $result[] = 'The remote request errored';
-            return [false, $result, [], $return];
-        }
-        if ($return['response']['code'] != '200') {
-            //$result[count($result) - 1] .= '. FAILED';
-            $result[] = 'Request URL: ' . $requestUrl;
-            $result[] = 'Response: ' . $return['response']['code'] . ' ' . $return['response']['message'];
+        $log = [];
+        $args['redirection'] = 0;
 
-            if (isset($return['headers'])) {
-                $result = array_merge($result, SelfTestHelper::printHeaders($return['headers']));
-            } else {
-                $return['headers'] = [];
-            }
-            if (isset($return['headers']['content-type'])) {
-                if (strpos($return['headers']['content-type'], 'text/html') !== false) {
-                    $result[] = 'Body:';
-                    $result[] = print_r($return['body'], true);
+        $log[] = 'Request URL: ' . $requestUrl;
+
+        $results = [];
+        $wpResult = wp_remote_get($requestUrl, $args);
+        if (!isset($wpResult['headers'])) {
+            $wpResult['headers'] = [];
+        }
+        $results[] = $wpResult;
+        if (is_wp_error($wpResult)) {
+            $log[] = 'The remote request errored';
+            return [false, $log, $results];
+        }
+        $responseCode = $wpResult['response']['code'];
+
+        $log[] = 'Response: ' . $responseCode . ' ' . $wpResult['response']['message'];
+        $log = array_merge($log, SelfTestHelper::printHeaders($wpResult['headers']));
+
+        if (isset($wpResult['headers']['content-type'])) {
+            if (strpos($wpResult['headers']['content-type'], 'text/html') !== false) {
+                if (isset($wpResult['body']) && (!empty($wpResult['body']))) {
+                    $log[] = 'Body:';
+                    $log[] = print_r($wpResult['body'], true);
                 }
-
             }
-
-            return [false, $result, $return['headers'], $return];
         }
-        return [true, $result, $return['headers'], $return];
+
+        if (($responseCode == '302') || ($responseCode == '301')) {
+            if ($maxRedirects > 0) {
+                if (isset($wpResult['headers']['location'])) {
+                    $url = $wpResult['headers']['location'];
+                    if (strpos($url, 'http') !== 0) {
+                        $url = $requestUrl . $url;
+                    }
+                    $log[] = 'Following that redirect';
+
+                    list($success, $newLog, $newResult) = self::remoteGet($url, $args, $maxRedirects - 1);
+                    $log = array_merge($log, $newLog);
+                    $results = array_merge($results, $newResult);
+
+                    return [$success, $log, $results];
+
+                }
+            } else {
+                $log[] = 'Not following the redirect (max redirects exceeded)';
+            }
+        }
+
+        $success = ($responseCode == '200');
+        return [$success, $log, $results];
     }
 
     public static function hasHeaderContaining($headers, $headerToInspect, $containString)
@@ -265,23 +301,23 @@ class SelfTestHelper
 
     public static function flattenHeaders($headers)
     {
-        $result = [];
+        $log = [];
         foreach ($headers as $headerName => $headerValue) {
             if (gettype($headerValue) == 'array') {
                 foreach ($headerValue as $i => $value) {
-                    $result[] = [$headerName, $value];
+                    $log[] = [$headerName, $value];
                 }
             } else {
-                $result[] = [$headerName, $headerValue];
+                $log[] = [$headerName, $headerValue];
             }
         }
-        return $result;
+        return $log;
     }
 
     public static function printHeaders($headers)
     {
-        $result = [];
-        $result[] = '#### Response headers:';
+        $log = [];
+        $log[] = '#### Response headers:';
 
         $headersFlat = self::flattenHeaders($headers);
         //
@@ -289,10 +325,10 @@ class SelfTestHelper
             if ($headerName == 'x-webp-express-error') {
                 $headerValue = '**' . $headerValue . '**{: .error}';
             }
-            $result[] = '- ' . $headerName . ': ' . $headerValue;
+            $log[] = '- ' . $headerName . ': ' . $headerValue;
         }
-        $result[] = '';
-        return $result;
+        $log[] = '';
+        return $log;
     }
 
     private static function trueFalseNullString($var)
@@ -308,109 +344,109 @@ class SelfTestHelper
 
     public static function systemInfo()
     {
-        $result = [];
-        $result[] = '#### System info:';
-        $result[] = '- PHP version: ' . phpversion();
-        $result[] = '- OS: ' . PHP_OS;
-        $result[] = '- Server software: ' . $_SERVER["SERVER_SOFTWARE"];
-        $result[] = '- Document Root status: ' . Paths::docRootStatusText();
+        $log = [];
+        $log[] = '#### System info:';
+        $log[] = '- PHP version: ' . phpversion();
+        $log[] = '- OS: ' . PHP_OS;
+        $log[] = '- Server software: ' . $_SERVER["SERVER_SOFTWARE"];
+        $log[] = '- Document Root status: ' . Paths::docRootStatusText();
         if (PathHelper::isDocRootAvailable()) {
-            $result[] = '- Document Root: ' . $_SERVER['DOCUMENT_ROOT'];
+            $log[] = '- Document Root: ' . $_SERVER['DOCUMENT_ROOT'];
         }
         if (PathHelper::isDocRootAvailableAndResolvable()) {
             if ($_SERVER['DOCUMENT_ROOT'] != realpath($_SERVER['DOCUMENT_ROOT'])) {
-                $result[] = '- Document Root (symlinked resolved): ' . realpath($_SERVER['DOCUMENT_ROOT']);
+                $log[] = '- Document Root (symlinked resolved): ' . realpath($_SERVER['DOCUMENT_ROOT']);
             }
         }
 
-        $result[] = '- Document Root: ' . Paths::docRootStatusText();
-        $result[] = '- Apache module "mod_rewrite" enabled?: ' . self::trueFalseNullString(PlatformInfo::gotApacheModule('mod_rewrite'));
-        $result[] = '- Apache module "mod_headers" enabled?: ' . self::trueFalseNullString(PlatformInfo::gotApacheModule('mod_headers'));
-        return $result;
+        $log[] = '- Document Root: ' . Paths::docRootStatusText();
+        $log[] = '- Apache module "mod_rewrite" enabled?: ' . self::trueFalseNullString(PlatformInfo::gotApacheModule('mod_rewrite'));
+        $log[] = '- Apache module "mod_headers" enabled?: ' . self::trueFalseNullString(PlatformInfo::gotApacheModule('mod_headers'));
+        return $log;
     }
 
     public static function wordpressInfo()
     {
-        $result = [];
-        $result[] = '#### Wordpress info:';
-        $result[] = '- Version: ' . get_bloginfo('version');
-        $result[] = '- Multisite?: ' . self::trueFalseNullString(is_multisite());
-        $result[] = '- Is wp-content moved?: ' . self::trueFalseNullString(Paths::isWPContentDirMoved());
-        $result[] = '- Is uploads moved out of wp-content?: ' . self::trueFalseNullString(Paths::isUploadDirMovedOutOfWPContentDir());
-        $result[] = '- Is plugins moved out of wp-content?: ' . self::trueFalseNullString(Paths::isPluginDirMovedOutOfWpContent());
+        $log = [];
+        $log[] = '#### Wordpress info:';
+        $log[] = '- Version: ' . get_bloginfo('version');
+        $log[] = '- Multisite?: ' . self::trueFalseNullString(is_multisite());
+        $log[] = '- Is wp-content moved?: ' . self::trueFalseNullString(Paths::isWPContentDirMoved());
+        $log[] = '- Is uploads moved out of wp-content?: ' . self::trueFalseNullString(Paths::isUploadDirMovedOutOfWPContentDir());
+        $log[] = '- Is plugins moved out of wp-content?: ' . self::trueFalseNullString(Paths::isPluginDirMovedOutOfWpContent());
 
-        $result[] = '';
+        $log[] = '';
 
-        $result[] = '#### Image roots (absolute paths)';
+        $log[] = '#### Image roots (absolute paths)';
         foreach (Paths::getImageRootIds() as $rootId) {
             $absDir = Paths::getAbsDirById($rootId);
 
             if (PathHelper::pathExistsAndIsResolvable($absDir) && ($absDir != realpath($absDir))) {
-                $result[] = '*' . $rootId . '*: ' . $absDir . ' (resolved for symlinks: ' .  realpath($absDir) . ')';
+                $log[] = '*' . $rootId . '*: ' . $absDir . ' (resolved for symlinks: ' .  realpath($absDir) . ')';
             } else {
-                $result[] = '*' . $rootId . '*: ' . $absDir;
+                $log[] = '*' . $rootId . '*: ' . $absDir;
 
             }
         }
 
-        $result[] = '#### Image roots (relative to document root)';
+        $log[] = '#### Image roots (relative to document root)';
         foreach (Paths::getImageRootIds() as $rootId) {
             $absPath = Paths::getAbsDirById($rootId);
             if (PathHelper::canCalculateRelPathFromDocRootToDir($absPath)) {
-                $result[] = '*' . $rootId . '*: ' . PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed($absPath);
+                $log[] = '*' . $rootId . '*: ' . PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed($absPath);
             } else {
-                $result[] = '*' . $rootId . '*: ' . 'n/a (not within document root)';
+                $log[] = '*' . $rootId . '*: ' . 'n/a (not within document root)';
             }
         }
 
-        $result[] = '#### Image roots (URLs)';
+        $log[] = '#### Image roots (URLs)';
         foreach (Paths::getImageRootIds() as $rootId) {
             $url = Paths::getUrlById($rootId);
-            $result[] = '*' . $rootId . '*: ' . $url;
+            $log[] = '*' . $rootId . '*: ' . $url;
         }
 
 
-        return $result;
+        return $log;
     }
 
     public static function configInfo($config)
     {
-        $result = [];
-        $result[] = '#### WebP Express configuration info:';
-        $result[] = '- Destination folder: ' . $config['destination-folder'];
-        $result[] = '- Destination extension: ' . $config['destination-extension'];
-        $result[] = '- Destination structure: ' . $config['destination-structure'];
-        //$result[] = 'Image types: ' . ;
-        //$result[] = '';
-        $result[] = '(To view all configuration, take a look at the config file, which is stored in *' . Paths::getConfigFileName() . '*)';
-        return $result;
+        $log = [];
+        $log[] = '#### WebP Express configuration info:';
+        $log[] = '- Destination folder: ' . $config['destination-folder'];
+        $log[] = '- Destination extension: ' . $config['destination-extension'];
+        $log[] = '- Destination structure: ' . $config['destination-structure'];
+        //$log[] = 'Image types: ' . ;
+        //$log[] = '';
+        $log[] = '(To view all configuration, take a look at the config file, which is stored in *' . Paths::getConfigFileName() . '*)';
+        return $log;
     }
 
     public static function htaccessInfo($config, $printRules = true)
     {
-        $result = [];
-        //$result[] = '*.htaccess info:*';
-        //$result[] = '- Image roots with WebP Express rules: ' . implode(', ', HTAccess::getRootsWithWebPExpressRulesIn());
-        $result[] = '#### .htaccess files that WebP Express have placed rules in the following files:';
+        $log = [];
+        //$log[] = '*.htaccess info:*';
+        //$log[] = '- Image roots with WebP Express rules: ' . implode(', ', HTAccess::getRootsWithWebPExpressRulesIn());
+        $log[] = '#### .htaccess files that WebP Express have placed rules in the following files:';
         $rootIds = HTAccess::getRootsWithWebPExpressRulesIn();
         foreach ($rootIds as $imageRootId) {
-            $result[] = '- ' . Paths::getAbsDirById($imageRootId) . '/.htaccess';
+            $log[] = '- ' . Paths::getAbsDirById($imageRootId) . '/.htaccess';
         }
 
         foreach ($rootIds as $imageRootId) {
-            $result = array_merge($result, self::rulesInImageRoot($config, $imageRootId));
+            $log = array_merge($log, self::rulesInImageRoot($config, $imageRootId));
         }
 
-        return $result;
+        return $log;
     }
 
     public static function rulesInImageRoot($config, $imageRootId)
     {
-        $result = [];
-        $result[] = '#### WebP rules in *' . $imageRootId . '*:';
+        $log = [];
+        $log[] = '#### WebP rules in *' . $imageRootId . '*:';
         $file = Paths::getAbsDirById($imageRootId) . '/.htaccess';
         if (!HTAccess::haveWeRulesInThisHTAccess($file)) {
-            $result[] = '**NONE!**{: .warn}';
+            $log[] = '**NONE!**{: .warn}';
         } else {
             $weRules = HTAccess::extractWebPExpressRulesFromHTAccess($file);
             // remove unindented comments
@@ -423,9 +459,9 @@ class SelfTestHelper
             }
             $weRules = implode("\n", $weRulesArr);
 
-            $result[] = '```' . $weRules . '```';
+            $log[] = '```' . $weRules . '```';
         }
-        return $result;
+        return $log;
     }
 
     public static function rulesInUpload($config)
@@ -435,117 +471,117 @@ class SelfTestHelper
 
     public static function allInfo($config)
     {
-        $result = [];
-        $result = array_merge($result, self::systemInfo());
-        $result = array_merge($result, self::wordpressInfo());
-        $result = array_merge($result, self::configInfo($config));
-        $result = array_merge($result, self::capabilityTests($config));
-        $result = array_merge($result, self::htaccessInfo($config, true));
-        //$result = array_merge($result, self::rulesInImageRoot($config, 'upload'));
-        //$result = array_merge($result, self::rulesInImageRoot($config, 'wp-content'));
-        return $result;
+        $log = [];
+        $log = array_merge($log, self::systemInfo());
+        $log = array_merge($log, self::wordpressInfo());
+        $log = array_merge($log, self::configInfo($config));
+        $log = array_merge($log, self::capabilityTests($config));
+        $log = array_merge($log, self::htaccessInfo($config, true));
+        //$log = array_merge($log, self::rulesInImageRoot($config, 'upload'));
+        //$log = array_merge($log, self::rulesInImageRoot($config, 'wp-content'));
+        return $log;
     }
 
     public static function capabilityTests($config)
     {
         $capTests = $config['base-htaccess-on-these-capability-tests'];
-        $result = [];
-        $result[] = '#### Live tests of .htaccess capabilities:';
-        /*$result[] = 'Exactly what you can do in a *.htaccess* depends on the server setup. WebP Express ' .
+        $log = [];
+        $log[] = '#### Live tests of .htaccess capabilities:';
+        /*$log[] = 'Exactly what you can do in a *.htaccess* depends on the server setup. WebP Express ' .
             'makes some live tests to verify if a certain feature in fact works. This is done by creating ' .
             'test files (*.htaccess* files and php files) in a dir inside the content dir and running these. ' .
             'These test results are used when creating the rewrite rules. Here are the results:';*/
 
-//        $result[] = '';
-        $result[] = '- mod_rewrite working?: ' . self::trueFalseNullString(CapabilityTest::modRewriteWorking());
-        $result[] = '- mod_header working?: ' . self::trueFalseNullString($capTests['modHeaderWorking']);
-        /*$result[] = '- pass variable from *.htaccess* to script through header working?: ' .
+//        $log[] = '';
+        $log[] = '- mod_rewrite working?: ' . self::trueFalseNullString(CapabilityTest::modRewriteWorking());
+        $log[] = '- mod_header working?: ' . self::trueFalseNullString($capTests['modHeaderWorking']);
+        /*$log[] = '- pass variable from *.htaccess* to script through header working?: ' .
             self::trueFalseNullString($capTests['passThroughHeaderWorking']);*/
-        $result[] = '- passing variables from *.htaccess* to PHP script through environment variable working?: ' . self::trueFalseNullString($capTests['passThroughEnvWorking']);
-        return $result;
+        $log[] = '- passing variables from *.htaccess* to PHP script through environment variable working?: ' . self::trueFalseNullString($capTests['passThroughEnvWorking']);
+        return $log;
     }
 
     public static function diagnoseFailedRewrite($config)
     {
         if (($config['destination-structure'] == 'image-roots') && (!PathHelper::isDocRootAvailableAndResolvable())) {
-            $result[] = 'The problem is probably this combination:';
+            $log[] = 'The problem is probably this combination:';
             if (!PathHelper::isDocRootAvailable()) {
-                $result[] = '1. Your document root isn`t available';
+                $log[] = '1. Your document root isn`t available';
             } else {
-                $result[] = '1. Your document root isn`t resolvable for symlinks (it is probably subject to open_basedir restriction)';
+                $log[] = '1. Your document root isn`t resolvable for symlinks (it is probably subject to open_basedir restriction)';
             }
-            $result[] = '2. Your document root is symlinked';
-            $result[] = '3. The wordpress function that tells the path of the uploads folder returns the symlink resolved path';
+            $log[] = '2. Your document root is symlinked';
+            $log[] = '3. The wordpress function that tells the path of the uploads folder returns the symlink resolved path';
 
-            $result[] = 'I cannot check if your document root is in fact symlinked (as document root isnt resolvable). ' .
+            $log[] = 'I cannot check if your document root is in fact symlinked (as document root isnt resolvable). ' .
                 'But if it is, there you have it. The line beginning with "RewriteCond %{REQUEST_FILENAME}"" points to your resolved root, ' .
                 'but it should point to your symlinked root. WebP Express cannot do that for you because it cannot discover what the symlink is. ' .
                 'Try changing the line manually. When it works, you can move the rules outside the WebP Express block so they dont get ' .
                 'overwritten. OR you can change your server configuration (document root / open_basedir restrictions)';
         }
 
-        //$result[] = '## Diagnosing';
+        //$log[] = '## Diagnosing';
         if (PlatformInfo::isNginx()) {
             // Nginx
-            $result[] = 'Notice that you are on Nginx and the rules that WebP Express stores in the *.htaccess* files probably does not ' .
+            $log[] = 'Notice that you are on Nginx and the rules that WebP Express stores in the *.htaccess* files probably does not ' .
                 'have any effect. ';
-            $result[] = 'Please read the "I am on Nginx" section in the FAQ (https://wordpress.org/plugins/webp-express/)';
-            $result[] = 'And did you remember to restart the nginx service after updating the configuration?';
+            $log[] = 'Please read the "I am on Nginx" section in the FAQ (https://wordpress.org/plugins/webp-express/)';
+            $log[] = 'And did you remember to restart the nginx service after updating the configuration?';
 
-            $result[] = 'PS: If you cannot get the redirect to work, you can simply rely on Alter HTML as described in the FAQ.';
-            return $result;
+            $log[] = 'PS: If you cannot get the redirect to work, you can simply rely on Alter HTML as described in the FAQ.';
+            return $log;
         }
 
         $modRewriteWorking = CapabilityTest::modRewriteWorking();
         if ($modRewriteWorking !== null) {
-            $result[] = 'Running a special designed capability test to test if rewriting works with *.htaccess* files';
+            $log[] = 'Running a special designed capability test to test if rewriting works with *.htaccess* files';
         }
         if ($modRewriteWorking === true) {
-            $result[] = 'Result: Yes, rewriting works.';
-            $result[] = 'It seems something is wrong with the *.htaccess* rules then. You could try ' .
+            $log[] = 'Result: Yes, rewriting works.';
+            $log[] = 'It seems something is wrong with the *.htaccess* rules then. You could try ' .
                 'to change "Destination structure" - the rules there are quite different.';
-            $result[] = 'It could also be that the server has cached the configuration a while. Some servers ' .
+            $log[] = 'It could also be that the server has cached the configuration a while. Some servers ' .
                 'does that. In that case, simply give it a few minutes and try again.';
         } elseif ($modRewriteWorking === false) {
-            $result[] = 'Result: No, rewriting does not seem to work within *.htaccess* rules.';
+            $log[] = 'Result: No, rewriting does not seem to work within *.htaccess* rules.';
             if (PlatformInfo::definitelyNotGotModRewrite()) {
-                $result[] = 'It actually seems "mod_write" is disabled on your server. ' .
+                $log[] = 'It actually seems "mod_write" is disabled on your server. ' .
                     '**You must enable mod_rewrite on the server**';
             } elseif (PlatformInfo::definitelyGotApacheModule('mod_rewrite')) {
-                $result[] = 'However, "mod_write" *is* enabled on your server. This seems to indicate that ' .
+                $log[] = 'However, "mod_write" *is* enabled on your server. This seems to indicate that ' .
                     '*.htaccess* files has been disabled for configuration on your server. ' .
                     'In that case, you need to copy the WebP Express rules from the *.htaccess* files into your virtual host configuration files. ' .
                     '(WebP Express generates multiple *.htaccess* files. Look in the upload folder, the wp-content folder, etc).';
-                $result[] = 'It could however alse simply be that your server simply needs some time. ' .
+                $log[] = 'It could however alse simply be that your server simply needs some time. ' .
                     'Some servers caches the *.htaccess* rules for a bit. In that case, simply give it a few minutes and try again.';
             } else {
-                $result[] = 'However, this could be due to your server being a bit slow on picking up changes in *.htaccess*.' .
+                $log[] = 'However, this could be due to your server being a bit slow on picking up changes in *.htaccess*.' .
                     'Give it a few minutes and try again.';
             }
         } else {
             // The mod_rewrite test could not conclude anything.
             if (PlatformInfo::definitelyNotGotApacheModule('mod_rewrite')) {
-                $result[] = 'It actually seems "mod_write" is disabled on your server. ' .
+                $log[] = 'It actually seems "mod_write" is disabled on your server. ' .
                     '**You must enable mod_rewrite on the server**';
             } elseif (PlatformInfo::definitelyGotApacheModule('mod_rewrite')) {
-                $result[] = '"mod_write" is enabled on your server, so rewriting ought to work. ' .
+                $log[] = '"mod_write" is enabled on your server, so rewriting ought to work. ' .
                     'However, it could be that your server setup has disabled *.htaccess* files for configuration. ' .
                     'In that case, you need to copy the WebP Express rules from the *.htaccess* files into your virtual host configuration files. ' .
                     '(WebP Express generates multiple *.htaccess* files. Look in the upload folder, the wp-content folder, etc). ';
             } else {
-                $result[] = 'It seems something is wrong with the *.htaccess* rules. ';
-                $result[] = 'Or perhaps the server has cached the configuration a while. Some servers ' .
+                $log[] = 'It seems something is wrong with the *.htaccess* rules. ';
+                $log[] = 'Or perhaps the server has cached the configuration a while. Some servers ' .
                     'does that. In that case, simply give it a few minutes and try again.';
             }
         }
-        $result[] = 'Note that if you cannot get redirection to work, you can switch to "CDN friendly" mode and ' .
+        $log[] = 'Note that if you cannot get redirection to work, you can switch to "CDN friendly" mode and ' .
             'rely on the "Alter HTML" functionality to point to the webp images. If you do a bulk conversion ' .
             'and make sure that "Convert upon upload" is activated, you should be all set. Alter HTML even handles ' .
             'inline css (unless you select "picture tag" syntax). It does however not handle images in external css or ' .
             'which is added dynamically with javascript.';
 
-        $result[] = '## Info for manually diagnosing';
-        $result = array_merge($result, self::allInfo($config));
-        return $result;
+        $log[] = '## Info for manually diagnosing';
+        $log = array_merge($log, self::allInfo($config));
+        return $log;
     }
 }

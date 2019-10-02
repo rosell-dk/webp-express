@@ -432,7 +432,7 @@ You can also make it "work" on some CDN's by bypassing cache for images. But I r
 *Status of some CDN's*:
 
 - *KeyCDN*: Does not support varied image responses. I have added a feature request [here](https://community.keycdn.com/t/support-vary-accept-header-for-conditional-webp/1864). You can give it a +1 if you like!
-- *Cloudflare*: See the "I am on Cloudflare" item
+- *Cloudflare*: See the "I am on Cloudflare" section
 - *Cloudfront*: Works, but needs to be configured to forward the accept header. Go to *Distribution settings*, find the *Behavior tab*, select the Behavior and click the Edit button. Choose *Whitelist* from *Forward Headers* and then add the "Accept" header to the whitelist.
 
 I shall add more to the list. You are welcome to help out [here](https://wordpress.org/support/topic/which-cdns-works-in-standard-mode/).
@@ -490,7 +490,12 @@ To make *WebP Express* work on a free Cloudflare account, you have the following
 
 3. You can switch operation mode to "CDN friendly" and use HTML altering.
 
-### WebP Express / ShortPixel setup
+= I am on WP Engine =
+From version 0.17.1 on WebP Express works with WP engine and the combination is tested before each release. To make the redirection work, you must add the configuration found in the "I am on Nginx/OpenResty" section in this FAQ. Use the "try_files" variant.
+
+WebP Express tweaks the workings of "Redirect to converter" a bit for WP engine. The script usually serves the webp directly, along with a Vary:Accept header. This header is however overwritten by the caching machinery on WP engine. So instead of serving the image, WebP Express serves a redirect to itself. That is: The image request result redirects to itself. As the webp now exists, it will not be redirected to the converter script this time, but directly to the webp (provided you are using the rules!). You can hit the "Live test" button next to "Enable redirection to converter?" to verify that this works as just described.
+
+= WebP Express / ShortPixel setup =
 Here is a recipe for using WebP Express together with ShortPixel, such that WebP Express generates the webp's, and ShortPixel only is used to create `<picture>` tags, when it detects a webp image in the same folder as an original.
 
 **There is really no need to do this anymore, because WebP Express is now capable of replacing img tags with picture tags (check out the Alter HTML option)**
@@ -646,7 +651,7 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 == Changelog ==
 
 = 0.17.1 =
-*(released: 1 Oct 2019)*
+*(released: 2 Oct 2019)*
 
 * Fixed NGINX rules in FAQ (added xdestination for the create webp upon request functionality)
 * Fixed issue with Alter HTML. Thanks to @jonathanernst for discovering issue and supplying the patch.

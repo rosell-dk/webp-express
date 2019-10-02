@@ -17,9 +17,10 @@ use \WebPExpress\SanityException;
 use \WebPExpress\ValidateException;
 use \WebPExpress\Validate;
 use \WebPExpress\WodConfigLoader;
+use WebPConvert\Loggers\EchoLogger;
 
 class WebPOnDemand extends WodConfigLoader
-{    
+{
     private static function getSourceDocRoot() {
 
 
@@ -205,6 +206,39 @@ class WebPOnDemand extends WodConfigLoader
             $serveOptions['serve-image']['headers']['vary-accept'] = true;
         }
 //echo $source . '<br>' . $destination; exit;
+
+        /*
+        // No caching!
+        // - perhaps this will solve it for WP engine.
+        // but no... Perhaps a 302 redirect to self then? (if redirect to existing is activated).
+        // TODO: try!
+        //$serveOptions['serve-image']['headers']['vary-accept'] = false;
+
+        */
+/*
+        include_once __DIR__ . '/../../vendor/autoload.php';
+        $convertLogger = new \WebPConvert\Loggers\BufferLogger();
+        \WebPConvert\WebPConvert::convert($source, $destination, $serveOptions['convert'], $convertLogger);
+        header('Location: ?fresh' , 302);
+*/
+
+        if (isset($_SERVER['WPENGINE_ACCOUNT'])) {
+            // Redirect to self rather than serve directly for WP Engine.
+            // This overcomes that Vary:Accept header set from PHP is lost on WP Engine.
+            // To prevent endless loop in case "redirect to existing webp" isn't set up correctly,
+            // only activate when destination is missing.
+            //   (actually it does not prevent anything on wpengine as the first request is cached!
+            //    -even though we try to prevent it:)
+            // Well well. Those users better set up "redirect to existing webp" as well! 
+            $serveOptions['serve-image']['headers']['cache-control'] = true;
+            $serveOptions['serve-image']['headers']['expires'] = false;
+            $serveOptions['serve-image']['cache-control-header'] = 'no-store, no-cache, must-revalidate, max-age=0';
+            //header("Pragma: no-cache", true);
+
+            if (!@file_exists($destination)) {
+                $serveOptions['redirect-to-self-instead-of-serving'] = true;
+            }
+        }
 
         ConvertHelperIndependent::serveConverted(
             $source,
