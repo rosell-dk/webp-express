@@ -1,3 +1,8 @@
+= Next release =
+*(released: not yet!)*
+
+* Fixed bug: Alter HTML used the protocol (http/https) for the site for generated links (rather than keeping the protocol for the link). Thanks to Jacob Gullberg from Sweden for discovering this bug.
+
 = 0.17.1 =
 *(released: 3 Oct 2019)*
 
