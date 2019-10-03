@@ -35,8 +35,10 @@ if ($weKnowThereAreNoWorkingConverters) {
         '<li>You can try to meet the server requirements of cwebp, imagick, vips, gmagick or gd. Check out <a target="_blank" href="https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters">this wiki page</a> on how to do that</li>' .
         '</ol>' .
         '<p>Of course, there is also the option of using another plugin altogether. ' .
-        'I can recommend ' .
-        '<a href="https://optimole.pxf.io/20b0M">Optimole</a>. ' .
+        'I can recommend <i>Optimole</i>. ' .
+        'If you want to try that out and want to support me in the process, ' .
+        '<a href="https://optimole.pxf.io/20b0M">follow this link</a> ' .
+        '(it will give me a reward in case you decide to sign up).' .
         '</p>' .
         "<p>Btw, don't worry, your images still works. The rewrite rules will not be saved until you click the " .
         '"Save settings" button.</p>';
