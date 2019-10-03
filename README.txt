@@ -162,7 +162,7 @@ WebP Express has three ways of distributing webp to webp-enabled browsers while 
 Can some of these go wrong?
 Yes. All!
 
-#### Method 1: Varied image responses
+**Method 1: Varied image responses**
 The "Varied image responses" method adds rules to the `.htaccess` which redirects jpegs and pngs to the corresponding webps (if they exist). The rules have a condition that makes sure they only trigger for browsers supports webp images (this is established by examining the "accept" header).
 
 I the method "varied image responses" because the response on a given image URL *varies* (the webp is served on the same URL as the jpeg/png).
@@ -180,12 +180,12 @@ I do not believe it can go wrong in other ways. To be certain, please check out 
 
 Since WebP Express 0.15.0 you can use the "Live test" button to check that browsers not supporting webp gets the original files and that the Vary:Accept header is returned. Note however that it may not detect CDN caching problems if the CDN doesn't cache a new image immediately - and across all its nodes.
 
-#### Method 2: Altering HTML to use picture tags
+**Method 2: Altering HTML to use picture tags**
 IMG tags are replaced with PICTURE tags which has two sources. One of them points to the webp and has the "content-type" set to "image/webp". The other points to the original. The browser will select the webp source if it supports webp and the other source if it doesn't.
 
 Method 2 can go wrong on old browser that doesn't support the picture tag syntax. However, simply enable the "Dynamically load picturefill.js on older browsers" option, and it will take care of that issue.
 
-#### Method 3: Altering HTML to point directly to webps in webp enabled browsers
+**Method 3: Altering HTML to point directly to webps in webp enabled browsers**
 In this solution, the URLs in the HTML are modified for browsers that supports webp. Again, this is determined by examining the "accept" header. So, actually the complete page HTML varies with this method.
 
 Method 3 can go wrong if you are using a page caching plugin if that plugin does not create a separate webp cache for webp-enabled browsers. The *Cache Enabler* plugin handles this. I don't believe there are other page caching plugins that does. There is a FAQ section in this FAQ describing how to set *Cache Enabler* up to work in tandem with WebP Express.
