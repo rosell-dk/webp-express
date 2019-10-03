@@ -1051,7 +1051,7 @@ For older releases, check out changelog.txt
 == Upgrade Notice ==
 
 = 0.17.1 =
-* Miscellaneous bug fixes. Including the NGINX rules in the FAQ (added "xdestination" argument to webp-realizer.php)
+* Miscellaneous bug fixes. Including the NGINX rules in the FAQ (added "xdestination" argument to webp-realizer.php). Now works with WP Engine.
 
 = 0.17.0 =
 * Improved Cwebp availability and Ewww performance. And updated cwebp binaries to version 1.0.3
