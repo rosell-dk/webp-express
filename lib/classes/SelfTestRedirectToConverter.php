@@ -138,9 +138,9 @@ class SelfTestRedirectToConverter extends SelfTestRedirectAbstract
             return [false, $log, $createdTestFiles];
         }
         //$log[count($log) - 1] .= '. ok!';
-        $log[] = '*' . $requestUrl . '*';
+        //$log[] = '*' . $requestUrl . '*';
 
-        $log = array_merge($log, SelfTestHelper::printHeaders($headers));
+        //$log = array_merge($log, SelfTestHelper::printHeaders($headers));
 
         if (!isset($headers['content-type'])) {
             $log[] = 'Bummer. There is no "content-type" response header. The test FAILED';
