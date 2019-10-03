@@ -491,7 +491,14 @@ To make *WebP Express* work on a free Cloudflare account, you have the following
 3. You can switch operation mode to "CDN friendly" and use HTML altering.
 
 = I am on WP Engine =
-From version 0.17.1 on WebP Express works with WP engine and this combination will be tested before each release. To make the redirection work, you must add the configuration found in the "I am on Nginx/OpenResty" section in this FAQ. Use the "try_files" variant.
+From version 0.17.1 on WebP Express works with WP engine and this combination will be tested before each release.
+
+You can use the plugin both in "Varied image responses" mode and in "CDN friendly mode".
+
+To make the redirection work, you must:
+1) Grab the nginx configuration found in the "I am on Nginx/OpenResty" section in this FAQ. Use the "try_files" variant.
+2) Contact help center and ask them to insert that configuration.
+3) Make sure the settings match this configuration. Follow the "beware" statements in the "I am on Nginx/OpenResty" section.
 
 WebP Express tweaks the workings of "Redirect to converter" a bit for WP engine. That PHP script usually serves the webp directly, along with a Vary:Accept header. This header is however overwritten by the caching machinery on WP engine. As a work-around, I modified the response of the script for WP engine. Instead of serving the image, it serves a redirect to itself. As there now IS a corresponding webp, this repeated request will not be redirected to the PHP script, but directly to the webp. And headers are OK for those redirects. You can hit the "Live test" button next to "Enable redirection to converter?" to verify that this works as just described.
 
@@ -653,7 +660,7 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 == Changelog ==
 
 = 0.17.1 =
-*(released: 2 Oct 2019)*
+*(released: 3 Oct 2019)*
 
 * Fixed NGINX rules in FAQ (added xdestination for the create webp upon request functionality)
 * Fixed issue with Alter HTML. Thanks to @jonathanernst for discovering issue and supplying the patch.
