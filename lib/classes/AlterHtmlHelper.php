@@ -185,17 +185,18 @@ class AlterHtmlHelper
             self::$options['destination-extension'],
             ($rootId == 'uploads')
         );
-        $result['destination-url'] = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
-
         $destPathAbs = $destinationRoot['abs-path'] . '/' . $relPathFromImageRootToDest;
-        $destUrl = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
-
         $webpMustExist = self::$options['only-for-webps-that-exists'];
         if ($webpMustExist && (!@file_exists($destPathAbs))) {
             return false;
         }
-        return $destUrl;
 
+        $destUrl = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
+
+        // Fix scheme (use same as source)
+        $sourceUrlComponents = parse_url($sourceUrl);
+        $destUrlComponents = parse_url($destUrl);
+        return $sourceUrlComponents['scheme'] . '://' . $sourceUrlComponents['host'] . $destUrlComponents['path'];
     }
 
 
