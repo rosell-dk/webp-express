@@ -491,9 +491,11 @@ To make *WebP Express* work on a free Cloudflare account, you have the following
 3. You can switch operation mode to "CDN friendly" and use HTML altering.
 
 = I am on WP Engine =
-From version 0.17.1 on WebP Express works with WP engine and the combination is tested before each release. To make the redirection work, you must add the configuration found in the "I am on Nginx/OpenResty" section in this FAQ. Use the "try_files" variant.
+From version 0.17.1 on WebP Express works with WP engine and this combination will be tested before each release. To make the redirection work, you must add the configuration found in the "I am on Nginx/OpenResty" section in this FAQ. Use the "try_files" variant.
 
-WebP Express tweaks the workings of "Redirect to converter" a bit for WP engine. The script usually serves the webp directly, along with a Vary:Accept header. This header is however overwritten by the caching machinery on WP engine. So instead of serving the image, WebP Express serves a redirect to itself. That is: The image request result redirects to itself. As the webp now exists, it will not be redirected to the converter script this time, but directly to the webp (provided you are using the rules!). You can hit the "Live test" button next to "Enable redirection to converter?" to verify that this works as just described.
+WebP Express tweaks the workings of "Redirect to converter" a bit for WP engine. That PHP script usually serves the webp directly, along with a Vary:Accept header. This header is however overwritten by the caching machinery on WP engine. As a work-around, I modified the response of the script for WP engine. Instead of serving the image, it serves a redirect to itself. As there now IS a corresponding webp, this repeated request will not be redirected to the PHP script, but directly to the webp. And headers are OK for those redirects. You can hit the "Live test" button next to "Enable redirection to converter?" to verify that this works as just described.
+
+If you (contrary to this headline!) are in fact not on WP Engine, but might want to be, I have an affiliate link for you. It will give you 3 months free and it will give me a reward too, if you should decide to stay there. Here you go: [Get 3 months free when you sign up for WP Engine.](https://shareasale.com/r.cfm?b=1343154&u=2194916&m=41388&urllink=&afftrack=)
 
 = WebP Express / ShortPixel setup =
 Here is a recipe for using WebP Express together with ShortPixel, such that WebP Express generates the webp's, and ShortPixel only is used to create `<picture>` tags, when it detects a webp image in the same folder as an original.
@@ -655,7 +657,7 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 * Fixed NGINX rules in FAQ (added xdestination for the create webp upon request functionality)
 * Fixed issue with Alter HTML. Thanks to @jonathanernst for discovering issue and supplying the patch.
-* WebP Express now works on WPEngine. A test instance has been created to ensure it also works in future releases.
+* WebP Express now works on WP Engine. Check out the new "I am on WP Engine" section in the FAQ
 * Miscellaneous bug fixes
 
 For more info, see the closed issues on the 0.17.1 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/27?closed=1
