@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.2
-Stable tag: 0.17.1
+Stable tag: 0.17.2
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -659,6 +659,14 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.17.2 =
+*(released: 5 Oct 2019)*
+
+* Fixed bug: Updating plugin failed on some systems (in the unzip phase). Problem was introduced in 0.17.0 with the updated binaries.
+* Fixed bug: Alter HTML used the protocol (http/https) for the site for generated links (rather than keeping the protocol for the link). Thanks to Jacob Gullberg from Sweden for discovering this bug.
+
+For more info, see the closed issues on the 0.17.2 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/29?closed=1
+
 = 0.17.1 =
 *(released: 3 Oct 2019)*
 
@@ -1049,6 +1057,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.17.2 =
+* Fixed bug: Updating plugin failed on some systems (in the unzip phase). The problem was introduced in 0.17.0 where the binaries contains dots in their filename.
 
 = 0.17.1 =
 * Miscellaneous bug fixes. Including the NGINX rules in the FAQ (added "xdestination" argument to webp-realizer.php). Now works with WP Engine.

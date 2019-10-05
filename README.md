@@ -651,6 +651,14 @@ Here are my current plans ahead: 0.17 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.17.2
+*(released: 5 Oct 2019)*
+
+* Fixed bug: Updating plugin failed on some systems (in the unzip phase). Problem was introduced in 0.17.0 with the updated binaries.
+* Fixed bug: Alter HTML used the protocol (http/https) for the site for generated links (rather than keeping the protocol for the link). Thanks to Jacob Gullberg from Sweden for discovering this bug.
+
+For more info, see the closed issues on the 0.17.2 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/29?closed=1
+
 ## Changes in 0.17.1
 *(released: 3 Oct 2019)*
 
