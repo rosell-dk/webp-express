@@ -3,11 +3,13 @@
 namespace WebPConvert\Convert\Converters;
 
 use WebPConvert\Convert\Converters\AbstractConverter;
+use WebPConvert\Convert\Converters\BaseTraits\WarningLoggerTrait;
 use WebPConvert\Convert\Converters\ConverterTraits\EncodingAutoTrait;
 use WebPConvert\Convert\Converters\ConverterTraits\ExecTrait;
 use WebPConvert\Convert\Exceptions\ConversionFailed\ConverterNotOperational\SystemRequirementsNotMetException;
 use WebPConvert\Convert\Exceptions\ConversionFailedException;
 use WebPConvert\Convert\Exceptions\ConversionFailed\ConverterNotOperationalException;
+use WebPConvert\Helpers\BinaryDiscovery;
 use WebPConvert\Options\BooleanOption;
 use WebPConvert\Options\SensitiveStringOption;
 use WebPConvert\Options\StringOption;
@@ -39,51 +41,46 @@ class Cwebp extends AbstractConverter
             new SensitiveStringOption('rel-path-to-precompiled-binaries', './Binaries'),
             new BooleanOption('try-cwebp', true),
             new BooleanOption('try-common-system-paths', true),
+            new BooleanOption('try-discovering-cwebp', true),
             new BooleanOption('try-supplied-binary-for-os', true)
         );
     }
-
-    // System paths to look for cwebp binary
-    private static $cwebpDefaultPaths = [
-        //'cwebp',
-        '/usr/bin/cwebp',
-        '/usr/local/bin/cwebp',
-        '/usr/gnu/bin/cwebp',
-        '/usr/syno/bin/cwebp'
-    ];
 
     // OS-specific binaries included in this library, along with hashes
     // If other binaries are going to be added, notice that the first argument is what PHP_OS returns.
     // (possible values, see here: https://stackoverflow.com/questions/738823/possible-values-for-php-os)
     // Got the precompiled binaries here: https://developers.google.com/speed/webp/docs/precompiled
+    // Note when changing binaries:
+    // 1: Do NOT use "." in filename. It causes unzipping to fail on some hosts
+    // 2: Set permission to 775. 755 causes unzipping to fail on some hosts
     private static $suppliedBinariesInfo = [
         'WINNT' => [
-            ['cwebp-1.0.3-windows-x64.exe', 'b3aaab03ca587e887f11f6ae612293d034ee04f4f7f6bc7a175321bb47a10169'],
+            ['cwebp-103-windows-x64.exe', 'b3aaab03ca587e887f11f6ae612293d034ee04f4f7f6bc7a175321bb47a10169'],
         ],
         'Darwin' => [
-            ['cwebp-1.0.3-mac-10.14', '7332ed5f0d4091e2379b1eaa32a764f8c0d51b7926996a1dc8b4ef4e3c441a12'],
+            ['cwebp-103-mac-10_14', '7332ed5f0d4091e2379b1eaa32a764f8c0d51b7926996a1dc8b4ef4e3c441a12'],
         ],
         'SunOS' => [
             // Got this from ewww Wordpress plugin, which unfortunately still uses the old 0.6.0 versions
             // Can you help me get a 1.0.3 version?
-            ['cwebp-0.6.0-solaris', '1febaffbb18e52dc2c524cda9eefd00c6db95bc388732868999c0f48deb73b4f']
+            ['cwebp-060-solaris', '1febaffbb18e52dc2c524cda9eefd00c6db95bc388732868999c0f48deb73b4f']
         ],
         'FreeBSD' => [
             // Got this from ewww Wordpress plugin, which unfortunately still uses the old 0.6.0 versions
             // Can you help me get a 1.0.3 version?
-            ['cwebp-0.6.0-fbsd', 'e5cbea11c97fadffe221fdf57c093c19af2737e4bbd2cb3cd5e908de64286573']
+            ['cwebp-060-fbsd', 'e5cbea11c97fadffe221fdf57c093c19af2737e4bbd2cb3cd5e908de64286573']
         ],
         'Linux' => [
             // Dynamically linked executable.
             // It seems it is slightly faster than the statically linked
-            ['cwebp-1.0.3-linux-x86-64', 'a663215a46d347f63e1ca641c18527a1ae7a2c9a0ae85ca966a97477ea13dfe0'],
+            ['cwebp-103-linux-x86-64', 'a663215a46d347f63e1ca641c18527a1ae7a2c9a0ae85ca966a97477ea13dfe0'],
 
             // Statically linked executable
             // It may be that it on some systems works, where the dynamically linked does not (see #196)
-            ['cwebp-1.0.3-linux-x86-64-static', 'ab96f01b49336da8b976c498528080ff614112d5985da69943b48e0cb1c5228a'],
+            ['cwebp-103-linux-x86-64-static', 'ab96f01b49336da8b976c498528080ff614112d5985da69943b48e0cb1c5228a'],
 
             // Old executable for systems in case both of the above fails
-            ['cwebp-0.6.1-linux-x86-64', '916623e5e9183237c851374d969aebdb96e0edc0692ab7937b95ea67dc3b2568'],
+            ['cwebp-061-linux-x86-64', '916623e5e9183237c851374d969aebdb96e0edc0692ab7937b95ea67dc3b2568'],
         ]
     ];
 
@@ -108,7 +105,11 @@ class Cwebp extends AbstractConverter
         $this->checkOperationalityExecTrait();
 
         $options = $this->options;
-        if (!$options['try-supplied-binary-for-os'] && !$options['try-common-system-paths'] && !$options['try-cwebp']) {
+        if (!$options['try-supplied-binary-for-os'] &&
+            !$options['try-common-system-paths'] &&
+            !$options['try-cwebp'] &&
+            !$options['try-discovering-cwebp']
+        ) {
             throw new ConverterNotOperationalException(
                 'Configured to neither try pure cwebp command, ' .
                 'nor look for cweb binaries in common system locations and ' .
@@ -395,7 +396,6 @@ class Cwebp extends AbstractConverter
             }
             $result[] = $binaryFile;
         }
-
         return $result;
     }
 
@@ -468,52 +468,94 @@ class Cwebp extends AbstractConverter
         return ['detected' => $binariesWithVersions, 'failed' => $binariesWithFailCodes];
     }
 
-    /**
-     *  Detect versions of all cwebps that are of relevance (according to configuration).
-     *
-     *  @return  array  the "detected" key holds working binaries and their version numbers, the
-     *                  the "failed" key holds failed binaries and their error codes.
-     */
-    private function getCwebpVersions()
+    private function logBinariesFound($binaries)
     {
-        // TODO: Check out if exec('whereis cwebp'); would be a good idea
+        if (count($binaries) == 0) {
+            $this->logLn('Found 0 binaries');
+        } else {
+            $this->logLn('Found ' . count($binaries) . ' binaries: ');
+            foreach ($binaries as $binary) {
+                $this->logLn('- ' . $binary);
+            }
+        }
+    }
+
+    private function logDiscoverAction($optionName, $description)
+    {
+        if ($this->options[$optionName]) {
+            $this->logLn(
+                'Discovering binaries ' . $description . ' ' .
+                 '(to skip this step, disable the "' . $optionName . '" option)'
+            );
+        } else {
+            $this->logLn(
+                'Skipped discovering binaries ' . $description . ' ' .
+                '(enable "' . $optionName . '" if you do not want to skip that step)'
+            );
+        }
+    }
+
+    private function discoverCwebpBinaries()
+    {
+        $this->logLn(
+            'Looking for cwebp binaries.'
+        );
+        $binaries = [];
 
         if (defined('WEBPCONVERT_CWEBP_PATH')) {
             $this->logLn('WEBPCONVERT_CWEBP_PATH was defined, so using that path and ignoring any other');
-            return $this->detectVersions([constant('WEBPCONVERT_CWEBP_PATH')]);
+            return [constant('WEBPCONVERT_CWEBP_PATH')];
         }
         if (!empty(getenv('WEBPCONVERT_CWEBP_PATH'))) {
             $this->logLn(
                 'WEBPCONVERT_CWEBP_PATH environment variable was set, so using that path and ignoring any other'
             );
-            return $this->detectVersions([getenv('WEBPCONVERT_CWEBP_PATH')]);
+            return [getenv('WEBPCONVERT_CWEBP_PATH')];
         }
 
-        $versions = [];
         if ($this->options['try-cwebp']) {
             $this->logLn(
-                'Detecting version of cwebp command (it may not be available, but we try nonetheless)'
+                'Discovering if a plain cwebp call works (to skip this step, disable the "try-cwebp" option)'
             );
-            $versions = $this->detectVersions(['cwebp']);
-        }
-        if ($this->options['try-common-system-paths']) {
-            // Note:
-            // We used to do a file_exists($binary) check.
-            // That was not a good idea because it could trigger open_basedir errors. The open_basedir
-            // restriction does not operate on the exec command. So note to self: Do not do that again.
+            $result = $this->detectVersion('cwebp');
+            if (gettype($result) == 'string') {
+                $this->logLn('We could get the version, so yes, a plain cwebp call works');
+                $binaries[] = 'cwebp';
+            } else {
+                $this->logLn('Nope a plain cwebp call does not work');
+            }
+        } else {
             $this->logLn(
-                'Detecting versions of the cwebp binaries in common system paths ' .
-                '(some may not be found, that is to be expected)'
+                'Skipped discovering if a plain cwebp call works' .
+                ' (enable the "try-cwebp" option if you do not want to skip that step)'
             );
-            $versions = array_merge_recursive($versions, $this->detectVersions(self::$cwebpDefaultPaths));
         }
+
+        // try-discovering-cwebp
+        $this->logDiscoverAction('try-discovering-cwebp', 'using "which -a cwebp" command.');
+        if ($this->options['try-discovering-cwebp']) {
+            $moreBinaries = BinaryDiscovery::discoverInstalledBinaries('cwebp');
+            $this->logBinariesFound($moreBinaries);
+            $binaries = array_merge($binaries, $moreBinaries);
+        }
+
+        // 'try-common-system-paths'
+        $this->logDiscoverAction('try-common-system-paths', 'by peeking in common system paths');
+        if ($this->options['try-common-system-paths']) {
+            $moreBinaries = BinaryDiscovery::discoverInCommonSystemPaths('cwebp');
+            $this->logBinariesFound($moreBinaries);
+            $binaries = array_merge($binaries, $moreBinaries);
+        }
+
+        // try-supplied-binary-for-os
+        $this->logDiscoverAction('try-supplied-binary-for-os', 'which are distributed with the webp-convert library');
         if ($this->options['try-supplied-binary-for-os']) {
-            $versions = array_merge_recursive(
-                $versions,
-                $this->detectVersions($this->getSuppliedBinaryPathForOS())
-            );
+            $moreBinaries = $this->getSuppliedBinaryPathForOS();
+            $this->logBinariesFound($moreBinaries);
+            $binaries = array_merge($binaries, $moreBinaries);
         }
-        return $versions;
+
+        return array_values(array_unique($binaries));
     }
 
     /**
@@ -552,7 +594,7 @@ class Cwebp extends AbstractConverter
     /**
      *  Helper for composing an error message when no converters are working.
      *
-     *  @param  array  $versions  The array which we get from calling ::getCwebpVersions()
+     *  @param  array  $versions  The array which we get from calling ::detectVersions($binaries)
      *  @return string  An informative and to the point error message.
      */
     private function composeMeaningfullErrorMessageNoVersionsWorking($versions)
@@ -593,7 +635,38 @@ class Cwebp extends AbstractConverter
 
     protected function doActualConvert()
     {
-        $versions = $this->getCwebpVersions();
+        $binaries = $this->discoverCwebpBinaries();
+        if (count($binaries) == 0) {
+            $this->logLn('No cwebp binaries found!');
+
+            $discoverOptions = [
+                'try-supplied-binary-for-os',
+                'try-common-system-paths',
+                'try-cwebp',
+                'try-discovering-cwebp'
+            ];
+            $disabledDiscoverOptions = [];
+            foreach ($discoverOptions as $discoverOption) {
+                if (!$this->options[$discoverOption]) {
+                    $disabledDiscoverOptions[] = $discoverOption;
+                }
+            }
+            if (count($disabledDiscoverOptions) == 0) {
+                throw new SystemRequirementsNotMetException(
+                    'No cwebp binaries found.'
+                );
+            } else {
+                throw new SystemRequirementsNotMetException(
+                    'No cwebp binaries found. Try enabling the "' .
+                    implode('" option or the "', $disabledDiscoverOptions) . '" option.'
+                );
+            }
+        }
+        $this->logLn(
+            'Detecting versions of the cwebp binaries found'
+        );
+        $versions = $this->detectVersions($binaries);
+
         $binaryVersions = $versions['detected'];
         if (count($binaryVersions) == 0) {
             // No working cwebp binaries found.
@@ -606,7 +679,7 @@ class Cwebp extends AbstractConverter
         // Sort binaries so those with highest numbers comes first
         arsort($binaryVersions);
         $this->logLn(
-            'Here is what we found, ordered by version number.'
+            'Binaries ordered by version number.'
         );
         foreach ($binaryVersions as $binary => $version) {
             $this->logLn('- ' . $binary . ': (version: ' . $version .')');
