@@ -665,6 +665,8 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 * Fixed bug: Updating plugin failed on some systems (in the unzip phase). Problem was introduced in 0.17.0 with the updated binaries.
 * Fixed bug: Alter HTML used the protocol (http/https) for the site for generated links (rather than keeping the protocol for the link). Thanks to Jacob Gullberg from Sweden for discovering this bug.
 
+If you experienced update problems due to the update bug, you will probably be left with an incomplete installation. Some of the plugin files are there, but not all. Especially, the main plugin file (webp-express.php) is missing, which means that Wordpress don't "see" the plugin (it is missing from the list). Trying to install WebP Express again will probably not work, because the "webp-express" folder is already there. You will then have to remove the "webp-express" folder in "plugins" manually (via ftp or a plugin, such as File Manager).
+
 For more info, see the closed issues on the 0.17.2 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/29?closed=1
 
 = 0.17.1 =
