@@ -38,7 +38,7 @@
               URL
               <?php echo helpIcon('The endpoint of the web service. Copy it from the remote setup.'); ?>
           </label>
-          <input type="text" id="wpc_api_url" placeholder="Url to your Remote WebP Express">
+          <input type="text" id="wpc_api_url" placeholder="Url to your Remote WebP Express" autocomplete="off">
       </div>
 
       <div id="wpc_secret_div">
@@ -46,7 +46,7 @@
               Secret
               <?php echo helpIcon('Must match the one set up in webp-convert-cloud-service v0.1'); ?>
           </label>
-          <input type="text" id="wpc_secret" placeholder="">
+          <input type="text" id="wpc_secret" placeholder="" autocomplete="off">
       </div>
 
       <div id="wpc_api_key_div">
@@ -58,7 +58,7 @@
               Api key
               <?php echo helpIcon('The API key is set up on the remote. Copy that.'); ?>
           </label>
-          <input id="wpc_new_api_key" type="password">
+          <input id="wpc_new_api_key" type="password" autocomplete="off">
           <a id="wpc_change_api_key" href="javascript:wpcChangeApiKey()">
               Click to change
           </a>
