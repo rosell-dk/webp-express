@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use \WebPExpress\Paths;
 use \WebPExpress\Config;
 
-$ver = '1';             // note: Minimum 1
+$ver = '2';             // note: Minimum 1
 $jsDir = 'js/0.16.0';   // We change dir when it is critical that no-one gets the cached version (there is a plugin that strips version strings out there...)
 
 if (!function_exists('webp_express_add_inline_script')) {
