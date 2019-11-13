@@ -173,7 +173,7 @@ namespace WebPExpress;
                 webpexpress_checkbox(
                     'alter-html-for-webps-that-has-yet-to-exist',
                     (!$config['alter-html']['only-for-webps-that-exists']),
-                    'Reference webps that hasn\'t been converted yet',
+                    'Reference webps that haven\'t been converted yet',
                     'If you enable this option, there will be references to webp files that doesnt exist yet. ' .
                         'And that will be ok! - Just make sure to enable the option to convert missing webp files ' .
                         'upon request in the "Redirection rules" section.'
