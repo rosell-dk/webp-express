@@ -15,8 +15,6 @@ class AdminInit
 {
     public static function init() {
 
-        self::runMigrationIfNeeded();
-
         // uncomment next line to debug an error during activation
         //include __DIR__ . "/../debug.php";
 
@@ -40,7 +38,7 @@ class AdminInit
         }
 
         // uncomment next line to test-run a migration
-        //include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate11.php';
+        include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate12.php';
     }
 
     public static function pageNowIs($pageId)
@@ -52,6 +50,7 @@ class AdminInit
         }
         return ($pageId == $pagenow);
     }
+
 
     public static function addHooksAfterAdminInit()
     {
@@ -101,6 +100,10 @@ class AdminInit
 
         // Some hooks must be registered AFTER admin_init...
         add_action("admin_init", array('\WebPExpress\AdminInit', 'addHooksAfterAdminInit'));
+
+        // Run migration AFTER admin_init hook (important, as insert_with_markers injection otherwise fails, see #394)
+        // PS: Unfortunately Message::addMessage doesnt print until next load now, we should look into that.
+        add_action("admin_init", array('\WebPExpress\AdminInit', 'runMigrationIfNeeded'));
 
         if (Multisite::isNetworkActivated()) {
             add_action("network_admin_menu", array('\WebPExpress\AdminUi', 'networAdminMenuHook'));
