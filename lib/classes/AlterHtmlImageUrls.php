@@ -23,7 +23,7 @@ class AlterHtmlImageUrls extends ImageUrlReplacer
     public function attributeFilter($attrName) {
         // Allow "src", "srcset" and data-attributes that smells like they are used for images
         // The following rule matches all attributes used for lazy loading images that we know of
-        return preg_match('#^(src|srcset|(data-[^=]*(lazy|small|slide|img|large|src|thumb|source|set|bg-url)[^=]*))$#i', $attrName);
+        return preg_match('#^(src|srcset|poster|(data-[^=]*(lazy|small|slide|img|large|src|thumb|source|set|bg-url)[^=]*))$#i', $attrName);
 
         // If you want to limit it further, only allowing attributes known to be used for lazy load,
         // use the following regex instead:

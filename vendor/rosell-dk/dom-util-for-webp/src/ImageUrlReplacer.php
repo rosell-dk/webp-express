@@ -40,7 +40,7 @@ class ImageUrlReplacer
     // How about preloaded images? - yes, suppose we should replace those
     // - <link rel="prefetch" href="[url]">
     // - <link rel="preload" as="image" href="[url]">
-    public static $searchInTags = ['img', 'source', 'input', 'iframe', 'div', 'li', 'link', 'a', 'section'];
+    public static $searchInTags = ['img', 'source', 'input', 'iframe', 'div', 'li', 'link', 'a', 'section', 'video'];
 
     /**
      *
