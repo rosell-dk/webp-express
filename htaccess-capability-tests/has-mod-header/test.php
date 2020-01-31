@@ -2,8 +2,8 @@
 
 //echo '<pre>'. print_r($_SERVER, 1) . '</pre>';
 
-if (isset($_SERVER['HTTP_HEADERFORTEST'])) {
-    echo ($_SERVER['HTTP_HEADERFORTEST'] == 'test' ? 1 : 0);
-    exit;
+if (isset($_SERVER['HTTP_USER_AGENT'])) {
+    echo  $_SERVER['HTTP_USER_AGENT'] == 'webp-express-test' ? 1 : 0;
+} else {
+	echo 0;
 }
-echo '0';
