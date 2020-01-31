@@ -2,6 +2,10 @@
 
 namespace WebPExpress;
 
+use \WebPExpress\Config;
+use \WebPExpress\Messenger;
+use \WebPExpress\Option;
+
 function webpexpress_migrate12() {
 
     $config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
