@@ -47,6 +47,9 @@
       "role": "Project Author"
     }
   ],
+  "suggest": {
+    "phpstan/phpstan": "Suggested for dev, in order to analyse code before committing"
+  },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.11",
     "phpunit/phpunit": "5.7.27",

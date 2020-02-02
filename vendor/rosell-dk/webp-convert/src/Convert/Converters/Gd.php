@@ -189,34 +189,29 @@ class Gd extends AbstractConverter
      */
     private function createImageResource()
     {
-        // In case of failure, image will be false
-
         $mimeType = $this->getMimeTypeOfSource();
 
-        if ($mimeType == 'image/png') {
-            $image = imagecreatefrompng($this->source);
-            if ($image === false) {
-                throw new ConversionFailedException(
-                    'Gd failed when trying to load/create image (imagecreatefrompng() failed)'
-                );
-            }
-            return $image;
+        switch ($mimeType) {
+            case 'image/png':
+                $image = imagecreatefrompng($this->source);
+                if ($image === false) {
+                    throw new ConversionFailedException(
+                        'Gd failed when trying to load/create image (imagecreatefrompng() failed)'
+                    );
+                }
+                return $image;
+
+            case 'image/jpeg':
+                $image = imagecreatefromjpeg($this->source);
+                if ($image === false) {
+                    throw new ConversionFailedException(
+                        'Gd failed when trying to load/create image (imagecreatefromjpeg() failed)'
+                    );
+                }
+                return $image;
         }
 
-        if ($mimeType == 'image/jpeg') {
-            $image = imagecreatefromjpeg($this->source);
-            if ($image === false) {
-                throw new ConversionFailedException(
-                    'Gd failed when trying to load/create image (imagecreatefromjpeg() failed)'
-                );
-            }
-            return $image;
-        }
-
-        /*
-        throw new InvalidInputException(
-            'Unsupported mime type:' . $mimeType
-        );*/
+        throw new InvalidInputException('Unsupported mime type');
     }
 
     /**
@@ -260,6 +255,11 @@ class Gd extends AbstractConverter
     protected function trySettingAlphaBlending($image)
     {
         if (function_exists('imagealphablending')) {
+            // TODO: Should we set second parameter to false instead?
+            // As here: https://www.texelate.co.uk/blog/retaining-png-transparency-with-php-gd
+            // (PS: I have backed up some local changes - to Gd.php, which includes changing that param
+            // to false. But I didn't finish up back then and now I forgot, so need to retest before
+            // changing anything...
             if (!imagealphablending($image, true)) {
                 $this->logLn('Warning: imagealphablending() failed');
                 return false;
@@ -377,7 +377,7 @@ class Gd extends AbstractConverter
                         'An error was produced during conversion',
                         $this->errorMessageWhileCreating
                     );
-                    break;
+                    //break;
             }
         }
 

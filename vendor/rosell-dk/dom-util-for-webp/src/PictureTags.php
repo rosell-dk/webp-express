@@ -13,6 +13,17 @@ use \WebPExpress\AlterHtmlHelper;
 class PictureTags
 {
 
+    /**
+     * Empty constructor for preventing child classes from creating constructors.
+     *
+     * We do this because otherwise the "new static()" call inside the ::replace() method
+     * would be unsafe. See #21
+     * @return  void
+     */
+    public final function __construct()
+    {
+    }
+
     public function replaceUrl($url)
     {
         if (!preg_match('#(png|jpe?g)$#', $url)) {

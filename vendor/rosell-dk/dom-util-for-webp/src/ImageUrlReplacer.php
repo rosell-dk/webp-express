@@ -43,6 +43,17 @@ class ImageUrlReplacer
     public static $searchInTags = ['img', 'source', 'input', 'iframe', 'div', 'li', 'link', 'a', 'section', 'video'];
 
     /**
+     * Empty constructor for preventing child classes from creating constructors.
+     *
+     * We do this because otherwise the "new static()" call inside the ::replace() method
+     * would be unsafe. See #21
+     * @return  void
+     */
+    public final function __construct()
+    {
+    }
+
+    /**
      *
      * @return string|null webp url or, if URL should not be changed, return nothing
      **/
@@ -151,7 +162,7 @@ class ImageUrlReplacer
                     $part = preg_replace_callback($regex, 'self::processCSSRegExCallback', $part);
                     //echo 'result:' . $part . "\n";
                 }
-                $declarations[$i] = implode($parts, ',');
+                $declarations[$i] = implode(',', $parts);
             }
         }
         return implode(';', $declarations);

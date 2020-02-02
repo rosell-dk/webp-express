@@ -179,6 +179,7 @@ class ServeConvertedWebP
         if ($options['serve-original']) {
             Header::addLogHeader('Serving original (told to)', $serveLogger);
             self::serveOriginal($source, $options['serve-image']);
+            return;
         }
 
         if ($options['redirect-to-self-instead-of-serving']) {
@@ -198,6 +199,7 @@ class ServeConvertedWebP
             ($filesizeDestination > $filesizeSource)) {
                 Header::addLogHeader('Serving original (it is smaller)', $serveLogger);
                 self::serveOriginal($source, $options['serve-image']);
+                return;
         }
 
         Header::addLogHeader('Serving converted file', $serveLogger);
