@@ -3,8 +3,8 @@ Contributors: rosell.dk
 Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
-Tested up to: 5.2
-Stable tag: 0.17.2
+Tested up to: 5.3
+Stable tag: 0.17.3
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -662,6 +662,17 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.17.3 =
+*(released: 3 Feb 2020)*
+
+* Fixed critical bug: Fatal error after updating plugin (if one had been postponing updating WebP Express for a while and then updated Wordpress to 5.3 and THEN updated WebP Express)
+* A critical bug was fixed in the webp-convert library (PHP 7.4 related)
+* A critical bug was fixed in dom-util-for-webp library (PHP 7.4 related)
+* Alter HTML now processes the "poster" attribute in Video tags. Thanks to @MikhailRoot from Russia for the PR on github.
+* On some Litespeed hosts, WebP Express reported that mod_headers was not available even though it was. Thanks to @lubieowoce from Poland for the PR on github)
+
+For more info, see the closed issues on the 0.17.3 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/31?closed=1
+
 = 0.17.2 =
 *(released: 5 Oct 2019)*
 
@@ -1062,6 +1073,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.17.3 =
+* Fixed two critical bugs. One occurred on PHP 7.4, the other when updating old WebP Express on Wordpress 5.3
 
 = 0.17.2 =
 * Fixed bug: Updating plugin failed on a few hosts (in the unzip phase). The problem was introduced in 0.17.0 where the binaries contains dots in their filename.
