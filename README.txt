@@ -665,7 +665,7 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 = 0.17.3 =
 *(released: 3 Feb 2020)*
 
-* Fixed critical bug: Fatal error after updating plugin (if one had been postponing updating WebP Express for a while and then updated Wordpress to 5.3 and THEN updated WebP Express)
+* Fixed critical bug: Fatal error after updating plugin (if one had been postponing updating WebP Express for a while and then updated Wordpress to 5.2 and THEN updated WebP Express)
 * A critical bug was fixed in the webp-convert library (PHP 7.4 related)
 * A critical bug was fixed in dom-util-for-webp library (PHP 7.4 related)
 * Alter HTML now processes the "poster" attribute in Video tags. Thanks to @MikhailRoot from Russia for the PR on github.
