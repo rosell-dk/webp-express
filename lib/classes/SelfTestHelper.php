@@ -191,12 +191,15 @@ class SelfTestHelper
     {
         $log = [];
         $args['redirection'] = 0;
+         if( defined('WP_DEBUG') && WP_DEBUG ){
+            $args['sslverify'] = false;
+        }
 
         $log[] = 'Request URL: ' . $requestUrl;
 
         $results = [];
         $wpResult = wp_remote_get($requestUrl, $args);
-        if (!isset($wpResult['headers'])) {
+        if (!is_wp_error($wpResult) && !isset($wpResult['headers'])) {
             $wpResult['headers'] = [];
         }
         $results[] = $wpResult;
