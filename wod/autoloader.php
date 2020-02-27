@@ -1,4 +1,5 @@
 <?php
+setlocale(LC_CTYPE, "C.UTF-8");
 define('WOD_DIR', __DIR__);
 function webpexpress_autoloader($class) {
     if (strpos($class, 'WebPExpress\\') === 0) {
