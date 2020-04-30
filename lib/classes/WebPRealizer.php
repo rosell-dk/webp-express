@@ -203,7 +203,7 @@ class WebPRealizer extends WodConfigLoader
         // Get destination
         // --------------------------------------------
         self::$checking = 'destination';
-        $destination = self::getDestination();
+        $destination = urldecode(self::getDestination());
 
         //self::exitWithError($destination);
 
