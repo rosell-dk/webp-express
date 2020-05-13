@@ -196,14 +196,14 @@ class SelfTestHelper
 
         $results = [];
         $wpResult = wp_remote_get($requestUrl, $args);
-        if (!isset($wpResult['headers'])) {
-            $wpResult['headers'] = [];
-        }
-        $results[] = $wpResult;
         if (is_wp_error($wpResult)) {
             $log[] = 'The remote request errored';
             return [false, $log, $results];
         }
+        if (!isset($wpResult['headers'])) {
+            $wpResult['headers'] = [];
+        }
+        $results[] = $wpResult;
         $responseCode = $wpResult['response']['code'];
 
         $log[] = 'Response: ' . $responseCode . ' ' . $wpResult['response']['message'];
