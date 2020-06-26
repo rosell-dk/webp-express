@@ -192,6 +192,10 @@ class SelfTestHelper
         $log = [];
         $args['redirection'] = 0;
 
+        if (defined('WP_DEBUG') && WP_DEBUG ) {
+           $args['sslverify'] = false;
+        }
+
         $log[] = 'Request URL: ' . $requestUrl;
 
         $results = [];
@@ -200,7 +204,7 @@ class SelfTestHelper
             $log[] = 'The remote request errored';
             return [false, $log, $results];
         }
-        if (!isset($wpResult['headers'])) {
+        if (!is_wp_error($wpResult) && !isset($wpResult['headers'])) {
             $wpResult['headers'] = [];
         }
         $results[] = $wpResult;
