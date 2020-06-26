@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.4
-Stable tag: 0.17.3
+Stable tag: 0.17.4
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -1073,6 +1073,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.17.4 =
+* Various fixes by community. Maintainer is partly back. Will be fully back mid august.
 
 = 0.17.3 =
 * Fixed two critical bugs. One occurred on PHP 7.4, the other when updating old WebP Express on Wordpress 5.3

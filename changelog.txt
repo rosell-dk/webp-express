@@ -1,3 +1,12 @@
+= 0.17.4 =
+*(released: 26 Jun 2020)*
+* Hopefully fixed that configuration was resetting for some users
+* Fixed "Path is outside resolved document root" on file conversion attempts in Windows. Thanks to @Ruzgfpegk from Japan for providing the fix.
+* Fix errors not caught in the selftest. Thanks to Benji Bilheimer from Germany providing the fix.
+* Fix errors not caught in the selftest with unverified certificates. Thanks to Rikesh Ramlochund from Mauritius for providing the fix.
+* Fixed errors with filenames containing encoded symbols. Thanks to Eddie Zhou from Canada for the fix.
+
+
 = 0.17.3 =
 *(released: 3 Feb 2020)*
 
