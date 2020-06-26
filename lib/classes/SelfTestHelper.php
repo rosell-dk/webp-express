@@ -193,6 +193,7 @@ class SelfTestHelper
         $args['redirection'] = 0;
 
         if (defined('WP_DEBUG') && WP_DEBUG ) {
+           // Prevent errors with unverified certificates (#379)
            $args['sslverify'] = false;
         }
 
