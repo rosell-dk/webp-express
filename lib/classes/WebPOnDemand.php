@@ -170,7 +170,7 @@ class WebPOnDemand extends WodConfigLoader
         // Check source (the image to be converted)
         // --------------------------------------------
         self::$checking = 'source';
-        $source = self::getSource();
+        $source = urldecode(self::getSource());
 
         //self::exitWithError($source);
 
