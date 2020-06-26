@@ -170,6 +170,8 @@ class WebPOnDemand extends WodConfigLoader
         // Check source (the image to be converted)
         // --------------------------------------------
         self::$checking = 'source';
+
+        // Decode URL in case file contains encoded symbols (#413)
         $source = urldecode(self::getSource());
 
         //self::exitWithError($source);
@@ -229,7 +231,7 @@ class WebPOnDemand extends WodConfigLoader
             // only activate when destination is missing.
             //   (actually it does not prevent anything on wpengine as the first request is cached!
             //    -even though we try to prevent it:)
-            // Well well. Those users better set up "redirect to existing webp" as well! 
+            // Well well. Those users better set up "redirect to existing webp" as well!
             $serveOptions['serve-image']['headers']['cache-control'] = true;
             $serveOptions['serve-image']['headers']['expires'] = false;
             $serveOptions['serve-image']['cache-control-header'] = 'no-store, no-cache, must-revalidate, max-age=0';

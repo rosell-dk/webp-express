@@ -203,6 +203,7 @@ class WebPRealizer extends WodConfigLoader
         // Get destination
         // --------------------------------------------
         self::$checking = 'destination';
+        // Decode URL in case file contains encoded symbols (#413)
         $destination = urldecode(self::getDestination());
 
         //self::exitWithError($destination);
