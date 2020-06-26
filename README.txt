@@ -662,6 +662,16 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.17.4 =
+*(released: 26 Jun 2020)*
+* Fixed bug: Configuration was repeatedly resetting for some users
+* Fixed "Path is outside resolved document root" on file conversion attempts in Windows. Thanks to @Ruzgfpegk from Japan for providing the fix.
+* Fix errors not caught in the selftest. Thanks to Benji Bilheimer from Germany providing the fix.
+* Fix errors not caught in the selftest with unverified certificates. Thanks to Rikesh Ramlochund from Mauritius for providing the fix.
+* Fixed errors with filenames containing encoded symbols. Thanks to Eddie Zhou from Canada for the fix.
+
+For more info, see the closed issues on the 0.17.3 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/32?closed=1
+
 = 0.17.3 =
 *(released: 3 Feb 2020)*
 
