@@ -1,9 +1,10 @@
 {
     "name": "rosell-dk/webp-express",
     "description": "WebP for the masses",
-    "type": "project",
+    "type": "wordpress-plugin",
     "license": "MIT",
     "require": {
+        "composer/installers": "^1.0.0",
         "rosell-dk/webp-convert": "^2.3.1",
         "rosell-dk/webp-convert-cloud-service": "^2.0.0",
         "rosell-dk/dom-util-for-webp": "^0.4.0"

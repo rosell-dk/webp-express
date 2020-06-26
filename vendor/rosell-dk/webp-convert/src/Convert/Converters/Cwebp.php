@@ -123,7 +123,7 @@ class Cwebp extends AbstractConverter
     {
         //$version = $this->detectVersion($binary);
 
-        $command = ($useNice ? 'nice ' : '') . $binary . ' ' . $commandOptions;
+        $command = ($useNice ? 'nice ' : '') . $binary . ' ' . $commandOptions . ' 2>&1';
 
         //$logger->logLn('command options:' . $commandOptions);
         $this->logLn('Trying to convert by executing the following command:');
@@ -277,7 +277,7 @@ class Cwebp extends AbstractConverter
                 // otherwise encoding=auto would not work as expected
 
                 if ($options['encoding'] == 'lossless') {
-                    $cmdOptions[] ='-near_lossless ' . $options['near-lossless'];
+                    $cmdOptions[] = '-near_lossless ' . $options['near-lossless'];
                 } else {
                     $this->logLn(
                         'The near-lossless option ignored for lossy'
@@ -401,7 +401,7 @@ class Cwebp extends AbstractConverter
 
     private function who()
     {
-        exec('whoami', $whoOutput, $whoReturnCode);
+        exec('whoami 2>&1', $whoOutput, $whoReturnCode);
         if (($whoReturnCode == 0) && (isset($whoOutput[0]))) {
             return 'user: "' . $whoOutput[0] . '"';
         } else {
@@ -415,7 +415,7 @@ class Cwebp extends AbstractConverter
      */
     private function detectVersion($binary)
     {
-        $command = $binary . ' -version';
+        $command = $binary . ' -version 2>&1';
         $this->log('- Executing: ' . $command);
         exec($command, $output, $returnCode);
 
@@ -427,7 +427,7 @@ class Cwebp extends AbstractConverter
         } else {
             $this->log('. Result: ');
             if ($returnCode == 127) {
-                $this->logLn('*Exec failed* (the cwebp binary was not found at path: ' . $binary. ')');
+                $this->logLn('*Exec failed* (the cwebp binary was not found at path: ' . $binary . ')');
             } else {
                 if ($returnCode == 126) {
                     $this->logLn(
@@ -443,7 +443,7 @@ class Cwebp extends AbstractConverter
             }
             return $returnCode;
         }
-        return '';  // Will not happen. Just so phpstan doesn't complain
+        return ''; // Will not happen. Just so phpstan doesn't complain
     }
 
     /**
@@ -486,7 +486,7 @@ class Cwebp extends AbstractConverter
         if ($this->options[$optionName]) {
             $this->logLn(
                 'Discovering binaries ' . $description . ' ' .
-                 '(to skip this step, disable the "' . $optionName . '" option)'
+                '(to skip this step, disable the "' . $optionName . '" option)'
             );
         } else {
             $this->logLn(
@@ -683,7 +683,7 @@ class Cwebp extends AbstractConverter
             'Binaries ordered by version number.'
         );
         foreach ($binaryVersions as $binary => $version) {
-            $this->logLn('- ' . $binary . ': (version: ' . $version .')');
+            $this->logLn('- ' . $binary . ': (version: ' . $version . ')');
         }
 
         // Execute!
@@ -700,14 +700,12 @@ class Cwebp extends AbstractConverter
         }
 
         // cwebp sets file permissions to 664 but instead ..
-        // .. $destination's parent folder's permissions should be used (except executable bits)
-        // (or perhaps the current umask instead? https://www.php.net/umask)
+        // .. $this->source file permissions should be used
 
         if ($success) {
-            $destinationParent = dirname($this->destination);
-            $fileStatistics = stat($destinationParent);
+            $fileStatistics = stat($this->source);
             if ($fileStatistics !== false) {
-                // Apply same permissions as parent folder but strip off the executable bits
+                // Apply same permissions as source file, but strip off the executable bits
                 $permissions = $fileStatistics['mode'] & 0000666;
                 chmod($this->destination, $permissions);
             }
