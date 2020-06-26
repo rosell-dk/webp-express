@@ -315,12 +315,13 @@ class SanityCheck
             // Cannot resolve document root, so cannot test if in document root
             return $input;
         }
-        $docRootSymLinksExpanded = rtrim($docRootSymLinksExpanded, '/');
+        $docRootSymLinksExpanded = rtrim($docRootSymLinksExpanded, '\\/');
         $docRootSymLinksExpanded = self::absPathExists($docRootSymLinksExpanded, 'Document root does not exist!');
         $docRootSymLinksExpanded = self::absPathExistsAndIsDir($docRootSymLinksExpanded, 'Document root is not a directory!');
 
+        $directorySeparator = self::isOnMicrosoft() ? '\\' : '/';
         $errorMsg = 'Path is outside resolved document root (' . $docRootSymLinksExpanded . ')';
-        self::pathBeginsWithSymLinksExpanded($input, $docRootSymLinksExpanded . '/', $errorMsg);
+        self::pathBeginsWithSymLinksExpanded($input, $docRootSymLinksExpanded . $directorySeparator, $errorMsg);
 
         return $input;
     }
