@@ -117,7 +117,7 @@ abstract class AbstractConverter
         $this->setProvidedOptions($options);
 
         if (!isset($this->options['_skip_input_check'])) {
-            $this->log('WebP Convert 2.3.0', 'italic');
+            $this->log('WebP Convert 2.3.2', 'italic');
             $this->logLn(' ignited.');
             $this->logLn('- PHP version: ' . phpversion());
             if (isset($_SERVER['SERVER_SOFTWARE'])) {
@@ -206,11 +206,11 @@ abstract class AbstractConverter
     {
         $sourceSize = filesize($source);
         $destSize = filesize($destination);
-        $this->log(round(($sourceSize - $destSize)/$sourceSize * 100) . '% ');
+        $this->log(round(($sourceSize - $destSize) / $sourceSize * 100) . '% ');
         if ($sourceSize < 10000) {
-            $this->logLn('(went from ' . strval($sourceSize) . ' bytes to '. strval($destSize) . ' bytes)');
+            $this->logLn('(went from ' . strval($sourceSize) . ' bytes to ' . strval($destSize) . ' bytes)');
         } else {
-            $this->logLn('(went from ' . round($sourceSize/1024) . ' kb to ' . round($destSize/1024) . ' kb)');
+            $this->logLn('(went from ' . round($sourceSize / 1024) . ' kb to ' . round($destSize / 1024) . ' kb)');
         }
     }
 
