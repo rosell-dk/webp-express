@@ -90,9 +90,6 @@ namespace WebPExpress;
                         <td>Very comprehensive. Replaces images in inline styles, image urls in lazy load attributes set in &lt;div&gt; or &lt;li&gt; tags, etc.</td>
                     </tr>
                 </table>
-                <p>
-                    Note: The altering only happens for images that are converted and which exists in the same folder as the source with the extension selected in the GENERAL section.
-                </p>
             </div>
             <a id="hide_alterhtml_chart_btn" href="javascript:updateAlterHTMLChartVisibility(false);">Hide comparison chart</a>
             <div>
