@@ -456,6 +456,7 @@ $sanitized = [
         'content-hooks',
         'ob'
     ]),
+    'alter-html-content-hooks-list' => str_replace( array( "'", '"', '\\' ), '', sanitize_textarea_field( $_POST['alter-html-content-hooks-list'] ) ),
     'alter-html-hostname-aliases' => webpexpress_getSanitizedAlterHtmlHostnameAliases(),
 
 
@@ -528,6 +529,7 @@ if ($sanitized['operation-mode'] != 'no-conversion') {
 
 $config['alter-html']['replacement'] = $sanitized['alter-html-replacement'];
 $config['alter-html']['hooks'] = $sanitized['alter-html-hooks'];
+$config['alter-html']['content-hooks-list'] = $sanitized['alter-html-content-hooks-list'];
 $config['alter-html']['hostname-aliases'] = $sanitized['alter-html-hostname-aliases'];
 
 

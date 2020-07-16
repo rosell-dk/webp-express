@@ -83,6 +83,7 @@ class Config
                 'enabled' => false,
                 'replacement' => 'picture',          // "picture" or "url"
                 'hooks' => 'ob',             // "content-hooks" or "ob"
+                'content-hooks-list' => '',     // hooks list for hooks field is "content-hooks"
                 'only-for-webp-enabled-browsers' => true,     // If true, there will be two HTML versions of each page
                 'only-for-webps-that-exists' => false,
                 'alter-html-add-picturefill-js' => true,
@@ -394,6 +395,7 @@ class Config
 
         Option::updateOption('webp-express-alter-html', $config['alter-html']['enabled'], true);
         Option::updateOption('webp-express-alter-html-hooks', $config['alter-html']['hooks'], true);
+        Option::updateOption('webp-express-alter-html-content-hooks-list', $config['alter-html']['content-hooks-list'], '');
         Option::updateOption('webp-express-alter-html-replacement', $config['alter-html']['replacement'], true);
         Option::updateOption('webp-express-alter-html-add-picturefill-js', (($config['alter-html']['replacement'] == 'picture') && (isset($config['alter-html']['alter-html-add-picturefill-js']) && $config['alter-html']['alter-html-add-picturefill-js'])), true);
 

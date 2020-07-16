@@ -183,14 +183,33 @@ namespace WebPExpress;
                     '<p></p>',
                     'no-margin-left set-margin-right');
                 ?></label>
+                <ul style="margin-left: 20px; margin-top: 5px"><li>
                 <?php
-                webpexpress_radioButtons('alter-html-hooks', $config['alter-html']['hooks'], [
-                    'content-hooks' => 'Use content filtering hooks (the_content, the_excerpt, etc)',
-                    'ob' => 'The complete page (using output buffering)</em>',
-                ], [
-                ]
+                webpexpress_radioButton(
+                  'alter-html-hooks',
+                  'content-hooks',
+                  'Use content filtering hooks (the_content, the_excerpt, etc)',
+                  $config['alter-html']['hooks']     // PS: the function takes care of the escaping
                 );
                 ?>
+                </li>
+                <li><div id="alter_html_content_hooks_options_div" style="margin-left:18px; margin-bottom: 13px;">
+                    <div style="margin:10px 0 0 10px;">
+                        <label for="alter_html_content_hooks_list">Add custom filtering hooks from theme or plugins here, 1 per line:</label><br/>
+                        <textarea id="alter_html_content_hooks_list" name="alter-html-content-hooks-list" cols="50" rows="4"><?php echo stripslashes( $config['alter-html']['content-hooks-list'] ); ?></textarea>
+                    </div>
+                </div></li>
+                <li>
+                <?php
+                webpexpress_radioButton(
+                  'alter-html-hooks',
+                  'ob',
+                  'The complete page (using output buffering)',
+                  $config['alter-html']['hooks']  // PS: the function takes care of the escaping
+                );
+                ?>
+                </li>
+                </ul>
             </div>
             <div style="margin-top: 20px">
                 <label>CDN hostname(s) / hostname alias(es) <?php echo helpIcon(

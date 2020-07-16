@@ -107,6 +107,21 @@ class AlterHtmlInit
             add_filter( 'the_excerpt', '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999 );
             add_filter( 'post_thumbnail_html', '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999);
 
+            // Run custom Filtering Hooks for support 3rd plugins that do not hardcode above
+            $hooks_list = Option::getOption('webp-express-alter-html-content-hooks-list');
+            if ( ! empty( $hooks_list ) ) {
+                $hooks_list = explode( "\n", $hooks_list );
+                if ( ! empty( $hooks_list ) ) {
+                    $hooks_list = array_map( 'trim', $hooks_list );
+
+                    foreach ( $hooks_list as $hook_tag ) {
+                        if ( ! empty( $hook_tag ) ) {
+                            add_filter( $hook_tag, '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999);
+                        }
+                    }
+                }
+            }
+
 
             /*
             TODO:
