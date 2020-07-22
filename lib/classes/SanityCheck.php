@@ -307,11 +307,6 @@ class SanityCheck
 
         // Use realpath to expand symbolic links and check if it exists
         $docRootSymLinksExpanded = @realpath($docRoot);
-        
-        // See if $filePath begins with the realpath of the $docRoot + '/'. If it does, we are done and OK!
-        if (strpos($input, $docRootSymLinksExpanded . '/') === 0) {
-            return $input;
-        }
 
         if ($docRootSymLinksExpanded === false) {
             // probably outside open basedir restriction.
@@ -321,6 +316,12 @@ class SanityCheck
             // Cannot resolve document root, so cannot test if in document root
             return $input;
         }
+
+        // See if $filePath begins with the realpath of the $docRoot + '/'. If it does, we are done and OK!
+        if (strpos($input, $docRootSymLinksExpanded . '/') === 0) {
+            return $input;
+        }
+
         $docRootSymLinksExpanded = rtrim($docRootSymLinksExpanded, '\\/');
         $docRootSymLinksExpanded = self::absPathExists($docRootSymLinksExpanded, 'Document root does not exist!');
         $docRootSymLinksExpanded = self::absPathExistsAndIsDir($docRootSymLinksExpanded, 'Document root is not a directory!');
