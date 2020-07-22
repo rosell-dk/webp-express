@@ -307,6 +307,12 @@ class SanityCheck
 
         // Use realpath to expand symbolic links and check if it exists
         $docRootSymLinksExpanded = @realpath($docRoot);
+        
+        // See if $filePath begins with the realpath of the $docRoot + '/'. If it does, we are done and OK!
+        if (strpos($input, $docRootSymLinksExpanded . '/') === 0) {
+            return $input;
+        }
+
         if ($docRootSymLinksExpanded === false) {
             // probably outside open basedir restriction.
             //$errorMsg = 'Cannot resolve document root';
