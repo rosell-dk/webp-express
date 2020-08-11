@@ -50,7 +50,12 @@ class AlterHtmlHelper
             if ($config) {
               $config = Config::fix($config, false);
               self::$options['scope'] = $config['scope'];
-              Option::updateOption('webp-express-alter-html-options', self::$options);
+
+              Option::updateOption(
+                  'webp-express-alter-html-options',
+                  json_encode(self::$options, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK),
+                  true
+              );
             }
           }
       }
@@ -66,7 +71,6 @@ class AlterHtmlHelper
      */
     public static function getRelUrlPath($imageUrl, $baseUrl)
     {
-
         $baseUrlComponents = parse_url($baseUrl);
         /* ie:
         (
@@ -163,6 +167,7 @@ class AlterHtmlHelper
     {
         //error_log('getWebPUrlInImageRoot:' . $sourceUrl . ':' . $baseUrl . ':' . $baseDir);
 
+
         $srcPathRel = self::getRelUrlPath($sourceUrl, $baseUrl);
 
         if ($srcPathRel === false) {
@@ -181,6 +186,9 @@ class AlterHtmlHelper
         // ----------------------------------------
 
         // We are calculating: $destPathAbs and $destUrl.
+
+        // Make sure the options are loaded (and fixed)
+        self::getOptions();
 
         if (!isset(self::$options['scope']) || !in_array($rootId, self::$options['scope'])) {
             return false;
