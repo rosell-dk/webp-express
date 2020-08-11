@@ -187,7 +187,7 @@ namespace WebPExpress;
                     'Also, in order to protect from memory problems, the HTML altering is ' .
                     'bypassed when the HTML is larger than 600 kb. ' .
                     'However, not all themes and plugins uses the standard hooks, so in some ' .
-                    'cases, you will have to resort to the second option. Since 0.17.5, ' .
+                    'cases, you will have to resort to the second option. As of 0.17.5, ' .
                     'hooks has been added for some popular plugins, such as <i>ACF</i> and ' .
                     '<i>Woo Commerce Product Image</i>. ' .
                     '<p><i>Use content filtering hooks</i> currently supports the following hooks: ' .
