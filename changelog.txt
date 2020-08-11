@@ -1,6 +1,6 @@
 = 0.17.5 =
 *(released: 11 Aug 2020)*
-* Fixed "Path is outside resolved document root" in a certain symlinked configuration. Thanks to @spiderPan for providing the fix.
+* Fixed "Path is outside resolved document root" in a certain symlinked configuration. Thanks to @spiderPan on github for providing the fix.
 * Added content filtering hooks for several third party plugins including ACF and WooCommerce Product Images. With this change, the "Use content filtering hooks" in Alter HTML works in more scenarios, which means there are fewer scenarios where you have to resort to the slower "The complete page" option. Thanks to alextuan for providing the contribution
 * Fixed problems with Alter HTML when migrating: Absolute paths were cached in the database and the cache was only updated upon saving settings. The paths are not cached anymore (recalculating these on each page load is not a performance problem)
 
