@@ -179,8 +179,22 @@ namespace WebPExpress;
             }
             ?>
             <div style="margin-top: 20px">
-                <label>Where to replace: <?php echo helpIcon(
-                    '<p></p>',
+                <label>How to replace: <?php echo helpIcon(
+                    '<p>WebP Express can either trigger the HTML altering by hooking into ' .
+                    'standard content filtering hooks, or it can do it on the whole page. ' .
+                    'Usually, you should select the first option, as it is lighter to ' .
+                    'do string manipulation on selected content than on the whole page. ' .
+                    'Also, in order to protect from memory problems, the HTML altering is ' .
+                    'bypassed when the HTML is larger than 600 kb. ' .
+                    'However, not all themes and plugins uses the standard hooks, so in some ' .
+                    'cases, you will have to resort to the second option. Since 0.17.5, ' .
+                    'hooks has been added for some popular plugins, such as <i>ACF</i> and ' .
+                    '<i>Woo Commerce Product Image</i>. ' .
+                    '<p><i>Use content filtering hooks</i> currently supports the following hooks: ' .
+                    '<i>the_content</i>, <i>the_excerpt</i>, <i>post_thumbnail_html</i>, <i>get_avatar</i>' .
+                    ', <i>woocommerce_product_get_image</i>, <i>acf_the_content</i>, <i>dynamic_sidebar_before</i>, <i>dynamic_sidebar_after</i>' .
+                    '. Let me know if you need another content filtering hook to be added.' .
+                    '</p>',
                     'no-margin-left set-margin-right');
                 ?></label>
                 <?php
