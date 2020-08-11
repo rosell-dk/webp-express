@@ -82,6 +82,20 @@ class AlterHtmlInit
            . '</script>';
     }
 
+    public static function sidebarBeforeAlterHtml()
+    {
+        ob_start();
+    }
+
+    public static function sidebarAfterAlterHtml()
+    {
+        $content = ob_get_clean();
+
+        echo self::alterHtml($content);
+
+        unset($content);
+    }
+
     public static function setHooks() {
 
         if (Option::getOption('webp-express-alter-html-add-picturefill-js')) {
@@ -106,6 +120,11 @@ class AlterHtmlInit
             add_filter( 'the_content', '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999 ); // priority big, so it will be executed last
             add_filter( 'the_excerpt', '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999 );
             add_filter( 'post_thumbnail_html', '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999);
+            add_filter( 'woocommerce_product_get_image', '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999 );
+            add_filter( 'get_avatar', '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999 );
+            add_filter( 'acf_the_content', '\\WebPExpress\\AlterHtmlInit::alterHtml', 99999 );
+            add_action( 'dynamic_sidebar_before', '\\WebPExpress\\AlterHtmlInit::sidebarBeforeAlterHtml', 0 );
+            add_action( 'dynamic_sidebar_after', '\\WebPExpress\\AlterHtmlInit::sidebarAfterAlterHtml', 1000 );
 
 
             /*
