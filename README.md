@@ -654,7 +654,27 @@ Here are my current plans ahead: 0.17 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
-## 0.17.3
+## Changes in 0.17.5
+*(released: 11 Aug 2020)*
+
+* Fixed "Path is outside resolved document root" in a certain symlinked configuration. Thanks to @robertgres for providing the fix.
+* Added content filtering hooks for several third party plugins including ACF and WooCommerce Product Images. With this change, the "Use content filtering hooks" in Alter HTML works in more scenarios, which means there are fewer scenarios where you have to resort to the slower "The complete page" option. Thanks to alextuan for providing the contribution
+* Fixed problems with Alter HTML when migrating: Absolute paths were cached in the database and the cache was only updated upon saving settings. The paths are not cached anymore (recalculating these on each page load is not a performance problem)
+
+For more info, see the closed issues on the 0.17.5 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/30?closed=1
+
+## Changes in 0.17.4
+*(released: 26 Jun 2020)*
+
+* Fixed bug: Configuration was repeatedly resetting for some users
+* Fixed "Path is outside resolved document root" on file conversion attempts in Windows. Thanks to @Ruzgfpegk from Japan for providing the fix.
+* Fix errors not caught in the selftest. Thanks to Benji Bilheimer from Germany providing the fix.
+* Fix errors not caught in the selftest with unverified certificates. Thanks to Rikesh Ramlochund from Mauritius for providing the fix.
+* Fixed errors with filenames containing encoded symbols. Thanks to Eddie Zhou from Canada for the fix.
+
+For more info, see the closed issues on the 0.17.4 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/32?closed=1
+
+## Changes in 0.17.3
 *(released: 3 Feb 2020)*
 
 * Fixed critical bug: Fatal error after updating plugin (if one had been postponing updating WebP Express for a while and then updated Wordpress and THEN updated WebP Express)

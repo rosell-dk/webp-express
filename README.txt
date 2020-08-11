@@ -3,8 +3,8 @@ Contributors: rosell.dk
 Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
-Tested up to: 5.4
-Stable tag: 0.17.4
+Tested up to: 5.5
+Stable tag: 0.17.5
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -662,6 +662,14 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.17.5 =
+*(released: 11 Aug 2020)*
+* Fixed "Path is outside resolved document root" in a certain symlinked configuration. Thanks to @robertgres for providing the fix.
+* Added content filtering hooks for several third party plugins including ACF and WooCommerce Product Images. With this change, the "Use content filtering hooks" in Alter HTML works in more scenarios, which means there are fewer scenarios where you have to resort to the slower "The complete page" option. Thanks to alextuan for providing the contribution
+* Fixed problems with Alter HTML when migrating: Absolute paths were cached in the database and the cache was only updated upon saving settings. The paths are not cached anymore (recalculating these on each page load is not a performance problem)
+
+For more info, see the closed issues on the 0.17.5 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/30?closed=1
+
 = 0.17.4 =
 *(released: 26 Jun 2020)*
 * Fixed bug: Configuration was repeatedly resetting for some users
@@ -1083,6 +1091,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.17.5 =
+* Various fixes, mainly by community.
 
 = 0.17.4 =
 * Various fixes by community. Maintainer is partly back. Will be fully back mid august.
