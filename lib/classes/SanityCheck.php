@@ -299,12 +299,6 @@ class SanityCheck
             return $input;
         }
 
-        // See if $filePath begins with $dirPath + '/'. If it does, we are done and OK!
-        if (strpos($input, $docRoot . '/') === 0) {
-            return $input;
-        }
-
-
         // Use realpath to expand symbolic links and check if it exists
         $docRootSymLinksExpanded = @realpath($docRoot);
         if ($docRootSymLinksExpanded === false) {
@@ -317,6 +311,7 @@ class SanityCheck
         }
 
         // See if $filePath begins with the realpath of the $docRoot + '/'. If it does, we are done and OK!
+        // (pull #429)
         if (strpos($input, $docRootSymLinksExpanded . '/') === 0) {
             return $input;
         }
