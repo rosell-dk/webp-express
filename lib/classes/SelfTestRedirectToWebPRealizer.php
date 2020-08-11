@@ -1,6 +1,8 @@
 <?php
 
 namespace WebPExpress;
+use \WebPExpress\Option;
+
 
 class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
 {
@@ -46,6 +48,19 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
             Paths::getAbsDirById($rootId)
         );
 
+        if ($requestUrl === false) {
+          $log[] = 'Hm, strange. The source URL does not seem to be in the base root';
+          $log[] = 'Source URL:' . $sourceUrl;
+          //$log[] = 'Root ID:' . $rootId;
+          $log[] = 'Root Url:' . Paths::getUrlById($rootId);
+          $log[] = 'Request Url:' . $requestUrl;
+          $log[] = 'parsed url:' . print_r(parse_url($sourceUrl), true);
+          $log[] = 'parsed url:' . print_r(parse_url(Paths::getUrlById($rootId)), true);
+          $log[] = 'scope:' . print_r(AlterHtmlHelper::$options['scope'], true);
+          $log[] = 'cached options:' . print_r(AlterHtmlHelper::$options, true);
+          $log[] = 'cached options: ' . print_r(Option::getOption('webp-express-alter-html-options', 'not there!'), true);
+        }
+
 
         $log[] = '### Lets check that browsers supporting webp gets a freshly converted WEBP ' .
             'when a non-existing WEBP is requested, which has a corresponding source';
@@ -58,6 +73,7 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
         list($success, $remoteGetLog, $results) = SelfTestHelper::remoteGet($requestUrl, $requestArgs);
         $headers = $results[count($results)-1]['headers'];
         $log = array_merge($log, $remoteGetLog);
+
 
         if (!$success) {
             //$log[count($log) - 1] .= '. FAILED';
