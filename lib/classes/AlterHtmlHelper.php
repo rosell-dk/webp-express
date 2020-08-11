@@ -3,7 +3,7 @@
 namespace WebPExpress;
 
 //use AlterHtmlInit;
-
+use \WebPExpress\Config;
 use \WebPExpress\Paths;
 use \WebPExpress\PathHelper;
 use \WebPExpress\Multisite;
@@ -39,6 +39,23 @@ class AlterHtmlHelper
         }
     }
 */
+
+    public static function getOptions() {
+      if (!isset(self::$options)) {
+          self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
+
+          // Set scope if it isn't there (it wasn't cached until 0.17.5)
+          if (!isset(self::$options['scope'])) {
+            $config = Config::loadConfig();
+            if ($config) {
+              $config = Config::fix($config, false);
+              self::$options['scope'] = $config['scope'];
+              Option::updateOption('webp-express-alter-html-options', self::$options);
+            }
+          }
+      }
+    }
+
     /**
      *  Gets relative path between a base url and another.
      *  Returns false if the url isn't a subpath
@@ -165,7 +182,7 @@ class AlterHtmlHelper
 
         // We are calculating: $destPathAbs and $destUrl.
 
-        if (!isset(self::$options['bases'][$rootId])) {
+        if (!isset(self::$options['scope']) || !in_array($rootId, self::$options['scope'])) {
             return false;
         }
 
@@ -210,9 +227,7 @@ class AlterHtmlHelper
     public static function getWebPUrl($sourceUrl, $returnValueOnFail)
     {
         // Get the options
-        if (!isset(self::$options)) {
-            self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
-        }
+        self::getOptions();
 
         // Fail for webp-disabled  browsers (when "only-for-webp-enabled-browsers" is set)
         if ((self::$options['only-for-webp-enabled-browsers']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') === false)) {
@@ -248,7 +263,10 @@ class AlterHtmlHelper
         //error_log('source url:' . $sourceUrl);
 
         // Try all image roots
-        foreach (self::$options['bases'] as $rootId => list($baseDir, $baseUrl)) {
+        foreach (self::$options['scope'] as $rootId) {
+            $baseDir = Paths::getAbsDirById($rootId);
+            $baseUrl = Paths::getUrlById($rootId);
+
             //error_log('baseurl: ' . $baseUrl);
             if (Multisite::isMultisite() && ($rootId == 'uploads')) {
                 $baseUrl = Paths::getUploadUrl();

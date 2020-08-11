@@ -405,42 +405,7 @@ class Config
         $obj['destination-folder'] = $config['destination-folder'];
         $obj['destination-extension'] = $config['destination-extension'];
         $obj['destination-structure'] = $config['destination-structure'];
-
-        $obj['bases'] = [];
-        foreach ($config['scope'] as $rootId) {
-            $obj['bases'][$rootId] = [
-                Paths::getAbsDirById($rootId),
-                Paths::getUrlById($rootId)
-            ];
-        }
-
-        /*
-        // TODO!
-        // Instead of "bases", use image root ids.
-        // Its a numeric array and there is no id called "content"
-
-        $obj['bases'] = [
-            'uploads' => [
-                Paths::getUploadDirAbs(),
-                Paths::getUploadUrl()
-            ],
-        ];
-
-        if ($obj['destination-structure'] == 'doc-root') {
-            $obj['bases']['content'] = [
-                Paths::getContentDirAbs(),
-                Paths::getContentUrl()
-            ];
-        } else {
-            foreach (Paths::getImageRootIds() as $rootId) {
-                $obj['bases'][$rootId] = [
-                    Paths::getAbsDirById($rootId),
-                    Paths::getUrlById($rootId)
-                ];
-            }
-        }*/
-
-
+        $obj['scope'] = $config['scope'];
         $obj['image-types'] = $config['image-types'];   // 0=none,1=jpg, 2=png, 3=both
 
         Option::updateOption(
