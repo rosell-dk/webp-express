@@ -63,7 +63,6 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
             //$log[count($log) - 1] .= '. FAILED';
             //$log[] = '*' . $requestUrl . '*';
 
-            $log = array_merge($log, $errors);
             $log[] = 'The test **failed**{: .error}';
 
             $log[] = 'Why did it fail? It could either be that the redirection rule did not trigger ' .
