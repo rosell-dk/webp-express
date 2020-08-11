@@ -506,7 +506,7 @@ class SelfTestHelper
         return $log;
     }
 
-    public static function diagnoseFailedRewrite($config)
+    public static function diagnoseFailedRewrite($config, $headers)
     {
         if (($config['destination-structure'] == 'image-roots') && (!PathHelper::isDocRootAvailableAndResolvable())) {
             $log[] = 'The problem is probably this combination:';
@@ -526,7 +526,10 @@ class SelfTestHelper
         }
 
         //$log[] = '## Diagnosing';
-        if (PlatformInfo::isNginx()) {
+
+        //if (PlatformInfo::isNginx()) {
+        if (strpos($headers['server'], 'nginx') === 0) {
+
             // Nginx
             $log[] = 'Notice that you are on Nginx and the rules that WebP Express stores in the *.htaccess* files probably does not ' .
                 'have any effect. ';

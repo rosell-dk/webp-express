@@ -24,7 +24,7 @@ abstract class SelfTestRedirectAbstract
     private function doRunTestForRoot($rootId)
     {
     //    return [true, ['hello'], false];
-//        return [false, SelfTestHelper::diagnoseFailedRewrite($this->config), false];
+//        return [false, SelfTestHelper::diagnoseFailedRewrite($this->config, $headers), false];
 
         $result = [];
 

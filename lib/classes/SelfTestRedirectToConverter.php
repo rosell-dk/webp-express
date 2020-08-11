@@ -78,7 +78,7 @@ class SelfTestRedirectToConverter extends SelfTestRedirectAbstract
                     'probably that the redirection simply failed';
 
                     $log[] = '### Diagnosing redirection problems';
-                    $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config));
+                    $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config, $headers));
             }
             return [false, $log, $createdTestFiles];
         }

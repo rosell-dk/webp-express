@@ -72,7 +72,6 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
             $log[] = 'Bummer. There is no "content-type" response header. The test FAILED';
             return [false, $log, $createdTestFiles];
         }
-
         if ($headers['content-type'] != 'image/webp') {
 
             if ($headers['content-type'] == 'image/' . $imageType) {
@@ -108,14 +107,14 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
                         'So we can conclude that the rewrite did not happen';
                     $log[] = 'The test **FAILED**{: .error}.';
                     $log[] = '#### Diagnosing rewrites';
-                    $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config));
+                    $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config, $headers));
                 }
             } else {
                 $log[] = 'In addition, we did not get a *content-length* header either.' .
                 $log[] = 'It seems we can conclude that the rewrite did not happen.';
                 $log[] = 'The test **FAILED**{: .error}.';
                 $log[] = '#### Diagnosing rewrites';
-                $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config));
+                $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config, $headers));
             }
 
             return [false, $log, $createdTestFiles];
@@ -129,7 +128,7 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
 
             $log[] = 'It seems something went wrong with the redirection.';
             $log[] = '#### Diagnosing redirects';
-            $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config));
+            $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config, $headers));
 
             return [false, $log, $createdTestFiles];
         } else {

@@ -72,7 +72,7 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
                 'if the latter is the case (sorry!). However, if the redirection rules are the problem, here is some info:';
 
             $log[] = '### Diagnosing redirection problems (presuming it is the redirection to the script that is failing)';
-            $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config));
+            $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config, $headers));
 
 
             //$log[count($log) - 1] .= '. FAILED';
@@ -107,7 +107,7 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
                     'probably that the redirection simply failed';
 
                     $log[] = '### Diagnosing redirection problems';
-                    $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config));
+                    $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config, $headers));
             }
             return [false, $log, $createdTestFiles];
         }
