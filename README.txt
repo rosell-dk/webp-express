@@ -646,6 +646,16 @@ If you got any further questions, look at, or comment on [this topic](https://wo
 = Update failed and cannot reinstall =
 The 0.17.0 release contained binaries with dots in their filenames, which caused the unpacking during update to fail on a few systems. This failure could leave an incomplete installation. With important files missing - such as the main plugin file - Wordpress no longer registers that the plugin is there (it is missing from the list). However, the folder is there in the file system and trying to install WebP Express again fails because Wordpress complains about just that. The solution is to remove the "webp-express" folder in "plugins" manually (via ftp or a plugin, such as File Manager) and then install WebP Express anew. The setting will be intact. The filenames that caused the trouble where fixed in 0.17.2.
 
+= Not all image tags are changed into picture tags =
+
+If you are wondering why Alter HTML are missing some images, it can be due to one of the following reasons:
+
+- WebP Express doesn't convert external images. Images that doesn't point to your server or a CDN that you have added in the CDN hostnames section are left untouched.
+- WebP Express has a "Scope" option, which for example can be set to "Uploads and themes". Only images that resides within the selected scope are replaced with webp.
+- If you have selected `<picture>` tags syntax, only images inserted with `<img>`-tags will be replaced (CSS images will not be replaced). Additionally, the `<img>`-tag must have a "src" attribute or a common attribute for lazyloading (such as “data-src” or “data-lazy-src”)
+- If you have set the "How to replace" option to "Use content filtering hooks", images inserted with some third party plugins/themes might not be replaced. To overcome that, change that setting to "The complete page".
+- The image might have been inserted with javascript. WebP Express doesn't changSome plugins might insert the
+
 = When is feature X coming? / Roadmap =
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
 
@@ -664,7 +674,7 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 = 0.17.5 =
 *(released: 11 Aug 2020)*
-* Fixed "Path is outside resolved document root" in a certain symlinked configuration. Thanks to @robertgres for providing the fix.
+* Fixed "Path is outside resolved document root" in a certain symlinked configuration. Thanks to @spiderPan for providing the fix.
 * Added content filtering hooks for several third party plugins including ACF and WooCommerce Product Images. With this change, the "Use content filtering hooks" in Alter HTML works in more scenarios, which means there are fewer scenarios where you have to resort to the slower "The complete page" option. Thanks to alextuan for providing the contribution
 * Fixed problems with Alter HTML when migrating: Absolute paths were cached in the database and the cache was only updated upon saving settings. The paths are not cached anymore (recalculating these on each page load is not a performance problem)
 
