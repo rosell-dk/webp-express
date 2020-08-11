@@ -650,12 +650,11 @@ The 0.17.0 release contained binaries with dots in their filenames, which caused
 
 If you are wondering why Alter HTML are missing some images, it can be due to one of the following reasons:
 
-- WebP Express doesn't convert external images. Images that doesn't point to your server or a CDN that you have added in the CDN hostnames section are left untouched.
+- WebP Express doesn't convert external images, only images on your server. Alter HTML will therefore not alter URLS that unless they point to your server or a CDN that you have added in the *CDN hostnames* section
 - WebP Express has a "Scope" option, which for example can be set to "Uploads and themes". Only images that resides within the selected scope are replaced with webp.
-- If you have selected `<picture>` tags syntax, only images inserted with `<img>`-tags will be replaced (CSS images will not be replaced). Additionally, the `<img>`-tag must have a "src" attribute or a common attribute for lazyloading (such as “data-src” or “data-lazy-src”)
+- If you have selected `<picture>` tags syntax, only images inserted with `<img>`-tags will be replaced (CSS images will not be replaced). Additionally, the `<img>`-tag must have a "src" attribute or a commonly used data attribute for lazyloading (such as “data-src” or “data-lazy-src”)
 - If you have set the "How to replace" option to "Use content filtering hooks", images inserted with some third party plugins/themes might not be replaced. To overcome that, change that setting to "The complete page".
 - The image might have been inserted with javascript. WebP Express doesn't changSome plugins might insert the
-
 
 = When is feature X coming? / Roadmap =
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
