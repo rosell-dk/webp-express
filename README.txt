@@ -378,11 +378,11 @@ Here are rules if you need to *replace* the file extension with ".webp" rather t
 Good news! It should work now, thanks to a guy that calls himself lwxbr. At least on XAMPP 7.3.1, Windows 10. https://github.com/rosell-dk/webp-express/pull/213.
 
 = I am on a Litespeed server =
-You do not have to do anything special for it to work on a Litespeed server. You should be able to use WebP Express in any operation mode. For best performance, I however recommend that use the LiteSpeed Cache plugin for page caching.
+You do not have to do anything special for it to work on a Litespeed server. You should be able to use WebP Express in any operation mode. For best performance, I however recommend that use the *LiteSpeed Cache* plugin for page caching.
 
 LiteSpeed Cache can be set up to maintain separate page caches for browsers that supports webp and browsers that don't. Through this functionality it is possible to use "Alter HTML" with the option "Replace image URLs" and "Only do the replacements in webp enabled browsers" mode.
 
-The setup was kindly shared and explained in detail by @ribeiroeder here: https://github.com/rosell-dk/webp-express/issues/433
+The setup was kindly shared and explained in detail by [@ribeiroeder](https://github.com/ribeiroeder) [here](https://github.com/rosell-dk/webp-express/issues/433)
 
 = I am using Jetpack =
 If you install Jetpack and enable the "Speed up image load times" then Jetpack will alter the HTML such that images are pointed to their CDN.
@@ -666,7 +666,7 @@ If you are wondering why Alter HTML are missing some images, it can be due to on
 = When is feature X coming? / Roadmap =
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
 
-Here are my current plans ahead: 0.17 will probably be a file manager-like interface for converting / bulk converting / viewing conversion logs / comparing original vs webp visually - kind of a merge of current "test converter" and "bulk conversion" interfaces, and with an addition of a file explorer. 0.18 might allow excluding certain files and folders. 0.19 could be supporting Save-Data header in Varied Image Responses mode (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.19 might be displaying rules for NGINX. 0.20 might be an effort to allow webp for all browsers using [this javascript library](http://libwebpjs.hohenlimburg.org/v0.6.0/). Unfortunately, the javascript librare does not (currently) support srcset attributes, which is why I moved this item down the priority list. We need srcset to be supported for the feature to be useful. 0.21 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
+Here are my current plans ahead: 0.18 will probably be a file manager-like interface for converting / bulk converting / viewing conversion logs / comparing original vs webp visually - kind of a merge of current "test converter" and "bulk conversion" interfaces, and with an addition of a file explorer. 0.19 might allow excluding certain files and folders. 0.20 could be supporting Save-Data header in Varied Image Responses mode (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.21 might be displaying rules for NGINX. 0.21 might be an effort to allow webp for all browsers using [this javascript library](http://libwebpjs.hohenlimburg.org/v0.6.0/). Unfortunately, the javascript library does not (currently) support srcset attributes, which is why I moved this item down the priority list. We need srcset to be supported for the feature to be useful. 0.21 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
