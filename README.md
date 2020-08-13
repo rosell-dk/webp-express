@@ -376,11 +376,11 @@ Here are rules if you need to *replace* the file extension with ".webp" rather t
 Good news! It should work now, thanks to a guy that calls himself lwxbr. At least on XAMPP 7.3.1, Windows 10. https://github.com/rosell-dk/webp-express/pull/213.
 
 ### I am on a Litespeed server
-You do not have to do anything special for it to work on a Litespeed server. You should be able to use WebP Express in any operation mode (1).
+You do not have to do anything special for it to work on a Litespeed server. You should be able to use WebP Express in any operation mode. For best performance, I however recommend that use the *LiteSpeed Cache* plugin for page caching.
 
-For best performance, I however recommend that you choose `CDN friendly` mode and use the `LiteSpeed Cache` plugin for page caching. `LiteSpeed Cache` can be set up to maintain separate page caches for browsers that supports webp and browsers that don't. The setup was kindly shared and explained in detail by ribeiroeder here: https://github.com/rosell-dk/webp-express/issues/433
+LiteSpeed Cache can be set up to maintain separate page caches for browsers that supports webp and browsers that don't. Through this functionality it is possible to use "Alter HTML" with the option "Replace image URLs" and "Only do the replacements in webp enabled browsers" mode.
 
-(1) It is a while since I last checked if the .htaccess rules in the "Varied image responses" operation mode works on Litespeed so I am not 100% certain that they still do. I hope to get around to test again soon and have Litespeed added to the test setup.
+The setup was kindly shared and explained in detail by @ribeiroeder here: https://github.com/rosell-dk/webp-express/issues/433
 
 ### I am using Jetpack
 If you install Jetpack and enable the "Speed up image load times" then Jetpack will alter the HTML such that images are pointed to their CDN.
