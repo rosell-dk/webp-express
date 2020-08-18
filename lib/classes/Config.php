@@ -2,15 +2,6 @@
 
 namespace WebPExpress;
 
-use \WebPExpress\ConvertersHelper;
-use \WebPExpress\FileHelper;
-use \WebPExpress\HTAccess;
-use \WebPExpress\Messenger;
-use \WebPExpress\Paths;
-use \WebPExpress\State;
-use \WebPExpress\TestRun;
-use \WebPExpress\Option;
-
 class Config
 {
 

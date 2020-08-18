@@ -20,6 +20,7 @@ class HTAccessRules
     private static $passThroughHeaderDefinitelyAvailable;
     private static $passThroughEnvVarDefinitelyUnavailable;
     private static $passThroughEnvVarDefinitelyAvailable;
+    private static $grantAllDefinitelyAllowed;
     private static $capTests;
     private static $addVary;
     private static $dirContainsSourceImages;
@@ -56,6 +57,8 @@ class HTAccessRules
                 (self::$capTests['passThroughHeaderWorking'] === true ? 'yes' : (self::$capTests['passThroughHeaderWorking'] === false ? 'no' : 'could not be determined')) . "\n" .
             "# - pass variable from .htaccess to script through environment variable working?: " .
                 (self::$capTests['passThroughEnvWorking'] === true ? 'yes' : (self::$capTests['passThroughEnvWorking'] === false ? 'no' : 'could not be determined')) . "\n" .
+            "# - AuthConfig (Grant All) allowed in .htaccess?: " .
+                (self::$capTests['grantAllAllowed'] === true ? 'yes' : (self::$capTests['grantAllAllowed'] === false ? 'no' : 'could not be determined')) . "\n" .
 
             "#\n# Role of the dir that this .htaccess is located in:\n" .
             '# - Is this .htaccess in a dir containing source images?: ' . (self::$dirContainsSourceImages ? 'yes' : 'no') . "\n" .
@@ -303,7 +306,7 @@ class HTAccessRules
 
             $rewriteRuleStart = '^/?(.+)';
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ " .
-                "/" . Paths::getWebPRealizerUrlPath() .
+                "/" . Paths::getWebPRealizerUrlPath(self::$grantAllDefinitelyAllowed) .
                 ((count($params) > 0) ?  "?" . implode('&', $params) : '') .
                 " [" . implode(',', $flags) . "]\n\n";
         } else {
@@ -340,7 +343,7 @@ class HTAccessRules
             $appendWebP = !(self::$config['destination-extension'] == 'set');
 
             $rules .= "  RewriteRule (?i).*" . ($appendWebP ? "(" . self::$fileExtIncludingDot . ")" : "") . "\.webp$ " .
-                "/" . Paths::getWebPRealizerUrlPath() .
+                "/" . Paths::getWebPRealizerUrlPath(self::$grantAllDefinitelyAllowed) .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n";
 
@@ -378,7 +381,7 @@ class HTAccessRules
             $appendWebP = !(self::$config['destination-extension'] == 'set');
 
             $rules .= "  RewriteRule (?i).*" . ($appendWebP ? "(" . self::$fileExtIncludingDot . ")" : "") . "\.webp$ " .
-                "/" . Paths::getWebPRealizerUrlPath() .
+                "/" . Paths::getWebPRealizerUrlPath(self::$grantAllDefinitelyAllowed) .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n\n";
 */
@@ -420,7 +423,7 @@ class HTAccessRules
             }
 
             $rules .= "  RewriteRule (?i).*\.webp$ " .
-                "/" . Paths::getWebPRealizerUrlPath() .
+                "/" . Paths::getWebPRealizerUrlPath(self::$grantAllDefinitelyAllowed) .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n\n";
             */
@@ -672,8 +675,8 @@ class HTAccessRules
         ];
         $config = array_merge($defaults, $config);
 
-        if (!isset($config['base-htaccess-on-these-capability-tests'])) {
-            $config['base-htaccess-on-these-capability-tests'] = Config::runAndStoreCapabilityTests();
+        if (!isset($config['base-htaccess-on-these-capability-tests']['grantAllAllowed'])) {
+            $config['base-htaccess-on-these-capability-tests'] = Config::runAndStoreCapabilityTests($config);
         }
         self::$config = $config;
 
@@ -682,7 +685,7 @@ class HTAccessRules
         self::$passThroughHeaderDefinitelyUnavailable = ($capTests['passThroughHeaderWorking'] === false);
         self::$passThroughHeaderDefinitelyAvailable = ($capTests['passThroughHeaderWorking'] === true);
         self::$passThroughEnvVarDefinitelyUnavailable = ($capTests['passThroughEnvWorking'] === false);
-        self::$passThroughEnvVarDefinitelyAvailable =($capTests['passThroughEnvWorking'] === true);
+        self::$grantAllDefinitelyAllowed =($capTests['grantAllAllowed'] === true);
         self::$capTests = $capTests;
 
         self::$imageTypes = self::$config['image-types'];

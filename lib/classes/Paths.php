@@ -690,15 +690,23 @@ APACHE
         return self::getUrlPathFromUrl(self::getWebPExpressPluginUrl());
     }
 
-    public static function getWodUrlPath()
+    public static function getWodUrlPath($grantAllAllowed = true)
     {
-        return self::getWebPExpressPluginUrlPath() . '/wod/webp-on-demand.php';
+        return
+            self::getWebPExpressPluginUrlPath() .
+            '/wod' .
+            ($grantAllAllowed ? '' : '-grant-all-disallowed') .
+            '/webp-on-demand.php';
         //return self::getHomeUrlPath() . '/webp-on-demand';
     }
 
-    public static function getWebPRealizerUrlPath()
+    public static function getWebPRealizerUrlPath($grantAllAllowed = true)
     {
-        return self::getWebPExpressPluginUrlPath() . '/wod/webp-realizer.php';
+        return
+            self::getWebPExpressPluginUrlPath() .
+            '/wod' .
+            ($grantAllAllowed ? '' : '-grant-all-disallowed') .
+            '/webp-realizer.php';
     }
 
     public static function getWebServiceUrl()
