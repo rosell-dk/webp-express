@@ -1,6 +1,0 @@
-<IfModule mod_rewrite.c>
-#RewriteEngine on
-#RewriteCond %{REQUEST_URI} !request-uri-usable
-#RewriteRule ^(.*)$ request-uri-usable/$1
-
-</IfModule>

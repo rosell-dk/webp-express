@@ -477,6 +477,7 @@ class SelfTestHelper
     public static function allInfo($config)
     {
         $log = [];
+
         $log = array_merge($log, self::systemInfo());
         $log = array_merge($log, self::wordpressInfo());
         $log = array_merge($log, self::configInfo($config));
@@ -498,8 +499,10 @@ class SelfTestHelper
             'These test results are used when creating the rewrite rules. Here are the results:';*/
 
 //        $log[] = '';
-        $log[] = '- mod_rewrite working?: ' . self::trueFalseNullString(CapabilityTest::modRewriteWorking());
+        $log[] = '- mod_rewrite working?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modRewriteWorking());
         $log[] = '- mod_header working?: ' . self::trueFalseNullString($capTests['modHeaderWorking']);
+        $log[] = '- Request ALL allowed?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::grantAllAllowed());
+
         /*$log[] = '- pass variable from *.htaccess* to script through header working?: ' .
             self::trueFalseNullString($capTests['passThroughHeaderWorking']);*/
         $log[] = '- passing variables from *.htaccess* to PHP script through environment variable working?: ' . self::trueFalseNullString($capTests['passThroughEnvWorking']);
@@ -540,7 +543,7 @@ class SelfTestHelper
             return $log;
         }
 
-        $modRewriteWorking = CapabilityTest::modRewriteWorking();
+        $modRewriteWorking = HTAccessCapabilityTestRunner::modRewriteWorking();
         if ($modRewriteWorking !== null) {
             $log[] = 'Running a special designed capability test to test if rewriting works with *.htaccess* files';
         }

@@ -100,5 +100,4 @@ class CapabilityTest
         return self::runTest('pass-server-var-through-header');
     }
 
-
 }

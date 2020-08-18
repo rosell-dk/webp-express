@@ -1,5 +1,0 @@
-<IfModule mod_headers.c>
-	# Certain hosts seem to strip non-standard request headers,
-	# so we use a standard one to avoid a false negative
-    RequestHeader set User-Agent "webp-express-test"
-</IfModule>

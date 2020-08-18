@@ -267,9 +267,10 @@ class Config
     public static function runAndStoreCapabilityTests(&$config)
     {
         $config['base-htaccess-on-these-capability-tests'] = [
-            'passThroughHeaderWorking' => CapabilityTest::passThroughHeaderWorking(),
-            'passThroughEnvWorking' => CapabilityTest::passThroughEnvWorking(),
-            'modHeaderWorking' => CapabilityTest::modHeaderWorking(),
+            'passThroughHeaderWorking' => HTAccessCapabilityTestRunner::passThroughHeaderWorking(),
+            'passThroughEnvWorking' => HTAccessCapabilityTestRunner::passThroughEnvWorking(),
+            'modHeaderWorking' => HTAccessCapabilityTestRunner::modHeaderWorking(),
+            'grantAllAllowed' => HTAccessCapabilityTestRunner::grantAllAllowed(),
         ];
     }
 

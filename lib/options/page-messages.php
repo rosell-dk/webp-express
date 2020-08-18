@@ -2,7 +2,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-use \WebPExpress\CapabilityTest;
+use \WebPExpress\HTAccessCapabilityTestRunner;
 use \WebPExpress\Config;
 use \WebPExpress\ConvertersHelper;
 use \WebPExpress\DismissableMessages;
@@ -24,18 +24,12 @@ if (!(State::getState('configured', false))) {
 
 
 /*
-if (CapabilityTest::modRewriteWorking()) {
+if (HTAccessCapabilityTestRunner::modRewriteWorking()) {
     echo 'mod rewrite works. that is nice';
 }*/
 
-/*if (CapabilityTest::modHeaderWorking() === true) {
+/*if (HTAccessCapabilityTestRunner::modHeaderWorking() === true) {
     //echo 'nice!';
-}*/
-/*
-if (CapabilityTest::copyCapabilityTestsToWpContent()) {
-    echo 'copy ok!';
-} else {
-    echo 'copy failed!';
 }*/
 
 // Dissmiss page messages for which the condition no longer applies

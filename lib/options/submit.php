@@ -3,7 +3,6 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 use \WebPExpress\CacheMover;
-use \WebPExpress\CapabilityTest;
 use \WebPExpress\Config;
 use \WebPExpress\ConvertersHelper;
 use \WebPExpress\DismissableMessages;

@@ -43,8 +43,8 @@ class SelfTest
         /*
         $result = [];
         $result[] = '# Redirection tests';
-        $modRewriteWorking = CapabilityTest::modRewriteWorking();
-        $modHeaderWorking = CapabilityTest::modHeaderWorking();
+        $modRewriteWorking = HTAccessCapabilityTestRunner::modRewriteWorking();
+        $modHeaderWorking = HTAccessCapabilityTestRunner::modHeaderWorking();
 
         if (($modRewriteWorking === false) && ($modHeaderWorking)) {
             //$result[] = 'mod_rewrite is not working';

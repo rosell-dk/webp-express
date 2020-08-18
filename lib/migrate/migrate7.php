@@ -2,7 +2,6 @@
 
 namespace WebPExpress;
 
-use \WebPExpress\CapabilityTest;
 use \WebPExpress\Config;
 use \WebPExpress\HTAccess;
 use \WebPExpress\Messenger;
@@ -75,9 +74,6 @@ function webpexpress_migrate7() {
 
         // PSST: When creating new migration files, remember to update WEBPEXPRESS_MIGRATION_VERSION in admin.php
         Option::updateOption('webp-express-migration-version', '7');
-
-
-        CapabilityTest::copyCapabilityTestsToWpContent();
 
         // Not completely sure if this could fail miserably, so commented out.
         // We should probably do it in upcoming migrations
