@@ -30,7 +30,11 @@ class HTAccessCapabilityTestRunner
         $tester = TesterFactory::create($testName, $baseDir, $baseUrl);
         $tester->setHTTPRequester(new WPHTTPRequester());
 
-        $testResult = $tester->runTest();
+        try {
+            $testResult = $tester->runTest();
+        } catch (\Exception $e) {
+            $testResult = null;
+        }
         //error_log('test: ' . $testName . ':' . (($testResult === true) ? 'ok' : ($testResult === false ? 'failed' : 'hm')));
 
         return $testResult;
