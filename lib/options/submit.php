@@ -683,7 +683,8 @@ if ($sanitized['operation-mode'] != $sanitized['change-operation-mode']) {
     }
 }
 
-// If we are going to save .htaccess, run and store capability tests first (we should only store results when .htaccess is updated as well)
+// If we are going to save .htaccess, run and store capability tests first
+// (we should only store results when .htaccess is updated as well)
 if ($sanitized['force'] || HTAccess::doesRewriteRulesNeedUpdate($config)) {
     Config::runAndStoreCapabilityTests($config);
 }

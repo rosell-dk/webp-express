@@ -21,9 +21,7 @@ $operationMode = $config['operation-mode'];
 <?php if ($config['operation-mode'] == 'varied-image-responses') : ?>
 <p><div class="p">
     <i>In the "Varied image responses" mode, WebP Express creates redirection rules for images, such that a request for a jpeg will
-        result in a webp &ndash; but only if the request comes from a webp-enabled browser.
-        If a webp already exists, it is served immediately. Otherwise it is converted and then served.
-        Note that not all CDN's handles varied responses well (see FAQ).
+        result in a webp &ndash; but only if the request comes from a webp-enabled browser. Note that not all CDN's handles varied responses well (see FAQ).
     </i>
 </div></p>
 <?php endif; ?>
