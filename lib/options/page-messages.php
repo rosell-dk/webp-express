@@ -233,15 +233,21 @@ if (Config::isConfigFileThere()) {
                 }
                 Messenger::printMessage(
                     'warning',
-                    'You have turned on ' . implode(' and ', $turnedOn) .
+                    '<p>You have turned on ' . implode(' and ', $turnedOn) .
                     '. However, ' . (count($turnedOn) == 2 ? 'these features' : 'this feature') .
                     ' does not work on your current server settings / wordpress setup, ' .
-                    ' because the PHP scripts in the plugin folder (in the "wod" and "wod2" subfolders) fails to run when requested directly. ' .
-                    ' You can try to fix the problem (reconfigure the server / locate the security plugin that blocks it), or ' .
-                    ' simply turn ' . (count($turnedOn) == 2 ? 'them' : 'it') . ' off and rely on "Convert on upload" and "Bulk Convert" to get the images converted. ' .
-                    ' If you are going to try to solve the problem, you need at least one of the following pages to display "pong": ' .
+                    ' because the PHP scripts in the plugin folder (in the "wod" and "wod2" subfolders) fails to run ' .
+                    ' when requested directly. You can try to fix the problem or simply turn ' .
+                    (count($turnedOn) == 2 ? 'them' : 'it') .
+                    ' off and rely on "Convert on upload" and "Bulk Convert" to get the images converted.</p>' .
+                    '<p>If you are going to try to solve the problem, you need at least one of the following pages ' .
+                    'to display "pong": ' .
                     '<a href="' . Paths::getWebPExpressPluginUrl() . '/wod/ping.php" target="_blank">wod-test</a>' .
-                    ' or <a href="' . Paths::getWebPExpressPluginUrl() . '/wod2/ping.php" target="_blank">wod2-test</a>.'
+                    ' or <a href="' . Paths::getWebPExpressPluginUrl() . '/wod2/ping.php" target="_blank">wod2-test</a>' .
+                    '. The problem will typically be found in the server configuration or a security plugin. ' .
+                    'If one of the links results in a 403 Permission denied, look out for "deny" and "denied" in ' .
+                    'httpd.conf, /etc/apache/sites-enabled/your-site.conf and in parent .htaccess files.' .
+                    '</p>.'
                 );
             }
             // We currently allow the "canRunTestScriptInWOD" test not to be stored,
