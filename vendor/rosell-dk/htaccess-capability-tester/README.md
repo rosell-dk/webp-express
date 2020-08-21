@@ -71,9 +71,14 @@ $baseDir = __DIR__ . '/live-tests';
 // URL for running the tests
 $baseUrl = 'http://hct0/live-tests';
 
+
 $tester = new SetRequestHeaderTester($baseDir, $baseUrl);
 
-$testResult = $tester->runTest();
+try {
+    $testResult = $tester->runTest();
+} catch (\Exception $e) {
+    $testResult = null;
+}
 
 if ($testResult === true) {
     echo 'the tested feature works';

@@ -11,7 +11,12 @@ class SimpleHttpRequester implements HTTPRequesterInterface
      */
     public function makeHTTPRequest($url)
     {
-        $text = file_get_contents($url);
+        // PS: We suppress the E_WARNING level error generated on failure
+        $text = @file_get_contents($url);
+        if ($text === false) {
+            return '';
+        }
+
         // var_dump($http_response_header);
         return $text;
     }
