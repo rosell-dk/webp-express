@@ -8,10 +8,13 @@ use \WebPExpress\ConvertersHelper;
 use \WebPExpress\DismissableMessages;
 use \WebPExpress\FileHelper;
 use \WebPExpress\HTAccess;
+use \WebPExpress\HTAccessRules;
 use \WebPExpress\Messenger;
 use \WebPExpress\Paths;
 use \WebPExpress\PlatformInfo;
 use \WebPExpress\State;
+
+// TODO: Move most of this file into a ProblemDetector class (SystemHealth)
 
 if (!(State::getState('configured', false))) {
     include __DIR__ . "/page-welcome.php";
@@ -22,6 +25,7 @@ if (!(State::getState('configured', false))) {
 
 }
 
+$storedCapTests = $config['base-htaccess-on-these-capability-tests'];
 
 /*
 if (HTAccessCapabilityTestRunner::modRewriteWorking()) {
@@ -49,33 +53,6 @@ DismissableMessages::printMessages();
 
 $firstActiveAndWorkingConverterId = ConvertersHelper::getFirstWorkingAndActiveConverterId($config);
 $workingIds = ConvertersHelper::getWorkingConverterIds($config);
-
-if ($config['redirect-to-existing-in-htaccess']) {
-    if (PlatformInfo::isApacheOrLiteSpeed() && isset($config['base-htaccess-on-these-capability-tests']['modHeaderWorking']) && ($config['base-htaccess-on-these-capability-tests']['modHeaderWorking'] == false)) {
-        Messenger::printMessage(
-            'warning',
-                'It seems your server setup does not support headers in <i>.htaccess</i>. You should either fix this (install <i>mod_headers</i>) <i>or</i> ' .
-                    'deactivate the "Enable direct redirection to existing converted images?" option. Otherwise the <i>Vary:Accept</i> header ' .
-                    'will not be added and this can result in problems for users behind proxy servers (ie used in larger companies)'
-        );
-    }
-}
-
-$anyRedirectionToConverterEnabled = (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer']));
-$anyRedirectionEnabled = ($anyRedirectionToConverterEnabled || $config['redirect-to-existing-in-htaccess']);
-
-if ($anyRedirectionEnabled) {
-    if (PlatformInfo::definitelyNotGotModRewrite()) {
-        Messenger::printMessage(
-            'error',
-            "Rewriting isn't enabled on your server. ' .
-                'Currently, the only way to make WebP Express generate webp files is with rewriting. '
-                'If you got the webp files through other means, you can use CDN friendly mode and disable the rewrites. ' .
-                'Or perhaps you want to enable rewriting? Tell your host or system administrator to enable the 'mod_rewrite' module. ' .
-                'If you are on a shared host, chances are that mod_rewrite can be turned on in your control panel."
-        );
-    }
-}
 
 $cacheEnablerActivated = in_array('cache-enabler/cache-enabler.php', get_option('active_plugins', []));
 if ($cacheEnablerActivated) {
@@ -216,11 +193,119 @@ if (Config::isConfigFileThere()) {
         }
 
     } else {
-        if (HTAccess::arePathsUsedInHTAccessOutdated()) {
+
+        if ($config['redirect-to-existing-in-htaccess']) {
+            if (PlatformInfo::isApacheOrLiteSpeed() && !(HTAccessCapabilityTestRunner::modHeaderWorking())) {
+                Messenger::printMessage(
+                    'warning',
+                    'It seems your server setup does not support headers in <i>.htaccess</i>. You should either fix this (install <i>mod_headers</i>) <i>or</i> ' .
+                        'deactivate the "Enable direct redirection to existing converted images?" option. Otherwise the <i>Vary:Accept</i> header ' .
+                        'will not be added and this can result in problems for users behind proxy servers (ie used in larger companies)'
+                );
+            }
+        }
+
+        $anyRedirectionToConverterEnabled = (($config['enable-redirection-to-converter']) || ($config['enable-redirection-to-webp-realizer']));
+        $anyRedirectionEnabled = ($anyRedirectionToConverterEnabled || $config['redirect-to-existing-in-htaccess']);
+
+        if ($anyRedirectionEnabled) {
+            if (PlatformInfo::isApacheOrLiteSpeed() && PlatformInfo::definitelyNotGotModRewrite()) {
+                Messenger::printMessage(
+                    'warning',
+                    "Rewriting isn't enabled on your server. " .
+                        'You must either switch to "CDN friendly" mode or enable rewriting. ' .
+                        "Tell your host or system administrator to enable the 'mod_rewrite' module. " .
+                        'If you are on a shared host, chances are that mod_rewrite can be turned on in your control panel.'
+                );
+            }
+        }
+
+        if ($anyRedirectionToConverterEnabled) {
+            $canRunInWod = HTAccessCapabilityTestRunner::canRunTestScriptInWOD();
+            $canRunInWod2 = HTAccessCapabilityTestRunner::canRunTestScriptInWOD2();
+            if (!$canRunInWod && !$canRunInWod2) {
+                $turnedOn = [];
+                if ($config['enable-redirection-to-converter']) {
+                    $turnedOn[] = '"Enable redirection to converter"';
+                }
+                if ($config['enable-redirection-to-webp-realizer']) {
+                    $turnedOn[] = '"Create webp files upon request?""';
+                }
+                Messenger::printMessage(
+                    'warning',
+                    'You have turned on ' . implode(' and ', $turnedOn) .
+                    '. However, ' . (count($turnedOn) == 2 ? 'these features' : 'this feature') .
+                    ' does not work on your current server settings / wordpress setup, ' .
+                    ' because the PHP scripts in the plugin folder (in the "wod" and "wod2" subfolders) fails to run when requested directly. ' .
+                    ' You can try to fix the problem (reconfigure the server / locate the security plugin that blocks it), or ' .
+                    ' simply turn ' . (count($turnedOn) == 2 ? 'them' : 'it') . ' off and rely on "Convert on upload" and "Bulk Convert" to get the images converted. ' .
+                    ' If you are going to try to solve the problem, you need at least one of the following pages to display "pong": ' .
+                    '<a href="' . Paths::getWebPExpressPluginUrl() . '/wod/ping.php" target="_blank">wod-test</a>' .
+                    ' or <a href="' . Paths::getWebPExpressPluginUrl() . '/wod2/ping.php" target="_blank">wod2-test</a>.'
+                );
+            }
+            // We currently allow the "canRunTestScriptInWOD" test not to be stored,
+            // If it is not stored, it means .htaccess files are pointing to "wod"
+            // PS: the logic of where it is stored happens in HTAccessRules::getWodUrlPath
+            // - we mimic it here.
+            $pointingToWod = true;  // true = pointing to "wod", false = pointing to "wod2"
+            $hasWODTestBeenRun = isset($storedCapTests['canRunTestScriptInWOD']);
+            if ($hasWODTestBeenRun && !($storedCapTests['canRunTestScriptInWOD'])) {
+                $pointingToWod = false;
+            }
+            $canOnlyRunInWod = $canRunInWod && !$canRunInWod2;
+            if ($canOnlyRunInWod && !$pointingToWod) {
+                Messenger::printMessage(
+                    'warning',
+                    'The conversion script cannot currently be run. ' .
+                    'However, simply click "Save settings and force new .htaccess rules" to fix it. ' .
+                    '(this will point to the script in the "wod" folder rather than "wod2")'
+                );
+            }
+
+            $canOnlyRunInWod2 = $canRunInWod2 && !$canRunInWod;
+            if ($canOnlyRunInWod2 && $pointingToWod) {
+                Messenger::printMessage(
+                    'warning',
+                    'The conversion script cannot currently be run. ' .
+                    'However, simply click "Save settings and force new .htaccess rules" to fix it. ' .
+                    '(this will point to the script in the "wod2" folder rather than "wod")'
+                );
+            }
+
+        }
+
+        if (HTAccessRules::arePathsUsedInHTAccessOutdated()) {
+
+            $pathsGoingToBeUsedInHtaccess = [
+                'wod-url-path' => Paths::getWodUrlPath(),
+            ];
+
+            $config2 = Config::loadConfig();
+            if ($config2 === false) {
+                Messenger::printMessage(
+                    'warning',
+                    'Warning: Config file cannot be loaded. Perhaps clicking ' .
+                    '<i>Save settings</i> will solve it<br>'
+                );
+            }
+
+            $warningMsg = 'Warning: Wordpress paths have changed since the last time the Rewrite Rules was generated. The rules ' .
+                'needs updating! (click <i>Save settings</i> to do so)<br><br>' .
+                'The following have changed:<br>';
+
+            foreach ($config2['paths-used-in-htaccess'] as $prop => $value) {
+                if (isset($pathsGoingToBeUsedInHtaccess[$prop])) {
+                    if ($value != $pathsGoingToBeUsedInHtaccess[$prop]) {
+                        $warningMsg .= '- ' . $prop . '(was: ' . $value . '- but is now: ' . $pathsGoingToBeUsedInHtaccess[$prop] . ')<br>';
+                    }
+                }
+            }
+
+
             Messenger::printMessage(
                 'warning',
-                'Warning: Wordpress paths have changed since the last time the Rewrite Rules was generated. The rules ' .
-                'needs updating! (click <i>Save settings</i> to do so)<br>'
+                $warningMsg
             );
         }
     }

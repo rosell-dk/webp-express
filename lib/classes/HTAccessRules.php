@@ -20,12 +20,144 @@ class HTAccessRules
     private static $passThroughHeaderDefinitelyAvailable;
     private static $passThroughEnvVarDefinitelyUnavailable;
     private static $passThroughEnvVarDefinitelyAvailable;
-    private static $grantAllDefinitelyAllowed;
+    private static $canDefinitelyRunTestScriptInWOD;
+    private static $canDefinitelyRunTestScriptInWOD2;
     private static $capTests;
     private static $addVary;
     private static $dirContainsSourceImages;
     private static $dirContainsWebPImages;
 
+    private static function trueFalseNullString($var)
+    {
+        if ($var === true) {
+            return 'yes';
+        }
+        if ($var === false) {
+            return 'no';
+        }
+        return 'could not be determined';
+    }
+
+    public static function arePathsUsedInHTAccessOutdated() {
+        if (!Config::isConfigFileThere()) {
+            // this properly means that rewrite rules have never been generated
+            return false;
+        }
+
+        $oldConfig = Config::loadConfig();
+        if ($oldConfig === false) {
+            // corrupt or not readable
+            return true;
+        }
+
+        return self::arePathsUsedInHTAccessOutdated2($oldConfig);
+    }
+
+    private static function arePathsUsedInHTAccessOutdated2($oldConfig)
+    {
+        if (!isset($oldConfig['paths-used-in-htaccess'])) {
+            return true;
+        }
+
+        $pathsGoingToBeUsedInHtaccess = [
+            'wod-url-path' => Paths::getWodUrlPath(),
+        ];
+        foreach ($oldConfig['paths-used-in-htaccess'] as $prop => $value) {
+            if (isset($pathsGoingToBeUsedInHtaccess[$prop])) {
+                if ($value != $pathsGoingToBeUsedInHtaccess[$prop]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Decides if .htaccess rules needs to be updated.
+     *
+     * The result is positive under these circumstances:
+     * - If there is no existing config.json (it must mean that there are no rules, and so they need "updating")
+     * - If existing config.json is corrupt or not readable
+     * - The new config.json is compared to the old. If any of the properties that will affect the .htaccess has
+     *       changed, well, it needs updating. Also, if there is a new property, it needs update, unless the
+     *       value of that new property would not have any effect
+     * - If the url path to the "wod" folder has changed (actually, to wod/webp-on-demand, but if one of these changes, so does the other)
+     * - TODO: Should we not also compare (some of) the capability tests?
+     * - TODO: Should we not also compare some paths, ie. Paths::getContentDirRelToPluginDir(), which is used in
+     *         HTAccessRules::webpRealizerRules()
+     * - TODO: Some changes would not really require regeneration. We could do a more fine-grained
+     *         check. For example, many changes matters not (ie "wod-url-path") if redirection to
+     *         both webp-realizer and webp-on-demand are disabled.
+     *
+     */
+    public static function doesRewriteRulesNeedUpdate($newConfig) {
+        if (!Config::isConfigFileThere()) {
+            // this properly means that rewrite rules have never been generated
+            return true;
+        }
+
+        $oldConfig = Config::loadConfig();
+        if ($oldConfig === false) {
+            // corrupt or not readable
+            return true;
+        }
+
+        // $propsToCompare is set like this:
+        // Keys: properties that should trigger .htaccess update if changed
+        // Values: The behaviour before that property was intruduced
+        $propsToCompare = [
+            'forward-query-string' => true,
+            'image-types' => 1,
+            'redirect-to-existing-in-htaccess' => false,
+            'only-redirect-to-converter-on-cache-miss' => false,
+            'success-response' => 'converted',
+            'cache-control' => 'no-header',
+            'cache-control-custom' => 'public, max-age:3600',
+            'cache-control-max-age' => 'one-week',
+            'cache-control-public' => true,
+            'enable-redirection-to-webp-realizer' => false,
+            'enable-redirection-to-converter' => true,
+            'destination-folder' => 'separate',
+            'destination-extension' => 'append',
+            'destination-structure' => 'doc-root',
+            'scope' => ['themes', 'uploads']
+        ];
+
+        // If one of the props have changed, we need to update.
+        // And we also need update if one of them doesn't exist in the old config, unless
+        // the new property/value has same effect as before the property was introduced.
+        foreach ($propsToCompare as $prop => $behaviourBeforeIntroduced) {
+            if (!isset($newConfig[$prop])) {
+                continue;
+            }
+            if (!isset($oldConfig[$prop])) {
+                // Do not trigger .htaccess update if the new value results
+                // in same old behaviour (before this option was introduced)
+                if ($newConfig[$prop] == $behaviourBeforeIntroduced) {
+                    continue;
+                } else {
+                    // Otherwise DO trigger .htaccess update
+                    return true;
+                }
+            }
+            if ($newConfig[$prop] != $oldConfig[$prop]) {
+                return true;
+            }
+        }
+
+        /*
+        if (isset($newConfig['redirect-to-existing-in-htaccess']) && $newConfig['redirect-to-existing-in-htaccess']) {
+            $propsToCompare['destination-folder'] = 'separate';
+            $propsToCompare['destination-extension'] = 'append';
+            $propsToCompare['destination-structure'] = 'doc-root';
+        }*/
+
+
+        if (self::arePathsUsedInHTAccessOutdated2($oldConfig)) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      *  @return  string  Info in comments.
@@ -57,8 +189,6 @@ class HTAccessRules
                 (self::$capTests['passThroughHeaderWorking'] === true ? 'yes' : (self::$capTests['passThroughHeaderWorking'] === false ? 'no' : 'could not be determined')) . "\n" .
             "# - pass variable from .htaccess to script through environment variable working?: " .
                 (self::$capTests['passThroughEnvWorking'] === true ? 'yes' : (self::$capTests['passThroughEnvWorking'] === false ? 'no' : 'could not be determined')) . "\n" .
-            "# - AuthConfig (Grant All) allowed in .htaccess?: " .
-                (self::$capTests['grantAllAllowed'] === true ? 'yes' : (self::$capTests['grantAllAllowed'] === false ? 'no' : 'could not be determined')) . "\n" .
 
             "#\n# Role of the dir that this .htaccess is located in:\n" .
             '# - Is this .htaccess in a dir containing source images?: ' . (self::$dirContainsSourceImages ? 'yes' : 'no') . "\n" .
@@ -306,7 +436,7 @@ class HTAccessRules
 
             $rewriteRuleStart = '^/?(.+)';
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ " .
-                "/" . Paths::getWebPRealizerUrlPath(self::$grantAllDefinitelyAllowed) .
+                "/" . self::getWebPRealizerUrlPath() .
                 ((count($params) > 0) ?  "?" . implode('&', $params) : '') .
                 " [" . implode(',', $flags) . "]\n\n";
         } else {
@@ -343,7 +473,7 @@ class HTAccessRules
             $appendWebP = !(self::$config['destination-extension'] == 'set');
 
             $rules .= "  RewriteRule (?i).*" . ($appendWebP ? "(" . self::$fileExtIncludingDot . ")" : "") . "\.webp$ " .
-                "/" . Paths::getWebPRealizerUrlPath(self::$grantAllDefinitelyAllowed) .
+                "/" . self::getWebPRealizerUrlPath() .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n";
 
@@ -381,7 +511,7 @@ class HTAccessRules
             $appendWebP = !(self::$config['destination-extension'] == 'set');
 
             $rules .= "  RewriteRule (?i).*" . ($appendWebP ? "(" . self::$fileExtIncludingDot . ")" : "") . "\.webp$ " .
-                "/" . Paths::getWebPRealizerUrlPath(self::$grantAllDefinitelyAllowed) .
+                "/" . self::getWebPRealizerUrlPath() .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n\n";
 */
@@ -423,7 +553,7 @@ class HTAccessRules
             }
 
             $rules .= "  RewriteRule (?i).*\.webp$ " .
-                "/" . Paths::getWebPRealizerUrlPath(self::$grantAllDefinitelyAllowed) .
+                "/" . self::getWebPRealizerUrlPath() .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n\n";
             */
@@ -499,7 +629,7 @@ class HTAccessRules
             // TODO: When $rewriteRuleStart is empty, we don't need the .*, do we? - test
             $rewriteRuleStart = '^/?(.+)';
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . self::$fileExt . ")$ " .
-                "/" . Paths::getWodUrlPath() .
+                "/" . self::getWodUrlPath() .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n";
 
@@ -540,7 +670,7 @@ class HTAccessRules
             $appendWebP = !(self::$config['destination-extension'] == 'set');
 
             $rules .= "  RewriteRule (?i).*" . ($appendWebP ? "(" . self::$fileExtIncludingDot . ")" : "") . "$ " .
-                "/" . Paths::getWodUrlPath() .
+                "/" . self::getWodUrlPath() .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n";
 
@@ -576,7 +706,7 @@ class HTAccessRules
             $params[] = 'xsource-rel-to-root-id=x%2' . (self::$appendWebP ? "%3" : "");
 
             $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ " .
-                "/" . Paths::getWodUrlPath() .
+                "/" . self::getWodUrlPath() .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n";
             */
@@ -601,7 +731,7 @@ class HTAccessRules
                 self::$htaccessDirAbs . "/)(.*)(" . self::$fileExtIncludingDot . ")$\n";
 
             $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ " .
-                "/" . Paths::getWodUrlPath() .
+                "/" . self::getWodUrlPath() .
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n";
 
@@ -675,17 +805,36 @@ class HTAccessRules
         ];
         $config = array_merge($defaults, $config);
 
-        if (!isset($config['base-htaccess-on-these-capability-tests']['grantAllAllowed'])) {
+        if (!isset($config['base-htaccess-on-these-capability-tests'])) {
             $config['base-htaccess-on-these-capability-tests'] = Config::runAndStoreCapabilityTests($config);
         }
+        // We currently accept that the following capability tests might not
+        // have been run (we did not want to force recreation of .htaccess because of these)
+        // - "modHeaderWorking"
+        // - "canRunTestScriptInWOD"
+        // - "canRunTestScriptInWOD2"
+        if (!isset($config['base-htaccess-on-these-capability-tests']['modHeaderWorking'])) {
+            $config['base-htaccess-on-these-capability-tests']['modHeaderWorking'] = HTAccessCapabilityTestRunner::modHeaderWorking();
+        }
+        if (!isset($config['base-htaccess-on-these-capability-tests']['canRunTestScriptInWOD'])) {
+            $config['base-htaccess-on-these-capability-tests']['canRunTestScriptInWOD'] = HTAccessCapabilityTestRunner::canRunTestScriptInWOD();
+        }
+        if (!isset($config['base-htaccess-on-these-capability-tests']['canRunTestScriptInWOD2'])) {
+            $config['base-htaccess-on-these-capability-tests']['canRunTestScriptInWOD2'] = HTAccessCapabilityTestRunner::canRunTestScriptInWOD2();
+        }
+
         self::$config = $config;
 
         $capTests = self::$config['base-htaccess-on-these-capability-tests'];
+
+
         self::$modHeaderDefinitelyUnavailable = ($capTests['modHeaderWorking'] === false);
         self::$passThroughHeaderDefinitelyUnavailable = ($capTests['passThroughHeaderWorking'] === false);
         self::$passThroughHeaderDefinitelyAvailable = ($capTests['passThroughHeaderWorking'] === true);
-        self::$passThroughEnvVarDefinitelyUnavailable = ($capTests['passThroughEnvWorking'] === false);
-        self::$grantAllDefinitelyAllowed =($capTests['grantAllAllowed'] === true);
+        self::$canDefinitelyRunTestScriptInWOD = ($capTests['canRunTestScriptInWOD'] === true);
+        self::$canDefinitelyRunTestScriptInWOD2 = ($capTests['canRunTestScriptInWOD2'] === true);
+
+
         self::$capTests = $capTests;
 
         self::$imageTypes = self::$config['image-types'];
@@ -746,7 +895,37 @@ class HTAccessRules
         return implode("\n", $rules);
     }
 
+    private static function getWodUrlPath()
+    {
+        // We prefer the "wod" folder over "wod2" (when it works), simply because it is older
+        // and we should not change things without having a good reason.
+        if (self::$canDefinitelyRunTestScriptInWOD) {
+            return Paths::getWodUrlPath();
+        }
+
+        // We however prefer the "wod2" folder when "wod" does not work, even if
+        // "wod2" doesn't work either. Why? Less things can go wrong in "wod2", so trying to fix
+        // it should be more straight forward.
+        return Paths::getWod2UrlPath();
+    }
+
+    private static function getWebPRealizerUrlPath()
+    {
+        // We prefer the "wod" folder over "wod2", simply because it is older
+        // and we should not change things without having a good reason.
+        if (self::$canDefinitelyRunTestScriptInWOD) {
+            return Paths::getWebPRealizerUrlPath();
+        }
+        return Paths::getWebPRealizer2UrlPath();
+    }
+
     // https://stackoverflow.com/questions/34124819/mod-rewrite-set-custom-header-through-htaccess
+    /**
+     *
+     *  PS: $config has a property "base-htaccess-on-these-capability-tests", which will be used.
+     *  make sure that this is up-to-date before calling this method.
+     *  It is updated with $config->runAndStoreCapabilityTests()
+     */
     public static function generateHTAccessRulesFromConfigObj($config, $htaccessDir = 'index', $dirContainsSourceImages = true, $dirContainsWebPImages = true)
     {
         self::setInternalProperties($config, $htaccessDir);

@@ -7,6 +7,7 @@ use \WebPExpress\Config;
 use \WebPExpress\ConvertersHelper;
 use \WebPExpress\DismissableMessages;
 use \WebPExpress\HTAccess;
+use \WebPExpress\HTAccessRules;
 use \WebPExpress\Messenger;
 use \WebPExpress\PathHelper;
 use \WebPExpress\Paths;
@@ -685,7 +686,7 @@ if ($sanitized['operation-mode'] != $sanitized['change-operation-mode']) {
 
 // If we are going to save .htaccess, run and store capability tests first
 // (we should only store results when .htaccess is updated as well)
-if ($sanitized['force'] || HTAccess::doesRewriteRulesNeedUpdate($config)) {
+if ($sanitized['force'] || HTAccessRules::doesRewriteRulesNeedUpdate($config)) {
     Config::runAndStoreCapabilityTests($config);
 }
 

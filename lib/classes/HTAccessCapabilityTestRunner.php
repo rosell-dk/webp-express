@@ -18,11 +18,65 @@ include_once WEBPEXPRESS_PLUGIN_DIR . '/vendor/autoload.php';
 class HTAccessCapabilityTestRunner
 {
 
+    public static $cachedResults;
+
+    private static function canRunTestScript($url)
+    {
+        $response = wp_remote_get($url, ['timeout' => 10]);
+        //echo '<pre>' . print_r($response, true) . '</pre>';
+        if (wp_remote_retrieve_response_code($response) != '200') {
+            return false;
+        }
+        $body = wp_remote_retrieve_body($response);
+        return ($body == 'pong');
+    }
+
+    private static function runNamedTest($testName)
+    {
+        switch ($testName) {
+            case 'canRunTestScriptInWOD':
+                $url = Paths::getWebPExpressPluginUrl() . '/wod/ping.php';
+                return self::canRunTestScript($url);
+
+            case 'canRunTestScriptInWOD2':
+                $url = Paths::getWebPExpressPluginUrl() . '/wod2/ping.php';
+                return self::canRunTestScript($url);
+
+            case 'modHeaderWorking':
+                return self::runTestInWebPExpressContentDir('set-request-header-tester');
+
+            case 'modRewriteWorking':
+                return self::runTestInWebPExpressContentDir('rewrite-tester');
+
+            case 'passThroughEnvWorking':
+                return self::runTestInWebPExpressContentDir('pass-env-through-rewrite-tester');
+
+            case 'passThroughHeaderWorking':
+                // pretend it fails because .htaccess rules aren't currently generated correctly
+                return false;
+                return self::runTestInWebPExpressContentDir('pass-env-through-request-header-tester');
+
+            case 'grantAllAllowed':
+                return self::runTestInWebPExpressContentDir('grant-all-crash-tester');
+        }
+    }
+
+    private static function runOrGetCached($testName)
+    {
+        if (!isset(self::$cachedResults)) {
+            self::$cachedResults = [];
+        }
+        if (!isset(self::$cachedResults[$testName])) {
+            self::$cachedResults[$testName] = self::runNamedTest($testName);
+        }
+        return self::$cachedResults[$testName];
+    }
+
     /**
-     *  Run one of the htaccess capability tests
+     *  Run one of the htaccess capability tests.
      *  Three possible outcomes: true, false or null (null if request fails)
      */
-    public static function runTest($testName)
+    private static function runTestInWebPExpressContentDir($testName)
     {
         $baseDir = Paths::getWebPExpressContentDirAbs() . '/htaccess-capability-tests';
         $baseUrl = Paths::getContentUrl() . '/webp-express/htaccess-capability-tests';
@@ -41,46 +95,40 @@ class HTAccessCapabilityTestRunner
     }
 
 
-    /**
-     *  Three possible outcomes: true, false or null (null if failed to run test)
-     */
     public static function modRewriteWorking()
     {
-        return self::runTest('rewrite-tester');
+        return self::runOrGetCached('modRewriteWorking');
     }
 
-    /**
-     *  Three possible outcomes: true, false or null (null if failed to run test)
-     */
     public static function modHeaderWorking()
     {
-        return self::runTest('set-request-header-tester');
+        return self::runOrGetCached('modHeaderWorking');
     }
 
-    /**
-     *  Three possible outcomes: true, false or null (null if failed to run test)
-     */
     public static function passThroughEnvWorking()
     {
-        return self::runTest('pass-env-through-rewrite-tester');
+        return self::runOrGetCached('passThroughEnvWorking');
     }
 
-    /**
-     *  Three possible outcomes: true, false or null (null if failed to run test)
-     */
     public static function passThroughHeaderWorking()
     {
-        // pretend it fails because .htaccess rules aren't currently generated correctly
-        return false;
-        return self::runTest('pass-env-through-request-header-tester');
+        return self::runOrGetCached('passThroughHeaderWorking');
     }
 
-    /**
-     *  Three possible outcomes: true, false or null (null if failed to run test)
-     */
     public static function grantAllAllowed()
     {
-        return self::runTest('grant-all-crash-tester');
+        return self::runOrGetCached('grantAllAllowed');
     }
+
+    public static function canRunTestScriptInWOD()
+    {
+        return self::runOrGetCached('canRunTestScriptInWOD');
+    }
+
+    public static function canRunTestScriptInWOD2()
+    {
+        return self::runOrGetCached('canRunTestScriptInWOD2');
+    }
+
 
 }

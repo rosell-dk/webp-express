@@ -261,7 +261,9 @@ class Config
             'passThroughHeaderWorking' => HTAccessCapabilityTestRunner::passThroughHeaderWorking(),
             'passThroughEnvWorking' => HTAccessCapabilityTestRunner::passThroughEnvWorking(),
             'modHeaderWorking' => HTAccessCapabilityTestRunner::modHeaderWorking(),
-            'grantAllAllowed' => HTAccessCapabilityTestRunner::grantAllAllowed(),
+            //'grantAllAllowed' => HTAccessCapabilityTestRunner::grantAllAllowed(),
+            'canRunTestScriptInWOD' => HTAccessCapabilityTestRunner::canRunTestScriptInWOD(),
+            'canRunTestScriptInWOD2' => HTAccessCapabilityTestRunner::canRunTestScriptInWOD2(),
         ];
     }
 
@@ -638,10 +640,10 @@ class Config
         if ($forceRuleUpdating) {
             $rewriteRulesNeedsUpdate = true;
         } else {
-            $rewriteRulesNeedsUpdate = HTAccess::doesRewriteRulesNeedUpdate($config);
+            $rewriteRulesNeedsUpdate = HTAccessRules::doesRewriteRulesNeedUpdate($config);
         }
 
-        if (!isset($config['base-htaccess-on-these-capability-tests'])) {
+        if (!isset($config['base-htaccess-on-these-capability-tests']) || $rewriteRulesNeedsUpdate) {
             self::runAndStoreCapabilityTests($config);
         }
 

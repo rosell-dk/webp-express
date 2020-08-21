@@ -424,6 +424,8 @@ class SelfTestHelper
         //$log[] = 'Image types: ' . ;
         //$log[] = '';
         $log[] = '(To view all configuration, take a look at the config file, which is stored in *' . Paths::getConfigFileName() . '*)';
+        //$log[] = '- Config file: (config.json)';
+        //$log[] = "'''\n" . json_encode($config, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT) . "\n'''\n";
         return $log;
     }
 
@@ -448,8 +450,10 @@ class SelfTestHelper
     public static function rulesInImageRoot($config, $imageRootId)
     {
         $log = [];
-        $log[] = '#### WebP rules in *' . $imageRootId . '*:';
         $file = Paths::getAbsDirById($imageRootId) . '/.htaccess';
+        $log[] = '#### WebP rules in *' .
+            ($imageRootId == 'cache' ? 'webp image cache' : $imageRootId) . '*:';
+        $log[] = 'File: ' . $file;
         if (!HTAccess::haveWeRulesInThisHTAccess($file)) {
             $log[] = '**NONE!**{: .warn}';
         } else {
@@ -492,7 +496,10 @@ class SelfTestHelper
     {
         $capTests = $config['base-htaccess-on-these-capability-tests'];
         $log = [];
-        $log[] = '#### Live tests of .htaccess capabilities:';
+        $log[] = '#### Live tests of .htaccess capabilities / system configuration:';
+        $log[] = 'Unless noted otherwise, the tests are run in *wp-content/webp-express/htaccess-capability-tester*. ';
+        $log[] = 'WebPExpress currently treats the results as they neccessarily applies to all scopes (upload, themes, etc), ';
+        $log[] = 'but note that a server might be configured to have mod_rewrite disallowed in some folders and allowed in others.';
         /*$log[] = 'Exactly what you can do in a *.htaccess* depends on the server setup. WebP Express ' .
             'makes some live tests to verify if a certain feature in fact works. This is done by creating ' .
             'test files (*.htaccess* files and php files) in a dir inside the content dir and running these. ' .
@@ -500,12 +507,13 @@ class SelfTestHelper
 
 //        $log[] = '';
         $log[] = '- mod_rewrite working?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modRewriteWorking());
-        $log[] = '- mod_header working?: ' . self::trueFalseNullString($capTests['modHeaderWorking']);
-        $log[] = '- Request ALL allowed?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::grantAllAllowed());
-
+        $log[] = '- mod_header working?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modHeaderWorking());
+        $log[] = '- passing variables from *.htaccess* to PHP script through environment variable working?: ' . self::trueFalseNullString($capTests['passThroughEnvWorking']);
+        $log[] = '- Can run php test file in plugins/webp-express/wod/ ?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::canRunTestScriptInWOD());
+        $log[] = '- Can run php test file in plugins/webp-express/wod2/ ?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::canRunTestScriptInWOD2());
+        $log[] = '- Directives for granting access like its done in wod/.htaccess allowed?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::grantAllAllowed());
         /*$log[] = '- pass variable from *.htaccess* to script through header working?: ' .
             self::trueFalseNullString($capTests['passThroughHeaderWorking']);*/
-        $log[] = '- passing variables from *.htaccess* to PHP script through environment variable working?: ' . self::trueFalseNullString($capTests['passThroughEnvWorking']);
         return $log;
     }
 
