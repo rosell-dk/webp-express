@@ -315,6 +315,7 @@
     font-family: sans-serif;
     position: relative;
     font-style: normal;
+    pointer-events: all;
 }
 
 select + .help,
