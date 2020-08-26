@@ -24,6 +24,8 @@ I reserve the right to disallow inappropriate messages and links. No xxx sites o
 | ---------------------- | -------------- |
 | Max Kreminsky          | 2019-08-02     |
 | [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/) | 2020-08-26     |
+| Nodeflame              | 2019-10-31     |
+| Ruben Solvang          | 2020-01-08     |
 
 
 Hi-scores:
@@ -34,3 +36,7 @@ Hi-scores:
 | Max Kreminsky            | $65                      |        
 | Ruben Solvang            | $14                      |        
 | Dmitry Verzjikovsky      | $5                       |        
+
+## Former backers - I'm still grateful :)
+- Dmitry Verzjikovsky
+- Tammy Valgardson
