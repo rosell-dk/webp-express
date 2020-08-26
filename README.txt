@@ -105,24 +105,26 @@ Bread on the table don't come for free, even though this plugin does, and always
 * [Buy me a Coffee](https://ko-fi.com/rosell)
 * [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell)
 
-*Persons currently backing the project via patreon - Thanks!*
+== Supporters of WebP Express ==
+
+**Persons currently backing the project via patreon - Thanks!**
 
 * Max Kreminsky
 * [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
 
-*Persons who contributed with coffee within the last 30 days:*
+**Persons who contributed with coffee within the last 30 days - thanks!**
 
 * Anon
 * Eder Ribeiro
 * Christian
 
-*Persons who contributed with extra generously amounts of coffee / lifetime backing (>50$) - thanks!:*
+**Persons who contributed with extra generously amounts of coffee / lifetime backing (>50$) - thanks!:**
 
-* Justin - BigScoots ($105)
-* Sebastian ($99)
-* Tammy Lee ($90)
-* Max Kreminsky ($65)
-* Steven Sullivan ($51)
+* Justin - BigScoots ($105 in coffee supplies)
+* Sebastian ($99, coffee)
+* Tammy Lee ($90, bread and butter on patreon)
+* Max Kreminsky ($65, bread and butter on patreon)
+* Steven Sullivan ($51, coffee)
 
 
 == Frequently Asked Questions ==
