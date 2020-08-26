@@ -105,6 +105,25 @@ Bread on the table don't come for free, even though this plugin does, and always
 * [Buy me a Coffee](https://ko-fi.com/rosell)
 * [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell)
 
+*Persons currently backing the project via patreon - Thanks!*
+
+* Max Kreminsky
+* [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
+
+*Persons who contributed with coffee within the last 30 days:*
+
+* Anon
+* Eder Ribeiro
+* Christian
+
+*Persons who contributed with extra generously amounts of coffee / lifetime backing (>50$) - thanks!:*
+
+* Justin - BigScoots ($105)
+* Sebastian ($99)
+* Tammy Lee ($90)
+* Max Kreminsky ($65)
+* Steven Sullivan ($51)
+
 
 == Frequently Asked Questions ==
 
