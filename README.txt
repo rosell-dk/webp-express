@@ -113,7 +113,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Max Kreminsky
 * [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
 
-**Persons who contributed with coffee within the last 30 days - thanks!**
+**Persons who contributed with coffee within the last 30 days (updated biweekly) - Thanks! **
 
 * RobMoore
 * Anon
