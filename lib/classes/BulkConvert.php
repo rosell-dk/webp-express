@@ -8,14 +8,12 @@ class BulkConvert
     public static function getList($config)
     {
 
-
         /*
         isUploadDirMovedOutOfWPContentDir
         isUploadDirMovedOutOfAbsPath
         isPluginDirMovedOutOfAbsPath
         isPluginDirMovedOutOfWpContent
         isWPContentDirMovedOutOfAbsPath */
-
 
         $listOptions = [
             //'root' => Paths::getUploadDirAbs(),
@@ -32,8 +30,6 @@ class BulkConvert
             ]
         ];
 
-        //$dirs = $config['scope'];
-
         $rootIds = Paths::filterOutSubRoots($config['scope']);
 
         $groups = [];
@@ -43,54 +39,6 @@ class BulkConvert
                 'root' => Paths::getAbsDirById($rootId)
             ];
         }
-
-/*
-        if (in_array('index', $config['scope'])) {
-            if (Paths::isWPContentDirMovedOutOfAbsPath()) {
-
-            }
-        } elseif (in_array('wp-content', $config['scope'])) {
-            $dirs[] = 'wp-content';
-            if (in_array('uploads', $config['scope']) && Paths::isUploadDirMovedOutOfWPContentDir()) {
-                $dirs[] = 'uploads';
-            }
-            if (in_array('plugins', $config['scope']) && Paths::isPluginDirMovedOutOfWpContent()) {
-                $dirs[] = 'plugins';
-            }
-            // ps: themes is always below wp-content
-        } else {
-            if (in_array('uploads', $config['scope'])) {
-                $dirs[] = 'uploads';
-            }
-            if (in_array('plugins', $config['scope'])) {
-                $dirs[] = 'plugins';
-            }
-        }
-
-/*
-        if (Paths::isUploadDirMovedOutOfWPContentDir()) {
-            $groups[] = [
-                'groupName' => 'uploads',
-                'root' => Paths::getUploadDirAbs(),
-            ];
-        }
-
-        $groups[] = [
-            'groupName' => 'themes',
-            'root' => Paths::getThemesDirAbs(),
-        ];
-
-        $groups[] = [
-            'groupName' => 'wp-content',
-            'root' => Paths::getContentDirAbs(),
-        ];
-
-        if (Paths::isPluginDirMovedOutOfWpContent()) {
-            $groups[] = [
-                'groupName' => 'plugins',
-                'root' => Paths::getPluginDirAbs(),
-            ];
-        }*/
 
         foreach ($groups as $i => &$group) {
             $listOptions['root'] = $group['root'];
