@@ -135,7 +135,8 @@ class BulkConvert
                         }
 
                         if ($addThis) {
-                            $results[] = substr($relDir . "/", 2) . $filename;      // (we cut the leading "./" off with substr)
+                            // utf8_encode the filename so json_encode won't fail later on (#445)
+                            $results[] = substr($relDir . "/", 2) . utf8_encode($filename);      // (we cut the leading "./" off with substr)
                         }
                     }
                 }
@@ -178,6 +179,8 @@ class BulkConvert
 
         $config = Config::loadConfigAndFix();
         $arr = self::getList($config);
+
+        // TODO: Handle json failure (false)
         echo json_encode($arr, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
         wp_die();
     }
