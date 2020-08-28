@@ -89,22 +89,27 @@ If you do not have quality detection working, you can try one of the following:
 - Use "Remote WebP Express" converter to connect to a site, that *does* have quality detection working
 - If you have cwebp converter available, you can configure it to aim for a certain reduction, rather than using the quality parameter. Set this to for example 50%, or even 45%.
 
-### Verifying that it works.
-Once, you have a converter, that works, when you click the "test"-button, you are ready to test the whole stack, and the rewrite rules. To do this, first make sure to select something other than "Do not convert any images!" in *Image types to convert*. Next, click "Save settings". This will save settings, as well as update the *.htaccess*.
+### Verifying that it works (in "Varied image responses" mode)
+1. Make sure at least one of the conversion methods are working. It should have a green checkmark next to it.
+2. If you haven't saved yet, click "Save settings". This will put redirection rules into .htaccess files in the relevant directories (typically in uploads, themes and wp-content/webp-express/webp-images, depending on the "Scope" setting)
+3. I assume that you checked at least one of the checkboxes in the .htaccess rules section - otherwise you might as well change to "CDN friendly" mode. The first
+4. Click the "Live test" buttons to see that the enabled rules actually are working. If they are not, it *could* be that the server needs a little time to recognize the changed rules.
 
-If you are working in a browser that supports webp (ie Google Chrome), you will see a link "Convert test image (show debug)" after a successful save. Click that to test if it works. The screen should show a textual report of the conversion process. If it shows an image, it means that the *.htaccess* redirection isn't working. It may be that your server just needs some time. Some servers has set up caching. It could also be that your images are handled by nginx.
+The live tests are quite thorough and I recommend them over a manual test. However, it doesn't hurt to do a manual inspection too.
 
-Note that the plugin does not change any HTML (unless you enabled the *Alter HTML* option). In the HTML the image src is still set to ie "example.jpg". To verify that the plugin is working (without clicking the test button), do the following:
+*Doing a manual inspection*
 
-- Open the page in Google Chrome
+Note that when WebP Express is serving varied image responses, the image URLs *still points to the jpg/png*. If the URL is visited using a browser that supports webp, however, the response will be a webp image. So there is a mismatch between the file extension (the filename ends with "jpg" or "png") and the file type. But luckily, the browser does not rely on the extension to determine the file type, it only looks at the Content-Type response header.
+
+To verify that the plugin is working (without clicking the test button), do the following:
+
+- Open the page in a browser that supports webp, ie Google Chrome
 - Right-click the page and choose "Inspect"
 - Click the "Network" tab
 - Reload the page
 - Find a jpeg or png image in the list. In the "type" column, it should say "webp"
 
-In order to test that the image is not being reconverted every time, look at the Response headers of the image. There should be a "X-WebP-Convert-Status" header. It should say "Serving existing converted image" the first time, but "Serving existing converted image" on subsequent requests (WebP-Express is based upon [WebP Convert](https://github.com/rosell-dk/webp-convert)).
-
-You can also append `?debug` after any image url, in order to run a conversion, and see the conversion report. Also, if you append `?reconvert` after an image url, you will force a reconversion of the image.
+You can also look at the headers. When WebP Express has redirected to an existing webp, there will be a "X-WebP-Express" header with the following value: "Redirected directly to existing webp". If there isn't (and you have checked "Enable redirection to converter"), you should see a "WebP-Convert-Log" header (WebP-Express uses the [WebP Convert](https://github.com/rosell-dk/webp-convert) for conversions).
 
 ### Notes
 
