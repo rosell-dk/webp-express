@@ -20,7 +20,10 @@ class HTAccessCapabilityTestRunner
 
     public static $cachedResults;
 
-    private static function canRunTestScript($url)
+    /**
+     *  Tests if a test script responds with "pong"
+     */
+    private static function canRunPingPongTestScript($url)
     {
         $response = wp_remote_get($url, ['timeout' => 10]);
         //echo '<pre>' . print_r($response, true) . '</pre>';
@@ -36,11 +39,11 @@ class HTAccessCapabilityTestRunner
         switch ($testName) {
             case 'canRunTestScriptInWOD':
                 $url = Paths::getWebPExpressPluginUrl() . '/wod/ping.php';
-                return self::canRunTestScript($url);
+                return self::canRunPingPongTestScript($url);
 
             case 'canRunTestScriptInWOD2':
                 $url = Paths::getWebPExpressPluginUrl() . '/wod2/ping.php';
-                return self::canRunTestScript($url);
+                return self::canRunPingPongTestScript($url);
 
             case 'modHeaderWorking':
                 return self::runTestInWebPExpressContentDir('set-request-header-tester');
