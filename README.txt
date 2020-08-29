@@ -137,6 +137,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 **Persons who contributed with coffee within the last 30 days (updated biweekly) - Thanks! **
 
+* Devashish Datt Mamgain
 * RobMoore
 * Anon
 * Eder Ribeiro
