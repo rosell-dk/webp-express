@@ -179,12 +179,12 @@ class Convert
 
         if (!check_ajax_referer('webpexpress-ajax-convert-nonce', 'nonce', false)) {
         //if (true) {
-            //wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
+            //wp_send_json_error('The security nonce has expired. You need to reload the settings page (press F5) and try again)');
             //wp_die();
 
             $result = [
                 'success' => false,
-                'msg' => 'Invalid security nonce (it has probably expired - try refreshing)',
+                'msg' => 'The security nonce has expired. You need to reload the settings page (press F5) and try again)',
                 'stop' => true
             ];
 

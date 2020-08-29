@@ -152,7 +152,7 @@ class CachePurge
     {
 
         if (!check_ajax_referer('webpexpress-ajax-purge-cache-nonce', 'nonce', false)) {
-            wp_send_json_error('Invalid security nonce (it has probably expired - try refreshing)');
+            wp_send_json_error('The security nonce has expired. You need to reload the settings page (press F5) and try again)');
             wp_die();
         }
 
