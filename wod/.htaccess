@@ -1,5 +1,5 @@
 # Grant access to webp-on-demand.php and webp-realizer.php
-<FilesMatch "(webp-on-demand|webp-realizer|ping)\.php$">
+<FilesMatch "(webp-on-demand\.php|webp-realizer\.php|ping\.php|ping\.txt)$">
   <IfModule !mod_authz_core.c>
     Order deny,allow
     Allow from all
