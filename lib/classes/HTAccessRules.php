@@ -855,6 +855,21 @@ class HTAccessRules
         self::$appendWebP = !$setWebPExt;
     }
 
+    public static function addVaryHeaderRules()
+    {
+        $rules = [
+            '# Add "Vary: Accept" header in order to make proxies aware that the response varies depending',
+            '# on the "accept" request header (which is the one browsers use to signal if they support webp).',
+            '# In this folder, there are only webp files, so there is no need for any other logic than the ',
+            '# check which ensures that mod_headers is available.',
+            '<IfModule mod_headers.c>',
+            '  Header append "Vary" "Accept"',
+            '</IfModule>',
+            ''
+        ];
+        return implode("\n", $rules);
+    }
+
     public static function addVaryHeaderEnvRules($indent = 0)
     {
         $rules = [];
@@ -1017,7 +1032,11 @@ class HTAccessRules
                 (self::$config['redirect-to-existing-in-htaccess'])
             ) {
             }*/
-            $rules .= self::addVaryHeaderEnvRules();
+            if ($dirContainsSourceImages) {
+                $rules .= self::addVaryHeaderEnvRules();
+            } else {
+                $rules .= self::addVaryHeaderRules();
+            }
 
             $rules .= "\n# Register webp mime type \n";
             $rules .= "<IfModule mod_mime.c>\n";
