@@ -134,13 +134,12 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
         } else {
             $log[] = 'Alrighty. We got a webp. Just what we wanted. **Great!**{: .ok}';
         }
+
         if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
-            $log[count($log) - 1] .= '. **BUT!**';
-            $log[] = '**Warning: We did not receive a Vary:Accept header. ' .
-                'That header should be set in order to tell proxies that the response varies depending on the ' .
-                'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+            $log = array_merge($log, SelfTestHelper::diagnoseNoVaryHeader($rootId, 'existing'));
             $noWarningsYet = false;
         }
+
         if (!SelfTestHelper::hasCacheControlOrExpiresHeader($headers)) {
             $log[] = '**Notice: No cache-control or expires header has been set. ' .
                 'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression compromise.**{: .warn}';
@@ -212,10 +211,7 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
         $log[] = 'Alrighty. We got the ' . $imageType . '. **Great!**{: .ok}.';
 
         if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
-            $log[count($log) - 1] .= '. **BUT!**';
-            $log[] = '**We did not receive a Vary:Accept header. ' .
-                'That header should be set in order to tell proxies that the response varies depending on the ' .
-                'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+            $log = array_merge($log, SelfTestHelper::diagnoseNoVaryHeader($rootId, 'existing'));
             $noWarningsYet = false;
         }
 

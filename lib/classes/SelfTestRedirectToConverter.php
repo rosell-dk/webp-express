@@ -263,10 +263,7 @@ class SelfTestRedirectToConverter extends SelfTestRedirectAbstract
         }
 
         if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
-            $log[count($log) - 1] .= '. **BUT!**';
-            $log[] = '**Warning: We did not receive a Vary:Accept header. ' .
-                'That header should be set in order to tell proxies that the response varies depending on the ' .
-                'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+            $log = array_merge($log, SelfTestHelper::diagnoseNoVaryHeader($rootId, 'webp-on-demand'));
             $noWarningsYet = false;
         }
         if (!SelfTestHelper::hasCacheControlOrExpiresHeader($headers)) {
@@ -341,10 +338,7 @@ class SelfTestRedirectToConverter extends SelfTestRedirectAbstract
         $log[] = 'Alrighty. We got the ' . $imageType . '. **Great!**{: .ok}.';
 
         if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
-            $log[count($log) - 1] .= '. **BUT!**';
-            $log[] = '**We did not receive a Vary:Accept header. ' .
-                'That header should be set in order to tell proxies that the response varies depending on the ' .
-                'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+            $log = array_merge($log, SelfTestHelper::diagnoseNoVaryHeader($rootId, 'webp-on-demand'));
             $noWarningsYet = false;
         }
 

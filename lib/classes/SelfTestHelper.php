@@ -292,6 +292,45 @@ class SelfTestHelper
         return false;
     }
 
+    /**
+     * @param  string  $rule  existing|webp-on-demand|webp-realizer
+     */
+    public static function diagnoseNoVaryHeader($rootId, $rule)
+    {
+        $log = [];
+        $log[] = '**However, we did not receive a Vary:Accept header. ' .
+            'That header should be set in order to tell proxies that the response varies depending on the ' .
+            'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+
+        $log[] = 'Too technical? ';
+        $log[] = 'Here is an explanation of what this means: ' .
+            'Some companies have set up proxies which caches resources. This way, if employee A have downloaded an ' .
+            'image and employee B requests it, the proxy can deliver the image directly to employee B without needing to ' .
+            'send a request to the server. ' .
+            'This is clever, but it can go wrong. If B for some reason is meant to get another image than A, it will not ' .
+            'happen, as the server does not get the request. That is where the Vary header comes in. It tells the proxy ' .
+            'that the image is dependent upon something. In this case, we need to signal proxies that the image depends upon ' .
+            'the "Accept" header, as this is the one browsers use to tell the server if it accepts webps or not. ' .
+            'We do that using the "Vary:Accept" header. However - it is missing :( ' .
+            'Which means that employees at (larger) companies might experience problems if some are using browsers ' .
+            'that supports webp and others are using browsers that does not. Worst case is that the request to an image ' .
+            'is done with a browser that supports webp, as this will cache the webp in the proxy, and deliver webps to ' .
+            'all employees - even to those who uses browsers that does not support webp. These employees will get blank images.';
+
+        if ($rule == 'existing') {
+            $log[] = 'So, what should you do? **I would recommend that you either try to fix the problem with the missing Vary:Accept ' .
+                'header or change to "CDN friendly" mode.**{: .warn}';
+        } elseif ($rule == 'webp-on-demand') {
+            $log[] = 'So, what should you do? **I would recommend that you either try to fix the problem with the missing Vary:Accept ' .
+                'header or disable the "Enable redirection to converter?" option and use another way to get the images converted - ie ' .
+                'Bulk Convert or Convert on Upload**{: .warn}';
+        }
+
+
+
+        return $log;
+    }
+
     public static function hasCacheControlOrExpiresHeader($headers)
     {
         if (isset($headers['cache-control'])) {
