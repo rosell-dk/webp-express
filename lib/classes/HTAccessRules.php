@@ -979,7 +979,7 @@ class HTAccessRules
         $addVaryHeaderUsingModHeader = $variedImageResponses;
 
         /*
-        TODO:
+        TODO: (#447)
         We should not add the "Header append" code if it is disallowed
         in the server config (ie if "FileInfo" isn't in the AllowOverride list)
         Why? Well, it will result in 500 internal error on the image requests
