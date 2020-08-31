@@ -18,6 +18,21 @@ class SelfTestRedirectToConverter extends SelfTestRedirectAbstract
         $createdTestFiles = false;
         $noWarningsYet = true;
 
+        $htaccessFile = Paths::getAbsDirById($rootId) . '/.htaccess';
+        if (!FileHelper::fileExists($htaccessFile)) {
+            $log[] = '**Warning: There is no .htaccess file in the ' . $rootId . ' folder!**{: .warn} (did you save settings yet?)';
+            $noWarningsYet = false;
+        } elseif (!HTAccess::haveWeRulesInThisHTAccess($htaccessFile)) {
+            $log[] = '**Warning: There are no WebP Express rules in the .htaccess file in the ' . $rootId . ' folder!**{: .warn}';
+            $noWarningsYet = false;
+        }
+
+        $htaccessRules = SelfTestHelper::rulesInImageRoot($config, $rootId);
+        $rulesText = implode('', $htaccessRules);
+        $rulesPointsToWod = (strpos($rulesText, '/wod/') > 0);
+        $rulesPointsToWod2 = (strpos($rulesText, '/wod2/') !== false);
+
+
         // Copy test image (jpeg)
         list($subResult, $success, $sourceFileName) = SelfTestHelper::copyTestImageToRoot($rootId, $imageType);
         $log = array_merge($log, $subResult);
@@ -45,7 +60,145 @@ class SelfTestRedirectToConverter extends SelfTestRedirectAbstract
             //$log[count($log) - 1] .= '. FAILED';
             $log[] = 'The request FAILED';
             //$log = array_merge($log, $remoteGetLog);
-            $log[] = 'The test cannot be completed';
+
+            if (isset($results[0]['response']['code'])) {
+                $responseCode = $results[0]['response']['code'];
+                if (($responseCode == 500) || ($responseCode == 403)) {
+
+                    $config = Config::loadConfigAndFix(false);
+
+                    $log[] = '';
+                    $log[] = '**diagnosing**';
+                    $canRunTestScriptInWod = HTAccessCapabilityTestRunner::canRunTestScriptInWOD();
+                    $canRunTestScriptInWod2 = HTAccessCapabilityTestRunner::canRunTestScriptInWOD2();
+                    $canRunInAnyWod = ($canRunTestScriptInWod || $canRunTestScriptInWod2);
+
+                    $responsePingText = wp_remote_get(Paths::getPluginsUrl() . '/webp-express/wod/ping.txt', ['timeout' => 7]);
+                    $pingTextResponseCode = wp_remote_retrieve_response_code($responsePingText);
+
+                    if ($responseCode == 500) {
+                        $log[] = 'The response was a *500 Internal Server Error*. There can be different reasons for that. ' .
+                            'Lets dig a bit deeper...';
+                    }
+
+                    $log[] = 'Examining where the *.htaccess* rules in the ' . $rootId . ' folder points to. ';
+
+                    if ($rulesPointsToWod) {
+                        $log[] = 'They point to **wod**/webp-on-demand.php';
+                    } elseif ($rulesPointsToWod2) {
+                        $log[] = 'They point to **wod2**/webp-on-demand.php';
+                    } else {
+                        $log[] = '**There are no redirect rule to *webp-on-demand.php* in the .htaccess!**{: .warn}';
+                        $log[] = 'Here is the rules:';
+                        $log = array_merge($log, $htaccessRules);
+                    }
+
+                    if ($rulesPointsToWod) {
+                        $log[] = 'Requesting simple test script "wod/ping.php"... Result: ' . ($canRunTestScriptInWod ? 'ok' : 'failed');
+
+                        if ($canRunTestScriptInWod) {
+                            if ($responseCode == '500') {
+                                $log[] = '';
+                                $log[] = '**As the test script works, it would seem that the explanation for the 500 internal server ' .
+                                    'error is that the PHP script (webp-on-demand.php) crashes. ' .
+                                    'You can help me by enabling debugging and post the error on the support forum on Wordpress ' .
+                                    '(https://wordpress.org/support/plugin/webp-express/), or create an issue on github ' .
+                                    '(https://github.com/rosell-dk/webp-express/issues)**';
+                                $log[] = '';
+                            }
+                        } else {
+                            $log[] = 'Requesting simple test file "wod/ping.txt". ' .
+                                'Result: ' . ($pingTextResponseCode == '200' ? 'ok' : 'failed (response code: ' . $pingTextResponseCode . ')');
+
+                            if ($canRunTestScriptInWod2) {
+                                if ($responseCode == 500) {
+                                    if ($pingTextResponseCode == '500') {
+                                        $log[] = 'The problem appears to be that the *.htaccess* placed in *plugins/webp-express/wod/.htaccess*' .
+                                            ' contains auth directives ("Allow" and "Request") and your server is set up to go fatal about it. ' .
+                                            'Luckily, it seems that running scripts in the "wod2" folder works. ' .
+                                            '**What you need to do is simply to click the "Save settings and force new .htacess rules"' .
+                                            ' button. WebP Express wil then change the .htaccess rules to point to the "wod2" folder**';
+                                    } else {
+                                        $log[] = 'The problem appears to be running PHP scripts in the "wod". ' .
+                                            'Luckily, it seems that running scripts in the "wod2" folder works ' .
+                                            '(it has probably something to do with the *.htaccess* file placed in "wod"). ' .
+                                            '**What you need to do is simply to click the "Save settings and force new .htacess rules"' .
+                                            ' button. WebP Express wil then change the .htaccess rules to point to the "wod2" folder**';
+                                    }
+                                } elseif ($responseCode == 403) {
+                                    $log[] = 'The problem appears to be running PHP scripts in the "wod". ' .
+                                        'Luckily, it seems that running scripts in the "wod2" folder works ' .
+                                        '(it could perhaps have something to do with the *.htaccess* file placed in "wod", ' .
+                                        'although it ought not result in a 403). **What you need to do is simply to click the "Save settings and force new .htacess rules"' .
+                                        ' button. WebP Express wil then change the .htaccess rules to point to the "wod2" folder**';
+                                }
+
+                                return [false, $log, $createdTestFiles];
+                            }
+                        }
+                    }
+
+                    $log[] = 'Requesting simple test script "wod2/ping.php". Result: ' . ($canRunTestScriptInWod2 ? 'ok' : 'failed');
+                    $responsePingText2 = wp_remote_get(Paths::getPluginsUrl() . '/webp-express/wod2/ping.txt', ['timeout' => 7]);
+                    $pingTextResponseCode2 = wp_remote_retrieve_response_code($responsePingText2);
+                    $log[] = 'Requesting simple test file "wod2/ping.txt". ' .
+                        'Result: ' . ($pingTextResponseCode == '200' ? 'ok' : 'failed (response code: ' . $pingTextResponseCode2 . ')');
+
+                    if ($rulesPointsToWod2) {
+                        if ($canRunTestScriptInWod2) {
+                            if ($responseCode == '500') {
+                                $log[] = '';
+                                $log[] = '**As the test script works, it would seem that the explanation for the 500 internal server ' .
+                                    'error is that the PHP script (webp-on-demand.php) crashes. ' .
+                                    'You can help me by enabling debugging and post the error on the support forum on Wordpress ' .
+                                    '(https://wordpress.org/support/plugin/webp-express/), or create an issue on github ' .
+                                    '(https://github.com/rosell-dk/webp-express/issues)**';
+                                $log[] = '';
+                            }
+                        } else {
+                            if ($canRunTestScriptInWod) {
+                                $log[] = '';
+                                $log[] = 'The problem appears to be running PHP scripts in the "wod2" folder. ' .
+                                    'Luckily, it seems that running scripts in the "wod" folder works ' .
+                                    '**What you need to do is simply to click the "Save settings and force new .htacess rules"' .
+                                    ' button. WebP Express wil then change the .htaccess rules to point to the "wod" folder**';
+                                $log[] = '';
+                            } else {
+                                if ($responseCode == 500) {
+
+                                    if ($pingTextResponseCode2 == '500') {
+                                        $log[] = 'All our requests results in 500 Internal Error. Even ' .
+                                            'the request to plugins/webp-express/wod2/ping.txt. ' .
+                                            'Surprising!';
+                                    } else {
+                                        $log[] = 'The internal server error happens for php files, but not txt files. ' .
+                                            'It could be the result of a restrictive server configuration or the works of a security plugin. ' .
+                                            'Try to examine the .htaccess file in the plugins folder and its parent folders. ' .
+                                            'Or try to look in the httpd.conf. Look for the "AllowOverride" and the "AllowOverrideList" directives. ';
+                                    }
+
+                                    //$log[] = 'We get *500 Internal Server Error*';
+                                    /*
+                                    It can for example be that the *.htaccess* ' .
+                                        'in the ' . $rootId . ' folder (or a parent folder) contains directives that the server either ' .
+                                        'doesnt support or has not allowed (using AllowOverride in ie httpd.conf). It could also be that the redirect succeded, ' .
+                                        'but the *.htaccess* in the folder of the script (or a parent folder) results in such problems. Also, ' .
+                                        'it could be that the script (webp-on-demand.php) for some reason fails.';
+
+                                    */
+                                }
+                            }
+
+
+                        }
+                    }
+
+
+                    //$log[] = 'or that there is an .htaccess file in the ';
+                }
+//                $log[] = print_r($results[0]['response']['code'], true);
+            }
+            //$log[] = 'The test cannot be completed';
             //$log[count($log) - 1] .= '. FAILED';
             return [false, $log, $createdTestFiles];
         }
