@@ -26,6 +26,7 @@ class HTAccessRules
     private static $setAddVaryEnvInRedirect;
     private static $dirContainsSourceImages;
     private static $dirContainsWebPImages;
+    private static $alterHtmlEnabled;
 
     private static function trueFalseNullString($var)
     {
@@ -179,6 +180,7 @@ class HTAccessRules
             "# - Destination extension: " . self::$config['destination-extension'] . "\n" .
             "# - Destination structure: " . self::$config['destination-structure'] . (((self::$config['destination-structure'] == 'doc-root') && (!self::$useDocRootForStructuringCacheDir)) ? ' (overruled!)' : '') . "\n" .
             "# - Image types: " . str_replace('?', '', implode(', ', self::$fileExtensions)) . "\n" .
+            '# - Alter HTML enabled?: ' . (self::$alterHtmlEnabled  ? 'yes' : 'no') . "\n" .
 
             "#\n# Wordpress/Server configuration:\n" .
             '# - Document root availablity: ' . Paths::docRootStatusText() . "\n" .
@@ -827,6 +829,13 @@ class HTAccessRules
 
         self::$config = $config;
 
+
+        if (!isset($config['alter-html']['enabled'])) {
+            self::$alterHtmlEnabled = false;
+        } else {
+            self::$alterHtmlEnabled = true;
+        }
+
         $capTests = self::$config['base-htaccess-on-these-capability-tests'];
 
 
@@ -1055,10 +1064,19 @@ class HTAccessRules
             ) {
             }*/
             if ($addVaryHeaderUsingModHeader) {
-                if ($dirContainsSourceImages) {
-                    $rules .= self::addVaryHeaderEnvRules();
-                } else {
+                if (!$dirContainsSourceImages && !self::$alterHtmlEnabled) {
+                    // Simple rules for Vary:Accept  #444
+                    // These can be used when we are sure that the webp in this folder is never
+                    // requested directly.
+                    // The simple rules are prefered when possible because they are more robust
+                    // and doesn't depend on mod_setenvif
+
+                    // TODO: Use simple rules if it can be proved that mod_setenvif isn't working
                     $rules .= self::addVaryHeaderRules();
+                } else {
+                    // Advanced rules, which ensures that direct requests for webps doesn't get
+                    // Vary:Accept header added
+                    $rules .= self::addVaryHeaderEnvRules();
                 }
             }
 
