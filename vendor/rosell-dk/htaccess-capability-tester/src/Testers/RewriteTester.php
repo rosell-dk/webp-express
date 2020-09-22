@@ -1,6 +1,6 @@
 <?php
 
-namespace HtaccessCapabilityTester;
+namespace HtaccessCapabilityTester\Testers;
 
 /**
  * Class for testing if rewriting works at the tested location.
@@ -15,7 +15,7 @@ namespace HtaccessCapabilityTester;
  *     (if disallowed, the result is either a 500 Internal Server Error or that the directive is
  *     ignored, depending on whether Nonfatal is set)
  * - The request results in a 500 Internal Server Error due to another problem than a disallowed
- *     directive (this is a false negative)
+ *     directive (this is, there is a risk for a false negative)
  *
  * The test works by creating an .htaccess which redirects requests to "0.txt"
  * to "1.txt" and then requesting "0.txt".
@@ -37,30 +37,19 @@ namespace HtaccessCapabilityTester;
  *
  * @package    HtaccessCapabilityTester
  * @author     Bjørn Rosell <it@rosell.dk>
- * @since      Class available since the beginning
+ * @since      Class available since 0.7
  */
-class RewriteTester extends AbstractTester
+class RewriteTester extends CustomTester
 {
 
     /**
-     * Child classes must implement this method, which tells which subdir the
-     * test files are to be put.
+     * Constructor.
      *
-     * @return  string  A subdir for the test files
+     * @return void
      */
-    public function getSubDir()
+    public function __construct()
     {
-        return 'rewrite-tester';
-    }
-
-    /**
-     * Register the test files using the "registerTestFile" method
-     *
-     * @return  void
-     */
-    public function registerTestFiles() {
         $htaccessFile = <<<'EOD'
-
 # Testing for mod_rewrite
 # -----------------------
 # If mod_rewrite is enabled, redirect to 1.txt, which returns "1".
@@ -75,35 +64,30 @@ class RewriteTester extends AbstractTester
 #      too. Actually, the <IfModule> wrap isn't neccessary for our test to work, as the test
 #      identifies a 500 Internal Error as test failure. However, not having the wrap would
 #      cause the test to generate an entry in the error log when mod_rewrite isn't installed
-#      (regardless if overrides are configured to Nonfatal or not):
-#      "Invalid command 'RewriteEngine', perhaps misspelled or defined by a module not included
+#      (regardless if configured to Nonfatal or not): "Invalid command 'RewriteEngine', perhaps
+#      misspelled or defined by a module not included
 #      in the server configuration"
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteRule ^0\.txt$ 1.txt [L]
+    RewriteRule ^0\.txt$ 1\.txt [L]
 </IfModule>
-
 EOD;
 
-        $this->registerTestFile('.htaccess', $htaccessFile);
-        $this->registerTestFile('0.txt', "0");
-        $this->registerTestFile('1.txt', "1");
-    }
+        $test = [
+            'subdir' => 'rewrite',
+            'files' => [
+                ['.htaccess', $htaccessFile],
+                ['0.txt', "0"],
+                ['1.txt', "1"]
+            ],
+            'request' => '0.txt',
+            'interpretation' => [
+                ['success', 'body', 'equals', '1'],
+                ['failure', 'body', 'equals', '0'],
+            ]
+        ];
 
-    /**
-     *  Run the rewrite test.
-     *
-     *  @return bool|null  Returns true if rewriting works in the directory being tested, false if
-     *                        does not.
-     */
-    public function runTest() {
-        $responseText = $this->makeHTTPRequest($this->baseUrl . '/' . $this->subDir . '/0.txt');
-        //echo $this->baseUrl . '/' . $this->subDir . '/0.txt' . ':' .$responseText;
-        if ($responseText == '1') {
-            return true;
-        };
-        return false;
+        parent::__construct($test);
     }
-
 }

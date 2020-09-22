@@ -190,30 +190,31 @@
     },
     {
         "name": "rosell-dk/htaccess-capability-tester",
-        "version": "0.6",
-        "version_normalized": "0.6.0.0",
+        "version": "0.7",
+        "version_normalized": "0.7.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/rosell-dk/htaccess-capability-tester.git",
-            "reference": "0a10b7e3c254d5ab8a7073c7cc56f600ae30c5cc"
+            "reference": "d8c4783f8c809a0f8c5c16a8f2cf7004912f957f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/htaccess-capability-tester/zipball/0a10b7e3c254d5ab8a7073c7cc56f600ae30c5cc",
-            "reference": "0a10b7e3c254d5ab8a7073c7cc56f600ae30c5cc",
+            "url": "https://api.github.com/repos/rosell-dk/htaccess-capability-tester/zipball/d8c4783f8c809a0f8c5c16a8f2cf7004912f957f",
+            "reference": "d8c4783f8c809a0f8c5c16a8f2cf7004912f957f",
             "shasum": ""
         },
         "require": {
             "php": "^5.6 | ^7.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "^8",
+            "phpunit/php-code-coverage": "dev-4.0-dev as 4.0.4",
+            "phpunit/phpunit": "^5.7",
             "squizlabs/php_codesniffer": "3.*"
         },
         "suggest": {
             "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
         },
-        "time": "2020-08-21T10:55:23+00:00",
+        "time": "2020-09-15T11:34:30+00:00",
         "type": "library",
         "extra": {
             "scripts-descriptions": {

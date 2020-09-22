@@ -67,7 +67,8 @@ class PlatformInfo
         // https://stackoverflow.com/questions/9021425/how-to-check-if-mod-rewrite-is-enabled-in-php
         // But it does not seem to return all modules in my php-fpm setup.
 
-        // Currently we got no more tools.
+        // Currently we got no more tools in this function...
+        // you might want to take a look at the "htaccess_capability_tester" library...
         return null;
 
     }

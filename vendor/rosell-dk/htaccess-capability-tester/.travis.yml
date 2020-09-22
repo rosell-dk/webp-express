@@ -1,14 +1,45 @@
 language: php
 os: linux
-dist: xenial
 
-php:
-  - 7.2
-  - 7.3
-  - 7.4
-
-env:
-    - PHPSTAN=1
+matrix:
+  fast_finish: true
+  include:
+    - name: "PHP 7.4, Xenial"
+      php: 7.4
+      dist: xenial
+      env:
+      - PHPSTAN=1
+      - UPLOADCOVERAGE=0
+    - name: "PHP 7.3, Xenial"
+      php: 7.3
+      dist: xenial
+      env:
+      - PHPSTAN=1
+      - UPLOADCOVERAGE=1
+    - name: "PHP 7.2, Xenial"
+      php: 7.2
+      dist: xenial
+      env:
+      - PHPSTAN=1
+      - UPLOADCOVERAGE=0
+    - name: "PHP 7.1, Xenial"
+      php: 7.1
+      dist: xenial
+      env:
+      - PHPSTAN=1
+      - UPLOADCOVERAGE=0
+    - name: "PHP 7.0, Xenial"
+      php: 7.0
+      dist: xenial
+      env:
+      - PHPSTAN=0
+      - UPLOADCOVERAGE=0
+    - name: "PHP 5.6, Trusty"
+      php: 5.6
+      dist: trusty
+      env:
+      - PHPSTAN=0
+      - UPLOADCOVERAGE=0
 
 before_script:
   - (composer self-update; true)
@@ -18,3 +49,10 @@ before_script:
 script:
   - composer test
   - if [[ $PHPSTAN == 1 ]]; then vendor/bin/phpstan analyse src --level=4; fi
+
+after_script:
+  - |
+    if [[ $UPLOADCOVERAGE == 1 ]]; then
+      wget https://scrutinizer-ci.com/ocular.phar
+      php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+    fi

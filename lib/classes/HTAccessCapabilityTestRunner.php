@@ -11,7 +11,7 @@ namespace WebPExpress;
 use \WebPExpress\FileHelper;
 use \WebPExpress\Paths;
 
-use \HtaccessCapabilityTester\TesterFactory;
+use \HtaccessCapabilityTester\HtaccessCapabilityTester;
 
 include_once WEBPEXPRESS_PLUGIN_DIR . '/vendor/autoload.php';
 
@@ -46,21 +46,21 @@ class HTAccessCapabilityTestRunner
                 return self::canRunPingPongTestScript($url);
 
             case 'modHeaderWorking':
-                return self::runTestInWebPExpressContentDir('set-request-header-tester');
+                return self::runTestInWebPExpressContentDir('headerSetWorks');
 
             case 'modRewriteWorking':
-                return self::runTestInWebPExpressContentDir('rewrite-tester');
+                return self::runTestInWebPExpressContentDir('rewriteWorks');
 
             case 'passThroughEnvWorking':
-                return self::runTestInWebPExpressContentDir('pass-env-through-rewrite-tester');
+                return self::runTestInWebPExpressContentDir('passingInfoFromRewriteToScriptThroughEnvWorks');
 
             case 'passThroughHeaderWorking':
                 // pretend it fails because .htaccess rules aren't currently generated correctly
                 return false;
-                return self::runTestInWebPExpressContentDir('pass-env-through-request-header-tester');
+                return self::runTestInWebPExpressContentDir('passingInfoFromRewriteToScriptThroughRequestHeaderWorks');
 
             case 'grantAllAllowed':
-                return self::runTestInWebPExpressContentDir('grant-all-crash-tester');
+                return self::runTestInWebPExpressContentDir('grantAllCrashTester');
         }
     }
 
@@ -84,11 +84,40 @@ class HTAccessCapabilityTestRunner
         $baseDir = Paths::getWebPExpressContentDirAbs() . '/htaccess-capability-tests';
         $baseUrl = Paths::getContentUrl() . '/webp-express/htaccess-capability-tests';
 
-        $tester = TesterFactory::create($testName, $baseDir, $baseUrl);
-        $tester->setHTTPRequester(new WPHTTPRequester());
+        $hct = new HtaccessCapabilityTester($baseDir, $baseUrl);
+        $hct->setHttpRequester(new WPHttpRequester());
 
         try {
-            $testResult = $tester->runTest();
+            switch ($testName) {
+                case 'htaccessEnabled':
+                    return $hct->htaccessEnabled();
+                case 'rewriteWorks':
+                    return $hct->rewriteWorks();
+                case 'addTypeWorks':
+                    return $hct->addTypeWorks();
+                case 'headerSetWorks':
+                    return $hct->headerSetWorks();
+                case 'requestHeaderWorks':
+                    return $hct->requestHeaderWorks();
+                case 'passingInfoFromRewriteToScriptThroughRequestHeaderWorks':
+                    return $hct->passingInfoFromRewriteToScriptThroughRequestHeaderWorks();
+                case 'passingInfoFromRewriteToScriptThroughEnvWorks':
+                    return $hct->passingInfoFromRewriteToScriptThroughEnvWorks();
+                case 'grantAllCrashTester':
+                    $rules = <<<'EOD'
+<FilesMatch "(webp-on-demand\.php|webp-realizer\.php|ping\.php|ping\.txt)$">
+  <IfModule !mod_authz_core.c>
+    Order deny,allow
+    Allow from all
+  </IfModule>
+  <IfModule mod_authz_core.c>
+    Require all granted
+  </IfModule>
+</FilesMatch>
+EOD;
+                    return $hct->crashTest($rules, 'grant-all');
+            }
+
         } catch (\Exception $e) {
             $testResult = null;
         }
