@@ -545,6 +545,7 @@ class SelfTestHelper
             'These test results are used when creating the rewrite rules. Here are the results:';*/
 
 //        $log[] = '';
+        $log[] = '- .htaccess files enabled?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::htaccessEnabled());
         $log[] = '- mod_rewrite working?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modRewriteWorking());
         $log[] = '- mod_header working?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modHeaderWorking());
         $log[] = '- passing variables from *.htaccess* to PHP script through environment variable working?: ' . self::trueFalseNullString($capTests['passThroughEnvWorking']);

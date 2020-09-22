@@ -45,6 +45,9 @@ class HTAccessCapabilityTestRunner
                 $url = Paths::getWebPExpressPluginUrl() . '/wod2/ping.php';
                 return self::canRunPingPongTestScript($url);
 
+            case 'htaccessEnabled':
+                return self::runTestInWebPExpressContentDir('htaccessEnabled');
+
             case 'modHeaderWorking':
                 return self::runTestInWebPExpressContentDir('headerSetWorks');
 
@@ -119,17 +122,22 @@ EOD;
             }
 
         } catch (\Exception $e) {
-            $testResult = null;
+            return null;
         }
         //error_log('test: ' . $testName . ':' . (($testResult === true) ? 'ok' : ($testResult === false ? 'failed' : 'hm')));
 
-        return $testResult;
+        throw new \Exception('Unknown test:' . $testName);
     }
 
 
     public static function modRewriteWorking()
     {
         return self::runOrGetCached('modRewriteWorking');
+    }
+
+    public static function htaccessEnabled()
+    {
+        return self::runOrGetCached('htaccessEnabled');
     }
 
     public static function modHeaderWorking()
