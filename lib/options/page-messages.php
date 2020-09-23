@@ -264,7 +264,7 @@ if (Config::isConfigFileThere()) {
                 Messenger::printMessage(
                     'warning',
                     'The conversion script cannot currently be run. ' .
-                    'However, simply click "Save settings and force new .htaccess rules" to fix it. ' .
+                    'However, simply click "Save settings <b>and force new .htaccess rules</b>" to fix it. ' .
                     '(this will point to the script in the "wod" folder rather than "wod2")'
                 );
             }
@@ -274,7 +274,7 @@ if (Config::isConfigFileThere()) {
                 Messenger::printMessage(
                     'warning',
                     'The conversion script cannot currently be run. ' .
-                    'However, simply click "Save settings and force new .htaccess rules" to fix it. ' .
+                    'However, simply click "Save settings <b>and force new .htaccess rules</b>" to fix it. ' .
                     '(this will point to the script in the "wod2" folder rather than "wod")'
                 );
             }
