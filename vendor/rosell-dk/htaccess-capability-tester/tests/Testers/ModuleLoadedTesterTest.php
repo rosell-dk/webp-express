@@ -94,9 +94,17 @@ class ModuleLoadedTesterTest extends BasisTestCase
     {
       $fakeServer = new FakeServer();
       $fakeServer->setResponses([
-          '/content-digest/on/request-me.txt' => new HttpResponse('hi', '200', ['Content-MD5: aaoeu']),
+          '/content-digest/on/request-me.txt' => new HttpResponse(
+              'hi',
+              '200',
+              ['Content-MD5' => 'aaoeu']
+          ),
           '/content-digest/off/request-me.txt' => new HttpResponse('hi', '200', []),
-          '/module-loaded/setenvif/content-digest/request-me.txt' => new HttpResponse('', '200', ['Content-MD5: aoeu'])
+          '/module-loaded/setenvif/content-digest/request-me.txt' => new HttpResponse(
+              '',
+              '200',
+              ['Content-MD5' => 'aoeu']
+          )
       ]);
       $testResult = $fakeServer->runTester(new ModuleLoadedTester('setenvif'));
       $this->assertSuccess($testResult);
@@ -106,7 +114,11 @@ class ModuleLoadedTesterTest extends BasisTestCase
     {
       $fakeServer = new FakeServer();
       $fakeServer->setResponses([
-          '/content-digest/on/request-me.txt' => new HttpResponse('hi', '200', ['Content-MD5: aaoeu']),
+          '/content-digest/on/request-me.txt' => new HttpResponse(
+              'hi',
+              '200',
+              ['Content-MD5' => 'aaoeu']
+          ),
           '/content-digest/off/request-me.txt' => new HttpResponse('hi', '200', []),
           '/module-loaded/setenvif/content-digest/request-me.txt' => new HttpResponse('', '200', [])
       ]);
@@ -118,8 +130,16 @@ class ModuleLoadedTesterTest extends BasisTestCase
     {
       $fakeServer = new FakeServer();
       $fakeServer->setResponses([
-          '/add-type/request-me.test' => new HttpResponse('hi', '200', ['Content-Type: image/gif']),
-          '/module-loaded/setenvif/add-type/request-me.test' => new HttpResponse('hi', '200', ['Content-Type: image/gif'])
+          '/add-type/request-me.test' => new HttpResponse(
+              'hi',
+              '200',
+              ['Content-Type' => 'image/gif']
+          ),
+          '/module-loaded/setenvif/add-type/request-me.test' => new HttpResponse(
+              'hi',
+              '200',
+              ['Content-Type' => 'image/gif']
+          )
       ]);
       $testResult = $fakeServer->runTester(new ModuleLoadedTester('setenvif'));
       $this->assertSuccess($testResult);
@@ -129,8 +149,16 @@ class ModuleLoadedTesterTest extends BasisTestCase
     {
       $fakeServer = new FakeServer();
       $fakeServer->setResponses([
-          '/add-type/request-me.test' => new HttpResponse('hi', '200', ['Content-Type: image/gif']),
-          '/module-loaded/setenvif/add-type/request-me.test' => new HttpResponse('hi', '200', ['Content-Type: image/jpeg'])
+          '/add-type/request-me.test' => new HttpResponse(
+              'hi',
+              '200',
+              ['Content-Type' => 'image/gif']
+          ),
+          '/module-loaded/setenvif/add-type/request-me.test' => new HttpResponse(
+              'hi',
+              '200',
+              ['Content-Type' => 'image/jpeg']
+          )
       ]);
       $testResult = $fakeServer->runTester(new ModuleLoadedTester('setenvif'));
       $this->assertFailure($testResult);
@@ -184,8 +212,16 @@ class ModuleLoadedTesterTest extends BasisTestCase
     {
       $fakeServer = new FakeServer();
       $fakeServer->setResponses([
-          '/header-set/request-me.txt' => new HttpResponse('hi', '200', ['X-Response-Header-Test: test']),
-          '/module-loaded/setenvif/header-set/request-me.txt' => new HttpResponse('thanks', '200', ['X-Response-Header-Test: 1']),
+          '/header-set/request-me.txt' => new HttpResponse(
+              'hi',
+              '200',
+              ['X-Response-Header-Test' => 'test']
+          ),
+          '/module-loaded/setenvif/header-set/request-me.txt' => new HttpResponse(
+              'thanks',
+              '200',
+              ['X-Response-Header-Test' => '1']
+          ),
       ]);
       $testResult = $fakeServer->runTester(new ModuleLoadedTester('setenvif'));
       $this->assertSuccess($testResult);
@@ -195,8 +231,16 @@ class ModuleLoadedTesterTest extends BasisTestCase
     {
       $fakeServer = new FakeServer();
       $fakeServer->setResponses([
-          '/header-set/request-me.txt' => new HttpResponse('hi', '200', ['X-Response-Header-Test: test']),
-          '/module-loaded/setenvif/header-set/request-me.txt' => new HttpResponse('thanks', '200', ['X-Response-Header-Test: 0']),
+          '/header-set/request-me.txt' => new HttpResponse(
+              'hi',
+              '200',
+              ['X-Response-Header-Test' => 'test']
+          ),
+          '/module-loaded/setenvif/header-set/request-me.txt' => new HttpResponse(
+              'thanks',
+              '200',
+              ['X-Response-Header-Test' => '0']
+          ),
       ]);
       $testResult = $fakeServer->runTester(new ModuleLoadedTester('setenvif'));
       $this->assertFailure($testResult);

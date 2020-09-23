@@ -89,8 +89,8 @@ class ContentDigestTesterTest extends BasisTestCase
     {
         $fakeServer = new FakeServer();
         $fakeServer->setResponses([
-            '/content-digest/on/request-me.txt' => new HttpResponse('hi', '200', ['Content-MD5: aaoeu']),
-            '/content-digest/off/request-me.txt' => new HttpResponse('hi', '200', ['Content-MD5: aaoeu']),
+            '/content-digest/on/request-me.txt' => new HttpResponse('hi', '200', ['Content-MD5' => 'aaoeu']),
+            '/content-digest/off/request-me.txt' => new HttpResponse('hi', '200', ['Content-MD5' => 'aaoeu']),
         ]);
         $testResult = $fakeServer->runTester(new ContentDigestTester());
         $this->assertFailure($testResult);
@@ -113,7 +113,11 @@ class ContentDigestTesterTest extends BasisTestCase
     {
         $fakeServer = new FakeServer();
         $fakeServer->setResponses([
-            '/content-digest/on/request-me.txt' => new HttpResponse('hi', '200', ['Content-MD5: aaoeu']),
+            '/content-digest/on/request-me.txt' => new HttpResponse(
+                'hi',
+                '200',
+                ['Content-MD5' => 'aaoeu']
+            ),
             '/content-digest/off/request-me.txt' => new HttpResponse('hi', '200', [])
         ]);
         $testResult = $fakeServer->runTester(new ContentDigestTester());

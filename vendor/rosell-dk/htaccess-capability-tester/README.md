@@ -122,10 +122,10 @@ interpretation:
 In fact, this is more or less how this library implements it.
 
 The test definition has the following sub-definitions:
-*subdir*: Defines which subdir the test files should reside in
-*files*: Defines the files for the test (filename and content)
-*request*: Defines which file that should be requested
-*interpretation*: Defines how to interprete the response. It consists of a list of mappings is read from the top until one of the conditions is met. The first line for example translates to "Map to success if the body of the response equals '1'". If none of the conditions are met, the result is automatically mapped to 'inconclusive'.
+- *subdir*: Defines which subdir the test files should reside in
+- *files*: Defines the files for the test (filename and content)
+- *request*: Defines which file that should be requested
+- *interpretation*: Defines how to interprete the response. It consists of a list of mappings is read from the top until one of the conditions is met. The first line for example translates to "Map to success if the body of the response equals '1'". If none of the conditions are met, the result is automatically mapped to 'inconclusive'.
 
 For more info, look in the API (below). For real examples, check out the classes in the "Testers" dir - most of them are defined in this "language"
 
@@ -140,7 +140,7 @@ The tests have the following in common:
 - If the server has been set up to disallow the directive being tested (AllowOverride), the result is *failure* (both when configured to ignore and when configured to go fatal)
 - A *403 Forbidden* results in *inconclusive*. Why? Because it could be that the server has been set up to forbid access to files matching a pattern that our test file unluckily matches. In most cases, this is unlikely, as most tests requests files with harmless-looking file extensions (often a "request-me.txt"). A few of the tests however requests a "test.php", which is more likely to be denied.
 
-Most tests are implemented as a definition such as the one accepted in *customTest()*. This means that if you want it to work slightly differently, you can easily grab the code in the corresponding class in the *Testers* directory, make your modification and call *customTest()*. Those definitions are also available in this document, in YAML format (more readable).
+Most tests are implemented as a definition such as the one accepted in *customTest()*. This means that if you want one of the tests provided by this library to work slightly differently, you can easily grab the code in the corresponding class in the *Testers* directory, make your modification and call *customTest()*.
 
 <details><summary><b>addTypeWorks()</b></summary>
 <p><br>
@@ -688,10 +688,13 @@ This allows you to use another object for lining up the test files than the stan
 </details>
 
 ## Stable API?
-The 0.7 release is just about right. I do not expect any changes in the part of the API that is mentioned above. So, if you stick to that, it should still work, when the 1.0 release comes.
+The 0.8 release is just about right. I do not expect any changes in the part of the API that is mentioned above. So, if you stick to that, it should still work, when the 1.0 release comes.
 
-Expected changes:
-- TestResult class might be disposed of so the "internal" Tester classes also returns bool|null.
+Changes in the new 0.8 release:
+- HttpResponse now takes a map of headers rather than a numeric array. If you have implemented your own HttpRequester rather than using the default, you need to update it.
+
+Expected changes in the 1.0 release:
+- TestResult class might be disposed off so the "internal" Tester classes also returns bool|null.
 - Throw custom exception when test file cannot be created
 
 ## Installation

@@ -60,7 +60,11 @@ class HtaccessEnabledTesterTest extends BasisTestCase
     {
         $fakeServer = new FakeServer();
         $fakeServer->setResponses([
-            '/header-set/request-me.txt' => new HttpResponse('hi', '200', ['X-Response-Header-Test: test'])
+            '/header-set/request-me.txt' => new HttpResponse(
+                'hi',
+                '200',
+                ['X-Response-Header-Test' => 'test']
+            )
         ]);
         $testResult = $fakeServer->runTester(new HtaccessEnabledTester());
         $this->assertSuccess($testResult);

@@ -40,15 +40,52 @@ class ResponseInterpreter
     }
 
     /**
-     * Evaluate condition (string examination)
+     * Interpret headers line
      *
-     * @param  string  $val
-     * @param  string  $operator  (is-empty | equals | not-equals | begins-with)
-     * @param  string  $arg1  (only required for some operators)
-     * @return bool
+     * @param  HttpResponse  $response
+     * @param  string        $operator (has-key | )
+     * @param  string        $fieldName  field name of the header
+     * @param  string        $fieldValue (optional) field value to look for. Only required when
+     *                             operator is "contains-key-value" or "not-contains-key-value"
+     * @return bool          true if the condition matches, false otherwise
      */
-    private static function evaluateConditionForString($operator, $val, $arg1)
+    private static function evaluateHeadersLine($response, $operator, $fieldName, $fieldValue)
     {
+        switch ($operator) {
+            case 'contains-key':
+                return $response->hasHeader($fieldName);
+            case 'not-contains-key':
+                return (!($response->hasHeader($fieldName)));
+            case 'contains-key-value':
+                return $response->hasHeaderValue($fieldName, $fieldValue);
+            case 'not-contains-key-value':
+                return (!($response->hasHeaderValue($fieldName, $fieldValue)));
+        }
+        return false;
+    }
+
+    /**
+     * Interpret string line (body or status-code)
+     *
+     * @param  HttpResponse  $response
+     * @param  string        $property ("body" or "status-code")
+     * @param  string        $operator  (is-empty | equals | not-equals | begins-with)
+     * @param  string        $arg1  (only required for some operators)
+     *
+     * @return bool          true if the condition matches, false otherwise
+     */
+    private static function evaluateStringLine($response, $property, $operator, $arg1)
+    {
+        $val = '';
+        switch ($property) {
+            case 'status-code':
+                $val = $response->statusCode;
+                break;
+            case 'body':
+                $val = $response->body;
+                break;
+        }
+
         switch ($operator) {
             case 'is-empty':
                 return ($val == '');
@@ -60,71 +97,9 @@ class ResponseInterpreter
                 return (strpos($val, $arg1) === 0);
         }
         return false;
+
     }
 
-    /**
-     * Evaluate condition  (hash examination)
-     *
-     * @param  array  $val
-     * @param  string $operator  (is-empty | equals | not-equals | begins-with)
-     * @param  string $arg1  (only required for some operators)
-     * @return bool
-     */
-    private static function evaluateConditionForHash($operator, $val, $arg1, $arg2)
-    {
-        switch ($operator) {
-            case 'contains-key':
-                return (isset($val[$arg1]));
-            case 'not-contains-key':
-                return (!isset($val[$arg1]));
-            case 'contains-key-value':
-                return (isset($val[$arg1]) && ($val[$arg1] == $arg2));
-            case 'not-contains-key-value':
-                return (!isset($val[$arg1]) || ($val[$arg1] != $arg2));
-        }
-        return false;
-    }
-
-    /**
-     * Evaluate condition
-     *
-     * @param  array  $val
-     * @param  string $valType  (string | hash)
-     * @param  string $arg1  (only required for some operators)
-     * @param  string $arg2  (only required for some operators)
-     * @return bool
-     */
-    private static function evaluateCondition($operator, $valType, $val, $arg1, $arg2)
-    {
-        if ($valType == 'string') {
-            return self::evaluateConditionForString($operator, $val, $arg1);
-        } elseif ($valType == 'hash') {
-            return self::evaluateConditionForHash($operator, $val, $arg1, $arg2);
-        }
-        return false;
-    }
-
-
-    /**
-     * Get property
-     *
-     * @param HttpResponse  $response
-     * @param string        $property  (status-code | body | headers)
-     *
-     * @return array|null   [variable type, value] or null if invalid property
-     */
-    private static function getPropertyOnResponse($response, $property)
-    {
-        switch ($property) {
-            case 'status-code':
-                return ['string', $response->statusCode];
-            case 'body':
-                return ['string', $response->body];
-            case 'headers':
-                return ['hash', $response->getHeadersHash()];
-        }
-        return null;
-    }
 
     /**
      * Interpret line.
@@ -152,19 +127,23 @@ class ResponseInterpreter
         $arg1 = (isset($line[3]) ? $line[3] : '');
         $arg2 = (isset($line[4]) ? $line[4] : '');
 
-        list($valType, $val) = self::getPropertyOnResponse($response, $propertyToExamine);
-
-        $reason = $propertyToExamine . ' ' . $operator;
-        if (isset($line[3])) {
-            $reason .= ' "' . implode('" "', array_slice($line, 3)) . '"';
+        if ($propertyToExamine == 'headers') {
+            $match = self::evaluateHeadersLine($response, $operator, $arg1, $arg2);
+        } else {
+            $match = self::evaluateStringLine($response, $propertyToExamine, $operator, $arg1);
         }
-        if (($propertyToExamine == 'status-code') && ($operator == 'not-equals')) {
-            $reason .= ' - it was: ' . $val;
-        }
-
-        if (self::evaluateCondition($operator, $valType, $val, $arg1, $arg2)) {
+        if ($match) {
+            $reason = $propertyToExamine . ' ' . $operator;
+            if (isset($line[3])) {
+                $reason .= ' "' . implode('" "', array_slice($line, 3)) . '"';
+            }
+            /*
+            if (($propertyToExamine == 'status-code') && ($operator == 'not-equals') && (gettype($val) == 'string')) {
+                $reason .= ' - it was: ' . $val;
+            }*/
             return new TestResult($status, $reason);
         }
+
         return null;
     }
 

@@ -297,23 +297,6 @@ EOD;
     }
 
     /**
-     *  @return  array
-     */
-    private function getLastTest()
-    {
-        return [
-            'subdir' => $this->getSubDir() . '/last-test',
-            'files' => [
-                ['request-me.test', '0'],
-            ],
-            'request' => 'request-me.test',
-            'interpretation' => [
-                ['inconclusive'],
-            ]
-        ];
-    }
-
-    /**
      * @return  bool|null
      */
     private function run2()

@@ -85,7 +85,7 @@ class AddTypeTesterTest extends BasisTestCase
     {
         $fakeServer = new FakeServer();
         $fakeServer->setResponses([
-            '/add-type/request-me.test' => new HttpResponse('hi', '200', ['Content-Type: image/gif'])
+            '/add-type/request-me.test' => new HttpResponse('hi', '200', ['Content-Type' => 'image/gif'])
         ]);
         $testResult = $fakeServer->runTester(new AddTypeTester());
         $this->assertSuccess($testResult);

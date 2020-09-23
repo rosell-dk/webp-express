@@ -85,21 +85,21 @@ class HtaccessEnabledTester extends AbstractTester
                 // Try an .htaccess with syntax errors in it.
                 // (we do this lastly because it may generate an entry in the error log)
                 $crashTestResult = $hct->crashTest('aoeu', 'htaccess-enabled-malformed-htaccess');
-                if ($crashTestResult === false) {
-                    // It crashed, - which means .htaccess is processed!
-                    $status = true;
-                    $info = 'syntax error in an .htaccess causes crash';
-                } elseif ($crashTestResult === true) {
-                    // It did not crash. So the .htaccess is not processed, as syntax errors
-                    // makes servers crash
-                    $status = false;
-                    $info = 'syntax error in an .htaccess does not cause crash';
-                } elseif (is_null($crashTestResult)) {
+                if (is_null($crashTestResult)) {
                     // It did crash. But so did a request to an innocent text file in a directory
                     // without a .htaccess file in it. Something is making all requests fail and
                     // we cannot judge.
                     $status = null;
                     $info = 'all requests results in 500 Internal Server Error';
+                } elseif ($crashTestResult === false) {
+                    // It crashed, - which means .htaccess is processed!
+                    $status = true;
+                    $info = 'syntax error in an .htaccess causes crash';
+                } else {
+                    // It did not crash. So the .htaccess is not processed, as syntax errors
+                    // makes servers crash
+                    $status = false;
+                    $info = 'syntax error in an .htaccess does not cause crash';
                 }
             }
         }

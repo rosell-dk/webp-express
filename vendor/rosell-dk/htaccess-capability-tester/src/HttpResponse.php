@@ -18,43 +18,59 @@ class HttpResponse
     /* @var string  the status code of the response */
     public $statusCode;
 
-    /* @var array  the response headers */
-    public $headers;
+    /* @var array  the response headers keyed by lowercased field name */
+    public $headersMapLowerCase;
 
     /**
      * Constructor.
      *
      * @param  string  $body
      * @param  string  $statusCode
-     * @param  array   $headers
+     * @param  array   $headersMap     Map of headers, keyed by field name.
+     *                                 There is only one value (string) for each key.
+     *                                 If there are multiple values, they must be separated by comma
      *
      * @return void
      */
-    public function __construct($body, $statusCode, $headers)
+    public function __construct($body, $statusCode, $headersMap)
     {
         $this->body = $body;
         $this->statusCode = $statusCode;
-        $this->headers = $headers;
+        $this->headersMapLowerCase = array_change_key_case($headersMap, CASE_LOWER);
     }
 
     /**
-     *  Get headers as a hash.
+     *  Check if the response has a header
      *
-     *  Note: This little function does not handle multiple headers with the
-     *        same name.
-     *  @return  array  Hashed headers
+     *  @param  string $fieldName
+     *  @return bool
      */
-    public function getHeadersHash()
+    public function hasHeader($fieldName)
     {
-        $hash = [];
-        foreach ($this->headers as $header) {
-            $pos = strpos($header, ':');
-            if ($pos > 0) {
-                $key = trim(substr($header, 0, $pos));
-                $value = trim(substr($header, $pos + 1));
-                $hash[$key] = $value;
+        $fieldName = strtolower($fieldName);
+        return (isset($this->headersMapLowerCase[$fieldName]));
+    }
+
+    /**
+     *  Check if the response has a header with a given value
+     *
+     *  @param  string $fieldName
+     *  @param  string $fieldValue
+     *  @return bool
+     */
+    public function hasHeaderValue($fieldName, $fieldValue)
+    {
+        $fieldName = strtolower($fieldName);
+        if (!isset($this->headersMapLowerCase[$fieldName])) {
+            return false;
+        }
+        $values = explode(',', $this->headersMapLowerCase[$fieldName]);
+        foreach ($values as $value) {
+            if (trim($value) == $fieldValue) {
+                return true;
             }
         }
-        return $hash;
+        return false;
     }
+
 }
