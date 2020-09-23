@@ -81,6 +81,17 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
 
             $log[] = 'The test **failed**{: .error}';
 
+            if (isset($results[0]['response']['code'])) {
+                $responseCode = $results[0]['response']['code'];
+                if (($responseCode == 500) || ($responseCode == 403)) {
+
+                    $log = array_merge($log, SelfTestHelper::diagnoseWod403or500($this->config, $rootId, $responseCode));
+                    return [false, $log, $createdTestFiles];
+                    //$log[] = 'or that there is an .htaccess file in the ';
+                }
+//                $log[] = print_r($results[0]['response']['code'], true);
+            }
+
             $log[] = 'Why did it fail? It could either be that the redirection rule did not trigger ' .
                 'or it could be that the PHP script could not locate a source image corresponding to the destination URL. ' .
                 'Currently, this analysis cannot dertermine which was the case and it cannot be helpful ' .
