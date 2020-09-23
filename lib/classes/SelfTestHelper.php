@@ -547,7 +547,8 @@ class SelfTestHelper
 //        $log[] = '';
         $log[] = '- .htaccess files enabled?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::htaccessEnabled());
         $log[] = '- mod_rewrite working?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modRewriteWorking());
-        $log[] = '- mod_header working?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modHeaderWorking());
+        $log[] = '- mod_headers loaded?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modHeadersLoaded());
+        $log[] = '- mod_headers working (header set): ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modHeaderWorking());
         $log[] = '- passing variables from *.htaccess* to PHP script through environment variable working?: ' . self::trueFalseNullString($capTests['passThroughEnvWorking']);
         $log[] = '- Can run php test file in plugins/webp-express/wod/ ?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::canRunTestScriptInWOD());
         $log[] = '- Can run php test file in plugins/webp-express/wod2/ ?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::canRunTestScriptInWOD2());

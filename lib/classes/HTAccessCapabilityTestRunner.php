@@ -48,6 +48,9 @@ class HTAccessCapabilityTestRunner
             case 'htaccessEnabled':
                 return self::runTestInWebPExpressContentDir('htaccessEnabled');
 
+            case 'modHeadersLoaded':
+                return self::runTestInWebPExpressContentDir('modHeadersLoaded');
+
             case 'modHeaderWorking':
                 return self::runTestInWebPExpressContentDir('headerSetWorks');
 
@@ -98,6 +101,8 @@ class HTAccessCapabilityTestRunner
                     return $hct->rewriteWorks();
                 case 'addTypeWorks':
                     return $hct->addTypeWorks();
+                case 'modHeadersLoaded':
+                    return $hct->moduleLoaded('headers');
                 case 'headerSetWorks':
                     return $hct->headerSetWorks();
                 case 'requestHeaderWorks':
@@ -138,6 +143,11 @@ EOD;
     public static function htaccessEnabled()
     {
         return self::runOrGetCached('htaccessEnabled');
+    }
+
+    public static function modHeadersLoaded()
+    {
+        return self::runOrGetCached('modHeadersLoaded');
     }
 
     public static function modHeaderWorking()
