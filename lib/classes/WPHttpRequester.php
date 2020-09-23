@@ -21,8 +21,8 @@ class WPHttpRequester implements HttpRequesterInterface
 
         $body = wp_remote_retrieve_body($response);
         $statusCode = wp_remote_retrieve_response_code($response);
-        $headers = wp_remote_retrieve_headers($response);
-        
-        return new HttpResponse($body, $statusCode, $headers);
+        $headersMap = wp_remote_retrieve_headers($response)->getAll();
+
+        return new HttpResponse($body, $statusCode, $headersMap);
     }
 }
