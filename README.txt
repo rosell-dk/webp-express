@@ -134,6 +134,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 * Max Kreminsky
 * [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
+* Ruben Solvang
 
 **Persons who contributed with coffee within the last 30 days (updated biweekly) - Thanks! **
 
@@ -149,7 +150,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Justin - BigScoots ($105)
 * Sebastian ($99)
 * Tammy Lee ($90)
-* Max Kreminsky ($65)
+* Max Kreminsky ($70)
 * Steven Sullivan ($51)
 
 == Frequently Asked Questions ==
