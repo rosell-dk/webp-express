@@ -22,7 +22,7 @@ class AdminUi
         } else {
             $mylinks = array(
                 '<a href="' . admin_url('options-general.php?page=webp_express_settings_page') . '">Settings</a>',
-                '<a href="https://ko-fi.com/rosell" target="_blank">Provide coffee for the developer</a>',
+                '<a href="https://wordpress.org/plugins/webp-express/#%0Ahow%20do%20i%20buy%20you%20a%20cup%20of%20coffee%3F%0A" target="_blank">Provide coffee for the developer</a>',
             );
 
         }

@@ -1,6 +1,6 @@
 === WebP Express ===
 Contributors: rosell.dk
-Donate link: https://ko-fi.com/rosell
+Donate link: https://wordpress.org/plugins/webp-express/#%0Ahow%20do%20i%20buy%20you%20a%20cup%20of%20coffee%3F%0A
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.5
