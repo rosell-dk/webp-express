@@ -4,7 +4,7 @@ Donate link: https://wordpress.org/plugins/webp-express/#%0Ahow%20do%20i%20buy%2
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.5
-Stable tag: 0.17.5
+Stable tag: 0.18.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -141,9 +141,6 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Katja
 * Devashish Datt Mamgain
 * RobMoore
-* Anon
-* Eder Ribeiro
-* Christian
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
