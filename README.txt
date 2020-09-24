@@ -126,11 +126,11 @@ Do not simply remove the plugin without deactivating it first. Deactivation take
 Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue wasting time on this plugin:
 
 * [Buy me a Coffee](https://ko-fi.com/rosell)
-* [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell)
+* [Buy me coffee on a regular basis](https://github.com/sponsors/rosell-dk) and help ensuring my coffee supplies doesn't run dry.
 
 == Supporters of WebP Express ==
 
-**Persons currently backing the project via patreon - Thanks!**
+**Persons currently backing the project via GitHub Sponsors or patreon - Thanks!**
 
 * Max Kreminsky
 * [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
@@ -151,7 +151,6 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Tammy Lee ($90)
 * Max Kreminsky ($65)
 * Steven Sullivan ($51)
-
 
 == Frequently Asked Questions ==
 
@@ -724,8 +723,11 @@ Here are my current plans ahead: 0.18 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
-= How do I buy you a cup of coffee? =
-Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacoff.ee/rosell).
+= Can I buy you a cup of coffee? =
+You sure can! To do so, [go here!](https://ko-fi.com/rosell). If payment doesn't work for your country, [try here instead](https://buymeacoff.ee/rosell).
+
+If you want to make sure that my coffee supplies don't run dry, you can even buy me a cup of coffee on a regular basis [by going here](https://github.com/sponsors/rosell-dk)
+
 
 == Screenshots ==
 
