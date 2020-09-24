@@ -1,12 +1,13 @@
 
 # Backers
 
-WebP Express is an MIT-licensed open source project. It is free and always will be. And I, the developer, promise not to try to harvest it later by creating a PRO version.
+WebP Express is an MIT-licensed open source project. It is free and always will be.
 
-How is it financed then? Well, it isn't exactly. However, some people choose to support the development by buying the developer a cup of coffee, and some go even further, by becoming backers. Backers are nice folks making recurring monthly donations, and by doing this, they give me an excuse to put more work into the plugin than I really should.
+How is it financed then? Well, it isn't exactly. However, some people choose to support the development by buying me a cup of coffee, and some go even further, by becoming backers. Backers are nice folks making recurring monthly donations, and by doing this, they give me an excuse to put more work into the plugin than I really should.
 
-To become a backer, yourself, [go to my page at patreon.com](https://www.patreon.com/rosell)
+To become a backer, yourself, [go to my GitHub sponsors page](https://github.com/sponsors/rosell-dk)
 
+PS: I just started using GitHub Sponsors instead of patreon. I'm keeping [my patreon page]((https://www.patreon.com/rosell)), but might change it to support some other project. I'm for example very curious about the nature of reality and if we might be living in a computer simulation, and I might want to write a book about it one day.
 
 ## Generous backers via Patron
 
