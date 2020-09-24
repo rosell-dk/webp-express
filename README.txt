@@ -4,7 +4,7 @@ Donate link: https://wordpress.org/plugins/webp-express/#%0Ahow%20do%20i%20buy%2
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.5
-Stable tag: 0.18.0
+Stable tag: 0.18.1
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -733,6 +733,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.18.1 =
+*(released: 24 Sep 2020)*
+* Bugfix: Bulk Convert failed to show list on systems that did not have the [utf8-encode()](https://www.php.net/manual/en/function.utf8-encode.php) function.
+
 = 0.18.0 =
 *(released: 24 Sep 2020)*
 * You can now set cache control header in CDN friendly mode too
@@ -1175,6 +1179,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.18.1 =
+* Minor bug fix for bulk convert
 
 = 0.18.0 =
 * General maintenance and improvements

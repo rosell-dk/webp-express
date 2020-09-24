@@ -677,6 +677,10 @@ Here are my current plans ahead: 0.18 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.18.1
+*(released: 24 Sep 2020)*
+* Bugfix: Bulk Convert failed to show list on systems that did not have the [utf8-encode()](https://www.php.net/manual/en/function.utf8-encode.php) function.
+
 ## Changes in 0.18.0
 *(released: 24 Sep 2020)*
 * You can now set cache control header in CDN friendly mode too
