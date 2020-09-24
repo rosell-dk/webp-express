@@ -369,6 +369,7 @@ $sanitized = [
     ]),
     'cache-control-max-age' => webpexpress_getSanitizedChooseFromSet('cache-control-max-age', 'one-hour', [
         'one-second',
+        'one-minute',
         'one-hour',
         'one-day',
         'one-week',
@@ -491,23 +492,19 @@ $config = array_merge($config, [
     'forward-query-string' => true,
 ]);
 
-// Set options that are available in all operation modes, except the "CDN friendly" mode
-if ($sanitized['operation-mode'] != 'cdn-friendly') {
-    $config['cache-control'] = $sanitized['cache-control'];
-    switch ($sanitized['cache-control']) {
-        case 'no-header':
-            break;
-        case 'set':
-            $config['cache-control-max-age'] =  $sanitized['cache-control-max-age'];
-            $config['cache-control-public'] = ($sanitized['cache-control-public'] == 'public');
-            break;
-        case 'custom':
-            $config['cache-control-custom'] = $sanitized['cache-control-custom'];
-            break;
-    }
-}
-
 // Set options that are available in ALL operation modes
+$config['cache-control'] = $sanitized['cache-control'];
+switch ($sanitized['cache-control']) {
+    case 'no-header':
+        break;
+    case 'set':
+        $config['cache-control-max-age'] =  $sanitized['cache-control-max-age'];
+        $config['cache-control-public'] = ($sanitized['cache-control-public'] == 'public');
+        break;
+    case 'custom':
+        $config['cache-control-custom'] = $sanitized['cache-control-custom'];
+        break;
+}
 
 // Alter HTML
 $config['alter-html'] = [];

@@ -24,7 +24,7 @@
 
             // TODO:
             // Perhaps also show cache control in cdn-friendly mode?
-            if (($config['operation-mode'] == 'tweaked') || ($config['operation-mode'] == 'varied-image-responses')) {
+            if (($config['operation-mode'] == 'tweaked') || ($config['operation-mode'] == 'varied-image-responses') || ($config['operation-mode'] == 'cdn-friendly')) {
                 include_once 'cache-control.inc';
             }
 
