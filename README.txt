@@ -733,6 +733,19 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.18.0 =
+*(released: 24 Sep 2020)*
+* You can now set cache control header in CDN friendly mode too
+* The code for testing what actually works in .htaccess files on the server setup has been moved to a new library: [htaccess-capability-tester](https://github.com/rosell-dk/htaccess-capability-tester). It has been strengthened in the process.
+* Improved diagnosing in the "Live test" buttons
+* Simplified the logic for adding "Vary header" in the .htaccess residing in the cache dir. The logic no longer depends on the Apache module "mod_envif" being installed. mod_envif has Apache "Base" status, which means it is very rarely missing, so I decided not to trigger automatically updating of the .htaccess rules. To apply the change, you must click the button that forces .htaccess regeneration
+* The plugin has a folder called "wod" which contains php scripts for converting an image to webp. This is used for the function that rely on redirect magic to trigger conversion ("Enable redirection to converter?" and "Create webp files upon request?"). The .htaccess file in the "wod" folder in the plugin dir contains directives for modifying access (in order to counterfight rules placed by security plugins for disallows scripts to be run directly). However if these directives has been disallowed in the server setup, any request to a file in the folder will result in a 500 internal server error. To circumvent this, a "wod2" folder has been added, which contains the same scripts, but without the .htaccess. Upon saving, WebP Express now automatically checks which one works, and points to that in the .htaccess rules.
+* Bugfix: webp mime type was not registred in .htaccess in "CDN friendly" mode. This is a minor fix so I decided not to update the .htaccess automatically. To apply it, you must click the button that forces .htaccess regeneration.
+* Bugfix: Bulk convert failed to load the list when there were filenames containing non-unicode characters
+* Added a new way to support me. I'm on [GitHub Sponsors](https://github.com/sponsors/rosell-dk)!
+
+For more info, see the closed issues on the 0.18.0 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/33?closed=1
+
 = 0.17.5 =
 *(released: 11 Aug 2020)*
 * Fixed "Path is outside resolved document root" in a certain symlinked configuration. Thanks to @spiderPan on github for providing the fix.
@@ -1162,6 +1175,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.18.0 =
+* General maintenance and improvements
 
 = 0.17.5 =
 * Various fixes, mainly by community.
