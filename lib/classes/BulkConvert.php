@@ -135,8 +135,13 @@ class BulkConvert
                         }
 
                         if ($addThis) {
-                            // utf8_encode the filename so json_encode won't fail later on (#445)
-                            $results[] = substr($relDir . "/", 2) . utf8_encode($filename);      // (we cut the leading "./" off with substr)
+
+                            // utf8_encode is not available on all systems (#452)
+                            if (function_exists('utf8_encode')) {
+                                // utf8_encode the filename so json_encode won't fail later on (#445)
+                                $filename = utf8_encode($filename);
+                            }
+                            $results[] = substr($relDir . "/", 2) . $filename;   // (we cut the leading "./" off with substr)
                         }
                     }
                 }
