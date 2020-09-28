@@ -19,10 +19,18 @@ class WPHttpRequester implements HttpRequesterInterface
         $response = wp_remote_get($url, ['timeout' => 10]);
         //echo '<pre>' . print_r($response, true) . '</pre>';
 
-        $body = wp_remote_retrieve_body($response);
-        $statusCode = wp_remote_retrieve_response_code($response);
-        $headersMap = wp_remote_retrieve_headers($response)->getAll();
-
-        return new HttpResponse($body, $statusCode, $headersMap);
+        if (is_wp_error($response)) {
+            return new HttpResponse('0','',[]);
+        } else {
+            $body = wp_remote_retrieve_body($response);
+            $statusCode = wp_remote_retrieve_response_code($response);
+            $headersDict = wp_remote_retrieve_headers($response);
+            if (method_exists($headersDict, 'getAll')) {
+                $headersMap = $headersDict->getAll();
+            } else {
+                $headersMap = [];
+            }
+            return new HttpResponse($body, $statusCode, $headersMap);
+        }
     }
 }
