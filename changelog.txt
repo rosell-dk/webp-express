@@ -1,3 +1,7 @@
+= 0.18.2 =
+*(released: 28 Sep 2020)*
+* Bugfix: Fixed error on the settings page on a handful of setups.
+
 = 0.18.1 =
 *(released: 24 Sep 2020)*
 * Bugfix: Bulk Convert failed to show list on systems that did not have the [utf8-encode()](https://www.php.net/manual/en/function.utf8-encode.php) function.
