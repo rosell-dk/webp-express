@@ -92,7 +92,7 @@ If you do not have quality detection working, you can try one of the following:
 ### Verifying that it works (in "Varied image responses" mode)
 1. Make sure at least one of the conversion methods are working. It should have a green checkmark next to it.
 2. If you haven't saved yet, click "Save settings". This will put redirection rules into .htaccess files in the relevant directories (typically in uploads, themes and wp-content/webp-express/webp-images, depending on the "Scope" setting)
-3. I assume that you checked at least one of the checkboxes in the .htaccess rules section - otherwise you might as well change to "CDN friendly" mode. The first
+3. I assume that you checked at least one of the two first checkboxes in the .htaccess rules section. Otherwise you aren't using "varied responses", and then the "CDN friendly" mode will be more appropriate.
 4. Click the "Live test" buttons to see that the enabled rules actually are working. If they are not, it *could* be that the server needs a little time to recognize the changed rules.
 
 The live tests are quite thorough and I recommend them over a manual test. However, it doesn't hurt to do a manual inspection too.
