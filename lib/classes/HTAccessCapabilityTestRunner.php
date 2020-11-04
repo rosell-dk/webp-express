@@ -27,6 +27,9 @@ class HTAccessCapabilityTestRunner
     {
         $response = wp_remote_get($url, ['timeout' => 10]);
         //echo '<pre>' . print_r($response, true) . '</pre>';
+        if (is_wp_error($response)) {
+            return null;
+        }
         if (wp_remote_retrieve_response_code($response) != '200') {
             return false;
         }
