@@ -20,7 +20,7 @@ class WPHttpRequester implements HttpRequesterInterface
         //echo '<pre>' . print_r($response, true) . '</pre>';
 
         if (is_wp_error($response)) {
-            return new HttpResponse('0','',[]);
+            return new HttpResponse($response->get_error_message(), '0', []);
         } else {
             $body = wp_remote_retrieve_body($response);
             $statusCode = wp_remote_retrieve_response_code($response);
