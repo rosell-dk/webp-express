@@ -166,7 +166,9 @@ class HTAccessRules
     private static function infoRules()
     {
 
-        return "# The rules below is a result of many parameters, including the following:\n" .
+        return "# The rules below have been dynamically created by WebP Express in accordance with the plugin settings\n" .
+            "# DO NOT EDIT MANUALLY (unless you are prepared that your changes might be overridden by WebP Express)" . "\n" .
+            "# The following parameters have been in play to produce the rules:\n" .
             "#\n# WebP Express options:\n" .
             "# - Operation mode: " . self::$config['operation-mode'] . "\n" .
             "# - Redirection to existing webp: " .

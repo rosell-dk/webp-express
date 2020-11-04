@@ -11,6 +11,14 @@ use \WebPExpress\State;
 class HTAccess
 {
 
+    public static function inlineInstructions($instructions, $marker)
+    {
+        if ($marker == 'WebP Express') {
+            return [];
+        } else {
+           return $instructions;
+        }
+    }
 
     /**
      *  Must be parsed ie "wp-content", "index", etc. Not real dirs
@@ -160,6 +168,9 @@ class HTAccess
 
         // Convert to array, because string version has bugs in Wordpress 4.3
         $rules = explode("\n", $rules);
+
+        add_filter('insert_with_markers_inline_instructions', array('\WebPExpress\HTAccess', 'inlineInstructions'), 10, 2);
+
         $success = insert_with_markers($filename, 'WebP Express', $rules);
 
         // Revert file or dir permissions
