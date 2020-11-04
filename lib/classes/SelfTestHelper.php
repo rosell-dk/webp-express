@@ -203,6 +203,8 @@ class SelfTestHelper
         $wpResult = wp_remote_get($requestUrl, $args);
         if (is_wp_error($wpResult)) {
             $log[] = 'The remote request errored';
+            $log[] = $wpResult->get_error_message();
+            //$log[] = print_r($wpResult, true);
             return [false, $log, $results];
         }
         if (!is_wp_error($wpResult) && !isset($wpResult['headers'])) {
@@ -549,7 +551,8 @@ class SelfTestHelper
         $log[] = '- mod_rewrite working?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modRewriteWorking());
         $log[] = '- mod_headers loaded?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modHeadersLoaded());
         $log[] = '- mod_headers working (header set): ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::modHeaderWorking());
-        $log[] = '- passing variables from *.htaccess* to PHP script through environment variable working?: ' . self::trueFalseNullString($capTests['passThroughEnvWorking']);
+        //$log[] = '- passing variables from *.htaccess* to PHP script through environment variable working?: ' . self::trueFalseNullString($capTests['passThroughEnvWorking']);
+        $log[] = '- passing variables from *.htaccess* to PHP script through environment variable working?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::passThroughEnvWorking());
         $log[] = '- Can run php test file in plugins/webp-express/wod/ ?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::canRunTestScriptInWOD());
         $log[] = '- Can run php test file in plugins/webp-express/wod2/ ?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::canRunTestScriptInWOD2());
         $log[] = '- Directives for granting access like its done in wod/.htaccess allowed?: ' . self::trueFalseNullString(HTAccessCapabilityTestRunner::grantAllAllowed());
