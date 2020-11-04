@@ -27,6 +27,7 @@ class InnocentRequestTester extends CustomTester
             ],
             'interpretation' => [
                 ['success', 'status-code', 'equals', '200'],
+                ['inconclusive', 'status-code', 'equals', '0'],
                 ['inconclusive', 'status-code', 'equals', '403'],
                 ['inconclusive', 'status-code', 'equals', '404'],
                 ['failure'],

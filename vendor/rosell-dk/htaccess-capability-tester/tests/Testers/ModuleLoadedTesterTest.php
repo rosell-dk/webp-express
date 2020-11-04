@@ -246,4 +246,12 @@ class ModuleLoadedTesterTest extends BasisTestCase
       $this->assertFailure($testResult);
     }
 
+    public function testRequestFailure()
+    {
+        $fakeServer = new FakeServer();
+        $fakeServer->failAllRequests();
+        $testResult = $fakeServer->runTester(new ModuleLoadedTester('setenvif'));
+        $this->assertInconclusive($testResult);
+    }
+
 }

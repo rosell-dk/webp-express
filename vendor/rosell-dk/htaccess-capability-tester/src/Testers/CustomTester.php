@@ -88,6 +88,8 @@ class CustomTester extends AbstractTester
     private function standardErrorHandling($response)
     {
         switch ($response->statusCode) {
+            case '0':
+                return new TestResult(null, $response->body);
             case '403':
                 return new TestResult(null, '403 Forbidden');
             case '404':

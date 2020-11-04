@@ -36,6 +36,9 @@ class FakeServer implements TestFilesLineUpperInterface, HttpRequesterInterface
     /** @var bool  Returns the php text file rather than "Sorry, this server cannot process PHP!" */
     private $handlePHPasText = false;
 
+    /** @var bool  If all requests fail (without response code) */
+    private $failAll = false;
+
     /** @var array  Predefined responses for certain urls */
     private $responses;
 
@@ -58,6 +61,10 @@ class FakeServer implements TestFilesLineUpperInterface, HttpRequesterInterface
         $body = '';
         $statusCode = '200';
         $headers = [];
+
+        if ($this->failAll) {
+            return new HttpResponse('', '0', []);
+        }
 
         //echo 'Fakeserver request:' . $url . "\n";
         if (isset($this->responses[$url])) {
@@ -131,6 +138,10 @@ class FakeServer implements TestFilesLineUpperInterface, HttpRequesterInterface
         $this->crashAll = true;
     }
 
+    public function failAllRequests()
+    {
+        $this->failAll = true;
+    }
 
     public function handlePHPasText()
     {

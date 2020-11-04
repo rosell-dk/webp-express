@@ -190,17 +190,17 @@
     },
     {
         "name": "rosell-dk/htaccess-capability-tester",
-        "version": "0.8",
-        "version_normalized": "0.8.0.0",
+        "version": "0.9",
+        "version_normalized": "0.9.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/rosell-dk/htaccess-capability-tester.git",
-            "reference": "3556f664c5533643c0cb0beceaf1947abd7aed7a"
+            "reference": "2eb2cf38a9f42fc3aa647d6e9c896e124bfebf4c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/htaccess-capability-tester/zipball/3556f664c5533643c0cb0beceaf1947abd7aed7a",
-            "reference": "3556f664c5533643c0cb0beceaf1947abd7aed7a",
+            "url": "https://api.github.com/repos/rosell-dk/htaccess-capability-tester/zipball/2eb2cf38a9f42fc3aa647d6e9c896e124bfebf4c",
+            "reference": "2eb2cf38a9f42fc3aa647d6e9c896e124bfebf4c",
             "shasum": ""
         },
         "require": {
@@ -214,7 +214,7 @@
         "suggest": {
             "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
         },
-        "time": "2020-09-23T10:46:34+00:00",
+        "time": "2020-11-04T10:29:38+00:00",
         "type": "library",
         "extra": {
             "scripts-descriptions": {

@@ -97,7 +97,6 @@ class ResponseInterpreter
                 return (strpos($val, $arg1) === 0);
         }
         return false;
-
     }
 
 

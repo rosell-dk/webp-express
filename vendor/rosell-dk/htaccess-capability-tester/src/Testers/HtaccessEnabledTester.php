@@ -86,11 +86,11 @@ class HtaccessEnabledTester extends AbstractTester
                 // (we do this lastly because it may generate an entry in the error log)
                 $crashTestResult = $hct->crashTest('aoeu', 'htaccess-enabled-malformed-htaccess');
                 if (is_null($crashTestResult)) {
-                    // It did crash. But so did a request to an innocent text file in a directory
-                    // without a .htaccess file in it. Something is making all requests fail and
-                    // we cannot judge.
+                    // Two scenarios:
+                    // 1: All requests fails (without response code)
+                    // 2: The crash test could not figure it out (ie if even innocent requests crashes)
                     $status = null;
-                    $info = 'all requests results in 500 Internal Server Error';
+                    $info = 'all requests fails (even innocent ones)';
                 } elseif ($crashTestResult === false) {
                     // It crashed, - which means .htaccess is processed!
                     $status = true;

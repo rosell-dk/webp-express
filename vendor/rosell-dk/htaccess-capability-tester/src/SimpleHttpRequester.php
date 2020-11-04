@@ -9,15 +9,17 @@ class SimpleHttpRequester implements HttpRequesterInterface
      *
      * @param  string  $url  The URL to make the HTTP request to
      *
-     * @return  HttpResponse  A HttpResponse object, which simply contains body, status code
-     *                        and response headers
+     * @return  HttpResponse  A HttpResponse object, which simply contains body, status code and response headers.
+     *                        In case the request itself fails, the status code is "0" and the body should contain
+     *                        error description (if available)
      */
     public function makeHttpRequest($url)
     {
         // PS: We suppress the E_WARNING level error generated on failure
         $body = @file_get_contents($url);
         if ($body === false) {
-            $body = '';
+            //$body = '';
+            return new HttpResponse('The following request failed: file_get_contents(' . $url . ')', '0', []);
         }
 
         // $http_response_header materializes out of thin air when file_get_contents() is called

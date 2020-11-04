@@ -43,7 +43,7 @@ class CrashTester extends CustomTester
                     ],
                     'request' => [
                         'url' => 'request-me.txt',
-                        'bypass-standard-error-handling' => ['all']
+                        'bypass-standard-error-handling' => ['403', '404', '500']
                     ],
                     'interpretation' => [
                         ['success', 'status-code', 'not-equals', '500'],
@@ -58,7 +58,7 @@ class CrashTester extends CustomTester
                     ],
                     'request' => [
                         'url' => 'request-me.txt',
-                        'bypass-standard-error-handling' => ['all']
+                        'bypass-standard-error-handling' => ['403', '404', '500']
                     ],
                     'interpretation' => [
                         // The suspect crashed. But if the innocent crashes too, we cannot judge

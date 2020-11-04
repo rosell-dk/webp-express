@@ -124,4 +124,12 @@ class ContentDigestTesterTest extends BasisTestCase
         $this->assertSuccess($testResult);
     }
 
+    public function testRequestFailure()
+    {
+        $fakeServer = new FakeServer();
+        $fakeServer->failAllRequests();
+        $testResult = $fakeServer->runTester(new ContentDigestTester());
+        $this->assertInconclusive($testResult);
+
+    }
 }

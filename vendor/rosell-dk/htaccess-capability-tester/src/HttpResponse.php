@@ -72,5 +72,4 @@ class HttpResponse
         }
         return false;
     }
-
 }

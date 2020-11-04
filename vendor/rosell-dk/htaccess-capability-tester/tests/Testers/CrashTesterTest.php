@@ -103,4 +103,12 @@ class CrashTesterTest extends BasisTestCase
         $this->assertFailure($testResult);
     }
 
+    public function testRequestFailure()
+    {
+        $fakeServer = new FakeServer();
+        $fakeServer->failAllRequests();
+        $testResult = $fakeServer->runTester(new CrashTester('aoeu', 'test'));
+        $this->assertInconclusive($testResult);
+    }
+
 }

@@ -355,7 +355,7 @@ EOD;
             return new TestResult(false, '.htaccess files are ignored');
         } elseif (is_null($htaccessEnabledTest)) {
             // We happen to know that if that test cannot establish anything,
-            // then none of the usual weapons works - we can surrender
+            // then none of the usual weapons works - we can surrender right away
             return new TestResult(null, 'no methods available - we surrender early');
         }
 

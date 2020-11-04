@@ -113,4 +113,12 @@ class HtaccessEnabledTesterTest extends BasisTestCase
         $this->assertInconclusive($testResult);
     }
 
+    public function testRequestFailure()
+    {
+        $fakeServer = new FakeServer();
+        $fakeServer->failAllRequests();
+        $testResult = $fakeServer->runTester(new HtaccessEnabledTester());
+        $this->assertInconclusive($testResult);
+    }
+
 }
