@@ -27,6 +27,7 @@ class HTAccessRules
     private static $dirContainsSourceImages;
     private static $dirContainsWebPImages;
     private static $alterHtmlEnabled;
+    private static $docRootString;
 
     private static function trueFalseNullString($var)
     {
@@ -303,18 +304,18 @@ class HTAccessRules
             if (self::$useDocRootForStructuringCacheDir) {
                 if (self::$config['destination-extension'] == 'append') {
                     $rules .= "  RewriteCond %{REQUEST_FILENAME}.webp -f\n";
-                    //$rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . self::$htaccessDirRelToDocRoot . "/$1.$2.webp -f\n";
+                    //$rules .= "  RewriteCond " . self::$docRootString . "/" . self::$htaccessDirRelToDocRoot . "/$1.$2.webp -f\n";
                     $rules .= "  RewriteRule ^/?(.*)\.(" . self::$fileExt . ")$ $1.$2.webp [NC,T=image/webp,E=EXISTING:1," . (self::$setAddVaryEnvInRedirect ? 'E=ADDVARY:1,' : '') . "L]\n\n";
                 } else {
                     // extension: set to webp
 
-                    //$rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . self::$htaccessDirRelToDocRoot . "/$1.webp -f\n";
+                    //$rules .= "  RewriteCond " . self::$docRootString . "/" . self::$htaccessDirRelToDocRoot . "/$1.webp -f\n";
                     //$rules .= "  RewriteRule " . $rewriteRuleStart . "\.(" . self::$fileExt . ")$ $1.webp [T=image/webp,E=EXISTING:1," . (self::$setAddVaryEnvInRedirect ? 'E=ADDVARY:1,' : '') . "L]\n\n";
 
                     // Got these new rules here: https://www.digitalocean.com/community/tutorials/how-to-create-and-serve-webp-images-to-speed-up-your-website
                     // (but are they actually better than the ones we use for append?)
                     $rules .= "  RewriteCond %{REQUEST_URI} (?i)(.*)(" . self::$fileExtIncludingDot . ")$\n";
-                    $rules .= "  RewriteCond %{DOCUMENT_ROOT}%1\.webp -f\n";
+                    $rules .= "  RewriteCond " . self::$docRootString . "%1\.webp -f\n";
                     $rules .= "  RewriteRule (?i)(.*)(" . self::$fileExtIncludingDot . ")$ %1\.webp [T=image/webp,E=EXISTING:1," . (self::$setAddVaryEnvInRedirect ? 'E=ADDVARY:1,' : '') . "L]\n\n";
 
                     // Instead of using REQUEST_URI, I can use REQUEST_FILENAME and remove DOCUMENT_ROOT
@@ -354,7 +355,7 @@ class HTAccessRules
                 $cacheDirRel = Paths::getCacheDirRelToDocRoot() . '/doc-root';
 
                 $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
-                $rules .= "  RewriteCond %{DOCUMENT_ROOT}/" . $cacheDirRel . "/" . self::$htaccessDirRelToDocRoot . "/$1.$2.webp -f\n";
+                $rules .= "  RewriteCond " . self::$docRootString . "/" . $cacheDirRel . "/" . self::$htaccessDirRelToDocRoot . "/$1.$2.webp -f\n";
                 $rules .= "  RewriteRule ^/?(.+)\.(" . self::$fileExt . ")$ /" . $cacheDirRel . "/" . self::$htaccessDirRelToDocRoot .
                     "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1," . (self::$setAddVaryEnvInRedirect ? 'E=ADDVARY:1,' : '') . "L]\n\n";
 
@@ -840,6 +841,10 @@ class HTAccessRules
 
         $capTests = self::$config['base-htaccess-on-these-capability-tests'];
 
+        self::$docRootString = '%{DOCUMENT_ROOT}';
+        if (defined('WEBPEXPRESS_DOCUMENT_ROOT_IN_HTACCESS')) {
+            self::$docRootString = constant('WEBPEXPRESS_DOCUMENT_ROOT_IN_HTACCESS');
+        };
 
         self::$modHeaderDefinitelyUnavailable = ($capTests['modHeaderWorking'] === false);
         self::$passThroughHeaderDefinitelyUnavailable = ($capTests['passThroughHeaderWorking'] === false);
