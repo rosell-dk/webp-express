@@ -1,6 +1,6 @@
 === WebP Express ===
 Contributors: rosell.dk
-Donate link: https://wordpress.org/plugins/webp-express/#%0Ahow%20do%20i%20buy%20you%20a%20cup%20of%20coffee%3F%0A
+Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.5
@@ -136,18 +136,18 @@ Bread on the table don't come for free, even though this plugin does, and always
 * [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
 * Ruben Solvang
 
-**Persons who contributed with coffee within the last 30 days (updated biweekly) - Thanks! **
+**Persons who contributed with ko-fi within the last 30 days (updated biweekly) - Thanks! **
 
-* Katja
-* Devashish Datt Mamgain
-* RobMoore
+* Mark from Portland, OR
+* Pradeep Maheepala from Watford, UK
+* jean
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
 * Justin - BigScoots ($105)
 * Sebastian ($99)
 * Tammy Lee ($90)
-* Max Kreminsky ($70)
+* Max Kreminsky ($80)
 * Steven Sullivan ($51)
 
 == Frequently Asked Questions ==
