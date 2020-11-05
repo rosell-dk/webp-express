@@ -733,6 +733,21 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.18.3 =
+*(released: 5 Nov 2020)*
+* Bugfix: WebP Express uses live tests to determine the capabilities of the server in respect to .htaccess files (using the htaccess-capability-tester library). The results are used for warnings and also for optimizing the rules in the .htaccess files. However, HTTP Requests can fail due to other reasons than the feature not working (ie timeout). Such failures should lead to an indeterminate result, but it was interpreted as if the feature was not working.
+* The Live test now displays a bit more information if the HTTP request failed.
+* Changed default value for "destination structure" to "Image roots", as "Document root" doesn't work on hosts that have defined DOCUMENT_ROOT in an unusual way.
+* Added possibility to change "%{DOCUMENT_ROOT}" part of RewriteCond by adding a line to wp-config.php. THIS IS A BETA FEATURE AND MIGHT BE REVOKED IF NOBODY ACTUALLY NEEDS IT.
+* Got rid of PHP notice Constant WEBPEXPRESS_MIGRATION_VERSION already defined
+* Fixed donation link. It now points to https://ko-fi.com/rosell again
+
+For more info, see the closed issues on the [0.18.3 milestone on the github repository](https://github.com/rosell-dk/webp-express/milestone/34?closed=1)
+
+= 0.18.2 =
+*(released: 28 Sep 2020)*
+* Bugfix: Fixed error on the settings page on a handful of setups.
+
 = 0.18.1 =
 *(released: 24 Sep 2020)*
 * Bugfix: Bulk Convert failed to show list on systems that did not have the [utf8-encode()](https://www.php.net/manual/en/function.utf8-encode.php) function.
@@ -1179,6 +1194,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.18.3 =
+* Minor fixes (see changelog)
 
 = 0.18.2 =
 * Fixed bug on settings page
