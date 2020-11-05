@@ -3,7 +3,7 @@
     <th scope="row">Destination structure<?php
         echo helpIcon(
             '<p>This setting determines how the converted files are structured within the folder that WebP Express ' .
-            'uses for storing webp images</p>' .
+            'uses for storing webp images (from here on called "the cache root")</p>' .
             '<p><span style="text-decoration:underline">"document root"</span><br>' .
             'When "document root" is selected, the webp images will be stored in:<br>' .
             '<span style="white-space:pre-wrap;font-family:monospace">[cache root]/doc-root/[relative path of source image, from document root].</span><br>' .
@@ -19,13 +19,17 @@
             '<span style="white-space:pre-wrap;font-family:monospace"">[cache root]/[image root]/[relative path of source image, from its image root].</span><br>' .
             '</p>' .
             '<p><span style="text-decoration:underline">Which option is best?</span><br>' .
-            'Well, in most cases it does not matter. However, as the "image roots" option is new, I would recommend staying with the ' .
-            '"document root" setting. On Nginx, I recommend "document root", as it requires fewer rewrite rules.</p>' .
-            '<p>The "image roots" option was added to make WebP Express work on systems where the document root is set up incorrectly or ' .
-            'is outside opendir restriction or an image root is located outside document root. WebP Express automatically detects this and will not allow you to select "document root" in those cases.</p>'
+            'Well, in most cases it does not matter. However, there are hosts out there that have set the document root up incorrectly, ' .
+            'so I would generally recommend "Image roots". ' .
+            'On Nginx, I however recommend "Document root", as it requires fewer rewrite rules.</p>'
         );
     ?></th>
     <td>
+        <!--
+        The "image roots" option was added to make WebP Express work on systems where the document root is set up incorrectly or
+        is outside opendir restriction or an image root is located outside document root.
+        WebP Express automatically detects this and will not allow you to select "document root" in those cases.
+    -->
         <select name="destination-structure" id="destination_structure">
             <?php
             webpexpress_selectBoxOptions($config['destination-structure'], [
