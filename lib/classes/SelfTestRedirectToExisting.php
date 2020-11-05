@@ -59,8 +59,13 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
         $log = array_merge($log, $remoteGetLog);
 
         if (!$success) {
-            $log[] = 'The request FAILED';
-            $log[] = 'The test cannot be completed';
+            $log[] = 'The test cannot be completed, as the HTTP request failed. This does not neccesarily mean that the redirections ' .
+                "aren't" . ' working, but it means you will have to check it manually. Check out the FAQ on how to do this. ' .
+                'You might also want to check out why a simple HTTP request could not be issued. WebP Express uses such requests ' .
+                'for detecting system capabilities, which are used when generating .htaccess files. These tests are not essential, but ' .
+                'it would be best to have them working. I can inform that the Wordpress function *wp_remote_get* was used for the HTTP request ' .
+                'and the URL was: ' . $requestUrl;
+
             return [false, $log, $createdTestFiles];
         }
         //$log[count($log) - 1] .= '. ok!';
