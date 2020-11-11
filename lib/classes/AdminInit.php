@@ -82,6 +82,7 @@ class AdminInit
             add_action('wp_ajax_webpexpress_view_log', array('\WebPExpress\ConvertLog', 'processAjaxViewLog'));
             add_action('wp_ajax_webpexpress_purge_cache', array('\WebPExpress\CachePurge', 'processAjaxPurgeCache'));
             add_action('wp_ajax_webpexpress_dismiss_message', array('\WebPExpress\DismissableMessages', 'processAjaxDismissMessage'));
+            add_action('wp_ajax_webpexpress_dismiss_global_message', array('\WebPExpress\DismissableGlobalMessages', 'processAjaxDismissGlobalMessage'));
             add_action('wp_ajax_webpexpress_self_test', array('\WebPExpress\SelfTest', 'processAjax'));
 
 
@@ -108,6 +109,8 @@ class AdminInit
         // Run migration AFTER admin_init hook (important, as insert_with_markers injection otherwise fails, see #394)
         // PS: Unfortunately Message::addMessage doesnt print until next load now, we should look into that.
         add_action("admin_init", array('\WebPExpress\AdminInit', 'runMigrationIfNeeded'));
+
+        add_action("admin_notices", array('\WebPExpress\DismissableGlobalMessages', 'printMessages'));
 
         if (Multisite::isNetworkActivated()) {
             add_action("network_admin_menu", array('\WebPExpress\AdminUi', 'networAdminMenuHook'));
