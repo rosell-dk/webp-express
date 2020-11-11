@@ -33,7 +33,7 @@ class AdminInit
         // So we added this "defined" check. #463
         if (!defined('WEBPEXPRESS_MIGRATION_VERSION')) {
             // When an update requires a migration, the number should be increased
-            define('WEBPEXPRESS_MIGRATION_VERSION', '12');
+            define('WEBPEXPRESS_MIGRATION_VERSION', '13');
         }
 
         if (WEBPEXPRESS_MIGRATION_VERSION != Option::getOption('webp-express-migration-version', 0)) {
@@ -42,7 +42,7 @@ class AdminInit
         }
 
         // uncomment next line to test-run a migration
-        //include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate12.php';
+        //include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate13.php';
     }
 
     public static function pageNowIs($pageId)
