@@ -32,7 +32,7 @@ if ($weKnowThereAreNoWorkingConverters) {
         '<li>You can purchase a key for the <a target="_blank" href="https://ewww.io/plans/">ewww cloud converter</a>. They do not charge credits for webp conversions, so all you ever have to pay is the one dollar start-up fee :)</li>' .
         '<li>I have written a <a target="_blank" href="https://github.com/rosell-dk/webp-convert/wiki/A-template-letter-for-shared-hosts">template letter</a> which you can try sending to your webhost</li>' .
         '<li>You can set up a <a target="_blank" href="https://github.com/rosell-dk/webp-convert-cloud-service">webp-convert-cloud-service</a> on another server and connect to that. Its open source.</li>' .
-        '<li>You can try to meet the server requirements of cwebp, imagick, vips, gmagick or gd. Check out <a target="_blank" href="https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters">this wiki page</a> on how to do that</li>' .
+        '<li>You can try to meet the server requirements of cwebp, imagick, vips, gmagick, ffmpeg or gd. Check out <a target="_blank" href="https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters">this wiki page</a> on how to do that</li>' .
         '</ol>' .
         '<p>Of course, there is also the option of using another plugin altogether. ' .
         'I can recommend <i>Optimole</i>. ' .

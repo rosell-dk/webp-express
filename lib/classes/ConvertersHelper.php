@@ -23,6 +23,10 @@ class ConvertersHelper
         ['converter' => 'graphicsmagick', 'options' => [
             'use-nice' => true,
         ]],
+        ['converter' => 'ffmpeg', 'options' => [
+            'use-nice' => true,
+            'method' => 4,
+        ]],
         ['converter' => 'wpc', 'options' => []],     // we should not set api-version default - it is handled in the javascript
         ['converter' => 'ewww', 'options' => []],
         ['converter' => 'imagick', 'options' => []],
@@ -63,7 +67,7 @@ class ConvertersHelper
     }
 
     /**
-     *  Those converters in second, but not in first will be appended to first
+     *  Those converters in second array, but not in first will be appended to first
      */
     public static function mergeConverters($first, $second)
     {

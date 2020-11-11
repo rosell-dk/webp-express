@@ -32,6 +32,7 @@
             include 'converter-options/wpc.php';
             include 'converter-options/imagemagick.php';
             include 'converter-options/graphicsmagick.php';
+            include 'converter-options/ffmpeg.php';
         ?>
     </td>
 </tr>
