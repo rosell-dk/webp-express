@@ -138,13 +138,16 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 **Persons who contributed with ko-fi within the last 30 days (updated biweekly) - Thanks! **
 
-* Mark from Portland, OR
-* Pradeep Maheepala from Watford, UK
-* jean
+* 10 Nov: Bill Vallance
+* 5 Nov: Steve from Oz
+* 31 Oct: Mark from Portland, OR
+* 27 Oct: Pradeep Maheepala from Watford, UK
+* 13 Oct: Anonymous
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
 * Justin - BigScoots ($105)
+* Bill Vallance ($102)
 * Sebastian ($99)
 * Tammy Lee ($90)
 * Max Kreminsky ($80)
