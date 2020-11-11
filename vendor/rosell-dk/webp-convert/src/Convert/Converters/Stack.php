@@ -66,7 +66,7 @@ class Stack extends AbstractConverter
     public static function getAvailableConverters()
     {
         return [
-            'cwebp', 'vips', 'imagick', 'gmagick', 'imagemagick', 'graphicsmagick', 'wpc', 'ewww', 'gd'
+            'cwebp', 'vips', 'imagick', 'gmagick', 'imagemagick', 'graphicsmagick', 'wpc', 'ffmpeg', 'ewww', 'gd'
         ];
     }
 
@@ -134,8 +134,12 @@ class Stack extends AbstractConverter
         $defaultConverterOptions = [];
 
         foreach ($this->options2->getOptionsMap() as $id => $option) {
-            if ($option->isValueExplicitlySet() && !($option instanceof GhostOption)) {
-                //$this->logLn('hi' . $id);
+            // Right here, there used to be a check that ensured that unknown options was not passed down to the
+            // converters (" && !($option instanceof GhostOption)"). But well, as the Stack doesn't know about
+            // converter specific options, such as "try-cwebp", these was not passed down (see #259)
+            // I'm not sure why the check was made in the first place, but it does not seem neccessary, as the
+            // converters simply ignore unknown options. So the check has now been removed.
+            if ($option->isValueExplicitlySet()) {
                 $defaultConverterOptions[$id] = $option->getValue();
             }
         }

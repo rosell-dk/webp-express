@@ -17,7 +17,7 @@ use WebPConvert\Convert\Exceptions\ConversionFailedException;
  * @author     Bjørn Rosell <it@rosell.dk>
  * @since      Class available since Release 2.0.0
  */
-class ImageMagick extends AbstractConverter
+class FFMpeg extends AbstractConverter
 {
     use ExecTrait;
     use EncodingAutoTrait;
@@ -25,34 +25,26 @@ class ImageMagick extends AbstractConverter
     protected function getUnsupportedDefaultOptions()
     {
         return [
+            'alpha-quality',
+            'auto-filter',
+            'encoding',
+            'low-memory',
             'near-lossless',
             'preset',
             'size-in-percentage',
+            'use-nice'
         ];
     }
 
-    // To futher improve this converter, I could check out:
-    // https://github.com/Orbitale/ImageMagickPHP
-
     private function getPath()
     {
-        if (defined('WEBPCONVERT_IMAGEMAGICK_PATH')) {
-            return constant('WEBPCONVERT_IMAGEMAGICK_PATH');
+        if (defined('WEBPCONVERT_FFMPEG_PATH')) {
+            return constant('WEBPCONVERT_FFMPEG_PATH');
         }
-        if (!empty(getenv('WEBPCONVERT_IMAGEMAGICK_PATH'))) {
-            return getenv('WEBPCONVERT_IMAGEMAGICK_PATH');
+        if (!empty(getenv('WEBPCONVERT_FFMPEG_PATH'))) {
+            return getenv('WEBPCONVERT_FFMPEG_PATH');
         }
-        return 'convert';
-    }
-
-    private function getVersion()
-    {
-        exec($this->getPath() . ' -version 2>&1', $output, $returnCode);
-        if (($returnCode == 0) && isset($output[0])) {
-            return $output[0];
-        } else {
-            return 'unknown';
-        }
+        return 'ffmpeg';
     }
 
     public function isInstalled()
@@ -64,24 +56,13 @@ class ImageMagick extends AbstractConverter
     // Check if webp delegate is installed
     public function isWebPDelegateInstalled()
     {
-        exec($this->getPath() . ' -list delegate 2>&1', $output, $returnCode);
+        exec($this->getPath() . ' -version 2>&1', $output, $returnCode);
         foreach ($output as $line) {
-            if (preg_match('#webp\\s*=#i', $line)) {
+            if (preg_match('# --enable-libwebp#i', $line)) {
                 return true;
             }
         }
-
-        // try other command
-        exec($this->getPath() . ' -list configure 2>&1', $output, $returnCode);
-        foreach ($output as $line) {
-            if (preg_match('#DELEGATE.*webp#i', $line)) {
-                return true;
-            }
-        }
-
         return false;
-
-        // PS, convert -version does not output delegates on travis, so it is not reliable
     }
 
     /**
@@ -95,11 +76,11 @@ class ImageMagick extends AbstractConverter
 
         if (!$this->isInstalled()) {
             throw new SystemRequirementsNotMetException(
-                'imagemagick is not installed (cannot execute: "' . $this->getPath() . '")'
+                'ffmpeg is not installed (cannot execute: "' . $this->getPath() . '")'
             );
         }
         if (!$this->isWebPDelegateInstalled()) {
-            throw new SystemRequirementsNotMetException('webp delegate missing');
+            throw new SystemRequirementsNotMetException('ffmpeg was compiled without libwebp');
         }
     }
 
@@ -110,47 +91,53 @@ class ImageMagick extends AbstractConverter
      */
     private function createCommandLineOptions()
     {
-        // PS: Available webp options for imagemagick are documented here:
-        // https://imagemagick.org/script/webp.php
+        // PS: Available webp options for ffmpeg are documented here:
+        // https://www.ffmpeg.org/ffmpeg-codecs.html#libwebp
 
         $commandArguments = [];
+
+        $commandArguments[] = '-i';
+        $commandArguments[] = escapeshellarg($this->source);
+
+        // preset. Appears first in the list as recommended in the cwebp docs
+        if (!is_null($this->options['preset'])) {
+            if ($this->options['preset'] != 'none') {
+                $commandArguments[] = '-preset ' . $this->options['preset'];
+            }
+        }
+
+        // Overwrite existing files?, yes!
+        $commandArguments[] = '-y';
+
         if ($this->isQualityDetectionRequiredButFailing()) {
             // quality:auto was specified, but could not be determined.
             // we cannot apply the max-quality logic, but we can provide auto quality
             // simply by not specifying the quality option.
         } else {
-            $commandArguments[] = '-quality ' . escapeshellarg($this->getCalculatedQuality());
+            $commandArguments[] = '-qscale ' . escapeshellarg($this->getCalculatedQuality());
         }
         if ($this->options['encoding'] == 'lossless') {
-            $commandArguments[] = '-define webp:lossless=true';
+            $commandArguments[] = '-lossless 1';
+        } else {
+            $commandArguments[] = '-lossless 0';
         }
-        if ($this->options['low-memory']) {
-            $commandArguments[] = '-define webp:low-memory=true';
-        }
-        if ($this->options['auto-filter'] === true) {
-            $commandArguments[] = '-define webp:auto-filter=true';
-        }
+
         if ($this->options['metadata'] == 'none') {
-            $commandArguments[] = '-strip';
-        }
-        if ($this->options['alpha-quality'] !== 100) {
-            $commandArguments[] = '-define webp:alpha-quality=' . strval($this->options['alpha-quality']);
+            // Unfortunately there seems to be no easy solution available for removing all metadata.
         }
 
-        // Unfortunately, near-lossless does not seem to be supported.
-        // it does have a "preprocessing" option, which may be doing something similar
+        // compression_level maps to method, according to https://www.ffmpeg.org/ffmpeg-codecs.html#libwebp
+        $commandArguments[] = '-compression_level ' . $this->options['method'];
 
-        $commandArguments[] = '-define webp:method=' . $this->options['method'];
+        $commandArguments[] = escapeshellarg($this->destination);
 
-        $commandArguments[] = escapeshellarg($this->source);
-        $commandArguments[] = escapeshellarg('webp:' . $this->destination);
 
         return implode(' ', $commandArguments);
     }
 
     protected function doActualConvert()
     {
-        $this->logLn($this->getVersion());
+        //$this->logLn($this->getVersion());
 
         $command = $this->getPath() . ' ' . $this->createCommandLineOptions() . ' 2>&1';
 
@@ -170,7 +157,7 @@ class ImageMagick extends AbstractConverter
         }
 
         if ($returnCode == 127) {
-            throw new SystemRequirementsNotMetException('imagemagick is not installed');
+            throw new SystemRequirementsNotMetException('ffmpeg is not installed');
         }
         if ($returnCode != 0) {
             throw new SystemRequirementsNotMetException('The exec call failed');

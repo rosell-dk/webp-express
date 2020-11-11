@@ -18,6 +18,7 @@ The library can convert using the following methods:
 - *gmagick* (using [Gmagick PHP extension](https://www.php.net/manual/en/book.gmagick.php))
 - *imagemagick* (executing [imagemagick](https://imagemagick.org/index.php) binary using an `exec` call)
 - *graphicsmagick* (executing [graphicsmagick](http://www.graphicsmagick.org/) binary using an `exec` call)
+- **NEW in 2.4.0:** *ffmpeg* (executing [ffmpeg](https://ffmpeg.org/) binary using an `exec` call)
 - *wpc* (using [WebPConvert Cloud Service](https://github.com/rosell-dk/webp-convert-cloud-service/) - an open source webp converter for PHP - based on this library)
 - *ewwww* (using the [ewww](https://ewww.io/plans/) cloud converter (1 USD startup and then free webp conversion))
 - *gd* (using the [Gd PHP extension](https://www.php.net/manual/en/book.image.php))
@@ -35,8 +36,6 @@ composer require rosell-dk/webp-convert
 Here is a minimal example of converting using the *WebPConvert::convert* method:
 
 ```php
-<?php
-
 // Initialise your autoloader (this example is using Composer)
 require 'vendor/autoload.php';
 
@@ -58,7 +57,6 @@ The *WebPConvert::serveConverted* method tries to serve a converted image. If th
 
 Example (version 2.0):
 ```php
-<?php
 require 'vendor/autoload.php';
 use WebPConvert\WebPConvert;
 
@@ -115,4 +113,27 @@ The webp-convert library and its dependents as a single PHP file (or two)
 ## Supporting WebP Convert
 Bread on the table don't come for free, even though this library does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to have both:
 
-[Become a backer or sponsor on Patreon](https://www.patreon.com/rosell).
+- [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell).
+- [Buy me a Coffee](https://ko-fi.com/rosell)
+
+## Supporters ==
+*Persons currently backing the project via patreon - Thanks!*
+
+- Max Kreminsky
+- Nodeflame
+- [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
+- Ruben Solvang
+
+*Persons who contributed with coffee within the last 30 days:*
+
+- Anon
+- Eder Ribeiro
+- Christian
+
+*Persons who contributed with extra generously amounts of coffee / lifetime backing (>50$) - thanks!:*
+
+- Justin - BigScoots ($105)
+- Sebastian ($99)
+- Tammy Lee ($90)
+- Max Kreminsky ($65)
+- Steven Sullivan ($51)

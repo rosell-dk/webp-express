@@ -309,17 +309,17 @@
     },
     {
         "name": "rosell-dk/webp-convert",
-        "version": "2.3.2",
-        "version_normalized": "2.3.2.0",
+        "version": "2.4.0",
+        "version_normalized": "2.4.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/rosell-dk/webp-convert.git",
-            "reference": "5da7989e87cc0b6c61a5fd73262ed28999be27ab"
+            "reference": "187a578ee55730f7a128a2f07b4351524b10d47b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/5da7989e87cc0b6c61a5fd73262ed28999be27ab",
-            "reference": "5da7989e87cc0b6c61a5fd73262ed28999be27ab",
+            "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/187a578ee55730f7a128a2f07b4351524b10d47b",
+            "reference": "187a578ee55730f7a128a2f07b4351524b10d47b",
             "shasum": ""
         },
         "require": {
@@ -337,7 +337,7 @@
             "ext-vips": "to use Vips extension for converting.",
             "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
         },
-        "time": "2020-04-18T14:41:50+00:00",
+        "time": "2020-11-10T11:24:50+00:00",
         "type": "library",
         "extra": {
             "scripts-descriptions": {
