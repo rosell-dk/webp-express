@@ -1,0 +1,38 @@
+language: php
+sudo: false
+dist: trusty
+
+cache:
+  directories:
+    - $HOME/.cache/composer/files
+
+php:
+  - '7.2'
+  - '7.3'
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 7.4snapshot
+      env: NO_INFECTION=1
+    - php: nightly
+      env: NO_INFECTION=1
+
+before_install:
+  - if [[ $NO_XDEBUG == 1 ]]; then phpenv config-rm xdebug.ini || echo 'No xdebug config.'; fi
+  - test "$TRAVIS_PHP_VERSION" != "nightly" || export COMPOSER_FLAGS="$COMPOSER_FLAGS --ignore-platform-reqs"
+
+before_script:
+  - composer self-update
+  - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist $COMPOSER_FLAGS
+
+script:
+  - composer validate --no-check-all
+  - composer phpcs
+  - composer phpmd
+  - composer phpstan
+  - if [[ $NO_INFECTION != 1 ]]; then composer infection; fi
+  - composer coverage
+
+notifications:
+  email: false

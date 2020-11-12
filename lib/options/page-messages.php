@@ -14,6 +14,7 @@ use \WebPExpress\Paths;
 use \WebPExpress\PlatformInfo;
 use \WebPExpress\State;
 
+
 // TODO: Move most of this file into a ProblemDetector class (SystemHealth)
 
 if (!(State::getState('configured', false))) {

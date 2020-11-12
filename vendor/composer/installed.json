@@ -129,6 +129,68 @@
         ]
     },
     {
+        "name": "onnov/detect-encoding",
+        "version": "v1.2.0",
+        "version_normalized": "1.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/onnov/detect-encoding.git",
+            "reference": "c88cea4f0c83d7f7e0675f2801e0995f328de1ce"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/onnov/detect-encoding/zipball/c88cea4f0c83d7f7e0675f2801e0995f328de1ce",
+            "reference": "c88cea4f0c83d7f7e0675f2801e0995f328de1ce",
+            "shasum": ""
+        },
+        "require": {
+            "ext-iconv": "*",
+            "php": ">=7.2"
+        },
+        "require-dev": {
+            "infection/infection": "*",
+            "phpbench/phpbench": "*",
+            "phpcompatibility/php-compatibility": "*",
+            "phpmd/phpmd": "*",
+            "phpstan/phpstan": "*",
+            "phpstan/phpstan-strict-rules": "*",
+            "phpunit/phpunit": "*",
+            "roave/backward-compatibility-check": "*",
+            "squizlabs/php_codesniffer": "*"
+        },
+        "time": "2019-09-20T16:11:46+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Onnov\\DetectEncoding\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "onnov",
+                "email": "oblnn@yandex.ru"
+            }
+        ],
+        "description": "Text encoding definition class instead of mb_detect_encoding. Defines: utf-8, windows-1251, koi8-r, iso-8859-5, ibm866, .....",
+        "homepage": "https://github.com/onnov/detect-encoding",
+        "keywords": [
+            "cyrillic",
+            "encoding",
+            "ibm866",
+            "iconv",
+            "iso-8859-5",
+            "koi8-r",
+            "mb_detect_encoding",
+            "utf-8",
+            "windows-1251"
+        ]
+    },
+    {
         "name": "rosell-dk/dom-util-for-webp",
         "version": "0.4.0",
         "version_normalized": "0.4.0.0",

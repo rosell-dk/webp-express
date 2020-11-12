@@ -1,0 +1,61 @@
+{
+  "name": "onnov/detect-encoding",
+  "description": "Text encoding definition class instead of mb_detect_encoding. Defines: utf-8, windows-1251, koi8-r, iso-8859-5, ibm866, .....",
+  "type": "library",
+  "keywords": [
+    "mb_detect_encoding",
+    "encoding",
+    "utf-8",
+    "windows-1251",
+    "koi8-r",
+    "iso-8859-5",
+    "ibm866",
+    "cyrillic",
+    "iconv"
+  ],
+  "homepage": "https://github.com/onnov/detect-encoding",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "onnov",
+      "email": "oblnn@yandex.ru"
+    }
+  ],
+  "require": {
+    "php": ">=7.2",
+    "ext-iconv": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Onnov\\DetectEncoding\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Onnov\\DetectEncoding\\Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*",
+    "phpbench/phpbench": "*",
+    "phpmd/phpmd": "*",
+    "phpstan/phpstan": "*",
+    "phpstan/phpstan-strict-rules": "*",
+    "squizlabs/php_codesniffer": "*",
+    "infection/infection": "*",
+    "phpcompatibility/php-compatibility": "*",
+    "roave/backward-compatibility-check": "*"
+  },
+  "scripts": {
+    "phpcs": "phpcs",
+    "phpcbf": "phpcbf",
+    "phpmd": "phpmd src text cleancode,codesize,controversial,design,naming,unusedcode",
+    "phpstan": "phpstan analyse src/ -c phpstan.neon --level=7 --no-progress -vvv --memory-limit=-1",
+    "phpunit": "phpunit",
+    "infection": "infection --min-msi=50 --min-covered-msi=70 --log-verbosity=all",
+    "coveragehtml": "phpunit --coverage-text --coverage-html ./build/coverage/html --coverage-clover ./build/coverage/clover.xml",
+    "coverage": "phpunit --coverage-text --coverage-clover clover.xml",
+    "phpbench": "phpbench run benchmarks --report=default",
+    "bccheck": "roave-backward-compatibility-check"
+  }
+}

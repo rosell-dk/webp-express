@@ -2,6 +2,8 @@
 
 namespace WebPExpress;
 
+use \Onnov\DetectEncoding\EncodingDetector;
+
 class BulkConvert
 {
 
@@ -136,12 +138,86 @@ class BulkConvert
 
                         if ($addThis) {
 
-                            // utf8_encode is not available on all systems (#452)
-                            if (function_exists('utf8_encode')) {
-                                // utf8_encode the filename so json_encode won't fail later on (#445)
-                                $filename = utf8_encode($filename);
+                            $path = substr($relDir . "/", 2) . $filename;   // (we cut the leading "./" off with substr)
+
+                            // Check if the string can be encoded to json (if not: change it to a string that can)
+                            if (json_encode($path, JSON_UNESCAPED_UNICODE) === false) {
+                                /*
+                                json_encode failed. This means that the string was not UTF-8.
+                                Lets see if we can convert it to UTF-8.
+                                This is however tricky business (see #471)
+                                */
+
+                                $encodedToUTF8 = false;
+
+                                // First try library that claims to do better than mb_detect_encoding
+                                if (!$encodedToUTF8) {
+                                    $detector = new EncodingDetector();
+
+                                    $dectedEncoding = $detector->getEncoding($path);
+
+                                    if ($dectedEncoding !== 'utf-8') {
+                                        if (function_exists('iconv')) {
+                                            $res = iconv($dectedEncoding, 'utf-8//TRANSLIT', $path);
+                                            if ($res !== false) {
+                                                $path = $res;
+                                                $encodedToUTF8 = true;
+                                            }
+                                        }
+                                    }
+
+                                    /*
+                                    try {
+                                        // hm, we avoid iconvXtoEncoding, as it has a bug - it is in the issue queue (#5)
+                                        //$path = $detector->iconvXtoEncoding($path);
+                                        $encodedToUTF8 = true;
+                                    } catch (\Exception $e) {
+
+                                    }*/
+                                }
+
+                                // Try mb_detect_encoding
+                                if (!$encodedToUTF8) {
+                                    if (function_exists('mb_convert_encoding')) {
+                                        $encoding = mb_detect_encoding($path, mb_detect_order(), true);
+                                		if ($encoding) {
+                                			$path = mb_convert_encoding($path, 'UTF-8', $encoding);
+                                            $encodedToUTF8 = true;
+                                		}
+                                    }
+                                }
+
+                                if (!$encodedToUTF8) {
+                                    /*
+                                    We haven't yet succeeded in encoding to UTF-8.
+                                    What should we do?
+                                    1. Skip the file? (no, the user will not know about the problem then)
+                                    2. Add it anyway? (no, if this string causes problems to json_encode, then we will have
+                                          the same problem when encoding the entire list - result: an empty list)
+                                    3. Try wp_json_encode? (no, it will fall back on "wp_check_invalid_utf8", which has a number of
+                                          things we do not want)
+                                    4. Encode it to UTF-8 assuming that the string is encoded in the most common encoding (Windows-1252) ?
+                                          (yes, if we are lucky with the guess, it will work. If it is in another encoding, the conversion
+                                          will not be correct, and the user will then know about the problem. And either way, we will
+                                          have UTF-8 string, which will not break encoding of the list)
+                                    */
+
+                                    // https://stackoverflow.com/questions/6606713/json-encode-non-utf-8-strings
+                                    if (function_exists('mb_convert_encoding')) {
+                                        $path = mb_convert_encoding($path, "UTF-8", "Windows-1252");
+                                    } elseif (function_exists('iconv')) {
+                                        $path = iconv("CP1252", "UTF-8", $path);
+                                    } elseif (function_exists('utf8_encode')) {
+                                        // utf8_encode converts from ISO-8859-1 to UTF-8
+                                        $path = utf8_encode($path);
+                                    } else {
+                                        $path = '[cannot encode this filename to UTF-8]';
+                                    }
+
+                                }
+
                             }
-                            $results[] = substr($relDir . "/", 2) . $filename;   // (we cut the leading "./" off with substr)
+                            $results[] = $path;
                         }
                     }
                 }
@@ -185,8 +261,16 @@ class BulkConvert
         $config = Config::loadConfigAndFix();
         $arr = self::getList($config);
 
-        // TODO: Handle json failure (false)
-        echo json_encode($arr, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
+        // We use "wp_json_encode" rather than "json_encode" because it handles problems if there is non UTF-8 characters
+        // There should be none, as we have taken our measures, but no harm in taking extra precautions
+        $json = wp_json_encode($arr, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        if ($json === false) {
+            // TODO: We can do better error handling than this!
+            echo '';
+        } else {
+            echo $json;
+        }
+
         wp_die();
     }
 

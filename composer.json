@@ -8,6 +8,7 @@
         "rosell-dk/webp-convert": "^2.4.0",
         "rosell-dk/webp-convert-cloud-service": "^2.0.0",
         "rosell-dk/dom-util-for-webp": "^0.4.0",
+        "onnov/detect-encoding": "^1.0.0",
         "rosell-dk/htaccess-capability-tester": "^0.9.0"
     },
     "require-dev": {
