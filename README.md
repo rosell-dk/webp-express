@@ -677,6 +677,12 @@ Here are my current plans ahead: 0.18 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.19.0
+*(released: 12 Nov 2020)*
+* New convertion method: ffmpeg
+
+For more info, see the closed issues on the [0.19.0 milestone on the github repository](https://github.com/rosell-dk/webp-express/milestone/36?closed=1)
+
 ## Changes in 0.18.3
 *(released: 5 Nov 2020)*
 * Bugfix: WebP Express uses live tests to determine the capabilities of the server in respect to .htaccess files (using the htaccess-capability-tester library). The results are used for warnings and also for optimizing the rules in the .htaccess files. However, HTTP Requests can fail due to other reasons than the feature not working (ie timeout). Such failures should lead to an indeterminate result, but it was interpreted as if the feature was not working.

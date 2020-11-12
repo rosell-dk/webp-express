@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.5
-Stable tag: 0.18.3
+Stable tag: 0.19.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -736,6 +736,12 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.19.0 =
+*(released: 12 Nov 2020)*
+* New convertion method: ffmpeg
+
+For more info, see the closed issues on the [0.19.0 milestone on the github repository](https://github.com/rosell-dk/webp-express/milestone/36?closed=1)
+
 = 0.18.3 =
 *(released: 5 Nov 2020)*
 * Bugfix: WebP Express uses live tests to determine the capabilities of the server in respect to .htaccess files (using the htaccess-capability-tester library). The results are used for warnings and also for optimizing the rules in the .htaccess files. However, HTTP Requests can fail due to other reasons than the feature not working (ie timeout). Such failures should lead to an indeterminate result, but it was interpreted as if the feature was not working.
@@ -1197,6 +1203,9 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.19.0 =
+* Added new conversion method (ffmpeg)
 
 = 0.18.3 =
 * Minor fixes (see changelog)
