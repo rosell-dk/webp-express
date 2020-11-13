@@ -1,6 +1,8 @@
 = 0.19.0 =
-*(released: 12 Nov 2020)*
+*(released: 13 Nov 2020)*
 * New convertion method: ffmpeg
+* Fixed problem in Bulk Convert when files had special characters in their filename
+* Prevented problems if the plugin gets included twice (can anybody enlighten me on how this might happen?)
 
 For more info, see the closed issues on the [0.19.0 milestone on the github repository](https://github.com/rosell-dk/webp-express/milestone/36?closed=1)
 

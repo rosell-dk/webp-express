@@ -720,7 +720,7 @@ If you are wondering why Alter HTML are missing some images, it can be due to on
 = When is feature X coming? / Roadmap =
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
 
-Here are my current plans ahead: 0.18 will probably be a file manager-like interface for converting / bulk converting / viewing conversion logs / comparing original vs webp visually - kind of a merge of current "test converter" and "bulk conversion" interfaces, and with an addition of a file explorer. 0.19 might allow excluding certain files and folders. 0.20 could be supporting Save-Data header in Varied Image Responses mode (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.21 might be displaying rules for NGINX. 0.21 might be an effort to allow webp for all browsers using [this javascript library](http://libwebpjs.hohenlimburg.org/v0.6.0/). Unfortunately, the javascript library does not (currently) support srcset attributes, which is why I moved this item down the priority list. We need srcset to be supported for the feature to be useful. 0.21 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
+Here are my current plans ahead: 0.20 will probably be a file manager-like interface for converting / bulk converting / viewing conversion logs / comparing original vs webp visually - kind of a merge of current "test converter" and "bulk conversion" interfaces, and with an addition of a file explorer. 0.21 might allow excluding certain files and folders. 0.22 could be supporting Save-Data header in Varied Image Responses mode (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.21 might be displaying rules for NGINX. 0.23 might be an effort to allow webp for all browsers using [this javascript library](http://libwebpjs.hohenlimburg.org/v0.6.0/). Unfortunately, the javascript library does not (currently) support srcset attributes, which is why I moved this item down the priority list. We need srcset to be supported for the feature to be useful. 0.21 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
@@ -737,8 +737,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 == Changelog ==
 
 = 0.19.0 =
-*(released: 12 Nov 2020)*
+*(released: 13 Nov 2020)*
 * New convertion method: ffmpeg
+* Fixed problem in Bulk Convert when files had special characters in their filename
+* Prevented problems if the plugin gets included twice (can anybody enlighten me on how this might happen?)
 
 For more info, see the closed issues on the [0.19.0 milestone on the github repository](https://github.com/rosell-dk/webp-express/milestone/36?closed=1)
 
