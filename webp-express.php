@@ -14,10 +14,9 @@
 Note: Perhaps create a plugin page on my website?, ie https://www.bitwise-it.dk/software/wordpress/webp-express
 */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
-use \WebPExpress\AdminInit;
-use \WebPExpress\Option;
+if (defined('WEBPEXPRESS_PLUGIN')) exit;  // Prevent problems if plugin is included twice (#472)
 
 define('WEBPEXPRESS_PLUGIN', __FILE__);
 define('WEBPEXPRESS_PLUGIN_DIR', __DIR__);
@@ -47,7 +46,7 @@ function webp_express_process_post() {
 add_action( 'init', 'webp_express_process_post' );
 //add_action( 'parse_request', 'webp_express_process_post' );
 
-if (Option::getOption('webp-express-alter-html', false)) {
+if (\WebPExpress\Option::getOption('webp-express-alter-html', false)) {
     require_once __DIR__ . '/lib/classes/AlterHtmlInit.php';
     \WebPExpress\AlterHtmlInit::setHooks();
 }
