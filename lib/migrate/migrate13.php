@@ -6,6 +6,8 @@ namespace WebPExpress;
 function webpexpress_migrate13_add_ffmpeg_message_if_relevant()
 {
     $config = Config::loadConfigAndFix(false);  // false, because we do not need to test if quality detection is working
+    $config = Config::updateConverterStatusWithFreshTest($config);  // Test all converters (especially we are excited to learn if the new ffmpeg converter is working)
+
     $workingConverterIds = ConvertersHelper::getWorkingAndActiveConverterIds($config);
 
     if (!in_array('ffmpeg', $workingConverterIds)) {
