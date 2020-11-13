@@ -136,7 +136,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 * [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
 * Ruben Solvang
 
-**Persons who contributed with ko-fi within the last 30 days (updated biweekly) - Thanks! **
+**Persons who contributed with ko-fi within the last 30 days (updated biweekly) - Thanks!**
 
 * 10 Nov: Bill Vallance
 * 5 Nov: Steve from Oz
