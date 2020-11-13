@@ -2,11 +2,6 @@
 
 namespace WebPExpress;
 
-use \WebPExpress\Config;
-use \WebPExpress\State;
-use \WebPExpress\Option;
-use \WebPExpress\Multisite;
-
 /**
  *
  */
@@ -29,12 +24,8 @@ class AdminInit
 
     public static function runMigrationIfNeeded()
     {
-        // For reasons I have not been able to unravel, someone reported a notice that WEBPEXPRESS_MIGRATION_VERSION was already defined.
-        // So we added this "defined" check. #463
-        if (!defined('WEBPEXPRESS_MIGRATION_VERSION')) {
-            // When an update requires a migration, the number should be increased
-            define('WEBPEXPRESS_MIGRATION_VERSION', '13');
-        }
+        // When an update requires a migration, the number should be increased
+        define('WEBPEXPRESS_MIGRATION_VERSION', '13');
 
         if (WEBPEXPRESS_MIGRATION_VERSION != Option::getOption('webp-express-migration-version', 0)) {
             // run migration logic
