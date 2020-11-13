@@ -278,6 +278,66 @@ class Config
         return self::fix(Config::loadConfig(), $checkQualityDetection);
     }
 
+    /**
+     * Run a fresh test on all converters and update their statuses in the config.
+     *
+     * @param  object  config to be updated
+     * @return object  Updated config
+     */
+    public static function updateConverterStatusWithFreshTest($config) {
+        // Test converters
+        $testResult = TestRun::getConverterStatus();
+
+        // Set "working" and "error" properties
+        if ($testResult) {
+            foreach ($config['converters'] as &$converter) {
+                $converterId = $converter['converter'];
+                $hasError = isset($testResult['errors'][$converterId]);
+                $working = !$hasError;
+
+                /*
+                Don't print this stuff here. It can end up in the head tag.
+                TODO: Move it somewhere
+                if (isset($converter['working']) && ($converter['working'] != $working)) {
+
+                    // TODO: webpexpress_converterName($converterId)
+                    if ($working) {
+                        Messenger::printMessage(
+                            'info',
+                            'Hurray! - The <i>' . $converterId . '</i> conversion method is working now!'
+                        );
+                    } else {
+                        Messenger::printMessage(
+                            'warning',
+                            'Sad news. The <i>' . $converterId . '</i> conversion method is not working anymore. What happened?'
+                        );
+                    }
+                }
+                */
+                $converter['working'] = $working;
+                if ($hasError) {
+                    $error = $testResult['errors'][$converterId];
+                    if ($converterId == 'wpc') {
+                        if (preg_match('/Missing URL/', $error)) {
+                            $error = 'Not configured';
+                        }
+                        if ($error == 'No remote host has been set up') {
+                            $error = 'Not configured';
+                        }
+
+                        if (preg_match('/cloud service is not enabled/', $error)) {
+                            $error = 'The server is not enabled. Click the "Enable web service" on WebP Express settings on the site you are trying to connect to.';
+                        }
+                    }
+                    $converter['error'] = $error;
+                } else {
+                    unset($converter['error']);
+                }
+            }
+        }
+        return $config;
+    }
+
 
     public static $configForOptionsPage = null;     // cache the result (called twice, - also in enqueue_scripts)
     public static function getConfigForOptionsPage()
@@ -307,56 +367,7 @@ class Config
         }
 
         if ($config['operation-mode'] != 'no-conversion') {
-            // Test converters
-            $testResult = TestRun::getConverterStatus();
-
-            // Set "working" and "error" properties
-            if ($testResult) {
-                foreach ($config['converters'] as &$converter) {
-                    $converterId = $converter['converter'];
-                    $hasError = isset($testResult['errors'][$converterId]);
-                    $working = !$hasError;
-
-                    /*
-                    Don't print this stuff here. It can end up in the head tag.
-                    TODO: Move it somewhere
-                    if (isset($converter['working']) && ($converter['working'] != $working)) {
-
-                        // TODO: webpexpress_converterName($converterId)
-                        if ($working) {
-                            Messenger::printMessage(
-                                'info',
-                                'Hurray! - The <i>' . $converterId . '</i> conversion method is working now!'
-                            );
-                        } else {
-                            Messenger::printMessage(
-                                'warning',
-                                'Sad news. The <i>' . $converterId . '</i> conversion method is not working anymore. What happened?'
-                            );
-                        }
-                    }
-                    */
-                    $converter['working'] = $working;
-                    if ($hasError) {
-                        $error = $testResult['errors'][$converterId];
-                        if ($converterId == 'wpc') {
-                            if (preg_match('/Missing URL/', $error)) {
-                                $error = 'Not configured';
-                            }
-                            if ($error == 'No remote host has been set up') {
-                                $error = 'Not configured';
-                            }
-
-                            if (preg_match('/cloud service is not enabled/', $error)) {
-                                $error = 'The server is not enabled. Click the "Enable web service" on WebP Express settings on the site you are trying to connect to.';
-                            }
-                        }
-                        $converter['error'] = $error;
-                    } else {
-                        unset($converter['error']);
-                    }
-                }
-            }
+            $config = self::updateConverterStatusWithFreshTest($config);
         }
 
         self::$configForOptionsPage = $config;  // cache the result
