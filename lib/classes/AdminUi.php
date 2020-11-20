@@ -73,5 +73,14 @@ class AdminUi
             array('\WebPExpress\OptionsPage', 'display') //The function to be called to output the content for this page.
         );
 
+        // Add Media page
+        add_media_page(
+          'WebP Express', //Page Title
+          'WebP Express', //Menu Title
+          'manage_options', //capability
+          'webp_express_conversion_page', // slug
+          array('\WebPExpress\WCFMPage', 'display') //The function to be called to output the content for this page.          
+        );
+
     }
 }

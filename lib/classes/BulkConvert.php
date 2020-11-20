@@ -29,7 +29,8 @@ class BulkConvert
                 'only-converted' => false,
                 'only-unconverted' => true,
                 'image-types' => $config['image-types'],
-            ]
+            ],
+            'flattenList' => true,
         ];
 
         $rootIds = Paths::filterOutSubRoots($config['scope']);
@@ -86,7 +87,15 @@ class BulkConvert
             if (($filename != ".") && ($filename != "..")) {
 
                 if (@is_dir($dir . "/" . $filename)) {
-                    $results = array_merge($results, self::getListRecursively($relDir . "/" . $filename, $listOptions));
+                    if ($listOptions['flattenList']) {
+                      $results = array_merge($results, self::getListRecursively($relDir . "/" . $filename, $listOptions));
+                    } else {
+                      $results[] = [
+                        'name' => $filename,
+                        'isDir' => true,
+                        'children' =>  self::getListRecursively($relDir . "/" . $filename, $listOptions)
+                      ];
+                    }
                 } else {
                     // its a file - check if its a jpeg or png
 
@@ -217,7 +226,13 @@ class BulkConvert
                                 }
 
                             }
-                            $results[] = $path;
+                            if ($listOptions['flattenList']) {
+                              $results[] = $path;
+                            } else {
+                              $results[] = [
+                                'name' => basename($path)
+                              ];
+                            }
                         }
                     }
                 }

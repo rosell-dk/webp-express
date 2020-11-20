@@ -52,6 +52,14 @@ class AdminInit
 
         if (current_user_can('manage_options')) {
 
+            // Hooks related to conversion page (in media)
+            if (self::pageNowIs('upload.php')) {
+                if (isset($_GET['page']) && ('webp_express_conversion_page' === $_GET['page'])) {
+                    //add_action('admin_enqueue_scripts', array('\WebPExpress\WCFMPage', 'enqueueScripts'));
+                    add_action('admin_head', array('\WebPExpress\WCFMPage', 'addToHead'));
+                }
+            }
+
             // Hooks related to options page
             if (self::pageNowIs('options-general.php') || self::pageNowIs('settings.php')) {
                 if (isset($_GET['page']) && ('webp_express_settings_page' === $_GET['page'])) {
@@ -75,9 +83,10 @@ class AdminInit
             add_action('wp_ajax_webpexpress_dismiss_message', array('\WebPExpress\DismissableMessages', 'processAjaxDismissMessage'));
             add_action('wp_ajax_webpexpress_dismiss_global_message', array('\WebPExpress\DismissableGlobalMessages', 'processAjaxDismissGlobalMessage'));
             add_action('wp_ajax_webpexpress_self_test', array('\WebPExpress\SelfTest', 'processAjax'));
+            add_action('wp_ajax_webpexpress-wcfm-api', array('\WebPExpress\WCFMApi', 'processRequest'));
 
 
-            // Add settings link on the plugins page
+            // Add settings link on the plugins list page
             add_filter('plugin_action_links_' . plugin_basename(WEBPEXPRESS_PLUGIN), array('\WebPExpress\AdminUi', 'pluginActionLinksFilter'), 10, 2);
 
             // Add settings link in multisite
