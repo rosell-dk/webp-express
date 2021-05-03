@@ -136,22 +136,31 @@ Bread on the table don't come for free, even though this plugin does, and always
 * [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
 * Ruben Solvang
 
-**Persons who contributed with ko-fi within the last 30 days (updated biweekly) - Thanks!**
+**Persons who contributed with ko-fi since last plugin update - Thanks!**
 
-* 10 Nov: Bill Vallance
-* 5 Nov: Steve from Oz
-* 31 Oct: Mark from Portland, OR
-* 27 Oct: Pradeep Maheepala from Watford, UK
-* 13 Oct: Anonymous
+* 3 May: Anonymous
+* 2 May: Anonymous
+* 13 Apr: Beachmat
+* 30 Mar: Chris Gibbs
+* 20 Mar: Mick Wall
+* 28 Feb: Jim Shelton
+* 3 Feb: Bjarne Olddrup
+* 14 Jan: Maggie
+* 6 Jan: Tim Schön
+* 24 Dec: Enno Lenze
+* 19 Dec: Anonymous
+* 22 Nov: Flavioweb
+* 16 Nov: WiredGorilla
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
+* Max Kreminsky ($110)
 * Justin - BigScoots ($105)
 * Bill Vallance ($102)
 * Sebastian ($99)
 * Tammy Lee ($90)
-* Max Kreminsky ($80)
 * Steven Sullivan ($51)
+* Mathieu Gollain-Dupont ($45)
 
 == Frequently Asked Questions ==
 
