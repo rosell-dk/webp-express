@@ -1,3 +1,7 @@
+= 0.19.1 =
+*(released: 03 May 2021)*
+* Bugfix for PHP 8.0 - fread() does not permit second argument to be 0. Thanks to @trition for reporting and fixing this bug.
+
 = 0.19.0 =
 *(released: 13 Nov 2020)*
 * New convertion method: ffmpeg
