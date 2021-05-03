@@ -225,7 +225,11 @@ class FileHelper
         $handle = @fopen($filename, "r");
         if ($handle !== false) {
             // Return value is either file content or false
-            $return = @fread($handle, filesize($filename));
+            if (filesize($filename) == 0) {
+              $return = '';
+            } else {
+              $return = @fread($handle, filesize($filename));
+            }
             fclose($handle);
         }
 
