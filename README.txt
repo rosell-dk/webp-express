@@ -1219,6 +1219,9 @@ For older releases, check out changelog.txt
 
 == Upgrade Notice ==
 
+= 0.19.1 =
+* Bugfix for PHP 8
+
 = 0.19.0 =
 * Added new conversion method (ffmpeg)
 
