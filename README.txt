@@ -37,10 +37,10 @@ The plugin implements the "WebP On Demand" solution described [here](https://git
 
 ### Benefits
 - Much faster load time for images in browsers that supports webp. The converted images are typically *less than half the size* (for jpeg), while maintaining the same quality. Bear in mind that for most web sites, images are responsible for the largest part of the waiting time.
-- Better user experience (whether performance goes from terrible to bad, or from good to impressive, it is a benefit)
-- Better ranking in Google searches (performance is taken into account by Google)
+- Better user experience (whether performance goes from terrible to bad, or from good to impressive, it is a benefit).
+- Better ranking in Google searches (performance is taken into account by Google).
 - Less bandwidth consumption - makes a huge difference in the parts of the world where the internet is slow and costly (you know, ~80% of the world population lives under these circumstances).
-- Currently ~88% of all traffic, and ~86% of mobile browsing traffic are done with browsers supporting webp. With Apple finally on board (Safari 14.0), these numbers are bound to increase. Check current numbers on [caniuse.com](https://caniuse.com/webp)).
+- Currently ~94% of all traffic, and ~96% of mobile browsing traffic are done with browsers supporting webp. Check current numbers on [caniuse.com](https://caniuse.com/webp).
 - It's great for the environment too! Reducing network traffic reduces electricity consumption which reduces CO2 emissions.
 
 == Installation ==
@@ -136,7 +136,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 * [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
 * Ruben Solvang
 
-**Persons who contributed with ko-fi since last plugin update - Thanks!**
+**Persons who contributed with [ko-fi](https://ko-fi.com/rosell) since last plugin update - Thanks!**
 
 * 3 May: Anonymous
 * 2 May: Anonymous
