@@ -3,8 +3,8 @@ Contributors: rosell.dk
 Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
-Tested up to: 5.5
-Stable tag: 0.19.0
+Tested up to: 5.6
+Stable tag: 0.19.1
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -735,6 +735,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 1. WebP Express settings
 
 == Changelog ==
+
+= 0.19.1 =
+*(released: 03 May 2021)*
+* Bugfix for PHP 8.0 - fread() does not permit second argument to be 0. Thanks to @trition for reporting and fixing this bug.
 
 = 0.19.0 =
 *(released: 13 Nov 2020)*
