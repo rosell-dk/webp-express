@@ -56,7 +56,7 @@ class Convert
                 $config = Config::loadConfigAndFix();  // ps: if this fails to load, default config is returned.
             }
             if (!is_array($config)) {
-                throw new SanityException('file is corrupt');
+                throw new SanityException('configuration file is corrupt');
             }
 
             // Check convert options
