@@ -238,7 +238,7 @@ class AlterHtmlHelper
         self::getOptions();
 
         // Fail for webp-disabled  browsers (when "only-for-webp-enabled-browsers" is set)
-        if ((self::$options['only-for-webp-enabled-browsers']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') === false)) {
+        if (!isset($_SERVER['HTTP_ACCEPT']) || ((self::$options['only-for-webp-enabled-browsers']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') === false))) {
             return $returnValueOnFail;
         }
 
