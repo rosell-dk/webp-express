@@ -238,8 +238,10 @@ class AlterHtmlHelper
         self::getOptions();
 
         // Fail for webp-disabled  browsers (when "only-for-webp-enabled-browsers" is set)
-        if (!isset($_SERVER['HTTP_ACCEPT']) || ((self::$options['only-for-webp-enabled-browsers']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') === false))) {
-            return $returnValueOnFail;
+        if (self::$options['only-for-webp-enabled-browsers']) {
+            if (!isset($_SERVER['HTTP_ACCEPT']) || (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') === false)) {
+                return $returnValueOnFail;
+            }          
         }
 
         // Fail for relative urls. Wordpress doesn't use such very much anyway
