@@ -63,7 +63,7 @@ class Config
             'converters' => [],
             'metadata' => 'none',
             //'log-call-arguments' => true,
-            'convert-on-upload' => true,
+            'convert-on-upload' => false,
 
             // serve options
             'fail' => 'original',
