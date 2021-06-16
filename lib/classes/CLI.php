@@ -15,6 +15,9 @@ class CLI extends \WP_CLI_Command
      *  [<location>]
      *  : Limit which folders to process to a single location. Must be uploads|themes|plugins|wp-content|index
      *
+     *  [--reconvert]
+     *  : Even convert images that are already converted (new conversions replaces the old conversions)
+     *
      *  [--quality]
      *  : Override quality with specified (0-100)
      *
@@ -58,15 +61,21 @@ class CLI extends \WP_CLI_Command
         \WP_CLI::log('');
 
 
+        $listOptions = BulkConvert::defaultListOptions($config);
+        if (isset($assoc_args['reconvert'])) {
+            $listOptions['filter']['only-unconverted'] = false;
+        }
+        //print_r($listOptions);
+
         //print_r($config);
         //\WP_CLI::log($args[0]);
         if (!isset($args[0])) {
-          $arr = BulkConvert::getList($config);
+          $arr = BulkConvert::getList($config, $listOptions);
           foreach($arr as $group){
-              \WP_CLI::log($group['groupName'] . ' contains ' . count($group['files']) . ' unconverted files');
-              //$files = array_reverse($group['files']);
+              \WP_CLI::log($group['groupName'] . ' contains ' . count($group['files']) . ' ' .
+              (isset($assoc_args['reconvert']) ? '' : 'unconverted ') .
+              'files');
           }
-          //\WP_CLI::log('To only convert ie uploads, you can do: "wp webp_express convert uploads"');
           \WP_CLI::log('');
         } else {
           if (!in_array($args[0], Paths::getImageRootIds())) {
@@ -76,7 +85,7 @@ class CLI extends \WP_CLI_Command
               );
           }
           $config['scope'] = [$args[0]];
-          $arr = BulkConvert::getList($config);
+          $arr = BulkConvert::getList($config, $listOptions);
           if (count($arr[0]['files']) == 0) {
             \WP_CLI::log('Nothing to convert in ' . $args[0]);
           }

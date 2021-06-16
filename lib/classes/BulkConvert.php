@@ -7,17 +7,9 @@ use \Onnov\DetectEncoding\EncodingDetector;
 class BulkConvert
 {
 
-    public static function getList($config)
+    public static function defaultListOptions($config)
     {
-
-        /*
-        isUploadDirMovedOutOfWPContentDir
-        isUploadDirMovedOutOfAbsPath
-        isPluginDirMovedOutOfAbsPath
-        isPluginDirMovedOutOfWpContent
-        isWPContentDirMovedOutOfAbsPath */
-
-        $listOptions = [
+        return [
             //'root' => Paths::getUploadDirAbs(),
             'ext' => $config['destination-extension'],
             'destination-folder' => $config['destination-folder'],  /* hm, "destination-folder" is a bad name... */
@@ -32,6 +24,21 @@ class BulkConvert
             ],
             'flattenList' => true,
         ];
+    }
+
+    public static function getList($config, $listOptions = null)
+    {
+
+        /*
+        isUploadDirMovedOutOfWPContentDir
+        isUploadDirMovedOutOfAbsPath
+        isPluginDirMovedOutOfAbsPath
+        isPluginDirMovedOutOfWpContent
+        isWPContentDirMovedOutOfAbsPath */
+
+        if (is_null($listOptions)) {
+            $listOptions = self::defaultListOptions($config);
+        }
 
         $rootIds = Paths::filterOutSubRoots($config['scope']);
 
