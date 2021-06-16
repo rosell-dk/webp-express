@@ -34,8 +34,7 @@ if (is_admin()) {
 }
 
 if ( class_exists( 'WP_CLI' ) ) {
-    \WP_CLI::add_command('webp_bulk', '\WebPExpress\BackgroundConvert');
-    //\WebPExpress\CliInit::init();
+    \WP_CLI::add_command('webp_express', '\WebPExpress\CLI');
 }
 
 function webp_express_process_post() {
