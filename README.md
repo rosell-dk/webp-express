@@ -38,15 +38,12 @@ The plugin implements the "WebP On Demand" solution described [here](https://git
 - Currently ~94% of all traffic, and ~96% of mobile browsing traffic are done with browsers supporting webp. Check current numbers on [caniuse.com](https://caniuse.com/webp).
 - It's great for the environment too! Reducing network traffic reduces electricity consumption which reduces CO2 emissions.
 
-### Recent news
-Feb 2019: Multisite is now supported (0.12.0)
-Jan 2019: Plugin can now alter HTML (0.11.0)
-
 ## Installation
 1. Upload the plugin files to the `/wp-content/plugins/webp-express` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. Configure it (the plugin doesn't do anything until configured)
 4. Verify that it works
+5. (Optional) Bulk convert all images, either in the admin ui or using WP CLI (command: "webp-express")
 
 ### Configuring
 You configure the plugin in *Settings > WebP Express*.
@@ -117,6 +114,34 @@ The redirect rules created in *.htaccess* are pointing to a PHP script. If you h
 *Note:*
 Do not simply remove the plugin without deactivating it first. Deactivation takes care of removing the rules in the *.htaccess* file. With the rules there, but converter gone, your Google Chrome visitors will not see any jpeg images.
 
+### Bulk convert
+You can start a bulk conversion two ways:
+1. In the admin UI. On the settings screen, there is a "Bulk Convert" button
+2. By using WP CLI (command: "webp-express").
+
+I'm currently working on a file manager interface, which will become a third way.
+
+### Making sure new images becomes converted
+There are several ways:
+1. Enable redirection to converter in the *.htaccess rules* section.
+2. Enable "Convert on upload". Note that this may impact upload experience in themes which defines many formats.
+3. Set up a cron job, which executes `wp webp-express convert` regularily
+
+### WP CLI command
+WebP Express currently supports commands for converting and flushing webp images throug the CLI. You can use the --help option to learn about the options:
+`wp webp-express --help`. Displays the available commands
+`wp webp-express convert --help`. Displays the available options for the "convert" command.
+
+A few examples:
+`wp webp-express convert`: Creates webp images for all unconverted images
+`wp webp-express convert --reconvert`: Also convert images that are already converted
+`wp webp-express convert themes`: Only images in the themes folder
+`wp webp-express convert --only-png`: Only the PNG images
+`wp webp-express convert --quality=50`: Use quality 50 (instead of what was entered in settings screen)
+`wp webp-express convert --quality=50`: Use quality 50 (instead of what was entered in settings screen)
+
+`wp webp-express flushwebp`: Remove all webp images
+`wp webp-express flushwebp --only-png`: Remove all webp images that are conversions of PNG images
 
 ## Limitations
 
@@ -671,7 +696,7 @@ The 0.17.0 release contained binaries with dots in their filenames, which caused
 ### When is feature X coming? / Roadmap
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
 
-Here are my current plans ahead: 0.20 will probably be a file manager-like interface for converting / bulk converting / viewing conversion logs / comparing original vs webp visually - kind of a merge of current "test converter" and "bulk conversion" interfaces, and with an addition of a file explorer. 0.21 might allow excluding certain files and folders. 0.22 could be supporting Save-Data header in Varied Image Responses mode (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.21 might be displaying rules for NGINX. 0.23 might be an effort to allow webp for all browsers using [this javascript library](http://libwebpjs.hohenlimburg.org/v0.6.0/). Unfortunately, the javascript library does not (currently) support srcset attributes, which is why I moved this item down the priority list. We need srcset to be supported for the feature to be useful. 0.21 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
+Here are my current plans ahead: 0.21 will probably be a file manager-like interface for converting / bulk converting / viewing conversion logs / comparing original vs webp visually - kind of a merge of current "test converter" and "bulk conversion" interfaces, and with an addition of a file explorer. 0.22 might allow excluding certain files and folders. 0.23 could be supporting Save-Data header in Varied Image Responses mode (send extra compressed images to clients who wants to use as little bandwidth as possible). 0.21 might be displaying rules for NGINX. 0.24 might be an effort to allow webp for all browsers using [this javascript library](http://libwebpjs.hohenlimburg.org/v0.6.0/). Unfortunately, the javascript library does not (currently) support srcset attributes, which is why I moved this item down the priority list. We need srcset to be supported for the feature to be useful. 0.26 might be WAMP support. The current milestones, their subtasks and their progress can be viewed here: https://github.com/rosell-dk/webp-express/milestones
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
