@@ -114,18 +114,19 @@ class BulkConvert
                     if (preg_match($filter['_regexPattern'], $filename)) {
                         $addThis = true;
 
+                        $destination = ConvertHelperIndependent::getDestination(
+                            $dir . "/" . $filename,
+                            $listOptions['destination-folder'],
+                            $listOptions['ext'],
+                            $listOptions['webExpressContentDirAbs'],
+                            $listOptions['uploadDirAbs'],
+                            $listOptions['useDocRootForStructuringCacheDir'],
+                            $listOptions['imageRoots']
+                        );
+                        $webpExists = @file_exists($destination);
+
                         if (($filter['only-converted']) || ($filter['only-unconverted'])) {
                             //$cacheDir = $listOptions['image-root'] . '/' . $relDir;
-                            $destination = ConvertHelperIndependent::getDestination(
-                                $dir . "/" . $filename,
-                                $listOptions['destination-folder'],
-                                $listOptions['ext'],
-                                $listOptions['webExpressContentDirAbs'],
-                                $listOptions['uploadDirAbs'],
-                                $listOptions['useDocRootForStructuringCacheDir'],
-                                $listOptions['imageRoots']
-                            );
-                            $webpExists = @file_exists($destination);
 
                             // Check if corresponding webp exists
                             /*
@@ -189,10 +190,10 @@ class BulkConvert
                                 if (!$encodedToUTF8) {
                                     if (function_exists('mb_convert_encoding')) {
                                         $encoding = mb_detect_encoding($path, mb_detect_order(), true);
-                                		if ($encoding) {
-                                			$path = mb_convert_encoding($path, 'UTF-8', $encoding);
-                                            $encodedToUTF8 = true;
-                                		}
+                                    		if ($encoding) {
+                                    			$path = mb_convert_encoding($path, 'UTF-8', $encoding);
+                                          $encodedToUTF8 = true;
+                                    		}
                                     }
                                 }
 
@@ -230,7 +231,8 @@ class BulkConvert
                               $results[] = $path;
                             } else {
                               $results[] = [
-                                'name' => basename($path)
+                                'name' => basename($path),
+                                'isConverted' => $webpExists
                               ];
                             }
                         }
