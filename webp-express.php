@@ -33,6 +33,11 @@ if (is_admin()) {
     \WebPExpress\AdminInit::init();
 }
 
+if ( class_exists( 'WP_CLI' ) ) {
+    \WP_CLI::add_command('webp_bulk', '\WebPExpress\BackgroundConvert');
+    //\WebPExpress\CliInit::init();
+}
+
 function webp_express_process_post() {
     // strip query string
     $requestUriNoQS = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
