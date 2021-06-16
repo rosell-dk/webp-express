@@ -143,6 +143,8 @@ A few examples:
 `wp webp-express flushwebp`: Remove all webp images
 `wp webp-express flushwebp --only-png`: Remove all webp images that are conversions of PNG images
 
+I'm considering adding commands for viewing status, viewing conversion stats, generating the .htaccess files and modifying the settings. Please let me know if you need any of these or perhaps something else.
+
 ## Limitations
 
 * The plugin [should now work on Microsoft IIS server](https://github.com/rosell-dk/webp-express/pull/213), but it has not been tested thoroughly.
