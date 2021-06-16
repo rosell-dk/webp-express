@@ -13,7 +13,7 @@ class CLI extends \WP_CLI_Command
      *
      *  ## OPTIONS
      *  [<location>]
-     *  : Limit which folders to process to a single location. Must be uploads|themes|plugins|wp-content|index
+     *  : Limit which folders to process to a single location. Must be uploads | themes | plugins | wp-content | index
      *
      *  [--reconvert]
      *  : Even convert images that are already converted (new conversions replaces the old conversions)
@@ -32,11 +32,16 @@ class CLI extends \WP_CLI_Command
      *
      *  [--alpha-quality]
      *  : Override alpha-quality quality with specified (0-100)
+     *
+     *  [--encoding]
+     *  : Override encoding quality with specified ("auto", "lossy" or "lossless")
+     *
+     *  [--converter=<converter>]
+     *  : Specify the converter to use (default is to use the stack). Valid options: cwebp | vips | ewww | imagemagick | imagick | gmagick | graphicsmagick | ffmpeg | gd | wpc | ewww
      */
     public function convert($args, $assoc_args)
     {
         $config = Config::loadConfigAndFix();
-
         $override = [];
 
         if (isset($assoc_args['quality'])) {
@@ -50,6 +55,23 @@ class CLI extends \WP_CLI_Command
         if (isset($assoc_args['alpha-quality'])) {
           $override['alpha-quality'] = intval($assoc_args['alpha-quality']);
         }
+        if (isset($assoc_args['encoding'])) {
+          if (!in_array($assoc_args['encoding'], ['auto', 'lossy', 'lossless'])) {
+              \WP_CLI::error('encoding must be auto, lossy or lossless');
+          }
+          $override['png-encoding'] = $assoc_args['encoding'];
+          $override['jpeg-encoding'] = $assoc_args['encoding'];
+        }
+        if (isset($assoc_args['converter'])) {
+          $filteredConverters = [];
+          foreach ($config['converters'] as $converter) {
+            if ($converter['converter'] == $assoc_args['converter']) {
+              $filteredConverters[] = $converter;
+            }
+          }
+          $config['converters'] = $filteredConverters;
+        }
+
         $config = array_merge($config, $override);
 
         \WP_CLI::log('Converting with the following settings:');
@@ -60,9 +82,10 @@ class CLI extends \WP_CLI_Command
           ($config['jpeg-enable-near-lossless'] ? $config['jpeg-near-lossless'] : 'disabled') . ' for jpeg, '
         );
         \WP_CLI::log('- Alpha quality: ' . $config['alpha-quality']);
+        \WP_CLI::log('- Encoding: ' . $config['png-encoding'] . ' for PNG, ' . $config['jpeg-encoding'] . " for jpeg");
 
         if (count($override) == 0) {
-          \WP_CLI::log('Note that you can override these with --quality=<quality>, ect');
+          \WP_CLI::log('Note that you can override these with --quality=<quality>, etc');
         }
         \WP_CLI::log('');
 
@@ -121,7 +144,6 @@ class CLI extends \WP_CLI_Command
                 $path = trailingslashit($group['root']) . $file;
                 \WP_CLI::log('Converting: ' . $file);
 
-
                 $result = Convert::convertFile($path, $config);
 
                 if ($result['success']) {
@@ -150,7 +172,12 @@ class CLI extends \WP_CLI_Command
                     \WP_CLI::log(
                         \WP_CLI::colorize("%RFailed%n")
                     );
-                    \WP_CLI::log($result['msg']);
+                    if (isset($assoc_args['converter']) && ($result['msg'] == 'None of the converters in the stack are operational')) {
+                      \WP_CLI::log($assoc_args['converter'] . ' converter is not operational');
+                    } else {
+                      \WP_CLI::log($result['msg']);
+                    }
+
                 }
             }
         }
