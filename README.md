@@ -138,10 +138,13 @@ A few examples:
 `wp webp-express convert themes`: Only images in the themes folder
 `wp webp-express convert --only-png`: Only the PNG images
 `wp webp-express convert --quality=50`: Use quality 50 (instead of what was entered in settings screen)
-`wp webp-express convert --quality=50`: Use quality 50 (instead of what was entered in settings screen)
 
 `wp webp-express flushwebp`: Remove all webp images
 `wp webp-express flushwebp --only-png`: Remove all webp images that are conversions of PNG images
+
+Synopsises:
+`wp webp-express convert [<location>] [--reconvert] [--only-png] [--only-jpeg] [--quality=<number>] [--near-lossless=<number>] [--alpha-quality=<number>] [--encoding=<auto|lossy|lossless>] [--converter=<converter>]`
+`wp webp-express flushwebp [--only-png]`
 
 I'm considering adding commands for viewing status, viewing conversion stats, generating the .htaccess files and modifying the settings. Please let me know if you need any of these or perhaps something else.
 
