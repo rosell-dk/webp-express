@@ -18,6 +18,12 @@ class CLI extends \WP_CLI_Command
      *  [--reconvert]
      *  : Even convert images that are already converted (new conversions replaces the old conversions)
      *
+     *  [--only-png]
+     *  : Only convert PNG images
+     *
+     *  [--only-jpeg]
+     *  : Only convert jpeg images
+     *
      *  [--quality]
      *  : Override quality with specified (0-100)
      *
@@ -65,6 +71,13 @@ class CLI extends \WP_CLI_Command
         if (isset($assoc_args['reconvert'])) {
             $listOptions['filter']['only-unconverted'] = false;
         }
+        if (isset($assoc_args['only-png'])) {
+            $listOptions['filter']['image-types'] = 2;
+        }
+        if (isset($assoc_args['only-jpeg'])) {
+            $listOptions['filter']['image-types'] = 1;
+        }
+
         //print_r($listOptions);
 
         //print_r($config);
