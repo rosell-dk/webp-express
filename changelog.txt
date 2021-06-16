@@ -1,13 +1,10 @@
 = 0.20.0 =
 *(released: 17 Jun 2021)*
 * Added WP CLI tasks for converting and flushing webp files. Thanks to Isuru Sampath Ratnayake from Sri Lanka for initializing this
-* Added "sharp-yuv" option (default:on). Better YUV->RGB color conversion at almost no price.
+* Added "sharp-yuv" (not as option, but as always on). Better YUV->RGB color conversion at almost no price. [Read more here](https://www.ctrl.blog/entry/webp-sharp-yuv.html). Supported by cwebp, vips, gmagick, graphicsmagick, imagick and imagemagick
 * Bumped cwebp binaries to 1.2.0
-* vips now supports "method" option and "preset" option.
-* graphicsmagick now supports "auto-filter" potion
-* vips, imagick, imagemagick, graphicsmagick and gmagick now supports "preset" option
 * cwebp now only validates hash of supplied precompiled binaries when necessary. This cuts down conversion time.
-* Convert on upload now defaults to false, as it may impact upload experience in themes with many formats. 
+* Convert on upload now defaults to false, as it may impact upload experience in themes with many formats.
 
 = 0.19.1 =
 *(released: 03 May 2021)*
