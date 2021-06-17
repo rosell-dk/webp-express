@@ -15,6 +15,9 @@ use WebPConvert\Options\Exceptions\InvalidOptionValueException;
 class MetadataOption extends StringOption
 {
 
+    protected $typeId = 'metadata';
+    protected $allowedValueTypes = ['string'];
+
     public function __construct($id, $defaultValue)
     {
         parent::__construct($id, $defaultValue);

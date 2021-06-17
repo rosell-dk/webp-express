@@ -5,6 +5,7 @@ namespace WebPConvert;
 //use WebPConvert\Convert\Converters\ConverterHelper;
 use WebPConvert\Convert\Converters\Stack;
 //use WebPConvert\Serve\ServeExistingOrHandOver;
+use WebPConvert\Convert\ConverterFactory;
 use WebPConvert\Serve\ServeConvertedWebP;
 use WebPConvert\Serve\ServeConvertedWebPWithErrorHandling;
 
@@ -74,4 +75,46 @@ class WebPConvert
             ServeConvertedWebP::serve($source, $destination, $options, $serveLogger, $convertLogger);
         }
     }
+
+    /**
+     *  Get ids of all converters available in webp-convert.
+     *
+     *  @return  array  Array of ids.
+     */
+    public static function getConverterIds()
+    {
+        $all = Stack::getAvailableConverters();
+        $all[] = 'stack';
+        return $all;
+    }
+
+    /**
+     *  Get option definitions for all converters
+     *
+     *  Added in order to give GUI's a way to automatically adjust their setting screens.
+     *
+     *  @param   string   $imageType   (png | jpeg)   The image type - determines the defaults
+     *  @param   bool     $returnGeneral              Whether the general setting definitions should be returned
+     *  @param   bool     $returnGeneralSupport       Whether the ids of supported/unsupported general options
+     *                                                should be returned
+     *
+     *  @return  array  Array of options definitions - ready to be json encoded, or whatever
+     */
+     /*  POST-PONED till 2.7.0
+    public static function getConverterOptionDefinitions(
+        $imageType = 'png',
+        $returnGeneral = true,
+        $returnGeneralSupport = true
+    ) {
+
+        $ids = self::getConverterIds();
+        $result = [];
+        foreach ($ids as $id) {
+            $c = ConverterFactory::makeConverter($id, '', '');
+            $optionDefinitions = $c->getOptionDefinitions($imageType, $returnGeneral, $returnGeneralSupport);
+
+            $result[$id] = $optionDefinitions;
+        }
+        return $result;
+    }*/
 }

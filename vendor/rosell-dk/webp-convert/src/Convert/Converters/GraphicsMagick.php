@@ -26,9 +26,7 @@ class GraphicsMagick extends AbstractConverter
     protected function getUnsupportedDefaultOptions()
     {
         return [
-            'auto-filter',
             'near-lossless',
-            'preset',
             'size-in-percentage',
         ];
     }
@@ -95,6 +93,10 @@ class GraphicsMagick extends AbstractConverter
      */
     private function createCommandLineOptions()
     {
+        // I cannot find any documentation on available webp options for graphicsmagick :(
+        // Checking for new supported options is currently done by searching for "webp" in the
+        // news page: http://www.graphicsmagick.org/NEWS.html
+
         $commandArguments = [];
 
         /*
@@ -108,9 +110,28 @@ class GraphicsMagick extends AbstractConverter
         */
         $commandArguments[] = '-quality ' . escapeshellarg($this->getCalculatedQuality());
 
+        $options = $this->options;
+
+        // preset
+        if (!is_null($options['preset'])) {
+            if ($options['preset'] != 'none') {
+                $imageHint = $options['preset'];
+                switch ($imageHint) {
+                    case 'drawing':
+                    case 'icon':
+                    case 'text':
+                        $imageHint = 'graph';
+                        $this->logLn(
+                            'Note: the preset was mapped to "graph" because graphicsmagick does not support ' .
+                            '"drawing", "icon" and "text", but grouped these into one option: "graph".'
+                        );
+                }
+                $commandArguments[] = '-define webp:image-hint=' . escapeshellarg($imageHint);
+            }
+        }
 
         // encoding
-        if ($this->options['encoding'] == 'lossless') {
+        if ($options['encoding'] == 'lossless') {
             // Btw:
             // I am not sure if we should set "quality" for lossless.
             // Quality should not apply to lossless, but my tests shows that it does in some way for gmagick
@@ -124,19 +145,27 @@ class GraphicsMagick extends AbstractConverter
             $commandArguments[] = '-define webp:lossless=false';
         }
 
-        if ($this->options['alpha-quality'] !== 100) {
-            $commandArguments[] = '-define webp:alpha-quality=' . strval($this->options['alpha-quality']);
+        if ($options['auto-filter'] === true) {
+            $commandArguments[] = '-define webp:auto-filter=true';
         }
 
-        if ($this->options['low-memory']) {
+        if ($options['alpha-quality'] !== 100) {
+            $commandArguments[] = '-define webp:alpha-quality=' . strval($options['alpha-quality']);
+        }
+
+        if ($options['low-memory']) {
             $commandArguments[] = '-define webp:low-memory=true';
         }
 
-        if ($this->options['metadata'] == 'none') {
+        if ($options['sharp-yuv'] === true) {
+            $commandArguments[] = '-define webp:use-sharp-yuv=true';
+        }
+
+        if ($options['metadata'] == 'none') {
             $commandArguments[] = '-strip';
         }
 
-        $commandArguments[] = '-define webp:method=' . $this->options['method'];
+        $commandArguments[] = '-define webp:method=' . $options['method'];
 
         $commandArguments[] = escapeshellarg($this->source);
         $commandArguments[] = escapeshellarg('webp:' . $this->destination);

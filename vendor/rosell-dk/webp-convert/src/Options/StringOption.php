@@ -15,7 +15,9 @@ use WebPConvert\Options\Exceptions\InvalidOptionValueException;
 class StringOption extends Option
 {
 
-    public $allowedValues;
+    protected $typeId = 'string';
+    protected $allowedValues;
+    protected $allowedValueTypes = ['string'];
 
     public function __construct($id, $defaultValue, $allowedValues = null)
     {

@@ -23,8 +23,21 @@ class Option
     /** @var mixed  The value of the option */
     protected $value;
 
-    /** @var boolean  Whether the value has been explicitly set */
+    /** @var boolean  Whether the value has been set (if not, getValue() will return the default value) */
     protected $isExplicitlySet = false;
+
+    /** @var string  An option must supply a type id */
+    protected $typeId;
+
+    /** @var array  Type constraints for the value */
+    protected $allowedValueTypes = [];
+
+    /** @var boolean  Whether the option has been deprecated */
+    protected $deprecated = false;
+
+    /** @var string  Help text */
+    protected $helpText = '';
+
 
     /**
      * Constructor.
@@ -80,7 +93,7 @@ class Option
     }
 
     /**
-     * Get to know if value has been explicitly set.
+     * Get to know if value has been set.
      *
      * @return  boolean  Whether or not the value has been set explicitly
      */
@@ -128,8 +141,36 @@ class Option
         }
     }
 
+    public function markDeprecated()
+    {
+        $this->deprecated = true;
+    }
+
+    public function isDeprecated()
+    {
+        return $this->deprecated;
+    }
+
     public function getValueForPrint()
     {
         return print_r($this->getValue(), true);
     }
+
+
+    /*  POST-PONED till 2.7.0
+
+    public function getDefinition()
+    {
+        $obj = [
+          'id' => $this->id,
+          'type' => $this->typeId,
+          'allowed-value-types' => $this->allowedValueTypes,
+          'default' => $this->defaultValue,
+          'help-text' => $this->helpText,
+        ];
+        if ($this->deprecated) {
+            $obj['deprecated'] = true;
+        }
+        return $obj;
+    }*/
 }

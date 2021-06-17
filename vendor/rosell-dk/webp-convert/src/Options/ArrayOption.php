@@ -15,6 +15,9 @@ use WebPConvert\Options\Exceptions\InvalidOptionValueException;
 class ArrayOption extends Option
 {
 
+    protected $typeId = 'array';
+    protected $allowedValueTypes = ['array'];
+
     public function check()
     {
         $this->checkType('array');
@@ -28,4 +31,11 @@ class ArrayOption extends Option
             return parent::getValueForPrint();
         }
     }
+/*
+    public function getDefinition()
+    {
+        $obj = parent::getDefinition();
+        $obj['sensitive'] = false;
+        return $obj;
+    }*/
 }

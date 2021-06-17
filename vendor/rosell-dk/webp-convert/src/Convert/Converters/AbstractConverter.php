@@ -106,8 +106,11 @@ abstract class AbstractConverter
      * @param   array   $options (optional)  options for conversion
      * @param   BaseLogger $logger (optional)
      */
-    final public function __construct($source, $destination, $options = [], $logger = null)
+    final public function __construct($source = '', $destination = '', $options = [], $logger = null)
     {
+        if ($source == '') {
+            return;
+        }
         InputValidator::checkSourceAndDestination($source, $destination);
 
         $this->source = $source;
@@ -117,7 +120,7 @@ abstract class AbstractConverter
         $this->setProvidedOptions($options);
 
         if (!isset($this->options['_skip_input_check'])) {
-            $this->log('WebP Convert 2.3.2', 'italic');
+            $this->log('WebP Convert 2.6.0', 'italic');
             $this->logLn(' ignited.');
             $this->logLn('- PHP version: ' . phpversion());
             if (isset($_SERVER['SERVER_SOFTWARE'])) {

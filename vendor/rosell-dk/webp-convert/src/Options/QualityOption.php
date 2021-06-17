@@ -16,6 +16,8 @@ use WebPConvert\Options\Exceptions\InvalidOptionValueException;
  */
 class QualityOption extends Option
 {
+    protected $typeId = 'quality';
+    protected $allowedValueTypes = ['integer', 'string'];
 
     public function __construct($id, $defaultValue)
     {

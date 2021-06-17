@@ -1,516 +1,564 @@
-[
-    {
-        "name": "composer/installers",
-        "version": "v1.9.0",
-        "version_normalized": "1.9.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/composer/installers.git",
-            "reference": "b93bcf0fa1fccb0b7d176b0967d969691cd74cca"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/composer/installers/zipball/b93bcf0fa1fccb0b7d176b0967d969691cd74cca",
-            "reference": "b93bcf0fa1fccb0b7d176b0967d969691cd74cca",
-            "shasum": ""
-        },
-        "require": {
-            "composer-plugin-api": "^1.0 || ^2.0"
-        },
-        "replace": {
-            "roundcube/plugin-installer": "*",
-            "shama/baton": "*"
-        },
-        "require-dev": {
-            "composer/composer": "1.6.* || 2.0.*@dev",
-            "composer/semver": "1.0.* || 2.0.*@dev",
-            "phpunit/phpunit": "^4.8.36",
-            "sebastian/comparator": "^1.2.4",
-            "symfony/process": "^2.3"
-        },
-        "time": "2020-04-07T06:57:05+00:00",
-        "type": "composer-plugin",
-        "extra": {
-            "class": "Composer\\Installers\\Plugin",
-            "branch-alias": {
-                "dev-master": "1.0-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Composer\\Installers\\": "src/Composer/Installers"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Kyle Robinson Young",
-                "email": "kyle@dontkry.com",
-                "homepage": "https://github.com/shama"
-            }
-        ],
-        "description": "A multi-framework Composer library installer",
-        "homepage": "https://composer.github.io/installers/",
-        "keywords": [
-            "Craft",
-            "Dolibarr",
-            "Eliasis",
-            "Hurad",
-            "ImageCMS",
-            "Kanboard",
-            "Lan Management System",
-            "MODX Evo",
-            "MantisBT",
-            "Mautic",
-            "Maya",
-            "OXID",
-            "Plentymarkets",
-            "Porto",
-            "RadPHP",
-            "SMF",
-            "Thelia",
-            "Whmcs",
-            "WolfCMS",
-            "agl",
-            "aimeos",
-            "annotatecms",
-            "attogram",
-            "bitrix",
-            "cakephp",
-            "chef",
-            "cockpit",
-            "codeigniter",
-            "concrete5",
-            "croogo",
-            "dokuwiki",
-            "drupal",
-            "eZ Platform",
-            "elgg",
-            "expressionengine",
-            "fuelphp",
-            "grav",
-            "installer",
-            "itop",
-            "joomla",
-            "known",
-            "kohana",
-            "laravel",
-            "lavalite",
-            "lithium",
-            "magento",
-            "majima",
-            "mako",
-            "mediawiki",
-            "modulework",
-            "modx",
-            "moodle",
-            "osclass",
-            "phpbb",
-            "piwik",
-            "ppi",
-            "puppet",
-            "pxcms",
-            "reindex",
-            "roundcube",
-            "shopware",
-            "silverstripe",
-            "sydes",
-            "sylius",
-            "symfony",
-            "typo3",
-            "wordpress",
-            "yawik",
-            "zend",
-            "zikula"
-        ]
-    },
-    {
-        "name": "onnov/detect-encoding",
-        "version": "v1.2.0",
-        "version_normalized": "1.2.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/onnov/detect-encoding.git",
-            "reference": "c88cea4f0c83d7f7e0675f2801e0995f328de1ce"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/onnov/detect-encoding/zipball/c88cea4f0c83d7f7e0675f2801e0995f328de1ce",
-            "reference": "c88cea4f0c83d7f7e0675f2801e0995f328de1ce",
-            "shasum": ""
-        },
-        "require": {
-            "ext-iconv": "*",
-            "php": ">=7.2"
-        },
-        "require-dev": {
-            "infection/infection": "*",
-            "phpbench/phpbench": "*",
-            "phpcompatibility/php-compatibility": "*",
-            "phpmd/phpmd": "*",
-            "phpstan/phpstan": "*",
-            "phpstan/phpstan-strict-rules": "*",
-            "phpunit/phpunit": "*",
-            "roave/backward-compatibility-check": "*",
-            "squizlabs/php_codesniffer": "*"
-        },
-        "time": "2019-09-20T16:11:46+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Onnov\\DetectEncoding\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "onnov",
-                "email": "oblnn@yandex.ru"
-            }
-        ],
-        "description": "Text encoding definition class instead of mb_detect_encoding. Defines: utf-8, windows-1251, koi8-r, iso-8859-5, ibm866, .....",
-        "homepage": "https://github.com/onnov/detect-encoding",
-        "keywords": [
-            "cyrillic",
-            "encoding",
-            "ibm866",
-            "iconv",
-            "iso-8859-5",
-            "koi8-r",
-            "mb_detect_encoding",
-            "utf-8",
-            "windows-1251"
-        ]
-    },
-    {
-        "name": "rosell-dk/dom-util-for-webp",
-        "version": "0.4.0",
-        "version_normalized": "0.4.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/rosell-dk/dom-util-for-webp.git",
-            "reference": "5928aecf64d59124b341dce23ce8ecf48a6eded6"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/5928aecf64d59124b341dce23ce8ecf48a6eded6",
-            "reference": "5928aecf64d59124b341dce23ce8ecf48a6eded6",
-            "shasum": ""
-        },
-        "require-dev": {
-            "friendsofphp/php-cs-fixer": "^2.11",
-            "phpunit/phpunit": "5.7.27",
-            "squizlabs/php_codesniffer": "3.*"
-        },
-        "suggest": {
-            "phpstan/phpstan": "Suggested for dev, in order to analyse code before committing"
-        },
-        "time": "2020-02-02T11:16:27+00:00",
-        "type": "library",
-        "extra": {
-            "scripts-descriptions": {
-                "ci": "Run tests before CI",
-                "phpcs": "Checks coding styles (PSR2) of file/dir, which you must supply. To check all, supply 'src'",
-                "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
-                "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard",
-                "cs-fix": "Fix the coding style of a PHP file or directory, which you must specify.",
-                "test": "Launches the preconfigured PHPUnit"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "DOMUtilForWebP\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Bjørn Rosell",
-                "homepage": "https://www.bitwise-it.dk/contact",
-                "role": "Project Author"
-            }
-        ],
-        "description": "Replace image URLs found in HTML",
-        "keywords": [
-            "Webp",
-            "html",
-            "images",
-            "replace"
-        ]
-    },
-    {
-        "name": "rosell-dk/htaccess-capability-tester",
-        "version": "0.9",
-        "version_normalized": "0.9.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/rosell-dk/htaccess-capability-tester.git",
-            "reference": "2eb2cf38a9f42fc3aa647d6e9c896e124bfebf4c"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/htaccess-capability-tester/zipball/2eb2cf38a9f42fc3aa647d6e9c896e124bfebf4c",
-            "reference": "2eb2cf38a9f42fc3aa647d6e9c896e124bfebf4c",
-            "shasum": ""
-        },
-        "require": {
-            "php": "^5.6 | ^7.0"
-        },
-        "require-dev": {
-            "phpunit/php-code-coverage": "dev-4.0-dev as 4.0.4",
-            "phpunit/phpunit": "^5.7",
-            "squizlabs/php_codesniffer": "3.*"
-        },
-        "suggest": {
-            "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
-        },
-        "time": "2020-11-04T10:29:38+00:00",
-        "type": "library",
-        "extra": {
-            "scripts-descriptions": {
-                "ci": "Run tests before CI",
-                "phpcs": "Checks coding styles (PSR2) of file/dir, which you must supply. To check all, supply 'src'",
-                "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
-                "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard",
-                "cs-fix": "Fix the coding style of a PHP file or directory, which you must specify.",
-                "test": "Launches the preconfigured PHPUnit"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "HtaccessCapabilityTester\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Bjørn Rosell",
-                "homepage": "https://www.bitwise-it.dk/contact",
-                "role": "Project Author"
-            }
-        ],
-        "description": "Test the capabilities of .htaccess files on the server using live tests",
-        "keywords": [
-            ".htaccess",
-            "apache",
-            "litespeed"
-        ]
-    },
-    {
-        "name": "rosell-dk/image-mime-type-guesser",
-        "version": "0.3",
-        "version_normalized": "0.3.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/rosell-dk/image-mime-type-guesser.git",
-            "reference": "204fd61ca81e3b0ba46c6165dab8f74816b1fe99"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/image-mime-type-guesser/zipball/204fd61ca81e3b0ba46c6165dab8f74816b1fe99",
-            "reference": "204fd61ca81e3b0ba46c6165dab8f74816b1fe99",
-            "shasum": ""
-        },
-        "require-dev": {
-            "friendsofphp/php-cs-fixer": "^2.11",
-            "phpunit/phpunit": "^5.7.27",
-            "squizlabs/php_codesniffer": "3.*"
-        },
-        "time": "2019-03-29T09:33:28+00:00",
-        "type": "library",
-        "extra": {
-            "scripts-descriptions": {
-                "ci": "Run tests before CI",
-                "phpcs": "Checks coding styles (PSR2) of file/dir, which you must supply. To check all, supply 'src'",
-                "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
-                "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard",
-                "cs-fix": "Fix the coding style of a PHP file or directory, which you must specify.",
-                "test": "Launches the preconfigured PHPUnit"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "ImageMimeTypeGuesser\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Bjørn Rosell",
-                "homepage": "https://www.bitwise-it.dk/contact",
-                "role": "Project Author"
-            }
-        ],
-        "description": "Guess mime type of images",
-        "keywords": [
-            "image",
-            "images",
-            "mime",
-            "mime type"
-        ]
-    },
-    {
-        "name": "rosell-dk/webp-convert",
-        "version": "2.4.0",
-        "version_normalized": "2.4.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/rosell-dk/webp-convert.git",
-            "reference": "187a578ee55730f7a128a2f07b4351524b10d47b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/187a578ee55730f7a128a2f07b4351524b10d47b",
-            "reference": "187a578ee55730f7a128a2f07b4351524b10d47b",
-            "shasum": ""
-        },
-        "require": {
-            "php": "^5.6 | ^7.0",
-            "rosell-dk/image-mime-type-guesser": "^0.3"
-        },
-        "require-dev": {
-            "friendsofphp/php-cs-fixer": "^2.11",
-            "phpunit/phpunit": "5.7.27",
-            "squizlabs/php_codesniffer": "3.*"
-        },
-        "suggest": {
-            "ext-gd": "to use GD extension for converting. Note: Gd must be compiled with webp support",
-            "ext-imagick": "to use Imagick extension for converting. Note: Gd must be compiled with webp support",
-            "ext-vips": "to use Vips extension for converting.",
-            "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
-        },
-        "time": "2020-11-10T11:24:50+00:00",
-        "type": "library",
-        "extra": {
-            "scripts-descriptions": {
-                "ci": "Run tests before CI",
-                "phpcs": "Checks coding styles (PSR2) of file/dir, which you must supply. To check all, supply 'src'",
-                "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
-                "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard",
-                "cs-fix": "Fix the coding style of a PHP file or directory, which you must specify.",
-                "test": "Launches the preconfigured PHPUnit"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "WebPConvert\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Bjørn Rosell",
-                "homepage": "https://www.bitwise-it.dk/contact",
-                "role": "Project Author"
+{
+    "packages": [
+        {
+            "name": "composer/installers",
+            "version": "v1.11.0",
+            "version_normalized": "1.11.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/installers.git",
+                "reference": "ae03311f45dfe194412081526be2e003960df74b"
             },
-            {
-                "name": "Martin Folkers",
-                "homepage": "https://twobrain.io",
-                "role": "Collaborator"
-            }
-        ],
-        "description": "Convert JPEG & PNG to WebP with PHP",
-        "keywords": [
-            "Webp",
-            "cwebp",
-            "gd",
-            "image conversion",
-            "images",
-            "imagick",
-            "jpg",
-            "jpg2webp",
-            "png",
-            "png2webp"
-        ]
-    },
-    {
-        "name": "rosell-dk/webp-convert-cloud-service",
-        "version": "2.0.1",
-        "version_normalized": "2.0.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/rosell-dk/webp-convert-cloud-service.git",
-            "reference": "703c2f1c76d30468ee3977170bfa3da138d8c4ad"
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/installers/zipball/ae03311f45dfe194412081526be2e003960df74b",
+                "reference": "ae03311f45dfe194412081526be2e003960df74b",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0 || ^2.0"
+            },
+            "replace": {
+                "roundcube/plugin-installer": "*",
+                "shama/baton": "*"
+            },
+            "require-dev": {
+                "composer/composer": "1.6.* || ^2.0",
+                "composer/semver": "^1 || ^3",
+                "phpstan/phpstan": "^0.12.55",
+                "phpstan/phpstan-phpunit": "^0.12.16",
+                "symfony/phpunit-bridge": "^4.2 || ^5",
+                "symfony/process": "^2.3"
+            },
+            "time": "2021-04-28T06:42:17+00:00",
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Composer\\Installers\\Plugin",
+                "branch-alias": {
+                    "dev-main": "1.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Composer\\Installers\\": "src/Composer/Installers"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kyle Robinson Young",
+                    "email": "kyle@dontkry.com",
+                    "homepage": "https://github.com/shama"
+                }
+            ],
+            "description": "A multi-framework Composer library installer",
+            "homepage": "https://composer.github.io/installers/",
+            "keywords": [
+                "Craft",
+                "Dolibarr",
+                "Eliasis",
+                "Hurad",
+                "ImageCMS",
+                "Kanboard",
+                "Lan Management System",
+                "MODX Evo",
+                "MantisBT",
+                "Mautic",
+                "Maya",
+                "OXID",
+                "Plentymarkets",
+                "Porto",
+                "RadPHP",
+                "SMF",
+                "Starbug",
+                "Thelia",
+                "Whmcs",
+                "WolfCMS",
+                "agl",
+                "aimeos",
+                "annotatecms",
+                "attogram",
+                "bitrix",
+                "cakephp",
+                "chef",
+                "cockpit",
+                "codeigniter",
+                "concrete5",
+                "croogo",
+                "dokuwiki",
+                "drupal",
+                "eZ Platform",
+                "elgg",
+                "expressionengine",
+                "fuelphp",
+                "grav",
+                "installer",
+                "itop",
+                "joomla",
+                "known",
+                "kohana",
+                "laravel",
+                "lavalite",
+                "lithium",
+                "magento",
+                "majima",
+                "mako",
+                "mediawiki",
+                "miaoxing",
+                "modulework",
+                "modx",
+                "moodle",
+                "osclass",
+                "phpbb",
+                "piwik",
+                "ppi",
+                "processwire",
+                "puppet",
+                "pxcms",
+                "reindex",
+                "roundcube",
+                "shopware",
+                "silverstripe",
+                "sydes",
+                "sylius",
+                "symfony",
+                "tastyigniter",
+                "typo3",
+                "wordpress",
+                "yawik",
+                "zend",
+                "zikula"
+            ],
+            "support": {
+                "issues": "https://github.com/composer/installers/issues",
+                "source": "https://github.com/composer/installers/tree/v1.11.0"
+            },
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/composer",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "./installers"
         },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/rosell-dk/webp-convert-cloud-service/zipball/703c2f1c76d30468ee3977170bfa3da138d8c4ad",
-            "reference": "703c2f1c76d30468ee3977170bfa3da138d8c4ad",
-            "shasum": ""
+        {
+            "name": "onnov/detect-encoding",
+            "version": "v1.2.0",
+            "version_normalized": "1.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/onnov/detect-encoding.git",
+                "reference": "c88cea4f0c83d7f7e0675f2801e0995f328de1ce"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/onnov/detect-encoding/zipball/c88cea4f0c83d7f7e0675f2801e0995f328de1ce",
+                "reference": "c88cea4f0c83d7f7e0675f2801e0995f328de1ce",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "infection/infection": "*",
+                "phpbench/phpbench": "*",
+                "phpcompatibility/php-compatibility": "*",
+                "phpmd/phpmd": "*",
+                "phpstan/phpstan": "*",
+                "phpstan/phpstan-strict-rules": "*",
+                "phpunit/phpunit": "*",
+                "roave/backward-compatibility-check": "*",
+                "squizlabs/php_codesniffer": "*"
+            },
+            "time": "2019-09-20T16:11:46+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Onnov\\DetectEncoding\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "onnov",
+                    "email": "oblnn@yandex.ru"
+                }
+            ],
+            "description": "Text encoding definition class instead of mb_detect_encoding. Defines: utf-8, windows-1251, koi8-r, iso-8859-5, ibm866, .....",
+            "homepage": "https://github.com/onnov/detect-encoding",
+            "keywords": [
+                "cyrillic",
+                "encoding",
+                "ibm866",
+                "iconv",
+                "iso-8859-5",
+                "koi8-r",
+                "mb_detect_encoding",
+                "utf-8",
+                "windows-1251"
+            ],
+            "install-path": "../onnov/detect-encoding"
         },
-        "require": {
-            "rosell-dk/webp-convert": "^2.0.0"
+        {
+            "name": "rosell-dk/dom-util-for-webp",
+            "version": "0.4.0",
+            "version_normalized": "0.4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rosell-dk/dom-util-for-webp.git",
+                "reference": "5928aecf64d59124b341dce23ce8ecf48a6eded6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/5928aecf64d59124b341dce23ce8ecf48a6eded6",
+                "reference": "5928aecf64d59124b341dce23ce8ecf48a6eded6",
+                "shasum": ""
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.11",
+                "phpunit/phpunit": "5.7.27",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "suggest": {
+                "phpstan/phpstan": "Suggested for dev, in order to analyse code before committing"
+            },
+            "time": "2020-02-02T11:16:27+00:00",
+            "type": "library",
+            "extra": {
+                "scripts-descriptions": {
+                    "ci": "Run tests before CI",
+                    "phpcs": "Checks coding styles (PSR2) of file/dir, which you must supply. To check all, supply 'src'",
+                    "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
+                    "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard",
+                    "cs-fix": "Fix the coding style of a PHP file or directory, which you must specify.",
+                    "test": "Launches the preconfigured PHPUnit"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DOMUtilForWebP\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bjørn Rosell",
+                    "homepage": "https://www.bitwise-it.dk/contact",
+                    "role": "Project Author"
+                }
+            ],
+            "description": "Replace image URLs found in HTML",
+            "keywords": [
+                "Webp",
+                "html",
+                "images",
+                "replace"
+            ],
+            "install-path": "../rosell-dk/dom-util-for-webp"
         },
-        "require-dev": {
-            "friendsofphp/php-cs-fixer": "^2.11",
-            "phpunit/phpunit": "5.7.27",
-            "squizlabs/php_codesniffer": "3.*"
+        {
+            "name": "rosell-dk/htaccess-capability-tester",
+            "version": "0.9",
+            "version_normalized": "0.9.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rosell-dk/htaccess-capability-tester.git",
+                "reference": "2eb2cf38a9f42fc3aa647d6e9c896e124bfebf4c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rosell-dk/htaccess-capability-tester/zipball/2eb2cf38a9f42fc3aa647d6e9c896e124bfebf4c",
+                "reference": "2eb2cf38a9f42fc3aa647d6e9c896e124bfebf4c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 | ^7.0"
+            },
+            "require-dev": {
+                "phpunit/php-code-coverage": "dev-4.0-dev as 4.0.4",
+                "phpunit/phpunit": "^5.7",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "suggest": {
+                "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
+            },
+            "time": "2020-11-04T10:29:38+00:00",
+            "type": "library",
+            "extra": {
+                "scripts-descriptions": {
+                    "ci": "Run tests before CI",
+                    "phpcs": "Checks coding styles (PSR2) of file/dir, which you must supply. To check all, supply 'src'",
+                    "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
+                    "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard",
+                    "cs-fix": "Fix the coding style of a PHP file or directory, which you must specify.",
+                    "test": "Launches the preconfigured PHPUnit"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "HtaccessCapabilityTester\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bjørn Rosell",
+                    "homepage": "https://www.bitwise-it.dk/contact",
+                    "role": "Project Author"
+                }
+            ],
+            "description": "Test the capabilities of .htaccess files on the server using live tests",
+            "keywords": [
+                ".htaccess",
+                "apache",
+                "litespeed"
+            ],
+            "install-path": "../rosell-dk/htaccess-capability-tester"
         },
-        "time": "2019-06-30T08:28:35+00:00",
-        "type": "library",
-        "extra": {
-            "scripts-descriptions": {
-                "ci": "Run tests before CI",
-                "phpcs": "Checks coding styles (PSR2) of file/dir, which you must supply. To check all, supply 'src'",
-                "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
-                "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard",
-                "cs-fix": "Fix the coding style of a PHP file or directory, which you must specify.",
-                "test": "Launches the preconfigured PHPUnit"
-            }
+        {
+            "name": "rosell-dk/image-mime-type-guesser",
+            "version": "0.3",
+            "version_normalized": "0.3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rosell-dk/image-mime-type-guesser.git",
+                "reference": "204fd61ca81e3b0ba46c6165dab8f74816b1fe99"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rosell-dk/image-mime-type-guesser/zipball/204fd61ca81e3b0ba46c6165dab8f74816b1fe99",
+                "reference": "204fd61ca81e3b0ba46c6165dab8f74816b1fe99",
+                "shasum": ""
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.11",
+                "phpunit/phpunit": "^5.7.27",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "time": "2019-03-29T09:33:28+00:00",
+            "type": "library",
+            "extra": {
+                "scripts-descriptions": {
+                    "ci": "Run tests before CI",
+                    "phpcs": "Checks coding styles (PSR2) of file/dir, which you must supply. To check all, supply 'src'",
+                    "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
+                    "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard",
+                    "cs-fix": "Fix the coding style of a PHP file or directory, which you must specify.",
+                    "test": "Launches the preconfigured PHPUnit"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "ImageMimeTypeGuesser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bjørn Rosell",
+                    "homepage": "https://www.bitwise-it.dk/contact",
+                    "role": "Project Author"
+                }
+            ],
+            "description": "Guess mime type of images",
+            "keywords": [
+                "image",
+                "images",
+                "mime",
+                "mime type"
+            ],
+            "install-path": "../rosell-dk/image-mime-type-guesser"
         },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "WebPConvertCloudService\\": "src/"
-            }
+        {
+            "name": "rosell-dk/webp-convert",
+            "version": "2.6.0",
+            "version_normalized": "2.6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rosell-dk/webp-convert.git",
+                "reference": "ed230afe56d3157dc402c33585e3ab7f15c7ac80"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/ed230afe56d3157dc402c33585e3ab7f15c7ac80",
+                "reference": "ed230afe56d3157dc402c33585e3ab7f15c7ac80",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 | ^7.0 | ^8.0",
+                "rosell-dk/image-mime-type-guesser": "^0.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.11",
+                "phpunit/phpunit": "^9.3",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "suggest": {
+                "ext-gd": "to use GD extension for converting. Note: Gd must be compiled with webp support",
+                "ext-imagick": "to use Imagick extension for converting. Note: Gd must be compiled with webp support",
+                "ext-vips": "to use Vips extension for converting.",
+                "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
+            },
+            "time": "2021-05-20T10:56:47+00:00",
+            "type": "library",
+            "extra": {
+                "scripts-descriptions": {
+                    "ci": "Run tests before CI",
+                    "phpcs": "Checks coding styles (PSR2) of file/dir, which you must supply. To check all, supply 'src'",
+                    "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
+                    "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard",
+                    "cs-fix": "Fix the coding style of a PHP file or directory, which you must specify.",
+                    "test": "Launches the preconfigured PHPUnit"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "WebPConvert\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bjørn Rosell",
+                    "homepage": "https://www.bitwise-it.dk/contact",
+                    "role": "Project Author"
+                },
+                {
+                    "name": "Martin Folkers",
+                    "homepage": "https://twobrain.io",
+                    "role": "Collaborator"
+                }
+            ],
+            "description": "Convert JPEG & PNG to WebP with PHP",
+            "keywords": [
+                "Webp",
+                "cwebp",
+                "gd",
+                "image conversion",
+                "images",
+                "imagick",
+                "jpg",
+                "jpg2webp",
+                "png",
+                "png2webp"
+            ],
+            "support": {
+                "issues": "https://github.com/rosell-dk/webp-convert/issues",
+                "source": "https://github.com/rosell-dk/webp-convert/tree/2.6.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/rosell-dk",
+                    "type": "github"
+                },
+                {
+                    "url": "https://ko-fi.com/rosell",
+                    "type": "ko_fi"
+                }
+            ],
+            "install-path": "../rosell-dk/webp-convert"
         },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Bjørn Rosell",
-                "role": "Project Author",
-                "homepage": "https://www.bitwise-it.dk/contact"
-            }
-        ],
-        "description": "Cloud service for converting JPEG & PNG to WebP",
-        "keywords": [
-            "Webp",
-            "cwebp",
-            "gd",
-            "image conversion",
-            "images",
-            "imagick",
-            "jpg",
-            "jpg2webp",
-            "png",
-            "png2webp"
-        ]
-    }
-]
+        {
+            "name": "rosell-dk/webp-convert-cloud-service",
+            "version": "2.0.1",
+            "version_normalized": "2.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rosell-dk/webp-convert-cloud-service.git",
+                "reference": "703c2f1c76d30468ee3977170bfa3da138d8c4ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rosell-dk/webp-convert-cloud-service/zipball/703c2f1c76d30468ee3977170bfa3da138d8c4ad",
+                "reference": "703c2f1c76d30468ee3977170bfa3da138d8c4ad",
+                "shasum": ""
+            },
+            "require": {
+                "rosell-dk/webp-convert": "^2.0.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.11",
+                "phpunit/phpunit": "5.7.27",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "time": "2019-06-30T08:28:35+00:00",
+            "type": "library",
+            "extra": {
+                "scripts-descriptions": {
+                    "ci": "Run tests before CI",
+                    "phpcs": "Checks coding styles (PSR2) of file/dir, which you must supply. To check all, supply 'src'",
+                    "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
+                    "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard",
+                    "cs-fix": "Fix the coding style of a PHP file or directory, which you must specify.",
+                    "test": "Launches the preconfigured PHPUnit"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "WebPConvertCloudService\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bjørn Rosell",
+                    "role": "Project Author",
+                    "homepage": "https://www.bitwise-it.dk/contact"
+                }
+            ],
+            "description": "Cloud service for converting JPEG & PNG to WebP",
+            "keywords": [
+                "Webp",
+                "cwebp",
+                "gd",
+                "image conversion",
+                "images",
+                "imagick",
+                "jpg",
+                "jpg2webp",
+                "png",
+                "png2webp"
+            ],
+            "install-path": "../rosell-dk/webp-convert-cloud-service"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

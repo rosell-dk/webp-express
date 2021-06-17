@@ -27,6 +27,14 @@ class Ewww extends AbstractConverter
     /** @var array  Array of invalid or exceeded api keys discovered during conversions (during the request)  */
     public static $nonFunctionalApiKeysDiscoveredDuringConversion;
 
+    public function getUniqueOptions($imageType)
+    {
+        return [
+            new SensitiveStringOption('api-key', ''),
+            new BooleanOption('check-key-status-before-converting', true)
+        ];
+    }
+
     protected function getUnsupportedDefaultOptions()
     {
         return [
@@ -37,19 +45,10 @@ class Ewww extends AbstractConverter
             'method',
             'near-lossless',
             'preset',
+            'sharp-yuv',
             'size-in-percentage',
             'use-nice'
         ];
-    }
-
-    protected function createOptions()
-    {
-        parent::createOptions();
-
-        $this->options2->addOptions(
-            new SensitiveStringOption('api-key', ''),
-            new BooleanOption('check-key-status-before-converting', true)
-        );
     }
 
     /**

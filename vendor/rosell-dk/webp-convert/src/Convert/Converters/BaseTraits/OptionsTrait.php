@@ -34,7 +34,7 @@ trait OptionsTrait
     abstract public function logLn($msg, $style = '');
     abstract protected function getMimeTypeOfSource();
 
-    /** @var array  Provided conversion options */
+    /** @var array  Provided conversion options (array of simple objects)*/
     public $providedOptions;
 
     /** @var array  Calculated conversion options (merge of default options and provided options)*/
@@ -43,6 +43,60 @@ trait OptionsTrait
     /** @var Options  */
     protected $options2;
 
+    /**
+     *  Get the "general" options (options that are standard in the meaning that they
+     *  are generally available (unless specifically marked as unsupported by a given converter)
+     *
+     *  @param   string   $imageType   (png | jpeg)   The image type - determines the defaults
+     *
+     *  @return  array  Array of options
+     */
+    public function getGeneralOptions($imageType)
+    {
+        $isPng = ($imageType == 'png');
+
+        $defaultQualityOption = new IntegerOption('default-quality', ($isPng ? 85 : 75), 0, 100);
+        $defaultQualityOption->markDeprecated();
+
+        $maxQualityOption = new IntegerOption('max-quality', 85, 0, 100);
+        $maxQualityOption->markDeprecated();
+
+        return [
+            new IntegerOption('alpha-quality', 85, 0, 100),
+            new BooleanOption('auto-limit', true),
+            //new IntegerOption('auto-limit-adjustment', 5, -100, 100),
+            new BooleanOption('auto-filter', false),
+            $defaultQualityOption,
+            new StringOption('encoding', 'auto', ['lossy', 'lossless', 'auto']),
+            new BooleanOption('low-memory', false),
+            new BooleanOption('log-call-arguments', false),
+            $maxQualityOption,
+            new MetadataOption('metadata', 'none'),
+            new IntegerOption('method', 6, 0, 6),
+            new IntegerOption('near-lossless', 60, 0, 100),
+            new StringOption('preset', 'none', ['none', 'default', 'photo', 'picture', 'drawing', 'icon', 'text']),
+            new QualityOption('quality', ($isPng ? 85 : 75)),
+            new IntegerOrNullOption('size-in-percentage', null, 0, 100),
+            new BooleanOption('sharp-yuv', true),
+            new BooleanOption('skip', false),
+            new BooleanOption('use-nice', false),
+            new ArrayOption('jpeg', []),
+            new ArrayOption('png', [])
+        ];
+    }
+
+    /**
+     *  Get the unique options for a converter
+     *
+     *  @param   string   $imageType   (png | jpeg)   The image type - determines the defaults
+     *
+     *  @return  array  Array of options
+     */
+    public function getUniqueOptions($imageType)
+    {
+        return [];
+    }
+
 
     /**
      *  Create options.
@@ -50,32 +104,15 @@ trait OptionsTrait
      *  The options created here will be available to all converters.
      *  Individual converters may add options by overriding this method.
      *
+     *  @param   string   $imageType   (png | jpeg)   The image type - determines the defaults
+     *
      *  @return void
      */
-    protected function createOptions()
+    protected function createOptions($imageType = 'png')
     {
-        $isPng = ($this->getMimeTypeOfSource() == 'image/png');
-
         $this->options2 = new Options();
-        $this->options2->addOptions(
-            new IntegerOption('alpha-quality', 85, 0, 100),
-            new BooleanOption('auto-filter', false),
-            new IntegerOption('default-quality', ($isPng ? 85 : 75), 0, 100),
-            new StringOption('encoding', 'auto', ['lossy', 'lossless', 'auto']),
-            new BooleanOption('low-memory', false),
-            new BooleanOption('log-call-arguments', false),
-            new IntegerOption('max-quality', 85, 0, 100),
-            new MetadataOption('metadata', 'none'),
-            new IntegerOption('method', 6, 0, 6),
-            new IntegerOption('near-lossless', 60, 0, 100),
-            new StringOption('preset', 'none', ['none', 'default', 'photo', 'picture', 'drawing', 'icon', 'text']),
-            new QualityOption('quality', ($isPng ? 85 : 'auto')),
-            new IntegerOrNullOption('size-in-percentage', null, 0, 100),
-            new BooleanOption('skip', false),
-            new BooleanOption('use-nice', false),
-            new ArrayOption('jpeg', []),
-            new ArrayOption('png', [])
-        );
+        $this->options2->addOptions(... $this->getGeneralOptions($imageType));
+        $this->options2->addOptions(... $this->getUniqueOptions($imageType));
     }
 
     /**
@@ -91,7 +128,8 @@ trait OptionsTrait
      */
     public function setProvidedOptions($providedOptions = [])
     {
-        $this->createOptions();
+        $imageType = ($this->getMimeTypeOfSource() == 'image/png' ? 'png' : 'jpeg');
+        $this->createOptions($imageType);
 
         $this->providedOptions = $providedOptions;
 
@@ -269,4 +307,14 @@ trait OptionsTrait
     {
         return [];
     }
+
+/*
+    public static function getUniqueOptions($imageType = 'png')
+    {
+        $options = new Options();
+//        $options->addOptions(... self::getGeneralOptions($imageType));
+//        $options->addOptions(... self::getUniqueOptions($imageType));
+
+        return $options->getDefinitions();
+    }*/
 }

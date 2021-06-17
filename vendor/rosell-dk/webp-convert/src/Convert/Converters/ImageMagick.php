@@ -26,7 +26,6 @@ class ImageMagick extends AbstractConverter
     {
         return [
             'near-lossless',
-            'preset',
             'size-in-percentage',
         ];
     }
@@ -113,6 +112,9 @@ class ImageMagick extends AbstractConverter
         // PS: Available webp options for imagemagick are documented here:
         // https://imagemagick.org/script/webp.php
 
+        // We should perhaps implement low-memory. Its already in cwebp, it
+        // could perhaps be promoted to a general option
+
         $commandArguments = [];
         if ($this->isQualityDetectionRequiredButFailing()) {
             // quality:auto was specified, but could not be determined.
@@ -121,26 +123,48 @@ class ImageMagick extends AbstractConverter
         } else {
             $commandArguments[] = '-quality ' . escapeshellarg($this->getCalculatedQuality());
         }
-        if ($this->options['encoding'] == 'lossless') {
+
+        $options = $this->options;
+
+        if (!is_null($options['preset'])) {
+            if ($options['preset'] != 'none') {
+                $imageHint = $options['preset'];
+                switch ($imageHint) {
+                    case 'drawing':
+                    case 'icon':
+                    case 'text':
+                        $imageHint = 'graph';
+                        $this->logLn(
+                            'The "preset" value was mapped to "graph" because imagemagick does not support "drawing",' .
+                            ' "icon" and "text", but grouped these into one option: "graph".'
+                        );
+                }
+                $commandArguments[] = '-define webp:image-hint=' . escapeshellarg($imageHint);
+            }
+        }
+        if ($options['encoding'] == 'lossless') {
             $commandArguments[] = '-define webp:lossless=true';
         }
-        if ($this->options['low-memory']) {
+        if ($options['low-memory']) {
             $commandArguments[] = '-define webp:low-memory=true';
         }
-        if ($this->options['auto-filter'] === true) {
+        if ($options['auto-filter'] === true) {
             $commandArguments[] = '-define webp:auto-filter=true';
         }
-        if ($this->options['metadata'] == 'none') {
+        if ($options['metadata'] == 'none') {
             $commandArguments[] = '-strip';
         }
-        if ($this->options['alpha-quality'] !== 100) {
-            $commandArguments[] = '-define webp:alpha-quality=' . strval($this->options['alpha-quality']);
+        if ($options['alpha-quality'] !== 100) {
+            $commandArguments[] = '-define webp:alpha-quality=' . strval($options['alpha-quality']);
+        }
+        if ($options['sharp-yuv'] === true) {
+            $commandArguments[] = '-define webp:use-sharp-yuv=true';
         }
 
         // Unfortunately, near-lossless does not seem to be supported.
         // it does have a "preprocessing" option, which may be doing something similar
 
-        $commandArguments[] = '-define webp:method=' . $this->options['method'];
+        $commandArguments[] = '-define webp:method=' . $options['method'];
 
         $commandArguments[] = escapeshellarg($this->source);
         $commandArguments[] = escapeshellarg('webp:' . $this->destination);

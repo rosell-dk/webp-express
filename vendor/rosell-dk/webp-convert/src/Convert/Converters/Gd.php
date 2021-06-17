@@ -32,6 +32,7 @@ class Gd extends AbstractConverter
             'method',
             'near-lossless',
             'preset',
+            'sharp-yuv',
             'size-in-percentage',
             'use-nice'
         ];
@@ -106,7 +107,7 @@ class Gd extends AbstractConverter
      * So, if the image is already rgb, nothing will be done, and true will be returned
      * PS: Got the workaround here: https://secure.php.net/manual/en/function.imagepalettetotruecolor.php
      *
-     * @param  resource  $image
+     * @param  resource|\GdImage  $image
      * @return boolean  TRUE if the convertion was complete, or if the source image already is a true color image,
      *          otherwise FALSE is returned.
      */
@@ -166,7 +167,7 @@ class Gd extends AbstractConverter
      * Try to convert image pallette to true color. If imagepalettetotruecolor() exists, that is used (available from
      * PHP >= 5.5.0). Otherwise using workaround found on the net.
      *
-     * @param  resource  $image
+     * @param  resource|\GdImage  $image
      * @return boolean  TRUE if the convertion was complete, or if the source image already is a true color image,
      *          otherwise FALSE is returned.
      */
@@ -185,7 +186,7 @@ class Gd extends AbstractConverter
      *
      * @throws  InvalidInputException  if mime type is unsupported or could not be detected
      * @throws  ConversionFailedException  if imagecreatefrompng or imagecreatefromjpeg fails
-     * @return  resource  $image  The created image
+     * @return  resource|\GdImage  $image  The created image
      */
     private function createImageResource()
     {
@@ -217,7 +218,7 @@ class Gd extends AbstractConverter
     /**
      * Try to make image resource true color if it is not already.
      *
-     * @param  resource  $image  The image to work on
+     * @param  resource|\GdImage  $image  The image to work on
      * @return void
      */
     protected function tryToMakeTrueColorIfNot(&$image)
@@ -249,7 +250,7 @@ class Gd extends AbstractConverter
 
     /**
      *
-     * @param  resource  $image
+     * @param  resource|\GdImage  $image
      * @return boolean  true if alpha blending was set successfully, false otherwise
      */
     protected function trySettingAlphaBlending($image)
@@ -297,7 +298,7 @@ class Gd extends AbstractConverter
 
     /**
      *
-     * @param  resource  $image
+     * @param  resource|\GdImage  $image
      * @return void
      */
     protected function destroyAndRemove($image)
@@ -310,7 +311,7 @@ class Gd extends AbstractConverter
 
     /**
      *
-     * @param  resource  $image
+     * @param  resource|\GdImage  $image
      * @return void
      */
     protected function tryConverting($image)
