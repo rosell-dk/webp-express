@@ -26,6 +26,10 @@ class BulkConvert
         ];
     }
 
+    /**
+     *  Get grouped list of files. They are grouped by image roots.
+     *
+     */
     public static function getList($config, $listOptions = null)
     {
 
