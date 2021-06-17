@@ -8,36 +8,38 @@ class CLI extends \WP_CLI_Command
     private static function printableSize($bytes) {
         return ($bytes < 10000) ? $bytes . " bytes" : round($bytes / 1024) . ' kb';
     }
+
     /**
-     *  Convert images to webp
+     * Convert images to webp
      *
-     *  ## OPTIONS
-     *  [<location>]
-     *  : Limit which folders to process to a single location. Must be uploads | themes | plugins | wp-content | index
+     * ## OPTIONS
+     * [<location>]
+     * : Limit which folders to process to a single location. Ie "uploads/2021". The first part is the
+     *   "image root", which must be "uploads", "themes", "plugins", "wp-content" or "index"
      *
-     *  [--reconvert]
-     *  : Even convert images that are already converted (new conversions replaces the old conversions)
+     * [--reconvert]
+     * : Even convert images that are already converted (new conversions replaces the old conversions)
      *
-     *  [--only-png]
-     *  : Only convert PNG images
+     * [--only-png]
+     * : Only convert PNG images
      *
-     *  [--only-jpeg]
-     *  : Only convert jpeg images
+     * [--only-jpeg]
+     * : Only convert jpeg images
      *
-     *  [--quality]
-     *  : Override quality with specified (0-100)
+     * [--quality=]
+     * : Override quality with specified (0-100)
      *
-     *  [--near-lossless]
-     *  : Override near-lossless quality with specified (0-100)
+     * [--near-lossless]
+     * : Override near-lossless quality with specified (0-100)
      *
-     *  [--alpha-quality]
-     *  : Override alpha-quality quality with specified (0-100)
+     * [--alpha-quality]
+     * : Override alpha-quality quality with specified (0-100)
      *
-     *  [--encoding]
-     *  : Override encoding quality with specified ("auto", "lossy" or "lossless")
+     * [--encoding]
+     * : Override encoding quality with specified ("auto", "lossy" or "lossless")
      *
-     *  [--converter=<converter>]
-     *  : Specify the converter to use (default is to use the stack). Valid options: cwebp | vips | ewww | imagemagick | imagick | gmagick | graphicsmagick | ffmpeg | gd | wpc | ewww
+     * [--converter=<converter>]
+     * : Specify the converter to use (default is to use the stack). Valid options: cwebp | vips | ewww | imagemagick | imagick | gmagick | graphicsmagick | ffmpeg | gd | wpc | ewww
      */
     public function convert($args, $assoc_args)
     {
@@ -106,23 +108,47 @@ class CLI extends \WP_CLI_Command
         //print_r($config);
         //\WP_CLI::log($args[0]);
         if (!isset($args[0])) {
-          $arr = BulkConvert::getList($config, $listOptions);
-          foreach($arr as $group){
+          $groups = BulkConvert::getList($config, $listOptions);
+          foreach($groups as $group){
               \WP_CLI::log($group['groupName'] . ' contains ' . count($group['files']) . ' ' .
               (isset($assoc_args['reconvert']) ? '' : 'unconverted ') .
               'files');
           }
           \WP_CLI::log('');
         } else {
-          if (!in_array($args[0], Paths::getImageRootIds())) {
+          $location = $args[0];
+          if (strpos($location, '/') === 0) {
+              $location = substr($location, 1);
+          }
+          if (strpos($location, '/') === false) {
+              $rootId = $location;
+              $path = '.';
+          } else {
+              list($rootId, $path) = explode('/', $location, 2);
+          }
+
+          if (!in_array($rootId, Paths::getImageRootIds())) {
               \WP_CLI::error(
-                '"' . $args[0] . '" is not a valid location. ' .
-                'Valid locations are: ' . implode(', ', Paths::getImageRootIds())
+                '"' . $args[0] . '" is not a valid image root. ' .
+                'Valid roots are: ' . implode(', ', Paths::getImageRootIds())
               );
           }
-          $config['scope'] = [$args[0]];
-          $arr = BulkConvert::getList($config, $listOptions);
-          if (count($arr[0]['files']) == 0) {
+          //$config['scope'] = [$args[0]];
+          $root = Paths::getAbsDirById($rootId) . '/' . $path;
+          if (!file_exists($root)) {
+            \WP_CLI::error(
+              '"' . $args[0] . '" does not exist. '
+            );
+          }
+          $listOptions['root'] = $root;
+          $groups = [
+              [
+                  'groupName' => $args[0],
+                  'root' => $root,
+                  'files' => BulkConvert::getListRecursively('.', $listOptions)
+              ]
+          ];
+          if (count($groups[0]['files']) == 0) {
             \WP_CLI::log('Nothing to convert in ' . $args[0]);
           }
         }
@@ -130,7 +156,7 @@ class CLI extends \WP_CLI_Command
         $orgTotalFilesize = 0;
         $webpTotalFilesize = 0;
 
-        foreach($arr as $group){
+        foreach($groups as $group){
             if (count($group['files']) == 0) continue;
 
             \WP_CLI::log('Converting ' . count($group['files']) . ' files in ' . $group['groupName']);

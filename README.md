@@ -136,6 +136,7 @@ A few examples:
 `wp webp-express convert`: Creates webp images for all unconverted images
 `wp webp-express convert --reconvert`: Also convert images that are already converted
 `wp webp-express convert themes`: Only images in the themes folder
+`wp webp-express convert uploads/2021`: Only images in the "2021" folder inside the uploads folder
 `wp webp-express convert --only-png`: Only the PNG images
 `wp webp-express convert --quality=50`: Use quality 50 (instead of what was entered in settings screen)
 
