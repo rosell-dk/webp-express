@@ -128,7 +128,7 @@ class CLI extends \WP_CLI_Command
                 'Valid roots are: ' . implode(', ', Paths::getImageRootIds())
               );
           }
-          
+
           $root = Paths::getAbsDirById($rootId) . '/' . $path;
           if (!file_exists($root)) {
             \WP_CLI::error(
@@ -153,20 +153,22 @@ class CLI extends \WP_CLI_Command
 
         $converter = null;
         $convertOptions = null;
+
         if (isset($assoc_args['converter'])) {
+
             $converter = $assoc_args['converter'];
             $convertOptions = Config::generateWodOptionsFromConfigObj($config)['webp-convert']['convert'];
 
             // find the converter
-            $optionsForThisConverter;
+            $optionsForThisConverter = null;
             foreach ($convertOptions['converters'] as $c) {
                 if ($c['converter'] == $converter) {
-                    $optionsForThisConverter = $c['options'];
+                    $optionsForThisConverter = (isset($c['options']) ? $c['options'] : []);
                     break;
                 }
             }
-            if ($optionsForThisConverter) {
-                // error
+            if (!is_array($optionsForThisConverter)) {
+                \WP_CLI::error('Failed handling options');
             }
 
             $convertOptions = array_merge($convertOptions, $optionsForThisConverter);
