@@ -102,10 +102,6 @@ class CLI extends \WP_CLI_Command
             $listOptions['filter']['image-types'] = 1;
         }
 
-        //print_r($listOptions);
-
-        //print_r($config);
-        //\WP_CLI::log($args[0]);
         if (!isset($args[0])) {
           $groups = BulkConvert::getList($config, $listOptions);
           foreach($groups as $group){
@@ -132,7 +128,7 @@ class CLI extends \WP_CLI_Command
                 'Valid roots are: ' . implode(', ', Paths::getImageRootIds())
               );
           }
-          //$config['scope'] = [$args[0]];
+          
           $root = Paths::getAbsDirById($rootId) . '/' . $path;
           if (!file_exists($root)) {
             \WP_CLI::error(
