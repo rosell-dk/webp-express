@@ -47,31 +47,30 @@ class CLI extends \WP_CLI_Command
         $override = [];
 
         if (isset($assoc_args['quality'])) {
-          $override['max-quality'] = intval($assoc_args['quality']);
-          $override['png-quality'] = intval($assoc_args['quality']);
+            $override['max-quality'] = intval($assoc_args['quality']);
+            $override['png-quality'] = intval($assoc_args['quality']);
         }
         if (isset($assoc_args['near-lossless'])) {
-          $override['png-near-lossless'] = intval($assoc_args['near-lossless']);
-          $override['jpeg-near-lossless'] = intval($assoc_args['near-lossless']);
+            $override['png-near-lossless'] = intval($assoc_args['near-lossless']);
+            $override['jpeg-near-lossless'] = intval($assoc_args['near-lossless']);
         }
         if (isset($assoc_args['alpha-quality'])) {
-          $override['alpha-quality'] = intval($assoc_args['alpha-quality']);
+            $override['alpha-quality'] = intval($assoc_args['alpha-quality']);
         }
         if (isset($assoc_args['encoding'])) {
-          if (!in_array($assoc_args['encoding'], ['auto', 'lossy', 'lossless'])) {
-              \WP_CLI::error('encoding must be auto, lossy or lossless');
-          }
-          $override['png-encoding'] = $assoc_args['encoding'];
-          $override['jpeg-encoding'] = $assoc_args['encoding'];
+            if (!in_array($assoc_args['encoding'], ['auto', 'lossy', 'lossless'])) {
+                \WP_CLI::error('encoding must be auto, lossy or lossless');
+            }
+            $override['png-encoding'] = $assoc_args['encoding'];
+            $override['jpeg-encoding'] = $assoc_args['encoding'];
         }
         if (isset($assoc_args['converter'])) {
-          $filteredConverters = [];
-          foreach ($config['converters'] as $converter) {
-            if ($converter['converter'] == $assoc_args['converter']) {
-              $filteredConverters[] = $converter;
+            if (!in_array($assoc_args['converter'], ConvertersHelper::getDefaultConverterNames())) {
+                \WP_CLI::error(
+                  '"' . $assoc_args['converter'] . '" is not a valid converter id. ' .
+                  'Valid converters are: ' . implode(', ', ConvertersHelper::getDefaultConverterNames())
+                );
             }
-          }
-          $config['converters'] = $filteredConverters;
         }
 
         $config = array_merge($config, $override);
@@ -79,15 +78,15 @@ class CLI extends \WP_CLI_Command
         \WP_CLI::log('Converting with the following settings:');
         \WP_CLI::log('- Lossless quality: ' . $config['png-quality'] . ' for PNG, ' . $config['max-quality'] . " for jpeg");
         \WP_CLI::log(
-          '- Near lossless: ' .
-          ($config['png-enable-near-lossless'] ? $config['png-near-lossless'] : 'disabled') . ' for PNG, ' .
-          ($config['jpeg-enable-near-lossless'] ? $config['jpeg-near-lossless'] : 'disabled') . ' for jpeg, '
+            '- Near lossless: ' .
+            ($config['png-enable-near-lossless'] ? $config['png-near-lossless'] : 'disabled') . ' for PNG, ' .
+            ($config['jpeg-enable-near-lossless'] ? $config['jpeg-near-lossless'] : 'disabled') . ' for jpeg, '
         );
         \WP_CLI::log('- Alpha quality: ' . $config['alpha-quality']);
         \WP_CLI::log('- Encoding: ' . $config['png-encoding'] . ' for PNG, ' . $config['jpeg-encoding'] . " for jpeg");
 
         if (count($override) == 0) {
-          \WP_CLI::log('Note that you can override these with --quality=<quality>, etc');
+            \WP_CLI::log('Note that you can override these with --quality=<quality>, etc');
         }
         \WP_CLI::log('');
 
@@ -156,6 +155,28 @@ class CLI extends \WP_CLI_Command
         $orgTotalFilesize = 0;
         $webpTotalFilesize = 0;
 
+        $converter = null;
+        $convertOptions = null;
+        if (isset($assoc_args['converter'])) {
+            $converter = $assoc_args['converter'];
+            $convertOptions = Config::generateWodOptionsFromConfigObj($config)['webp-convert']['convert'];
+
+            // find the converter
+            $optionsForThisConverter;
+            foreach ($convertOptions['converters'] as $c) {
+                if ($c['converter'] == $converter) {
+                    $optionsForThisConverter = $c['options'];
+                    break;
+                }
+            }
+            if ($optionsForThisConverter) {
+                // error
+            }
+
+            $convertOptions = array_merge($convertOptions, $optionsForThisConverter);
+            unset($convertOptions['converters']);
+        }
+
         foreach($groups as $group){
             if (count($group['files']) == 0) continue;
 
@@ -170,7 +191,7 @@ class CLI extends \WP_CLI_Command
                 $path = trailingslashit($group['root']) . $file;
                 \WP_CLI::log('Converting: ' . $file);
 
-                $result = Convert::convertFile($path, $config);
+                $result = Convert::convertFile($path, $config, $convertOptions, $converter);
 
                 if ($result['success']) {
                     $orgSize = $result['filesize-original'];
@@ -196,14 +217,8 @@ class CLI extends \WP_CLI_Command
                     //print_r($result);
                 } else {
                     \WP_CLI::log(
-                        \WP_CLI::colorize("%RFailed%n")
+                        \WP_CLI::colorize("%RConversion failed. " . $result['msg'] . "%n")
                     );
-                    if (isset($assoc_args['converter']) && ($result['msg'] == 'None of the converters in the stack are operational')) {
-                      \WP_CLI::log($assoc_args['converter'] . ' converter is not operational');
-                    } else {
-                      \WP_CLI::log($result['msg']);
-                    }
-
                 }
             }
         }
