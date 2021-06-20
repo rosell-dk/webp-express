@@ -2,7 +2,7 @@
 
 namespace WebPExpress;
 
-use \Onnov\DetectEncoding\EncodingDetector;
+//use \Onnov\DetectEncoding\EncodingDetector;
 
 class BulkConvert
 {
@@ -172,6 +172,10 @@ class BulkConvert
                                 $encodedToUTF8 = false;
 
                                 // First try library that claims to do better than mb_detect_encoding
+                                /*
+                                DISABLED, because Onnov EncodingDetector requires PHP 7.2
+                                https://wordpress.org/support/topic/get-http-error-500-after-new-update-2/                                
+
                                 if (!$encodedToUTF8) {
                                     $detector = new EncodingDetector();
 
@@ -187,15 +191,15 @@ class BulkConvert
                                         }
                                     }
 
-                                    /*
+
                                     try {
-                                        // hm, we avoid iconvXtoEncoding, as it has a bug - it is in the issue queue (#5)
-                                        //$path = $detector->iconvXtoEncoding($path);
+                                        // iconvXtoEncoding should work now hm, issue #5 has been fixed
+                                        $path = $detector->iconvXtoEncoding($path);
                                         $encodedToUTF8 = true;
                                     } catch (\Exception $e) {
 
-                                    }*/
-                                }
+                                    }
+                                }*/
 
                                 // Try mb_detect_encoding
                                 if (!$encodedToUTF8) {
