@@ -14,6 +14,7 @@ It actually seems that the mappings are not needed. It seems to work fine when I
 rm -r vendor/rosell-dk/webp-convert/docs
 rm -r vendor/rosell-dk/webp-convert/src/Helpers/*.txt
 rm vendor/rosell-dk/dom-util-for-webp/phpstan.neon
+rm composer.lock
 rmdir vendor/bin
 ```
 

@@ -32,7 +32,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'acd5aaef5298d5d01345c7fa95723a3f83486412',
+    'reference' => '936c03c18aaf2ecd964705afb55866b9803bc713',
     'name' => 'rosell-dk/webp-express',
     'dev' => true,
   ),
@@ -46,16 +46,6 @@ private static $installed = array (
       array (
       ),
       'reference' => 'ae03311f45dfe194412081526be2e003960df74b',
-      'dev-requirement' => false,
-    ),
-    'onnov/detect-encoding' => 
-    array (
-      'pretty_version' => 'v1.2.0',
-      'version' => '1.2.0.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => 'c88cea4f0c83d7f7e0675f2801e0995f328de1ce',
       'dev-requirement' => false,
     ),
     'rosell-dk/dom-util-for-webp' => 
@@ -115,7 +105,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'acd5aaef5298d5d01345c7fa95723a3f83486412',
+      'reference' => '936c03c18aaf2ecd964705afb55866b9803bc713',
       'dev-requirement' => false,
     ),
     'roundcube/plugin-installer' => 

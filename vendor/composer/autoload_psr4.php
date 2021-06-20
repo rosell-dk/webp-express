@@ -8,7 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'WebPConvert\\' => array($vendorDir . '/rosell-dk/webp-convert/src'),
     'WebPConvertCloudService\\' => array($vendorDir . '/rosell-dk/webp-convert-cloud-service/src'),
-    'Onnov\\DetectEncoding\\' => array($vendorDir . '/onnov/detect-encoding/src'),
     'ImageMimeTypeGuesser\\' => array($vendorDir . '/rosell-dk/image-mime-type-guesser/src'),
     'HtaccessCapabilityTester\\' => array($vendorDir . '/rosell-dk/htaccess-capability-tester/src'),
     'DOMUtilForWebP\\' => array($vendorDir . '/rosell-dk/dom-util-for-webp/src'),

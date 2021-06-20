@@ -143,8 +143,6 @@ return array(
     'ImageMimeTypeGuesser\\Detectors\\Stack' => $vendorDir . '/rosell-dk/image-mime-type-guesser/src/Detectors/Stack.php',
     'ImageMimeTypeGuesser\\GuessFromExtension' => $vendorDir . '/rosell-dk/image-mime-type-guesser/src/GuessFromExtension.php',
     'ImageMimeTypeGuesser\\ImageMimeTypeGuesser' => $vendorDir . '/rosell-dk/image-mime-type-guesser/src/ImageMimeTypeGuesser.php',
-    'Onnov\\DetectEncoding\\CodePage' => $vendorDir . '/onnov/detect-encoding/src/CodePage.php',
-    'Onnov\\DetectEncoding\\EncodingDetector' => $vendorDir . '/onnov/detect-encoding/src/EncodingDetector.php',
     'WebPConvertCloudService\\AccessCheck' => $vendorDir . '/rosell-dk/webp-convert-cloud-service/src/AccessCheck.php',
     'WebPConvertCloudService\\Serve' => $vendorDir . '/rosell-dk/webp-convert-cloud-service/src/Serve.php',
     'WebPConvertCloudService\\WebPConvertCloudService' => $vendorDir . '/rosell-dk/webp-convert-cloud-service/src/WebPConvertCloudService.php',
