@@ -707,6 +707,20 @@ Here are my current plans ahead: 0.21 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.20.1
+*(released: 20 Jun 2021)*
+* Bugfix: Removed composer.lock. It was locked on PHP 7.2, which caused server error on some sites.
+
+## Changes in 0.20.0
+*(released: 17 Jun 2021)*
+* Added WP CLI support. Add "wp webp-express convert" to crontab for nightly conversions of new images! Thanks to Isuru Sampath Ratnayake from Sri Lanka for initializing this.
+* Added "sharp-yuv" (not as option, but as always on). Better YUV->RGB color conversion at almost no price. [Read more here](https://www.ctrl.blog/entry/webp-sharp-yuv.html). Supported by cwebp, vips, gmagick, graphicsmagick, imagick and imagemagick
+* Bumped cwebp binaries to 1.2.0
+* cwebp now only validates hash of supplied precompiled binaries when necessary. This cuts down conversion time.
+* Convert on upload now defaults to false, as it may impact upload experience in themes with many formats.
+* bugfix: Alpha quality was saved incorrectly for PNG. Thanks to Chriss Gibbs from the UK for finding and fixing this.
+* bugfix: wp-debug log could be flooded with "Undefined index: HTTP_ACCEPT". Thanks to @markusreis for finding and fixing this.
+
 ## Changes in 0.19.0
 *(released: 13 Nov 2020)*
 * New convertion method: ffmpeg
