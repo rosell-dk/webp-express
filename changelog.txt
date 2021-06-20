@@ -1,6 +1,6 @@
 = 0.20.1 =
 *(released: 20 Jun 2021)*
-* Bugfix: Removed composer.lock. It was locked on PHP 7.2, which caused server error on some sites.
+* Bugfix: Removed composer.lock. It was locked on PHP 7.2, which caused server error on some sites (only some sites with old php were affected)
 
 = 0.20.0 =
 *(released: 17 Jun 2021)*
