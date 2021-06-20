@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.7
-Stable tag: 0.20.1
+Stable tag: 0.20.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -773,7 +773,7 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 = 0.20.1 =
 *(released: 20 Jun 2021)*
-* Bugfix: Removed composer.lock. It was locked on PHP 7.2, which caused server error on some sites.
+* Bugfix: Removed composer.lock. It was locked on PHP 7.2, which caused server error on some sites (only some sites with old php were affected). Also deleted the library which required PHP 7.2 (onnov/detect-encoding/). The functionality is not really needed.
 
 = 0.20.0 =
 *(released: 17 Jun 2021)*
