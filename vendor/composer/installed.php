@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '936c03c18aaf2ecd964705afb55866b9803bc713',
+    'reference' => '08b11e5a869de211a8f83d4da71c147f692aac05',
     'name' => 'rosell-dk/webp-express',
     'dev' => true,
   ),
@@ -24,12 +24,12 @@
     ),
     'rosell-dk/dom-util-for-webp' => 
     array (
-      'pretty_version' => '0.4.0',
-      'version' => '0.4.0.0',
+      'pretty_version' => '0.4.1',
+      'version' => '0.4.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => '5928aecf64d59124b341dce23ce8ecf48a6eded6',
+      'reference' => 'f06a38fe0950e2ca0e5137a6ecd44e93d9b6b2d9',
       'dev-requirement' => false,
     ),
     'rosell-dk/htaccess-capability-tester' => 
@@ -79,7 +79,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '936c03c18aaf2ecd964705afb55866b9803bc713',
+      'reference' => '08b11e5a869de211a8f83d4da71c147f692aac05',
       'dev-requirement' => false,
     ),
     'roundcube/plugin-installer' => 

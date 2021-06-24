@@ -7,11 +7,11 @@ namespace DOMUtilForWebP;
 /**
  *  Highly configurable class for replacing image URLs in HTML (both src and srcset syntax)
  *
- *  Based on http://simplehtmldom.sourceforge.net/ - a library for easily manipulating HTML by means of a DOM.
+ *  Uses http://simplehtmldom.sourceforge.net/ - a library for easily manipulating HTML by means of a DOM.
  *  The great thing about this library is that it supports working on invalid HTML and it only applies the changes you
- *  make - very gently.
- *
- * TODO: Check out how ewww does it
+ *  make - very gently (however, not as gently as we do in PictureTags).
+ *  PS: The library is a bit old, so perhaps we should look for another.
+ *  ie https://packagist.org/packages/masterminds/html5 ??
  *
  *  Behaviour can be customized by overriding the public methods (replaceUrl, $searchInTags, etc)
  *

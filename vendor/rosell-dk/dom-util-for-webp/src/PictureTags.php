@@ -5,7 +5,21 @@ namespace DOMUtilForWebP;
 //use Sunra\PhpSimple\HtmlDomParser;
 /**
  * Class PictureTags - convert an <img> tag to a <picture> tag and add the webp versions of the images
- * Based this code on code from the ShortPixel plugin, which used code from Responsify WP plugin
+ * Code is based on code from the ShortPixel plugin, which in turn used code from Responsify WP plugin
+ *
+ * It works like this:
+ *
+ * 1. Remove existing <picture> tags and their content - replace with tokens in order to reinsert later
+ * 2. Process <img> tags.
+ *    - The tags are found with regex.
+ *    - The attributes are parsed with DOMDocument if it exists, otherwise with the Simple Html Dom library,
+ *      which is included inside this library
+ * 3. Re-insert the existing <picture> tags
+ *
+ * This procedure is very gentle and needle-like. No need for a complete parse - so invalid HTML is no big issue
+ *
+ * PS:
+ * https://packagist.org/packages/masterminds/html5
  */
 
 use \WebPExpress\AlterHtmlHelper;
@@ -22,7 +36,10 @@ class PictureTags
      */
     public final function __construct()
     {
+      $this->existingPictureTags = [];
     }
+
+    private $existingPictureTags;
 
     public function replaceUrl($url)
     {
@@ -118,7 +135,7 @@ class PictureTags
     }
 
     /**
-     *  Replace <image> tag with <picture> tag.
+     *  Replace <img> tag with <picture> tag.
      */
     private function replaceCallback($match)
     {
@@ -195,10 +212,40 @@ class PictureTags
     /*
      *
      */
+    public function removePictureTagsTemporarily($content)
+    {
+        //print_r($content);
+        $this->existingPictureTags[] = $content[0];
+        return 'PICTURE_TAG_' . (count($this->existingPictureTags) - 1) . '_';
+    }
+
+    /*
+     *
+     */
+    public function insertPictureTagsBack($content)
+    {
+        $numberString = $content[1];
+        $numberInt = intval($numberString);
+        return $this->existingPictureTags[$numberInt];
+    }
+
+    /**
+     *
+     */
     public function replaceHtml($content)
     {
-        // TODO: We should not replace <img> tags that are inside <picture> tags already, now should we?
-        return preg_replace_callback('/<img[^>]*>/i', array($this, 'replaceCallback'), $content);
+        $this->existingPictureTags = [];
+
+        // Tempororily remove existing <picture> tags
+        $content = preg_replace_callback('/<picture[^>]*>.*?<\/picture>/i', array($this, 'removePictureTagsTemporarily'), $content);
+
+        // Replace "<img>" tags
+        $content = preg_replace_callback('/<img[^>]*>/i', array($this, 'replaceCallback'), $content);
+
+        // Re-insert <picture> tags that was removed
+        $content = preg_replace_callback('/PICTURE_TAG_(\d+)_/', array($this, 'insertPictureTagsBack'), $content);
+
+        return $content;
     }
 
     /* Main replacer function */
