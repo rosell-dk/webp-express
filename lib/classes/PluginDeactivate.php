@@ -29,7 +29,7 @@ class PluginDeactivate
                 $msg
             );
 
-            wp_redirect( $_SERVER['HTTP_REFERER']);
+            wp_redirect(admin_url('options-general.php?page=webp_express_settings_page'));
             exit;
         }
     }
