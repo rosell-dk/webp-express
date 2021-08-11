@@ -288,8 +288,22 @@ class Convert
 
         $result['nonce-tick'] = $nonceTick;
 
+        
+        $result = self::utf8ize($result);
+
         echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
+
         wp_die();
     }
 
+     function utf8ize($d) {
+        if (is_array($d)) {
+            foreach ($d as $k => $v) {
+                $d[$k] = self::utf8ize($v);
+            }
+        } else if (is_string ($d)) {
+            return utf8_encode($d);
+        }
+        return $d;
+    }
 }
