@@ -222,7 +222,11 @@ class FileHelper
         }
 
         $return = false;
-        $handle = @fopen($filename, "r");
+        try {
+            $handle = @fopen($filename, "r");
+        } catch (\ErrorException $e) {
+            $handle = false;
+        }
         if ($handle !== false) {
             // Return value is either file content or false
             if (filesize($filename) == 0) {
