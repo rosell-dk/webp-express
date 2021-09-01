@@ -224,8 +224,9 @@ class FileHelper
         $return = false;
         try {
             $handle = @fopen($filename, "r");
-        } catch (\ErrorException $e) {
+        } catch (\ErrorException $exception) {
             $handle = false;
+            error_log($exception->getMessage());
         }
         if ($handle !== false) {
             // Return value is either file content or false
