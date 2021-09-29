@@ -566,7 +566,7 @@ APACHE
      * Get destination root url and path, provided rootId and some configuration options
      *
      * This method kind of establishes the overall structure of the cache dir.
-     * (but not quite, as the logic is also in ConverterHelper::getDestination).
+     * (but not quite, as the logic is also in ConverterHelperIndependent::getDestination).
      *
      * @param  string  $rootId
      * @param  string  $destinationFolder  ("mingled" or "separate")
@@ -602,6 +602,67 @@ APACHE
                 ];
             }
         }
+    }
+
+    // PST:
+    // appendOrSetExtension(), destinationPath() and destinationPathConvenience() have been copied from
+    // ConvertHelperIndependent.
+    // TODO: I should complete the move ASAP.
+
+    /**
+     * Append ".webp" to path or replace extension with "webp", depending on what is appropriate.
+     *
+     * If destination-folder is set to mingled and destination-extension is set to "set" and
+     * the path is inside upload folder, the appropriate thing is to SET the extension.
+     * Otherwise, it is to APPEND.
+     *
+     * @param  string  $path
+     * @param  string  $destinationFolder
+     * @param  string  $destinationExt
+     * @param  boolean $inUploadFolder
+     */
+    public static function appendOrSetExtension($path, $destinationFolder, $destinationExt, $inUploadFolder)
+    {
+        if (($destinationFolder == 'mingled') && ($destinationExt == 'set') && $inUploadFolder) {
+            return preg_replace('/\\.(jpe?g|png)$/i', '', $path) . '.webp';
+        } else {
+            return $path . '.webp';
+        }
+    }
+
+    /**
+     * Get destination root url and path, provided rootId and some configuration options
+     *
+     * This method kind of establishes the overall structure of the cache dir.
+     * (but not quite, as the logic is also in ConverterHelperIndependent::getDestination).
+     *
+     * @param  string  $rootId
+     * @param  string  $relPath
+     * @param  string  $destinationFolder     ("mingled" or "separate")
+     * @param  string  $destinationExt        ('append' or 'set')
+     * @param  string  $destinationStructure  ("doc-root" or "image-roots")
+     *
+     * @return array   url and abs-path of destination
+     */
+    public static function destinationPath($rootId, $relPath, $destinationFolder, $destinationExtension, $destinationStructure) {
+        $root = self::destinationRoot($rootId, $destinationFolder, $destinationStructure);
+        $inUploadFolder = ($rootId == 'upload');
+        $relPath = ConvertHelperIndependent::appendOrSetExtension($relPath, $destinationFolder, $destinationExt, $inUploadFolder);
+
+        return [
+            'abs-path' => $root['abs-path'] . '/' . $relPath,
+            'url' => $root['url'] . '/' . $relPath,
+        ];
+    }
+
+    public static function destinationPathConvenience($rootId, $relPath, $config) {
+        return self::destinationPath(
+            $rootId,
+            $relPath,
+            $config['destination-folder'],
+            $config['destination-extension'],
+            $config['destination-structure']
+        );
     }
 
     public static function getUrlPathById($dirId) {

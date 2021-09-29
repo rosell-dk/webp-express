@@ -31,10 +31,10 @@ class WCFMPage
         $wcfmNonce = wp_create_nonce('webpexpress-wcfm-nonce');
         echo '<scr' . 'ipt>window.webpExpressWCFMNonce = "' . $wcfmNonce . '";</scr' . 'ipt>';
 
-        echo '<scr' . 'ipt src="' . $baseUrl . '/wcfm-options.js?2"></scr' . 'ipt>';
-        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/wcfm.js"></scr' . 'ipt>';
+        echo '<scr' . 'ipt src="' . $baseUrl . '/wcfm-options.js?7"></scr' . 'ipt>';
+        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/wcfm.js?3"></scr' . 'ipt>';
 
-        echo '<link rel="stylesheet" href="' . $baseUrl . '/style.css">';
+        echo '<link rel="stylesheet" href="' . $baseUrl . '/style.css?1">';
     }
 
 }
