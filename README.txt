@@ -174,11 +174,10 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Ruben Solvang
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
-* 18 Jun: Jerry Simmons
-* 17 Jun: Erica Dreisbach
-* 19 May: Gary Wong
-* 12 May: nicoletta
-* 6 May: Hanneke
+* 29 Aug: Pawa Tecnologia
+* 29 Jul: Brian Laursen
+* 24 Jul: Hans Konings
+* 8 Jul: Raj
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
@@ -190,6 +189,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Steven Sullivan ($51)
 * Mathieu Gollain-Dupont ($50)
 * Erica Dreisbach ($50)
+* Brian Laursen ($50)
 
 == Frequently Asked Questions ==
 
