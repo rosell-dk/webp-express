@@ -221,7 +221,8 @@ class AlterHtmlHelper
         // Fix scheme (use same as source)
         $sourceUrlComponents = parse_url($sourceUrl);
         $destUrlComponents = parse_url($destUrl);
-        return $sourceUrlComponents['scheme'] . '://' . $sourceUrlComponents['host'] . $destUrlComponents['path'];
+        $port = $sourceUrlComponents['port'] ? ":" . $sourceUrlComponents['port'] : "";
+        return $sourceUrlComponents['scheme'] . '://' . $sourceUrlComponents['host'] . $port . $destUrlComponents['path'];
     }
 
 
