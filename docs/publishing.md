@@ -7,10 +7,11 @@ If it is only the README.txt that has been changed:
 3. Update the commit message below
 4. Run the below
 ```
-cd /var/www/we0/svn/
+cd /var/www/we/svn/
 cp ~/github/webp-express/README.txt trunk
-cp ~/github/webp-express/README.txt tags/0.19.0
-svn ci -m 'minor change in README (now tested with 5.6)'
+cp ~/github/webp-express/README.txt tags/0.20.1
+svn status
+svn ci -m 'minor change in README (now tested with Wordpress 5.8 RC2)'
 ```
 
 After that, check out if it is applied, on http://plugins.svn.wordpress.org/webp-express/
