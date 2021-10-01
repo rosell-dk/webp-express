@@ -3,6 +3,7 @@
 namespace WebPExpress;
 
 use \WebPConvert\Convert\Converters\Stack;
+use \WebPConvert\WebPConvert;
 
 /**
  *
@@ -26,6 +27,9 @@ class WCFMApi
           break;
         case 'info':
           $result = self::processInfo();
+          break;
+        case 'convert':
+          $result = self::processConvert();
           break;
       }
 
@@ -126,6 +130,7 @@ class WCFMApi
       require_once __DIR__ . "/../../vendor/autoload.php";
       $availableConverters = Stack::getAvailableConverters();
 
+      /*
       $converters = [];
       //$supportsEncoding = [];
       foreach ($availableConverters as $converter) {
@@ -136,7 +141,10 @@ class WCFMApi
         /*if () {
           $supportsEncoding[] = $converter;
         }*/
-      }
+      //}
+
+
+
       $systemStatus = [
         'converterRequirements' => [
           'gd' => [
@@ -152,6 +160,7 @@ class WCFMApi
 
       return [
         'converters' => $converters,
+        'options' => WebPConvert::getConverterOptionDefinitions('png', false, true)['general'],
         'systemStatus' => $systemStatus
       ];
 
@@ -260,4 +269,32 @@ class WCFMApi
 
     }
 
+    public static function processConvert() {
+        return ['success' => true];
+      /*
+        Validate::postHasKey('args');
+
+        //$args = json_decode(sanitize_text_field(stripslashes($_POST['args'])), true);
+
+        $args = $_POST['args'];
+        if (!array_key_exists('path', $args)) {
+            throw new \Exception('"path" argument missing for command');
+        }
+
+        $path = SanityCheck::pathWithoutDirectoryTraversal($args['path']);
+        $path = ltrim($path, '/');
+        $pathTokens = explode('/', $path);
+
+        $rootId = array_shift($pathTokens);  // Shift off the first item, which is the scope
+        $relPath = implode('/', $pathTokens);
+        $config = Config::loadConfigAndFix();
+        $rootIds = Paths::filterOutSubRoots($config['scope']);
+        if (!in_array($rootId, $rootIds)) {
+            throw new \Exception('Invalid scope');
+        }
+
+        $absPath = Paths::getAbsDirById($rootId) . '/' . $relPath;
+        //absPathExistsAndIsFile
+        SanityCheck::absPathExists($absPath);      */
+    }
 }

@@ -1,7 +1,7 @@
 <?php
 
 namespace WebPExpress;
-
+use \WebPConvert\WebPConvert;
 /**
  *
  */
@@ -15,6 +15,17 @@ class WCFMPage
         echo '<p>Work in progress! Currently, actions are not working, only file browser</p>';
         echo '<div id="webpconvert-filemanager">loading</div>';
         //include WEBPEXPRESS_PLUGIN_DIR . '/lib/options/page.php';
+
+  /*      require_once __DIR__ . "/../../vendor/autoload.php";
+//        print_r(WebPConvert::getConverterOptionDefinitions('png', false, true));
+        echo '<pre>' .
+            print_r(
+                json_encode(
+                    WebPConvert::getConverterOptionDefinitions('png', false, true),
+                    JSON_PRETTY_PRINT
+                ),
+                true
+            ) . '</pre>';*/
     }
 
     /* We add directly to head instead, to get the type="module"
@@ -31,10 +42,14 @@ class WCFMPage
         $wcfmNonce = wp_create_nonce('webpexpress-wcfm-nonce');
         echo '<scr' . 'ipt>window.webpExpressWCFMNonce = "' . $wcfmNonce . '";</scr' . 'ipt>';
 
-        echo '<scr' . 'ipt src="' . $baseUrl . '/wcfm-options.js?7"></scr' . 'ipt>';
-        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/wcfm.js?3"></scr' . 'ipt>';
+        echo '<scr' . 'ipt src="' . $baseUrl . '/wcfm-options.js?9"></scr' . 'ipt>';
+        //echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/vendor.js?1"></scr' . 'ipt>';
 
-        echo '<link rel="stylesheet" href="' . $baseUrl . '/style.css?1">';
+        // TODO: Use generated name (ie index.bc30fc12.js) and make a script in npm for automatically
+        // updating this file when copying
+        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/wcfm.js?4"></scr' . 'ipt>';
+
+        echo '<link rel="stylesheet" href="' . $baseUrl . '/style.css?2">';
     }
 
 }
