@@ -15,7 +15,8 @@
     "scripts": {
         "ci": [
             "@composer validate --no-check-all --strict"
-        ]
+        ],
+        "copylocalwebpconvert": "rsync -varz /home/rosell/github/webp-convert/src/ /home/rosell/github/webp-express/vendor/rosell-dk/webp-convert/src/"
     },
     "authors": [
       {
