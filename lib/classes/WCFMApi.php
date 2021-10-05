@@ -270,8 +270,7 @@ class WCFMApi
     }
 
     public static function processConvert() {
-        return ['success' => true];
-      /*
+
         Validate::postHasKey('args');
 
         //$args = json_decode(sanitize_text_field(stripslashes($_POST['args'])), true);
@@ -280,7 +279,13 @@ class WCFMApi
         if (!array_key_exists('path', $args)) {
             throw new \Exception('"path" argument missing for command');
         }
+        if (!array_key_exists('convertOptions', $args)) {
+            throw new \Exception('"convertOptions" argument missing for command');
+        }
 
+        return ['success' => true, 'optionsReceived' => $args['convertOptions']];
+
+        /*
         $path = SanityCheck::pathWithoutDirectoryTraversal($args['path']);
         $path = ltrim($path, '/');
         $pathTokens = explode('/', $path);
