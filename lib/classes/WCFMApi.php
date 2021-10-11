@@ -33,7 +33,7 @@ class WCFMApi
           break;
       }
 
-      $json = wp_json_encode($result, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+      $json = wp_json_encode($result, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
       if ($json === false) {
           // TODO: We can do better error handling than this!
           throw new \Exception('Failed encoding result to JSON');
@@ -213,26 +213,30 @@ class WCFMApi
       $absPath = Paths::getAbsDirById($rootId) . '/' . $relPath;
       //absPathExistsAndIsFile
       SanityCheck::absPathExists($absPath);
+      $result = [
+          'original' => [
+            //'filename' => $absPath,
+            //'abspath' => $absPath,
+            'size' => filesize($absPath),
+            'url' => Paths::getUrlById($rootId) . '/' . $relPath,
+          ]
+      ];
 
       // TODO: What if it is a dir?
 
       $destination = Paths::destinationPathConvenience($rootId, $relPath, $config);
-
       $absPathDest = $destination['abs-path'] . '/' . $relPath;
+      SanityCheck::absPath($absPathDest);
 
-      return [
-        'original' => [
-          'name' => $absPath,
-          'size' => filesize($absPath),
-          'url' => '',
-        ],
-        'converted' => [
-          'name' => $destination['abs-path'],
-          'size' => 70,
-          'url' => ''
-        ],
-        'log' => 'blah blah blah'
-      ];
+      if (@file_exists($absPathDest)) {
+          $result['converted'] = [
+            //'abspath' => $destination['abs-path'],
+            'size' => 70,
+            'url' => $destination['url'],
+            'log' => ''
+          ];
+      }
+      return $result;
     }
 
     public static function processGetTree() {
