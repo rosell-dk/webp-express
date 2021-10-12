@@ -225,13 +225,13 @@ class WCFMApi
       // TODO: What if it is a dir?
 
       $destination = Paths::destinationPathConvenience($rootId, $relPath, $config);
-      $absPathDest = $destination['abs-path'] . '/' . $relPath;
+      $absPathDest = $destination['abs-path'];
       SanityCheck::absPath($absPathDest);
 
       if (@file_exists($absPathDest)) {
           $result['converted'] = [
-            //'abspath' => $destination['abs-path'],
-            'size' => 70,
+            'abspath' => $destination['abs-path'],
+            'size' => filesize($destination['abs-path']),
             'url' => $destination['url'],
             'log' => ''
           ];

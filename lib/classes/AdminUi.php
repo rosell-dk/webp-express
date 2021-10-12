@@ -74,7 +74,6 @@ class AdminUi
         );
 
         // Add Media page
-        /* Uncommented until ready!
         add_media_page(
           'WebP Express', //Page Title
           'WebP Express', //Menu Title
@@ -82,6 +81,6 @@ class AdminUi
           'webp_express_conversion_page', // slug
           array('\WebPExpress\WCFMPage', 'display') //The function to be called to output the content for this page.
         );
-        */
+
     }
 }
