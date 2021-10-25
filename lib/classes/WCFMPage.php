@@ -11,9 +11,8 @@ class WCFMPage
 
     // callback (registred in AdminUi)
     public static function display() {
-        echo '<div id="wcfmintro"><h1>WebP Express Conversion <span style="text-decoration: line-through;">Manager</span> Browser</h1>';
-        echo '<p>Note: Currently you can only browse the image files, not trigger conversions.';
-        echo 'To support development, you can <a href="https://ko-fi.com/rosell" target="_blank">buy me a cup of coffee</a></p></div>';
+        echo '<div id="wcfmintro"><h1>WebP Express Conversion Browser</h1>';
+        echo '<p>Note: To convert manually, you still need to use Bulk Convert on the settings page</p>';
         echo '<div id="webpconvert-filemanager" style="position:relative; min-height:400px">loading</div>';
         //include WEBPEXPRESS_PLUGIN_DIR . '/lib/options/page.php';
 
@@ -48,7 +47,7 @@ class WCFMPage
 
         // TODO: Use generated name (ie index.bc30fc12.js) and make a script in npm for automatically
         // updating this file when copying
-        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/wcfm.js?16"></scr' . 'ipt>';
+        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/wcfm.js?17"></scr' . 'ipt>';
 
         echo '<link rel="stylesheet" href="' . $baseUrl . '/style.css?6">';
     }
