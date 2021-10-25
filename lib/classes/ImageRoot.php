@@ -6,6 +6,9 @@ use \WebPExpress\PathHelper;
 
 class ImageRoot
 {
+
+    public $id;
+    
     /**
      * Constructor.
      *

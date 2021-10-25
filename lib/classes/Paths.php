@@ -604,6 +604,50 @@ APACHE
         }
     }
 
+    // this shall replace destinationRoot
+    public static function destinationRoot2($rootId, $destinationOptions)
+    {
+        if (($destinationOptions->mingled) && ($rootId == 'uploads')) {
+            return [
+                'url' => self::getUrlById('uploads'),
+                'abs-path' => self::getUploadDirAbs()
+            ];
+        } else {
+
+            // Its within these bases:
+            $destUrl = self::getUrlById('wp-content') . '/webp-express/webp-images';
+            $destPath = self::getAbsDirById('wp-content') . '/webp-express/webp-images';
+
+            if (($destinationOptions->useDocRoot) && self::canUseDocRootForStructuringCacheDir()) {
+                $relPathFromDocRootToSourceImageRoot = PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed(
+                    self::getAbsDirById($rootId)
+                );
+                return [
+                    'url' => $destUrl . '/doc-root/' . $relPathFromDocRootToSourceImageRoot,
+                    'abs-path' => $destPath  . '/doc-root/' . $relPathFromDocRootToSourceImageRoot
+                ];
+            } else {
+                return [
+                    'url' => $destUrl . '/' . $rootId,
+                    'abs-path' => $destPath  . '/' . $rootId
+                ];
+            }
+        }
+    }
+
+    public static function getRootAndRelPathForDestination($destinationPath, $imageRoots) {
+        foreach ($imageRoots->getArray() as $i => $imageRoot) {
+            $rootPath = $imageRoot->getAbsPath();
+            if (strpos($destinationPath, realpath($rootPath)) !== false) {
+                $relPath = substr($destinationPath, strlen(realpath($rootPath)) + 1);
+                return [$imageRoot->id, $relPath];
+            }
+        }
+        return ['', ''];
+    }
+
+
+
     // PST:
     // appendOrSetExtension() have been copied from ConvertHelperIndependent.
     // TODO: I should complete the move ASAP.
@@ -643,6 +687,7 @@ APACHE
      *
      * @return array   url and abs-path of destination
      */
+   /*
     public static function destinationPath($rootId, $relPath, $destinationFolder, $destinationExt, $destinationStructure) {
 
         // TODO: Current logic will not do!
@@ -667,6 +712,16 @@ APACHE
             $config['destination-folder'],
             $config['destination-extension'],
             $config['destination-structure']
+        );
+    }*/
+
+    public static function getDestinationPathCorrespondingToSource($source, $destinationOptions) {
+        return Destination::getDestinationPathCorrespondingToSource(
+            $source,
+            Paths::getWebPExpressContentDirAbs(),
+            Paths::getUploadDirAbs(),
+            $destinationOptions,
+            new ImageRoots(self::getImageRootsDef())
         );
     }
 

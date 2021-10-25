@@ -225,7 +225,48 @@ class WCFMApi
       // TODO: NO!
       // We must use ConvertHelper::getDestination for the abs path.
       // And we must use logic from AlterHtmlHelper to get the URL
+      //error_log('path:' . $absPathDest);
 
+      $destinationOptions = DestinationOptions::createFromConfig($config);
+      if ($destinationOptions->useDocRoot) {
+          if (!(Paths::canUseDocRootForStructuringCacheDir())) {
+              $destinationOptions->useDocRoot = false;
+          }
+      }
+      $imageRoots = new ImageRoots(Paths::getImageRootsDef());
+      $destinationPath = Paths::getDestinationPathCorrespondingToSource($absPath, $destinationOptions);
+      list($rootId, $destRelPath) = Paths::getRootAndRelPathForDestination($destinationPath, $imageRoots);
+      if ($rootId != '') {
+          $absPathDest = Paths::getAbsDirById($rootId) . '/' . $destRelPath;
+          $destinationUrl = Paths::getUrlById($rootId) . '/' . $destRelPath;
+
+          SanityCheck::absPath($absPathDest);
+          if (@file_exists($absPathDest)) {
+              $result['converted'] = [
+                'abspath' => $absPathDest,
+                'size' => filesize($absPathDest),
+                'url' => $destinationUrl,
+                'log' => ''
+              ];
+          }
+
+      }
+
+
+      //$destinationUrl = DestinationUrl::
+
+      /*
+      error_log('dest:' . $destinationPath);
+      error_log('dest root:' . $rootId);
+      error_log('dest path:' . $destRelPath);
+      error_log('dest abs-dir:' . Paths::getAbsDirById($rootId) . '/' . $destRelPath);
+      error_log('dest url:' . Paths::getUrlById($rootId) . '/' . $destRelPath);
+      */
+
+      //error_log('url:' . $destinationPath);
+      //error_log('destinationOptions' . print_r($destinationOptions, true));
+
+      /*
       $destination = Paths::destinationPathConvenience($rootId, $relPath, $config);
       $absPathDest = $destination['abs-path'];
       SanityCheck::absPath($absPathDest);
@@ -239,6 +280,7 @@ class WCFMApi
             'log' => ''
           ];
       }
+      */
       return $result;
     }
 
