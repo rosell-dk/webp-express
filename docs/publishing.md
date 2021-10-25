@@ -91,7 +91,7 @@ rsync -avh --exclude '.git' --exclude '.github' --exclude='composer.lock' --excl
 
 1. Create a zip
    - Select all the files in trunk (not the trunk dir itself)
-   - Save it to pre-releases/version-number/webp-express.zip
+   - Save it to /var/www/we/pre-releases/version-number/webp-express.zip
 2. Upload the zip to the LiteSpeed test site and test
    - Login to https://betasite.com.br/rosell/wp-admin/plugins.php
    - Go to Plugins | Add new and click the "Upload Plugin button"
