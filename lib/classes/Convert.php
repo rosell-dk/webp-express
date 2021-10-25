@@ -296,7 +296,7 @@ class Convert
         wp_die();
     }
 
-    private function utf8ize($d) {
+    private static function utf8ize($d) {
         if (is_array($d)) {
             foreach ($d as $k => $v) {
                 $d[$k] = self::utf8ize($v);
