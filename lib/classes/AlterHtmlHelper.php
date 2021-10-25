@@ -221,7 +221,7 @@ class AlterHtmlHelper
         // Fix scheme (use same as source)
         $sourceUrlComponents = parse_url($sourceUrl);
         $destUrlComponents = parse_url($destUrl);
-        $port = $sourceUrlComponents['port'] ? ":" . $sourceUrlComponents['port'] : "";
+        $port = isset($sourceUrlComponents['port']) ? ":" . $sourceUrlComponents['port'] : "";
         return $sourceUrlComponents['scheme'] . '://' . $sourceUrlComponents['host'] . $port . $destUrlComponents['path'];
     }
 
@@ -242,7 +242,7 @@ class AlterHtmlHelper
         if (self::$options['only-for-webp-enabled-browsers']) {
             if (!isset($_SERVER['HTTP_ACCEPT']) || (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') === false)) {
                 return $returnValueOnFail;
-            }          
+            }
         }
 
         // Fail for relative urls. Wordpress doesn't use such very much anyway
