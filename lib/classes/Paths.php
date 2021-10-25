@@ -644,7 +644,7 @@ APACHE
      *
      * @return array   url and abs-path of destination
      */
-    public static function destinationPath($rootId, $relPath, $destinationFolder, $destinationExtension, $destinationStructure) {
+    public static function destinationPath($rootId, $relPath, $destinationFolder, $destinationExt, $destinationStructure) {
         $root = self::destinationRoot($rootId, $destinationFolder, $destinationStructure);
         $inUploadFolder = ($rootId == 'upload');
         $relPath = ConvertHelperIndependent::appendOrSetExtension($relPath, $destinationFolder, $destinationExt, $inUploadFolder);
