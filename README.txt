@@ -774,6 +774,20 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.21.0 =
+*(released: 25 Oct 2021)*
+* Added image browser (in Media tab)
+* Updated webp convert library to 2.7.0.
+* ImageMagick now supports the "near-lossless" option (provided Imagick >= 7.0.10-54)
+* Added "try-common-system-paths" option for ImageMagick (default: true). Thanks to Henrik Alves for adding this option.
+* Bugfix: Handling Uncaught Fatal Exception during .htaccess read failure. Thanks to Manuel D'Orso from Italy for the fix.
+* Bugfix: File names which were not UTF8 caused trouble in the Bulk Convert. Thank to "mills4078" for the fix
+* Bugfix: Redirection back to settings after saving settings failed on some systems. Thanks to Martin Rehberger (@kingkero) from Germany for the fix.
+* Bugfix: Webp urls did not contain port number (only relevant when the website was not on default port number). Thanks to Nicolas LIENART (@nicolnt) from France for providing the fix.
+
+For more info, see the closed issues on the [webp-express 0.21.0 milestone](https://github.com/rosell-dk/webp-express/milestone/41?closed=1) and the
+[webp-convert 2.7.0 milestone](https://github.com/rosell-dk/webp-convert/milestone/24?closed=1)
+
 = 0.20.1 =
 *(released: 20 Jun 2021)*
 * Bugfix: Removed composer.lock. It was locked on PHP 7.2, which caused server error on some sites (only some sites with old php were affected). Also deleted the library which required PHP 7.2 (onnov/detect-encoding/). The functionality is not really needed.
@@ -788,13 +802,12 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 For more info, see the closed issues on the [0.20.0 milestone on the github repository](https://github.com/rosell-dk/webp-express/milestone/38?closed=1)
 
-= 0.19.1 =
-*(released: 03 May 2021)*
-* Bugfix for PHP 8.0 - fread() does not permit second argument to be 0. Thanks to @trition for reporting and fixing this bug.
-
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.21.0 =
+* Image browser and various bug fixes
 
 = 0.20.1 =
 * Bugfix for PHP 7.1 and below
