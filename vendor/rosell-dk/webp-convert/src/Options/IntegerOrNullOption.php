@@ -14,7 +14,7 @@ use WebPConvert\Options\Exceptions\InvalidOptionValueException;
  */
 class IntegerOrNullOption extends IntegerOption
 {
-    protected $allowedValueTypes = ['integer', 'null'];
+    protected $schemaType = ['integer', 'null'];
 
     public function __construct($id, $defaultValue, $minValue = null, $maxValue = null)
     {
@@ -40,5 +40,11 @@ class IntegerOrNullOption extends IntegerOption
             return 'null (not set)';
         }
         return parent::getValueForPrint();
+    }
+
+    public function getDefinition()
+    {
+        $obj = parent::getDefinition();
+        return $obj;
     }
 }

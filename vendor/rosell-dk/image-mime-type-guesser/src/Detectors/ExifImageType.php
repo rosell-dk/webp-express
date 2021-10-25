@@ -30,9 +30,12 @@ class ExifImageType extends AbstractDetector
                 return ($imageType ? image_type_to_mime_type($imageType) : false);
             } catch (\Exception $e) {
                 // Might for example get "Read error!"
+                // (for some reason, this happens on very small files)
+                // We handle such errors as indeterminable (null)
+                return null;
                 // well well, don't let this stop us
                 //echo $e->getMessage();
-//                throw($e);
+                //throw($e);
             }
         }
         return null;

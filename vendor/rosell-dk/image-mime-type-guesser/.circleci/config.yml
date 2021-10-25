@@ -1,0 +1,76 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
+version: 2
+jobs:
+  build71:
+    docker:
+      - image: circleci/php:7.1
+
+    steps:
+      - checkout
+
+      - run: sudo apt update
+      - run: sudo docker-php-ext-install zip
+
+      - restore_cache:
+          keys:
+            # "composer.lock" can be used if it is committed to the repo
+            - v1-dependencies-{{ checksum "composer.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: composer install -n --prefer-dist
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+
+      - run: ./vendor/bin/phpunit
+      - run: wget https://scrutinizer-ci.com/ocular.phar
+      - run: php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+
+      
+  build70:
+    docker:
+      - image: circleci/php:7.0
+    steps:
+      - checkout
+      - run: sudo apt update
+      - restore_cache:
+          keys:
+            - v0-dependencies-{{ checksum "composer.json" }}
+            - v0-dependencies-
+      - run: composer install -n --prefer-dist
+      - save_cache:
+          key: v0-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+      - run: composer test
+
+  build56:
+    docker:
+      - image: circleci/php:5.6
+    steps:
+      - checkout
+      - run: sudo apt update
+      - restore_cache:
+          keys:
+            - v56-dependencies-{{ checksum "composer.json" }}
+            - v56-dependencies-
+      - run: composer install -n --prefer-dist
+      - save_cache:
+          key: v56-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+      - run: composer test
+
+workflows:
+  version: 2
+  build_and_test_all:
+    jobs:
+      #- build71
+      #- build70
+      #- build56

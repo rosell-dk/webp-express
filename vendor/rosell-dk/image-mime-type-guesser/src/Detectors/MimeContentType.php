@@ -34,6 +34,11 @@ class MimeContentType extends AbstractDetector
                 }
             } catch (\Exception $e) {
                 // we are unstoppable!
+
+                // TODO:
+                // We should probably throw... - we will do in version 1.0.0
+                //throw $e;
+
             }
         }
         return null;

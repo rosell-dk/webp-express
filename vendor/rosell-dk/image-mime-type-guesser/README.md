@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/rosell-dk/image-mime-type-guesser.svg?style=flat-square)](https://packagist.org/packages/rosell-dk/image-mime-type-guesser)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net)
-[![Build Status](https://img.shields.io/travis/rosell-dk/image-mime-type-guesser/master.svg?style=flat-square)](https://travis-ci.org/rosell-dk/image-mime-type-guesser)
+[![Build Status](https://img.shields.io/github/workflow/status/rosell-dk/image-mime-type-guesser/PHP?style=flat-square)](https://github.com/rosell-dk/image-mime-type-guesser/actions/workflows/php.yml)
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/rosell-dk/image-mime-type-guesser.svg?style=flat-square)](https://scrutinizer-ci.com/g/rosell-dk/image-mime-type-guesser/code-structure/master)
 [![Quality Score](https://img.shields.io/scrutinizer/g/rosell-dk/image-mime-type-guesser.svg?style=flat-square)](https://scrutinizer-ci.com/g/rosell-dk/image-mime-type-guesser/)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/rosell-dk/image-mime-type-guesser/blob/master/LICENSE)
@@ -12,18 +12,16 @@
 
 Do you need to determine if a file is an image?<br>
 And perhaps you also want to know the mime type of the image?<br>
-Do you basically need [exif_imagetype](https://www.php.net/manual/en/function.exif-imagetype.php), but which also works when PHP is compiled without exif?
 
 &ndash; You come to the right library.
 
 Ok, actually the library cannot offer mime type detection for images which works *on all platforms*, but it can try a whole stack of methods and optionally fall back to guess from the file extension.
 
 The stack of detect methods are currently (and in that order):
--  [`exif_imagetype`](https://www.php.net/manual/en/function.exif-imagetype.php) *(PHP 4 >= 4.3.0, PHP 5, PHP 7) - unless PHP is compiled without exif*
--  [`finfo`](https://www.php.net/manual/en/class.finfo.php) *(PHP 5 >= 5.3.0, PHP 7, PECL fileinfo >= 0.1.0) - requires fileinfo extension to be enabled*
--  Our custom 4 byte sniffer (based on [this code](http://phil.lavin.me.uk/2011/12/php-accurately-detecting-the-type-of-a-file/)) *(PHP 4, PHP 5, PHP 7) - only detects png, gif and jpeg*
--  [`getimagesize`](https://www.php.net/getimagesize) *(PHP 4, PHP 5, PHP 7)*
--  [`mime_content_type`](https://www.php.net/manual/en/function.mime-content-type.php) *(PHP 4 >= 4.3.0, PHP 5, PHP 7)*
+-  [`finfo`](https://www.php.net/manual/en/class.finfo.php) *Requires fileinfo extension to be enabled. (PHP 5 >= 5.3.0, PHP 7, PHP 8, PECL fileinfo >= 0.1.0)*
+-  Our custom 4 byte sniffer (based on [this code](http://phil.lavin.me.uk/2011/12/php-accurately-detecting-the-type-of-a-file/)) *(PHP 4, PHP 5, PHP 7, PHP 8) - only detects png, gif and jpeg*
+-  [`exif_imagetype`](https://www.php.net/manual/en/function.exif-imagetype.php) *Requires that PHP is compiled with exif (PHP 4 >= 4.3.0, PHP 5, PHP 7, PHP 8)*
+-  [`mime_content_type`](https://www.php.net/manual/en/function.mime-content-type.php) *Requires fileinfo. (PHP 4 >= 4.3.0, PHP 5, PHP 7, PHP 8)*
 
 Note that these methods all uses the mime type mapping on the server. Not all servers for example detects `image/webp`.
 

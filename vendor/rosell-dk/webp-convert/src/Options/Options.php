@@ -168,9 +168,34 @@ class Options
         }
     }
 
+    /**
+     * Set help texts on multiple options
+     *
+     * @param  array  $helpTexts      Hash of helptexts indexed by option id
+     */
+    public function setHelpTexts($helpTexts)
+    {
+        foreach ($this->options as $option) {
+            if (array_key_exists($option->getId(), $helpTexts)) {
+                $option->setHelpText($helpTexts[$option->getId()]);
+            }
+        }
+    }
 
+    /**
+     * Set ui definitions on multiple options
+     *
+     * @param  array  $uis      Hash of ui definitions indexed by option id
+     */
+    public function setUI($uis)
+    {
+        foreach ($this->options as $option) {
+            if (array_key_exists($option->getId(), $uis)) {
+                $option->setUI($uis[$option->getId()]);
+            }
+        }
+    }
 
-/*  POST-PONED till 2.7.0
     public function getDefinitions($deprecatedToo = false)
     {
         $defs = [];
@@ -180,5 +205,5 @@ class Options
             }
         }
         return $defs;
-    }*/
+    }
 }

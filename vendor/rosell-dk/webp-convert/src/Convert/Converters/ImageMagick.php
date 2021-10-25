@@ -7,6 +7,8 @@ use WebPConvert\Convert\Converters\ConverterTraits\ExecTrait;
 use WebPConvert\Convert\Converters\ConverterTraits\EncodingAutoTrait;
 use WebPConvert\Convert\Exceptions\ConversionFailed\ConverterNotOperational\SystemRequirementsNotMetException;
 use WebPConvert\Convert\Exceptions\ConversionFailedException;
+use WebPConvert\Helpers\BinaryDiscovery;
+use WebPConvert\Options\OptionFactory;
 
 //use WebPConvert\Convert\Exceptions\ConversionFailed\InvalidInput\TargetNotFoundException;
 
@@ -25,9 +27,31 @@ class ImageMagick extends AbstractConverter
     protected function getUnsupportedDefaultOptions()
     {
         return [
-            'near-lossless',
             'size-in-percentage',
         ];
+    }
+
+    /**
+     *  Get the options unique for this converter
+     *
+     * @return  array  Array of options
+     */
+    public function getUniqueOptions($imageType)
+    {
+        return OptionFactory::createOptions([
+            ['try-common-system-paths', 'boolean', [
+                'title' => 'Try locating ImageMagick in common system paths',
+                'description' =>
+                    'If set, the converter will look for a ImageMagick binaries residing in common system locations ' .
+                    'such as "/usr/bin/convert". ' .
+                    'If such exist, it is assumed that they are valid ImageMagick binaries. ',
+                'default' => true,
+                'ui' => [
+                    'component' => 'checkbox',
+                    'advanced' => true
+                ]
+            ]],
+        ]);
     }
 
     // To futher improve this converter, I could check out:
@@ -41,6 +65,14 @@ class ImageMagick extends AbstractConverter
         if (!empty(getenv('WEBPCONVERT_IMAGEMAGICK_PATH'))) {
             return getenv('WEBPCONVERT_IMAGEMAGICK_PATH');
         }
+
+        if ($this->options['try-common-system-paths']) {
+            $binaries = BinaryDiscovery::discoverInCommonSystemPaths('convert');
+            if (!empty($binaries)) {
+                return $binaries[0];
+            }
+        }
+
         return 'convert';
     }
 
@@ -105,12 +137,14 @@ class ImageMagick extends AbstractConverter
     /**
      * Build command line options
      *
+     * @param  string $versionNumber. Ie "6.9.10-23"
      * @return string
      */
-    private function createCommandLineOptions()
+    private function createCommandLineOptions($versionNumber = 'unknown')
     {
-        // PS: Available webp options for imagemagick are documented here:
-        // https://imagemagick.org/script/webp.php
+        // Available webp options for imagemagick are documented here:
+        // - https://imagemagick.org/script/webp.php
+        // - https://github.com/ImageMagick/ImageMagick/blob/main/coders/webp.c
 
         // We should perhaps implement low-memory. Its already in cwebp, it
         // could perhaps be promoted to a general option
@@ -127,6 +161,7 @@ class ImageMagick extends AbstractConverter
         $options = $this->options;
 
         if (!is_null($options['preset'])) {
+            // "image-hint" is at least available from 6.9.4-0 (I can't see further back)
             if ($options['preset'] != 'none') {
                 $imageHint = $options['preset'];
                 switch ($imageHint) {
@@ -142,28 +177,56 @@ class ImageMagick extends AbstractConverter
                 $commandArguments[] = '-define webp:image-hint=' . escapeshellarg($imageHint);
             }
         }
+
         if ($options['encoding'] == 'lossless') {
+            // lossless is at least available from 6.9.4-0 (I can't see further back)
             $commandArguments[] = '-define webp:lossless=true';
         }
+
         if ($options['low-memory']) {
+            // low-memory is at least available from 6.9.4-0 (I can't see further back)
             $commandArguments[] = '-define webp:low-memory=true';
         }
+
         if ($options['auto-filter'] === true) {
+            // auto-filter is at least available from 6.9.4-0 (I can't see further back)
             $commandArguments[] = '-define webp:auto-filter=true';
         }
+
         if ($options['metadata'] == 'none') {
             $commandArguments[] = '-strip';
         }
+
         if ($options['alpha-quality'] !== 100) {
+            // alpha-quality is at least available from 6.9.4-0 (I can't see further back)
             $commandArguments[] = '-define webp:alpha-quality=' . strval($options['alpha-quality']);
         }
+
         if ($options['sharp-yuv'] === true) {
-            $commandArguments[] = '-define webp:use-sharp-yuv=true';
+            if (version_compare($versionNumber, '7.0.8-26', '>=')) {
+                $commandArguments[] = '-define webp:use-sharp-yuv=true';
+            } else {
+                $this->logLn(
+                    'Note: "sharp-yuv" option is not supported in your version of ImageMagick. ' .
+                        'ImageMagic >= 7.0.8-26 is required',
+                    'italic'
+                );
+            }
         }
 
-        // Unfortunately, near-lossless does not seem to be supported.
-        // it does have a "preprocessing" option, which may be doing something similar
+        if ($options['near-lossless'] != 100) {
+            if (version_compare($versionNumber, '7.0.10-54', '>=')) { // #299
+                $commandArguments[] = '-define webp:near-lossless=' . escapeshellarg($options['near-lossless']);
+            } else {
+                $this->logLn(
+                    'Note: "near-lossless" option is not supported in your version of ImageMagick. ' .
+                        'ImageMagic >= 7.0.10-54 is required',
+                    'italic'
+                );
+            }
+        }
 
+        // "method" is at least available from 6.9.4-0 (I can't see further back)
         $commandArguments[] = '-define webp:method=' . $options['method'];
 
         $commandArguments[] = escapeshellarg($this->source);
@@ -174,9 +237,16 @@ class ImageMagick extends AbstractConverter
 
     protected function doActualConvert()
     {
-        $this->logLn($this->getVersion());
+        $version = $this->getVersion();
 
-        $command = $this->getPath() . ' ' . $this->createCommandLineOptions() . ' 2>&1';
+        $this->logLn($version);
+
+        preg_match('#\d+\.\d+\.\d+[\d\.\-]+#', $version, $matches);
+        $versionNumber = (isset($matches[0]) ? $matches[0] : 'unknown');
+
+        $this->logLn('Extracted version number: ' . $versionNumber);
+
+        $command = $this->getPath() . ' ' . $this->createCommandLineOptions($versionNumber) . ' 2>&1';
 
         $useNice = (($this->options['use-nice']) && self::hasNiceSupport()) ? true : false;
         if ($useNice) {

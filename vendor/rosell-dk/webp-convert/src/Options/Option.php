@@ -29,14 +29,23 @@ class Option
     /** @var string  An option must supply a type id */
     protected $typeId;
 
-    /** @var array  Type constraints for the value */
-    protected $allowedValueTypes = [];
+    /** @var array  Type constraints for the value (JSON schema syntax) */
+    protected $schemaType = [];
+
+    /** @var array|null  Array of allowed values (JSON schema syntax) */
+    protected $enum = null; //https://json-schema.org/understanding-json-schema/reference/generic.html#enumerated-values
 
     /** @var boolean  Whether the option has been deprecated */
     protected $deprecated = false;
 
     /** @var string  Help text */
     protected $helpText = '';
+
+    /** @var array  UI Def */
+    protected $ui;
+
+    /** @var array  Extra Schema Def (ie holding 'title', 'description' or other)*/
+    protected $extraSchemaDefs;
 
 
     /**
@@ -156,21 +165,80 @@ class Option
         return print_r($this->getValue(), true);
     }
 
+    /**
+     * Set help text for the option
+     *
+     * @param  string  $helpText  The help text
+     * @return  void
+     */
+    public function setHelpText($helpText)
+    {
+        $this->helpText = $helpText;
+    }
 
-    /*  POST-PONED till 2.7.0
+    /**
+     * Get help text for the option
+     *
+     * @return  string  $helpText  The help text
+     */
+    public function getHelpText()
+    {
+        return $this->helpText;
+    }
+
+    /**
+     * Set ui definition for the option
+     *
+     * @param  array  $ui  The UI def
+     * @return  void
+     */
+    public function setUI($ui)
+    {
+        $this->ui = $ui;
+    }
+
+    public function setExtraSchemaDefs($def)
+    {
+        $this->extraSchemaDefs = $def;
+    }
+
+
+    /**
+     * Get ui definition for the option
+     *
+     * @return  array  $ui  The UI def
+     */
+    public function getUI()
+    {
+        return $this->ui;
+    }
+
+    public function getSchema()
+    {
+        if (isset($this->extraSchemaDefs)) {
+            $schema = $this->extraSchemaDefs;
+        } else {
+            $schema = [];
+        }
+        $schema['type'] = $this->schemaType;
+        $schema['default'] = $this->defaultValue;
+        if (!is_null($this->enum)) {
+            $schema['enum'] = $this->enum;
+        }
+        return $schema;
+    }
+
 
     public function getDefinition()
     {
         $obj = [
-          'id' => $this->id,
-          'type' => $this->typeId,
-          'allowed-value-types' => $this->allowedValueTypes,
-          'default' => $this->defaultValue,
-          'help-text' => $this->helpText,
+            'id' => $this->id,
+            'schema' => $this->getSchema(),
+            'ui' => $this->ui,
         ];
         if ($this->deprecated) {
             $obj['deprecated'] = true;
         }
         return $obj;
-    }*/
+    }
 }
