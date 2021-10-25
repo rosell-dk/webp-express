@@ -47,7 +47,7 @@ class WCFMPage
 
         // TODO: Use generated name (ie index.bc30fc12.js) and make a script in npm for automatically
         // updating this file when copying
-        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/wcfm.js?17"></scr' . 'ipt>';
+        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/wcfm.js?18"></scr' . 'ipt>';
 
         echo '<link rel="stylesheet" href="' . $baseUrl . '/style.css?6">';
     }
