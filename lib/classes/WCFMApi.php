@@ -159,8 +159,8 @@ class WCFMApi
       //supportedStandardOptions: {
 
       return [
-        'converters' => $converters,
-        'options' => WebPConvert::getConverterOptionDefinitions('png', false, true)['general'],
+        //'converters' => $converters,
+        //'options' => WebPConvert::getConverterOptionDefinitions('png', false, true)['general'],
         'systemStatus' => $systemStatus
       ];
 
