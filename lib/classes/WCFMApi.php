@@ -222,11 +222,14 @@ class WCFMApi
           ]
       ];
 
-      // TODO: What if it is a dir?
+      // TODO: NO!
+      // We must use ConvertHelper::getDestination for the abs path.
+      // And we must use logic from AlterHtmlHelper to get the URL
 
       $destination = Paths::destinationPathConvenience($rootId, $relPath, $config);
       $absPathDest = $destination['abs-path'];
       SanityCheck::absPath($absPathDest);
+      error_log('path:' . $absPathDest);
 
       if (@file_exists($absPathDest)) {
           $result['converted'] = [

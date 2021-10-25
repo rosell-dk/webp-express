@@ -605,8 +605,7 @@ APACHE
     }
 
     // PST:
-    // appendOrSetExtension(), destinationPath() and destinationPathConvenience() have been copied from
-    // ConvertHelperIndependent.
+    // appendOrSetExtension() have been copied from ConvertHelperIndependent.
     // TODO: I should complete the move ASAP.
 
     /**
@@ -645,6 +644,12 @@ APACHE
      * @return array   url and abs-path of destination
      */
     public static function destinationPath($rootId, $relPath, $destinationFolder, $destinationExt, $destinationStructure) {
+
+        // TODO: Current logic will not do!
+        // We must use ConvertHelper::getDestination for the abs path.
+        // And we must use logic from AlterHtmlHelper to get the URL
+        // Perhaps this method must be abandonned
+
         $root = self::destinationRoot($rootId, $destinationFolder, $destinationStructure);
         $inUploadFolder = ($rootId == 'upload');
         $relPath = ConvertHelperIndependent::appendOrSetExtension($relPath, $destinationFolder, $destinationExt, $inUploadFolder);
