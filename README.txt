@@ -29,18 +29,19 @@ The plugin supports different ways of delivering webps to browsers that supports
 5. You can also deliver webp to *all* browsers and add the [webpjs](http://webpjs.appspot.com) javascript, which provides webp support for browsers that doesn't support webp natively. However, beware that the javascript doesn't support srcset attributes, which is why I haven't added that method to the plugin (yet).
 
 The plugin implements the "WebP On Demand" solution described [here](https://github.com/rosell-dk/webp-convert/blob/master/docs/v2.0/webp-on-demand/webp-on-demand.md) and builds on a bunch of open source libraries (all maintained by me):
-- [WebPConvert](https://github.com/rosell-dk/webp-convert): For converting images to webp
+- [WebP Convert](https://github.com/rosell-dk/webp-convert): For converting images to webp
 - [WebP Convert Cloud Service](https://github.com/rosell-dk/webp-convert-cloud-service): For the Web Service functionality
 - [DOM Util for WebP](https://github.com/rosell-dk/dom-util-for-webp): For the Alter HTML functionality
 - [Image MimeType Guesser](https://github.com/rosell-dk/image-mime-type-guesser): For detecting mime types of images.
 - [HTAccess Capability Tester](https://github.com/rosell-dk/htaccess-capability-tester): For testing .htaccess capabilities in a given directory, using live tests
+- [WebP Convert File Manager](https://github.com/rosell-dk/webp-convert-filemanager): For browsing conversions (planned feature: triggering conversions).
 
 ### Benefits
 - Much faster load time for images in browsers that supports webp. The converted images are typically *less than half the size* (for jpeg), while maintaining the same quality. Bear in mind that for most web sites, images are responsible for the largest part of the waiting time.
 - Better user experience (whether performance goes from terrible to bad, or from good to impressive, it is a benefit).
 - Better ranking in Google searches (performance is taken into account by Google).
 - Less bandwidth consumption - makes a huge difference in the parts of the world where the internet is slow and costly (you know, ~80% of the world population lives under these circumstances).
-- Currently ~94% of all traffic, and ~96% of mobile browsing traffic are done with browsers supporting webp. Check current numbers on [caniuse.com](https://caniuse.com/webp).
+- Currently ~95% of all traffic, and ~96% of mobile browsing traffic are done with browsers supporting webp. Check current numbers on [caniuse.com](https://caniuse.com/webp).
 - It's great for the environment too! Reducing network traffic reduces electricity consumption which reduces CO2 emissions.
 
 == Installation ==
