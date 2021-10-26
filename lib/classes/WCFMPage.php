@@ -15,7 +15,7 @@ class WCFMPage
           '<h1>WebP Express Conversion Browser</h1>' .
           '<p>' .
           'Note: To convert manually, you still need to use Bulk Convert on the settings page ' .
-          '(or by using WP CLI)' .
+          '(or you can use WP CLI)' .
           '</p>' .
           '</div>';
 
