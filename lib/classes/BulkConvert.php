@@ -21,6 +21,7 @@ class BulkConvert
                 'only-converted' => false,
                 'only-unconverted' => true,
                 'image-types' => $config['image-types'],
+                'max-depth' => 100,
             ],
             'flattenList' => true,
         ];
@@ -76,7 +77,7 @@ class BulkConvert
     /**
      * $filter: all | converted | not-converted. "not-converted" for example returns paths to images that has not been converted
      */
-    public static function getListRecursively($relDir, &$listOptions)
+    public static function getListRecursively($relDir, &$listOptions, $depth = 0)
     {
         $dir = $listOptions['root'] . '/' . $relDir;
 
@@ -99,13 +100,24 @@ class BulkConvert
 
                 if (@is_dir($dir . "/" . $filename)) {
                     if ($listOptions['flattenList']) {
-                      $results = array_merge($results, self::getListRecursively($relDir . "/" . $filename, $listOptions));
+                        $results = array_merge($results, self::getListRecursively($relDir . "/" . $filename, $listOptions, $depth+1));
                     } else {
-                      $results[] = [
-                        'name' => $filename,
-                        'isDir' => true,
-                        'children' =>  self::getListRecursively($relDir . "/" . $filename, $listOptions)
-                      ];
+                        $r = [
+                            'name' => $filename,
+                            'isDir' => true,
+                        ];
+                        if ($depth > $listOptions['max-depth']) {
+                            return $r;  // one item is enough to determine that it is not empty
+                        }
+                        if ($depth < $listOptions['max-depth']) {
+                            $r['children'] = self::getListRecursively($relDir . "/" . $filename, $listOptions, $depth+1);
+                            $r['isEmpty'] = (count($r['children']) == 0);
+                        } else if ($depth == $listOptions['max-depth']) {
+                            $c = self::getListRecursively($relDir . "/" . $filename, $listOptions, $depth+1);
+                            $r['isEmpty'] = (count($c) == 0);
+                            //$r['isEmpty'] = !(new \FilesystemIterator($dir))->valid();
+                        }
+                        $results[] = $r;
                     }
                 } else {
                     // its a file - check if its a jpeg or png
@@ -174,7 +186,7 @@ class BulkConvert
                                 // First try library that claims to do better than mb_detect_encoding
                                 /*
                                 DISABLED, because Onnov EncodingDetector requires PHP 7.2
-                                https://wordpress.org/support/topic/get-http-error-500-after-new-update-2/                                
+                                https://wordpress.org/support/topic/get-http-error-500-after-new-update-2/
 
                                 if (!$encodedToUTF8) {
                                     $detector = new EncodingDetector();
@@ -249,6 +261,10 @@ class BulkConvert
                                 'name' => basename($path),
                                 'isConverted' => $webpExists
                               ];
+                              if ($depth > $listOptions['max-depth']) {
+                                  return $results;  // one item is enough to determine that it is not empty
+                              }
+
                             }
                         }
                     }

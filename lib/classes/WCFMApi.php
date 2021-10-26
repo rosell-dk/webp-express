@@ -19,8 +19,12 @@ class WCFMApi
       $command = sanitize_text_field(stripslashes($_POST['command']));
 
       switch ($command) {
+        /*
         case 'get-tree':
           $result = self::processGetTree();
+          break;*/
+        case 'get-folder':
+          $result = self::processGetFolder();
           break;
         case 'conversion-settings':
           $result = self::processConversionSettings();
@@ -282,6 +286,77 @@ class WCFMApi
       }
       */
       return $result;
+    }
+
+    public static function processGetFolder() {
+
+        Validate::postHasKey('args');
+
+        //$args = json_decode(sanitize_text_field(stripslashes($_POST['args'])), true);
+
+        $args = $_POST['args'];
+        if (!array_key_exists('path', $args)) {
+            throw new \Exception('"path" argument missing for command');
+        }
+
+        $path = SanityCheck::noStreamWrappers($args['path']);
+        //$pathTokens = explode('/', $path);
+        if ($path == '') {
+            $result = [
+                'children' => [
+                    [
+                      'name' => '/',
+                      'isDir' => true,
+                      'nickname' => 'scope'
+                    ]
+                ]
+            ];
+            return $result;
+        }
+
+        $config = Config::loadConfigAndFix();
+        $rootIds = Paths::filterOutSubRoots($config['scope']);
+
+        if ($path == '/') {
+            $result = ['children'=>[]];
+            foreach ($rootIds as $rootId) {
+                $result['children'][] = [
+                    'name' => $rootId,
+                    'isDir' => true,
+                ];
+            }
+            return $result;
+        }
+        $path = SanityCheck::pathWithoutDirectoryTraversal($path);
+        $path = ltrim($path, '/');
+        $pathTokens = explode('/', $path);
+
+        $rootId = array_shift($pathTokens);
+        $relPath = implode('/', $pathTokens);
+
+        if (!in_array($rootId, $rootIds)) {
+            throw new \Exception('Invalid rootId');
+        }
+
+        if ($relPath == '') {
+          $relPath = '.';
+        }
+
+        $absPath = Paths::getAbsDirById($rootId) . '/' . $relPath;
+        SanityCheck::absPathExists($absPath);
+
+        $listOptions = BulkConvert::defaultListOptions($config);
+        $listOptions['root'] = Paths::getAbsDirById($rootId);
+
+        $listOptions['filter']['only-unconverted'] = false;
+        $listOptions['flattenList'] = false;
+        $listOptions['max-depth'] = 0;
+
+        //throw new \Exception('Invalid rootId' . print_r($listOptions));
+
+
+        $list = BulkConvert::getListRecursively($relPath, $listOptions);
+        return ['children' => $list];
     }
 
     public static function processGetTree() {
