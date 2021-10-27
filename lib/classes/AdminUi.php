@@ -11,15 +11,6 @@ use \WebPExpress\Multisite;
 class AdminUi
 {
 
-    public static function getSettingsUrl()
-    {
-        if (Multisite::isNetworkActivated()) {
-            return network_admin_url('settings.php?page=webp_express_settings_page');
-        } else {
-            return admin_url('options-general.php?page=webp_express_settings_page');
-        }
-    }
-
     // Add settings link on the plugins page
     // The hook was registred in AdminInit
     public static function pluginActionLinksFilter($links)

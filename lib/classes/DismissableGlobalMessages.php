@@ -39,7 +39,7 @@ class DismissableGlobalMessages
                 $javascript .= ".done(function() {" . $button['javascript'] . "});";
             }
             if (isset($button['redirect-to-settings'])) {
-                $javascript .= ".done(function() {location.href='" . AdminUi::getSettingsUrl() . "'});";
+                $javascript .= ".done(function() {location.href='" . Paths::getSettingsUrl() . "'});";
             }
 
             $msg .= '<button type="button" class="button ' .
