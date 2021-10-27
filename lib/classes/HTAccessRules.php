@@ -645,9 +645,9 @@ class HTAccessRules
 
             /*
             Create something like this:
-
             RewriteCond %{REQUEST_FILENAME} -f
-            RewriteRule (?i).*(\.jpe?g|\.png)$ /plugins-moved/webp-express/wod/webp-on-demand.php [E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:../../we0-content,E=WE_SOURCE_REL_HTACCESS:$0,E=WE_HTACCESS_ID:themes,NC,L]
+            RewriteCond %{REQUEST_FILENAME} (?i)(.*)(\.jpe?g|\.png)$
+            RewriteRule (?i).*$ /wordpress/wp-content/plugins/webp-express/wod/webp-on-demand.php [E=WE_WP_CONTENT_REL_TO_WE_PLUGIN_DIR:../..,E=WE_SOURCE_REL_HTACCESS:$0,E=WE_HTACCESS_ID:uploads,NC,L]
             */
 
             // Making sure the source exists
@@ -672,11 +672,19 @@ class HTAccessRules
                 $params[] = 'htaccess-id=' . self::$htaccessDir;
             }
 
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(" . self::$fileExtIncludingDot . ")$\n";
+
+            $rules .= "  RewriteRule (?i).*$ " .
+                "/" . self::getWodUrlPath() .
+                (count($params) > 0 ? "?" . implode('&', $params) : "") .
+                " [" . implode(',', $flags) . "]\n";
+
             // self::$appendWebP cannot be used, we need the following in order for
             // it to work for uploads in: Mingled, "Set to WebP", "Image roots".
             // TODO! Will it work for ie theme images?
             // - well, it should, because the script is passed $0. Not matching the ".png" part of the filename
             // only means it is a bit more greedy than it has to
+            /*
             $appendWebP = !(self::$config['destination-extension'] == 'set');
 
             $rules .= "  RewriteRule (?i).*" . ($appendWebP ? "(" . self::$fileExtIncludingDot . ")" : "") . "$ " .
@@ -684,7 +692,7 @@ class HTAccessRules
                 (count($params) > 0 ? "?" . implode('&', $params) : "") .
                 " [" . implode(',', $flags) . "]\n";
 
-
+*/
             /*
 */
 
@@ -853,6 +861,10 @@ class HTAccessRules
         self::$modHeaderDefinitelyUnavailable = ($capTests['modHeaderWorking'] === false);
         self::$passThroughHeaderDefinitelyUnavailable = ($capTests['passThroughHeaderWorking'] === false);
         self::$passThroughHeaderDefinitelyAvailable = ($capTests['passThroughHeaderWorking'] === true);
+
+        self::$passThroughEnvVarDefinitelyUnavailable = ($capTests['passThroughEnvWorking'] === false);
+        self::$passThroughEnvVarDefinitelyAvailable = ($capTests['passThroughEnvWorking'] === true);
+
         self::$canDefinitelyRunTestScriptInWOD = ($capTests['canRunTestScriptInWOD'] === true);
         self::$canDefinitelyRunTestScriptInWOD2 = ($capTests['canRunTestScriptInWOD2'] === true);
 
