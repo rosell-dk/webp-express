@@ -175,10 +175,9 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Ruben Solvang
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
+* 26 Oct: Anonymous
 * 29 Aug: Pawa Tecnologia
 * 29 Jul: Brian Laursen
-* 24 Jul: Hans Konings
-* 8 Jul: Raj
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
@@ -762,7 +761,7 @@ No schedule. I move forward as time allows. I currently spend a lot of time answ
 Right now I am focusing on the File Manager. I would like to add possibility for converting, bulk converting, viewing conversion logs, viewing stats, etc.
 
 Here are other things in pipeline:
-- Excluding certain files and folders. 
+- Excluding certain files and folders.
 - Supporting Save-Data header in Varied Image Responses mode (send extra compressed images to clients who wants to use as little bandwidth as possible).
 - Displaying rules for NGINX.
 - Allow webp for all browsers using [this javascript library](http://libwebpjs.hohenlimburg.org/v0.6.0/). Unfortunately, the javascript library does not (currently) support srcset attributes, which is why I moved this item down the priority list. We need srcset to be supported for the feature to be useful.
