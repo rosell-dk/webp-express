@@ -790,6 +790,6 @@ if (!$result['saved-both-config']) {
     }
 }
 
-wp_redirect(admin_url('options-general.php?page=webp_express_settings_page'));
+wp_redirect(Paths::getSettingsUrl());
 
 exit();
