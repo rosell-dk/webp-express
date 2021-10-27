@@ -51,11 +51,9 @@ class WCFMPage
         echo '<scr' . 'ipt src="' . $baseUrl . '/wcfm-options.js?11"></scr' . 'ipt>';
         //echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/vendor.js?1"></scr' . 'ipt>';
 
-        // TODO: Use generated name (ie index.bc30fc12.js) and make a script in npm for automatically
-        // updating this file when copying
-        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/wcfm.js?25"></scr' . 'ipt>';
-
-        echo '<link rel="stylesheet" href="' . $baseUrl . '/style.css?11">';
+        // TODO:  make a script in npm for automatically updating the filenames below when copying
+        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/index.f8d1bd25.js"></scr' . 'ipt>';
+        echo '<link rel="stylesheet" href="' . $baseUrl . '/index.ab43bb2c.css">';
     }
 
 }
