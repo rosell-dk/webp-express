@@ -119,31 +119,48 @@ class WodConfigLoader
     protected static function getWebPExpressContentDirNoDocRoot() {
         // Check wp-content
         // ----------------------
-        self::$checking = 'path to wp-content dir';
+        self::$checking = 'relative path between webp-express plugin dir and wp-content dir';
 
-        // Passed in env variable?
-        $wpContentDirRelToPluginDir = self::getEnvPassedInRewriteRule('WE_WP_CONTENT_REL_TO_PLUGIN_DIR');
-        if ($wpContentDirRelToPluginDir === false) {
+        // From v0.22.0, we pass relative to webp-express dir rather than to the general plugin dir.
+        // - this allows symlinking the webp-express dir.
+        $wpContentDirRelToWEPluginDir = self::getEnvPassedInRewriteRule('WE_WP_CONTENT_REL_TO_WE_PLUGIN_DIR');
+        if (!$wpContentDirRelToWEPluginDir) {
             // Passed in QS?
-            if (isset($_GET['xwp-content-rel-to-plugin-dir'])) {
-
-                $xwpContentDirRelToPluginDir = SanityCheck::noControlChars($_GET['xwp-content-rel-to-plugin-dir']);
-                $wpContentDirRelToPluginDir = SanityCheck::pathDirectoryTraversalAllowed(substr($xwpContentDirRelToPluginDir, 1));
-
-            } else {
-                throw new \Exception('Path to wp-content was not received');
+            if (isset($_GET['xwp-content-rel-to-we-plugin-dir'])) {
+                $xwpContentDirRelToWEPluginDir = SanityCheck::noControlChars($_GET['xwp-content-rel-to-we-plugin-dir']);
+                $wpContentDirRelToWEPluginDir = SanityCheck::pathDirectoryTraversalAllowed(substr($xwpContentDirRelToWEPluginDir, 1));
             }
         }
+
+        // Old .htaccess rules from before 0.22.0 passed relative path to general plugin dir.
+        // these rules must still be supported, which is what we do here:
+        if (!$wpContentDirRelToWEPluginDir) {
+            self::$checking = 'relative path between plugin dir and wp-content dir';
+
+            $wpContentDirRelToPluginDir = self::getEnvPassedInRewriteRule('WE_WP_CONTENT_REL_TO_PLUGIN_DIR');
+            if ($wpContentDirRelToPluginDir === false) {
+                // Passed in QS?
+                if (isset($_GET['xwp-content-rel-to-plugin-dir'])) {
+                    $xwpContentDirRelToPluginDir = SanityCheck::noControlChars($_GET['xwp-content-rel-to-plugin-dir']);
+                    $wpContentDirRelToPluginDir = SanityCheck::pathDirectoryTraversalAllowed(substr($xwpContentDirRelToPluginDir, 1));
+
+                } else {
+                    throw new \Exception('Path to wp-content was not received in any way');
+                }
+            }
+            $wpContentDirRelToWEPluginDir = $wpContentDirRelToPluginDir . '/webp-express';
+        }
+
 
         // Check WebP Express content dir
         // ---------------------------------
         self::$checking = 'WebP Express content dir';
-//            echo 'dir:' . $wpContentDirRelToPluginDir . '<br>'; exit;
 
-        $pathToPluginDir = dirname(dirname(dirname(__DIR__)));
-        //echo $pathToPluginDir; exit;
+        $pathToWEPluginDir = dirname(dirname(__DIR__));
+        $webExpressContentDirAbs = SanityCheck::pathDirectoryTraversalAllowed($pathToWEPluginDir . '/' . $wpContentDirRelToWEPluginDir . '/webp-express');
 
-        $webExpressContentDirAbs = SanityCheck::pathDirectoryTraversalAllowed($pathToPluginDir . '/' . $wpContentDirRelToPluginDir . '/webp-express');
+        //$pathToPluginDir = dirname(dirname(dirname(__DIR__)));
+        //$webExpressContentDirAbs = SanityCheck::pathDirectoryTraversalAllowed($pathToPluginDir . '/' . $wpContentDirRelToPluginDir . '/webp-express');
         //echo $webExpressContentDirAbs; exit;
         if (@!file_exists($webExpressContentDirAbs)) {
             throw new \Exception('Dir not found');
@@ -166,6 +183,8 @@ class WodConfigLoader
     protected static function loadConfig() {
 
         $usingDocRoot = !(
+            isset($_GET['xwp-content-rel-to-we-plugin-dir']) ||
+            self::getEnvPassedInRewriteRule('WE_WP_CONTENT_REL_TO_WE_PLUGIN_DIR') ||
             isset($_GET['xwp-content-rel-to-plugin-dir']) ||
             self::getEnvPassedInRewriteRule('WE_WP_CONTENT_REL_TO_PLUGIN_DIR')
         );

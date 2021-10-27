@@ -458,7 +458,8 @@ class HTAccessRules
             $flags = [];
 
             if (!self::$passThroughEnvVarDefinitelyUnavailable) {
-                $flags[] = 'E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:' . Paths::getContentDirRelToPluginDir();
+                //$flags[] = 'E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:' . Paths::getContentDirRelToPluginDir();
+                $flags[] = 'E=WE_WP_CONTENT_REL_TO_WE_PLUGIN_DIR:' . Paths::getContentDirRelToWebPExpressPluginDir();
                 $flags[] = 'E=WE_DESTINATION_REL_HTACCESS:$0';
                 $flags[] = 'E=WE_HTACCESS_ID:' . self::$htaccessDir;    // this will btw either be "uploads" or "cache"
             }
@@ -466,7 +467,8 @@ class HTAccessRules
             $flags[] = 'L';
 
             if (!self::$passThroughEnvVarDefinitelyAvailable) {
-                $params[] = 'xwp-content-rel-to-plugin-dir=x' . Paths::getContentDirRelToPluginDir();
+                //$params[] = 'xwp-content-rel-to-plugin-dir=x' . Paths::getContentDirRelToPluginDir();
+                $params[] = 'xwp-content-rel-to-we-plugin-dir=x' . Paths::getContentDirRelToWebPExpressPluginDir();
                 $params[] = 'xdestination-rel-htaccess=x$0';
                 $params[] = 'htaccess-id=' . self::$htaccessDir;
             }
@@ -655,7 +657,8 @@ class HTAccessRules
             $flags = [];
 
             if (!self::$passThroughEnvVarDefinitelyUnavailable) {
-                $flags[] = 'E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:' . Paths::getContentDirRelToPluginDir();
+                //$flags[] = 'E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:' . Paths::getContentDirRelToPluginDir();
+                $flags[] = 'E=WE_WP_CONTENT_REL_TO_WE_PLUGIN_DIR:' . Paths::getContentDirRelToWebPExpressPluginDir();
                 $flags[] = 'E=WE_SOURCE_REL_HTACCESS:$0';
                 $flags[] = 'E=WE_HTACCESS_ID:' . self::$htaccessDir;    // this will btw be one of the image roots. It will not be "cache"
             }
@@ -663,7 +666,8 @@ class HTAccessRules
             $flags[] = 'L';
 
             if (!self::$passThroughEnvVarDefinitelyAvailable) {
-                $params[] = 'xwp-content-rel-to-plugin-dir=x' . Paths::getContentDirRelToPluginDir();
+                //$params[] = 'xwp-content-rel-to-plugin-dir=x' . Paths::getContentDirRelToPluginDir();
+                $params[] = 'xwp-content-rel-to-we-plugin-dir=x' . Paths::getContentDirRelToWebPExpressPluginDir();
                 $params[] = 'xsource-rel-htaccess=x$0';
                 $params[] = 'htaccess-id=' . self::$htaccessDir;
             }

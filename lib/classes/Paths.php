@@ -339,6 +339,10 @@ class Paths
     {
         return PathHelper::getRelDir(self::getPluginDirAbs(), self::getContentDirAbs());
     }
+    public static function getContentDirRelToWebPExpressPluginDir()
+    {
+        return PathHelper::getRelDir(self::getWebPExpressPluginDirAbs(), self::getContentDirAbs());
+    }
 
 
     public static function isWPContentDirMoved()
