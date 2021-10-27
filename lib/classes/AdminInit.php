@@ -25,7 +25,7 @@ class AdminInit
     public static function runMigrationIfNeeded()
     {
         // When an update requires a migration, the number should be increased
-        define('WEBPEXPRESS_MIGRATION_VERSION', '13');
+        define('WEBPEXPRESS_MIGRATION_VERSION', '14');
 
         if (WEBPEXPRESS_MIGRATION_VERSION != Option::getOption('webp-express-migration-version', 0)) {
             // run migration logic
@@ -107,7 +107,11 @@ class AdminInit
         add_action("admin_init", array('\WebPExpress\AdminInit', 'addHooksAfterAdminInit'));
 
         // Run migration AFTER admin_init hook (important, as insert_with_markers injection otherwise fails, see #394)
+        // PS: "plugins_loaded" is to early, as insert_with_markers fails.
         // PS: Unfortunately Message::addMessage doesnt print until next load now, we should look into that.
+        // PPS: It does run. It must be the Option that does not react
+        //add_action("admin_init", array('\WebPExpress\AdminInit', 'runMigrationIfNeeded'));
+
         add_action("admin_init", array('\WebPExpress\AdminInit', 'runMigrationIfNeeded'));
 
         add_action("admin_notices", array('\WebPExpress\DismissableGlobalMessages', 'printMessages'));
