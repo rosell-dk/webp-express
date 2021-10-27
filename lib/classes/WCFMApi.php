@@ -211,7 +211,7 @@ class WCFMApi
       $config = Config::loadConfigAndFix();
       $rootIds = Paths::filterOutSubRoots($config['scope']);
       if (!in_array($rootId, $rootIds)) {
-          throw new \Exception('Invalid scope');
+          throw new \Exception('Invalid scope (have you perhaps changed the scope setting after igniting the file manager?)');
       }
 
       $absPath = Paths::getAbsDirById($rootId) . '/' . $relPath;
