@@ -1,3 +1,9 @@
+= 0.21.1 =
+*(released: 27 Oct 2021)*
+* Bugfix: File manager could not handle many images. It now loads tree branches on need basis instead of the complete tree in one go
+* Bugfix: For mulisite, the redirect after settings save was not working (bug introduced in 0.21.0)
+For more info, see the closed issues on the [webp-express 0.21.1 milestone](https://github.com/rosell-dk/webp-express/milestone/42?closed=1)
+
 = 0.21.0 =
 *(released: 25 Oct 2021)*
 * Added image browser (in Media tab)
