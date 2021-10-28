@@ -670,22 +670,14 @@ There can be instances where you actually need to serve a jpeg or png. For examp
 Alter HTML is programmed not to substitute image URLs with query strings (better safe than sorry). You can exploit that and simply add ie ?original to the image URLs in question.
 
 *Redirection*
-To bypass the *redirection*, you can add the following in the `.htaccess` where *WebP Express* has placed its rules (this is usually in the `wp-content` folder). The rules needs to be added *above* the rules inserted by *WebP Express*.
+To avoid redirecting an image to webp, simply add "?original" to the image url.
 
+To bypass redirection for an entire folder, you can put something likke this into your index `.htaccess`:
 ```
-RewriteCond %{QUERY_STRING} original
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule . - [L]
+RewriteRule ^wp-content/uploads/2021/06/ - [L]
 ```
-With those rules in place, you can add "?original" to the URLs of those images that you want to keep serving as jpg / png.
+PS: If *WebP Express* has placed rules in that .htaccess, you need to place the rule *above* the rules inserted by *WebP Express*
 
-Alternatively, you can specify the filenames individually in the `.htaccess`:
-
-```
-RewriteRule ^uploads/2019/02/example-of-jpg-compressed-to-80\.jpg - [L]
-RewriteRule ^uploads/2019/02/image2\.jpg - [L]
-RewriteRule . - [L]
-```
 If you got any further questions, look at, or comment on [this topic](https://wordpress.org/support/topic/can-i-make-an-exception-for-specific-post-image/)
 
 ### Alter HTML only replaces some of the images

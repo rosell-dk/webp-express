@@ -277,7 +277,6 @@ class HTAccessRules
     {
         $rules = '';
 
-
         if (self::$mingled) {
             // TODO:
             // Only write mingled rules for "uploads" dir.
@@ -1031,6 +1030,11 @@ class HTAccessRules
             $rules .= "# ---------------------------------------------\n\n";
             $rules .= "<IfModule mod_rewrite.c>\n" .
                 "  RewriteEngine On\n\n";
+
+            $rules .= "  # Escape hatch: adding ?original to an url can be used to bypass redirection\n";
+            $rules .= "  RewriteCond %{QUERY_STRING} original$\n";
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
+            $rules .= "  RewriteRule . - [L]\n\n";
 
             if (self::$config['redirect-to-existing-in-htaccess']) {
                 $rules .= self::redirectToExistingRules();

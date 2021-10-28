@@ -11,11 +11,13 @@ function webpexpress_migrate14() {
     // Update migrate version right away to minimize risk of running the update twice in a multithreaded environment
     Option::updateOption('webp-express-migration-version', '14');
 
-    // Regenerate .htaccess files in case "Redirect to converter" is enabled in order to fix the rules.
-    // See #520
+    // Regenerate .htaccess files in case redirection to webp is enabled. Two reasons:
+    // 1: WebP On Demand rules needs fixing (#520)
+    // 2: The new escape hatch (#522), which is needed for the File Manager (#521)
+
     $checkIfQualityDetectionIsWorking = false;
     $config = Config::loadConfigAndFix($checkIfQualityDetectionIsWorking);
-    if ($config['enable-redirection-to-converter']) {
+    if (($config['enable-redirection-to-converter']) || ($config['redirect-to-existing-in-htaccess'])) {
         $forceHtaccessRegeneration = true;
         $result = Config::saveConfigurationAndHTAccess($config, $forceHtaccessRegeneration);
     }
