@@ -222,7 +222,7 @@ class WCFMApi
             //'filename' => $absPath,
             //'abspath' => $absPath,
             'size' => filesize($absPath),
-            'url' => Paths::getUrlById($rootId) . '/' . $relPath,
+            'url' => Paths::getUrlById($rootId) . '/' . $relPath . '?original',
           ]
       ];
 
@@ -354,8 +354,8 @@ class WCFMApi
 
         //throw new \Exception('Invalid rootId' . print_r($listOptions));
 
-
         $list = BulkConvert::getListRecursively($relPath, $listOptions);
+
         return ['children' => $list];
     }
 
