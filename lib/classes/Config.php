@@ -36,6 +36,7 @@ class Config
             'cache-control-max-age' => 'one-week',
             'cache-control-public' => false,
             'scope' => ['themes', 'uploads'],
+            'enable-logging' => false,
 
             // redirection rules
             'enable-redirection-to-converter' => true,
@@ -580,6 +581,7 @@ class Config
         // WOD options
         // -------------
         $wod = [
+            'enable-logging' => $config['enable-logging'],
             'enable-redirection-to-converter' => $config['enable-redirection-to-converter'],
             'enable-redirection-to-webp-realizer' => $config['enable-redirection-to-webp-realizer'],
             'base-htaccess-on-these-capability-tests' => $config['base-htaccess-on-these-capability-tests'],

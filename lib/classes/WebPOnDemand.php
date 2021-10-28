@@ -242,11 +242,14 @@ class WebPOnDemand extends WodConfigLoader
             }
         }
 
+        $loggingEnabled = (isset($wodOptions['enable-logging']) ? $wodOptions['enable-logging'] : true);
+        $logDir = ($loggingEnabled ? self::$webExpressContentDirAbs . '/log' : null);
+
         ConvertHelperIndependent::serveConverted(
             $source,
             $destination,
             $serveOptions,
-            self::$webExpressContentDirAbs . '/log',
+            $logDir,
             'Conversion triggered with the conversion script (wod/webp-on-demand.php)'
         );
 

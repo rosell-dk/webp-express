@@ -427,6 +427,7 @@ $sanitized = [
     ]),
     'alpha-quality' => webpexpress_getSanitizedQuality('alpha-quality', 80),
     'convert-on-upload' => isset($_POST['convert-on-upload']),
+    'enable-logging' => isset($_POST['enable-logging']),
     'converters' => webpexpress_getSanitizedConverters(),
 
 
@@ -565,6 +566,7 @@ if ($sanitized['operation-mode'] != 'no-conversion') {
 
     // Other conversion options
     $config['convert-on-upload'] = $sanitized['convert-on-upload'];
+    $config['enable-logging'] = $sanitized['enable-logging'];
 
 
     // Web Service

@@ -596,10 +596,10 @@ APACHE
      * @param  string  $source          Full path to the source file that was converted.
      * @param  string  $destination     Full path to the destination file (may exist or not).
      * @param  array   $convertOptions  Conversion options.
-     * @param  string  $logDir          The folder where log files are kept.
+     * @param  string  $logDir          The folder where log files are kept or null for no logging
      * @param  string  $converter       (optional) Set it to convert with a specific converter.
      */
-    public static function convert($source, $destination, $convertOptions, $logDir, $converter = null) {
+    public static function convert($source, $destination, $convertOptions, $logDir = null, $converter = null) {
         include_once __DIR__ . '/../../vendor/autoload.php';
 
         // At this point, everything has already been checked for sanity. But for good meassure, lets
@@ -620,7 +620,9 @@ APACHE
 
             // Check that log path is sane and inside document root
             // -------------------------------------------------------
-            $logDir = SanityCheck::absPathIsInDocRoot($logDir);
+            if (!is_null($logDir)) {
+                $logDir = SanityCheck::absPathIsInDocRoot($logDir);
+            }
 
 
             // PS: No need to check $logMsgTop. Log files are markdown and stored as ".md". They can do no harm.
@@ -658,7 +660,9 @@ APACHE
             //$msg = 'oh no';
         }
 
-        self::saveLog($source, $logDir, $logger->getMarkDown("\n\r"), 'Conversion triggered using bulk conversion');
+        if (!is_null($logDir)) {
+            self::saveLog($source, $logDir, $logger->getMarkDown("\n\r"), 'Conversion triggered using bulk conversion');
+        }
 
         return [
             'success' => $success,
@@ -672,7 +676,7 @@ APACHE
      *  Serve a converted file (if it does not already exist, a conversion is triggered - all handled in webp-convert).
      *
      */
-    public static function serveConverted($source, $destination, $serveOptions, $logDir, $logMsgTop = '')
+    public static function serveConverted($source, $destination, $serveOptions, $logDir = null, $logMsgTop = '')
     {
         include_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -697,8 +701,9 @@ APACHE
             // Check that log path is sane
             // -------------------------------------------------------
             //$logDir = SanityCheck::absPathIsInDocRoot($logDir);
-            $logDir = SanityCheck::absPath($logDir);
-
+            if ($logDir != null) {
+                $logDir = SanityCheck::absPath($logDir);
+            }
 
             // PS: No need to check $logMsgTop. Log files are markdown and stored as ".md". They can do no harm.
 
@@ -712,10 +717,11 @@ APACHE
 
         $convertLogger = new BufferLogger();
         WebPConvert::serveConverted($source, $destination, $serveOptions, null, $convertLogger);
-        $convertLog = $convertLogger->getMarkDown("\n\r");
-        if ($convertLog != '') {
-            self::saveLog($source, $logDir, $convertLog, $logMsgTop);
+        if (!is_null($logDir)) {
+            $convertLog = $convertLogger->getMarkDown("\n\r");
+            if ($convertLog != '') {
+                self::saveLog($source, $logDir, $convertLog, $logMsgTop);
+            }
         }
-
     }
 }

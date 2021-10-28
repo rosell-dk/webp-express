@@ -10,6 +10,7 @@
             include_once 'metadata.inc';
             include_once 'converters.inc';
             include_once 'convert-on-upload.inc';
+            include_once 'logging.inc';
             include_once 'bulk-convert.inc';
             ?>
         </tbody>

@@ -84,7 +84,11 @@ class Convert
             // Check log dir
             // -------------------------------
             $checking = 'conversion log dir';
-            $logDir = SanityCheck::absPath(Paths::getWebPExpressContentDirAbs() . '/log');
+            if (isset($config['enable-logging']) && $config['enable-logging']) {
+                $logDir = SanityCheck::absPath(Paths::getWebPExpressContentDirAbs() . '/log');
+            } else {
+                $logDir = null;
+            }
 
 
         } catch (\Exception $e) {
