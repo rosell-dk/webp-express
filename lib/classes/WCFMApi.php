@@ -222,7 +222,7 @@ class WCFMApi
             //'filename' => $absPath,
             //'abspath' => $absPath,
             'size' => filesize($absPath),
-            'url' => Paths::getUrlById($rootId) . '/' . $relPath . '?original',
+            'url' => Paths::getUrlById($rootId) . '/' . $relPath . '?' . SelfTestHelper::randomDigitsAndLetters(8) . '&original',
           ]
       ];
 
@@ -249,7 +249,7 @@ class WCFMApi
               $result['converted'] = [
                 'abspath' => $absPathDest,
                 'size' => filesize($absPathDest),
-                'url' => $destinationUrl,
+                'url' => $destinationUrl . '?' . SelfTestHelper::randomDigitsAndLetters(8),
                 'log' => ''
               ];
           }
