@@ -497,6 +497,13 @@ APACHE
         return self::getWebPExpressContentDirAbs() . '/log';
     }
 
+    // ------------ Bigger-than-source  dir -------------
+
+    public static function getBiggerThanSourceDirAbs()
+    {
+        return self::getWebPExpressContentDirAbs() . '/webp-images-bigger-than-source';
+    }
+
     // ------------ Plugin Dir (all plugins) -------------
 
     public static function getPluginDirAbs()

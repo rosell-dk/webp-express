@@ -117,6 +117,14 @@ class Convert
             }
         //}
 
+        BiggerThanSource::updateStatus(
+            $source,
+            $destination,
+            Paths::getWebPExpressContentDirAbs(),
+            new ImageRoots(Paths::getImageRootsDef()),
+            $config['destination-folder'],
+            $config['destination-extension']
+        );
 
         if ($result['success'] === true) {
             $result['filesize-original'] = @filesize($source);

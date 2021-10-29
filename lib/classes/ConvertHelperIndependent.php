@@ -2,7 +2,7 @@
 
 /*
 This class is made to not be dependent on Wordpress functions and must be kept like that.
-It is used by webp-on-demand.php, which does not register an auto loader. It is also used for bulk conversion.
+It is used by webp-on-demand.php. It is also used for bulk conversion.
 */
 namespace WebPExpress;
 
@@ -77,8 +77,8 @@ class ConvertHelperIndependent
     /**
      * Get destination path corresponding to the source path given (and some configurations)
      *
-     *  If for example Operation mode is set to "mingled" and extension is set to "Append .webp",
-     *  the result of finding the destination path that corresponds to "/path/to/logo.jpg" will be "/path/to/logo.jpg.webp".
+     * If for example Operation mode is set to "mingled" and extension is set to "Append .webp",
+     * the result of finding the destination path that corresponds to "/path/to/logo.jpg" will be "/path/to/logo.jpg.webp".
      *
      * @param  string   $source                     Path to source file
      * @param  string   $destinationFolder          'mingled' or 'separate'

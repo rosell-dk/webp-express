@@ -75,6 +75,25 @@ class HTAccessRules
     }
 
     /**
+     *
+     *  Note that server variables are only allowed some places in the .htaccess.
+     *  It is for example not allowed in CondPattern so something like this will not work:
+     *  RewriteCond %{REQUEST_FILENAME} (?i)(%{DOCUMENT_ROOT}/wordpress/wp-content/themes/)(.*)(\.jpe?g|\.png)$
+     */
+    private static function replaceDocRootWithApacheTokenIfDocRootAvailable($absPath)
+    {
+        // TODO: I would like to test this thoroughly before using so we do nothing now:
+        return $absPath;
+
+        if (PathHelper::isDocRootAvailable()) {
+            if (strpos($absPath, $_SERVER['DOCUMENT_ROOT']) === 0) {
+                return "%{DOCUMENT_ROOT}" . substr($absPath, strlen($_SERVER['DOCUMENT_ROOT']));
+            }
+        }
+        return $absPath;
+    }
+
+    /**
      * Decides if .htaccess rules needs to be updated.
      *
      * The result is positive under these circumstances:
@@ -439,6 +458,8 @@ class HTAccessRules
                 $params[] = "wp-content=" . Paths::getContentDirRel();
             }
 
+            // When matching from the beginning (^), we need the "/?" in order to make it work on litespeed too.
+            // Here is why: https://openlitespeed.org/kb/apache-rewrite-rules-in-openlitespeed/
             $rewriteRuleStart = '^/?(.+)';
             $rules .= "  RewriteRule " . $rewriteRuleStart . "\.(webp)$ " .
                 "/" . self::getWebPRealizerUrlPath() .
@@ -1031,10 +1052,40 @@ class HTAccessRules
             $rules .= "<IfModule mod_rewrite.c>\n" .
                 "  RewriteEngine On\n\n";
 
-            $rules .= "  # Escape hatch: adding ?original to an url can be used to bypass redirection\n";
+            $rules .= "  # Escape hatch #1: Adding ?original to an url can be used to bypass redirection\n";
             $rules .= "  RewriteCond %{QUERY_STRING} original$\n";
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             $rules .= "  RewriteRule . - [L]\n\n";
+
+            $rules .= "  # Escape hatch #2: Adding an empty file with same file name, but \".do-not-convert\" appended will bypass redirection\n";
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(\.jpe?g|\.png)$\n";
+            $rules .= "  RewriteCond %1%2\.do-not-convert -f\n";
+            $rules .= "  RewriteRule . - [L]\n\n";
+
+            $rules .= "  # Avoid redirecting to webp files that are bigger than the original\n";
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
+
+            // Find relative path of source (accessible as %2%3)
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(" . self::$htaccessDirAbs . "/)(.*)(" .self::$fileExtIncludingDot . ")$\n";
+
+            // Make sure there is a webp in the cache-dir
+            $cacheDirForThisRoot = PathHelper::fixAbsPathToUseUnresolvedDocRoot(
+                Paths::getBiggerThanSourceDirAbs() . '/' . self::$htaccessDir
+            );
+            $rules .= "  RewriteCond " .
+                self::replaceDocRootWithApacheTokenIfDocRootAvailable($cacheDirForThisRoot) .
+                "/%2%3.webp -f\n";
+            //RewriteCond %{REQUEST_FILENAME} (?i)(/var/www/we/we0/wordpress/wp-content/themes/)(.*)(\.jpe?g|\.png)$
+
+            // Make sure there is a webp in the cache-dir
+
+
+            $rules .= "  RewriteRule . - [L]\n\n";
+
+            // In the future, we could let user add exeptions in UI. Also for folders
+            // in order to make this work for folders, we will need to update the .htaccess
+            // and list the exceptions here with rules like this:
+            // RewriteRule ^uploads/2021/06/ - [L]
 
             if (self::$config['redirect-to-existing-in-htaccess']) {
                 $rules .= self::redirectToExistingRules();

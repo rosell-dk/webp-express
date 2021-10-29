@@ -250,6 +250,15 @@ class WebPRealizer extends WodConfigLoader
             'Conversion triggered with the conversion script (wod/webp-realizer.php)'
         );
 
+        BiggerThanSource::updateStatus(
+            $source,
+            $destination,
+            self::$webExpressContentDirAbs,
+            self::getImageRootsDef(),
+            $wodOptions['destination-folder'],
+            $wodOptions['destination-extension']
+        );        
+
         self::fixConfigIfEwwwDiscoveredNonFunctionalApiKeys();
     }
 

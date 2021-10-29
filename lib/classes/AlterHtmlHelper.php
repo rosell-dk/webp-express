@@ -151,12 +151,13 @@ class AlterHtmlHelper
 
 
     /**
-     *  Get url for webp from source url,  (if ), given a certain baseUrl / baseDir.
-     *  Base can for example be uploads or wp-content.
+     * Get url for webp from source url,  (if ), given a certain baseUrl / baseDir.
+     * Base can for example be uploads or wp-content.
      *
-     *  returns false
-     *  - if no source file found in that base
-     *  - or source file is found but webp file isn't there and the `only-for-webps-that-exists` option is set
+     * returns false:
+     * - if no source file found in that base
+     * - if source file is found but webp file isn't there and the `only-for-webps-that-exists` option is set
+     * - if webp is marked as bigger than source
      *
      *  @param  string  $sourceUrl   Url of source image (ie http://example.com/wp-content/image.jpg)
      *  @param  string  $rootId      Id (created in Config::updateAutoloadedOptions). Ie "uploads", "content" or any image root id
@@ -213,6 +214,12 @@ class AlterHtmlHelper
         $destPathAbs = $destinationRoot['abs-path'] . '/' . $relPathFromImageRootToDest;
         $webpMustExist = self::$options['only-for-webps-that-exists'];
         if ($webpMustExist && (!@file_exists($destPathAbs))) {
+            return false;
+        }
+
+        // check if webp is marked as bigger than source
+        $biggerThanSourcePath = Paths::getBiggerThanSourceDirAbs() . '/' . $rootId . '/' . $relPathFromImageRootToDest;
+        if (@file_exists($biggerThanSourcePath)) {
             return false;
         }
 

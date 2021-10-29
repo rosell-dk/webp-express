@@ -253,6 +253,15 @@ class WebPOnDemand extends WodConfigLoader
             'Conversion triggered with the conversion script (wod/webp-on-demand.php)'
         );
 
+        BiggerThanSource::updateStatus(
+            $source,
+            $destination,
+            self::$webExpressContentDirAbs,
+            self::getImageRootsDef(),
+            $wodOptions['destination-folder'],
+            $wodOptions['destination-extension']
+        );
+
         self::fixConfigIfEwwwDiscoveredNonFunctionalApiKeys();
     }
 
