@@ -7,7 +7,9 @@ class PathHelper
 
     public static function isDocRootAvailable() {
 
-        //return false;
+        // BTW:
+        // Note that DOCUMENT_ROOT does not end with trailing slash on old litespeed servers:
+        // https://www.litespeedtech.com/support/forum/threads/document_root-trailing-slash.5304/
 
         if (!isset($_SERVER['DOCUMENT_ROOT'])) {
             return false;
@@ -43,6 +45,17 @@ class PathHelper
         );
     }
 
+    /**
+     * When the rewrite rules are using the absolute dir, the rewrite rules does not work if that dir
+     * is outside document root. This poses a problem if some part of the document root has been symlinked.
+     *
+     * This method "unresolves" the document root part of a dir.
+     * That is: It takes an absolute url, looks to see if it begins with the resolved document root.
+     * In case it does, it replaces the resolved document root with the unresolved document root.
+     *
+     * Unfortunately we can only unresolve when document root is available and resolvable.
+     * - which is sad, because the image-roots was introduced in order to get it to work on setups
+     */
     public static function fixAbsPathToUseUnresolvedDocRoot($absPath) {
         if (self::isDocRootAvailableAndResolvable()) {
             if (strpos($absPath, realpath($_SERVER['DOCUMENT_ROOT'])) === 0) {
