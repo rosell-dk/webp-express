@@ -209,10 +209,11 @@ class WCFMApi
       $rootId = array_shift($pathTokens);  // Shift off the first item, which is the scope
       $relPath = implode('/', $pathTokens);
       $config = Config::loadConfigAndFix();
-      $rootIds = Paths::filterOutSubRoots($config['scope']);
+      /*$rootIds = Paths::filterOutSubRoots($config['scope']);
       if (!in_array($rootId, $rootIds)) {
           throw new \Exception('Invalid scope (have you perhaps changed the scope setting after igniting the file manager?)');
-      }
+      }*/
+      $rootIds = $rootIds = Paths::getImageRootIds();
 
       $absPath = Paths::getAbsDirById($rootId) . '/' . $relPath;
       //absPathExistsAndIsFile
@@ -315,9 +316,9 @@ class WCFMApi
         }
 
         $config = Config::loadConfigAndFix();
-        $rootIds = Paths::filterOutSubRoots($config['scope']);
-
+        $rootIds = Paths::getImageRootIds();
         if ($path == '/') {
+            $rootIds = Paths::filterOutSubRoots($config['scope']);
             $result = ['children'=>[]];
             foreach ($rootIds as $rootId) {
                 $result['children'][] = [
