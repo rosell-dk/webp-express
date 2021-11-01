@@ -218,8 +218,14 @@ class AlterHtmlHelper
         }
 
         // check if webp is marked as bigger than source
+        /*
         $biggerThanSourcePath = Paths::getBiggerThanSourceDirAbs() . '/' . $rootId . '/' . $relPathFromImageRootToDest;
         if (@file_exists($biggerThanSourcePath)) {
+            return false;
+        }*/
+
+        // check if webp is larger than original
+        if (BiggerThanSource::bigger($srcPathAbs, $destPathAbs)) {
             return false;
         }
 
