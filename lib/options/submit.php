@@ -381,6 +381,7 @@ $sanitized = [
         'private',
     ]),
     'cache-control-custom' => webpexpress_getSanitizedCacheControlHeader('cache-control-custom'),
+    'prevent-using-webps-larger-than-original' => isset($_POST['prevent-using-webps-larger-than-original']),
 
 
     // Redirection rules
@@ -506,6 +507,8 @@ switch ($sanitized['cache-control']) {
         $config['cache-control-custom'] = $sanitized['cache-control-custom'];
         break;
 }
+$config['prevent-using-webps-larger-than-original'] = $sanitized['prevent-using-webps-larger-than-original'];
+
 
 // Alter HTML
 $config['alter-html'] = [];

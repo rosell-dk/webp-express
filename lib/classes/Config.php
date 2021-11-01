@@ -37,6 +37,7 @@ class Config
             'cache-control-public' => false,
             'scope' => ['themes', 'uploads'],
             'enable-logging' => false,
+            'prevent-using-webps-larger-than-original' => true,
 
             // redirection rules
             'enable-redirection-to-converter' => true,
@@ -413,6 +414,7 @@ class Config
         $obj['destination-structure'] = $config['destination-structure'];
         $obj['scope'] = $config['scope'];
         $obj['image-types'] = $config['image-types'];   // 0=none,1=jpg, 2=png, 3=both
+        $obj['prevent-using-webps-larger-than-original'] = $config['prevent-using-webps-larger-than-original'];
 
         Option::updateOption(
             'webp-express-alter-html-options',

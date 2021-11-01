@@ -22,6 +22,8 @@
                 include_once 'destination-structure.inc';
             }
 
+            include_once 'prevent-using-webps-larger-than-original.inc';
+
             // TODO:
             // Perhaps also show cache control in cdn-friendly mode?
             if (($config['operation-mode'] == 'tweaked') || ($config['operation-mode'] == 'varied-image-responses') || ($config['operation-mode'] == 'cdn-friendly')) {

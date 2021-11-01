@@ -141,7 +141,8 @@ class HTAccessRules
             'destination-folder' => 'separate',
             'destination-extension' => 'append',
             'destination-structure' => 'doc-root',
-            'scope' => ['themes', 'uploads']
+            'scope' => ['themes', 'uploads'],
+            'prevent-using-webps-larger-than-original' => true,
         ];
 
         // If one of the props have changed, we need to update.
@@ -1062,25 +1063,24 @@ class HTAccessRules
             $rules .= "  RewriteCond %1%2\.do-not-convert -f\n";
             $rules .= "  RewriteRule . - [L]\n\n";
 
-            $rules .= "  # Avoid redirecting to webp files that are bigger than the original\n";
-            $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
+            if ($config['prevent-using-webps-larger-than-original']) {
+                $rules .= "  # Avoid redirecting to webp files that are bigger than the original\n";
+                $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
 
-            // Find relative path of source (accessible as %2%3)
-            $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(" . self::$htaccessDirAbs . "/)(.*)(" .self::$fileExtIncludingDot . ")$\n";
+                // Find relative path of source (accessible as %2%3)
+                $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(" . self::$htaccessDirAbs . "/)(.*)(" .self::$fileExtIncludingDot . ")$\n";
 
-            // Make sure there is a webp in the cache-dir
-            $cacheDirForThisRoot = PathHelper::fixAbsPathToUseUnresolvedDocRoot(
-                Paths::getBiggerThanSourceDirAbs() . '/' . self::$htaccessDir
-            );
-            $rules .= "  RewriteCond " .
-                self::replaceDocRootWithApacheTokenIfDocRootAvailable($cacheDirForThisRoot) .
-                "/%2%3.webp -f\n";
-            //RewriteCond %{REQUEST_FILENAME} (?i)(/var/www/we/we0/wordpress/wp-content/themes/)(.*)(\.jpe?g|\.png)$
+                // Check if dummy file exists
+                $cacheDirForThisRoot = PathHelper::fixAbsPathToUseUnresolvedDocRoot(
+                    Paths::getBiggerThanSourceDirAbs() . '/' . self::$htaccessDir
+                );
+                $rules .= "  RewriteCond " .
+                    self::replaceDocRootWithApacheTokenIfDocRootAvailable($cacheDirForThisRoot) .
+                    "/%2%3.webp -f\n";
 
-            // Make sure there is a webp in the cache-dir
+                $rules .= "  RewriteRule . - [L]\n\n";
 
-
-            $rules .= "  RewriteRule . - [L]\n\n";
+            }
 
             // In the future, we could let user add exeptions in UI. Also for folders
             // in order to make this work for folders, we will need to update the .htaccess

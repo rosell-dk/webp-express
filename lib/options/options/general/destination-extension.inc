@@ -40,8 +40,8 @@
         <?php
         if ($config['operation-mode'] == 'no-conversion') {
             webpexpress_radioButtons('destination-extension', $config['destination-extension'], [
-                'append' => 'Original extension is kept (ie "image.jpg.webp")',
-                'set' => 'Original extension is replaced (ie "image.webp")',
+                'append' => 'Appended ".webp" (ie "image.jpg.webp")',
+                'set' => 'Replaced extension (ie "image.webp")',
             ], [
                 'append' => 'Original extension is kept and ".webp" is appended. ',
                 'set' => 'Original extension is replaced with ".webp".'

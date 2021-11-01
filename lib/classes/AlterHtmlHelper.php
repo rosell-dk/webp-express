@@ -43,7 +43,9 @@ class AlterHtmlHelper
     public static function getOptions() {
       if (!isset(self::$options)) {
           self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
-
+          if (!isset(self::$options['prevent-using-webps-larger-than-original'])) {
+            self::$options['prevent-using-webps-larger-than-original'] = true;
+          }
           // Set scope if it isn't there (it wasn't cached until 0.17.5)
           if (!isset(self::$options['scope'])) {
             $config = Config::loadConfig();
@@ -225,8 +227,10 @@ class AlterHtmlHelper
         }*/
 
         // check if webp is larger than original
-        if (BiggerThanSource::bigger($srcPathAbs, $destPathAbs)) {
-            return false;
+        if (self::$options['prevent-using-webps-larger-than-original']) {
+            if (BiggerThanSource::bigger($srcPathAbs, $destPathAbs)) {
+                return false;
+            }
         }
 
         $destUrl = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
