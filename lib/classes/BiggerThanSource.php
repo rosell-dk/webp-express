@@ -64,6 +64,28 @@ APACHE
     }
 
     /**
+     * Check if webp is bigger than original.
+     *
+     * @return boolean|null   True if it is bigger than original, false if not. NULL if it cannot be determined
+     */
+    public static function bigger($source, $destination)
+    {
+        /*
+        if ((!@file_exists($source)) || (!@file_exists($destination) {
+            return null;
+        }*/
+        $filesizeDestination = @filesize($destination);
+        $filesizeSource = @filesize($source);
+
+        // sizes are FALSE on failure (ie if file does not exists)
+        if (($filesizeDestination === false) || ($filesizeDestination === false)) {
+            return null;
+        }
+
+        return ($filesizeDestination > $filesizeSource);
+    }
+
+    /**
      * Saves the log file corresponding to a conversion.
      *
      * @param  string  $source   Path to the source file that was converted
@@ -77,16 +99,7 @@ APACHE
         if (!file_exists($basedir)) {
             self::createBiggerThanSourceBaseDir($basedir);
         }
-        $filesizeDestination = @filesize($destination);
-        $filesizeSource = @filesize($source);
-        $bigWebP = false;
-        if (
-            ($filesizeSource !== false) &&
-            ($filesizeDestination !== false) &&
-            ($filesizeDestination > $filesizeSource)
-        ) {
-          $bigWebP = true;
-        }
+        $bigWebP = self::bigger($source, $destination);
 
         $file = self::pathToDummyFile($source, $basedir, $imageRoots, $destinationFolder, $destinationExt);
         if ($file === false) {
