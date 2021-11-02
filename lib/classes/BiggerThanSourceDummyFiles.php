@@ -63,6 +63,10 @@ APACHE
         return false;
     }
 
+    public static function pathToDummyFileRootAndRelKnown($source, $basedir, $rootId, $destinationFolder, $destinationExt)
+    {
+    }
+
     /**
      * Check if webp is bigger than original.
      *
@@ -86,7 +90,7 @@ APACHE
     }
 
     /**
-     * Update the status for a single image.
+     * Update the status for a single image (when rootId is unknown)
      *
      * Checks if webp is bigger than original. If it is, a dummy file is placed. Otherwise, it is
      * removed (if exists)
@@ -98,7 +102,6 @@ APACHE
     public static function updateStatus($source, $destination, $webExpressContentDirAbs, $imageRoots, $destinationFolder, $destinationExt)
     {
         $basedir = $webExpressContentDirAbs . '/webp-images-bigger-than-source';
-
         if (!file_exists($basedir)) {
             self::createBiggerThanSourceBaseDir($basedir);
         }
@@ -109,7 +112,7 @@ APACHE
             return;
         }
 
-        if ($bigWebP) {
+        if ($bigWebP === true) {
             // place dummy file, which marks that webp is bigger than source
 
             $folder = @dirname($file);
