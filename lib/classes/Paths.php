@@ -163,6 +163,12 @@ class Paths
         return ['uploads', 'themes', 'plugins', 'wp-content', 'index'];
     }
 
+    /**
+     * Find which rootId a path belongs to.
+     *
+     * Note: If the root ids passed are ordered the way getImageRootIds() returns them, the root id
+     * returned will be the "deepest"
+     */
     public static function findImageRootOfPath($path, $rootIdsToSearch) {
         foreach ($rootIdsToSearch as $rootId) {
             if (PathHelper::isPathWithinExistingDirPath($path, self::getAbsDirById($rootId))) {
