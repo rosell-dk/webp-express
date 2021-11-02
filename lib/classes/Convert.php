@@ -117,7 +117,7 @@ class Convert
             }
         //}
 
-        BiggerThanSource::updateStatus(
+        BiggerThanSourceDummyFiles::updateStatus(
             $source,
             $destination,
             Paths::getWebPExpressContentDirAbs(),

@@ -253,7 +253,7 @@ class WebPOnDemand extends WodConfigLoader
             'Conversion triggered with the conversion script (wod/webp-on-demand.php)'
         );
 
-        BiggerThanSource::updateStatus(
+        BiggerThanSourceDummyFiles::updateStatus(
             $source,
             $destination,
             self::$webExpressContentDirAbs,
