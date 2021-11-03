@@ -32,6 +32,24 @@ class Convert
         );
     }
 
+    public static function updateBiggerThanOriginalMark($source, $destination = null, &$config = null)
+    {
+        if (is_null($config)) {
+            $config = Config::loadConfigAndFix();
+        }
+        if (is_null($destination)) {
+            $destination = self::getDestination($config);
+        }
+        BiggerThanSourceDummyFiles::updateStatus(
+            $source,
+            $destination,
+            Paths::getWebPExpressContentDirAbs(),
+            new ImageRoots(Paths::getImageRootsDef()),
+            $config['destination-folder'],
+            $config['destination-extension']
+        );
+    }
+
     public static function convertFile($source, $config = null, $convertOptions = null, $converter = null)
     {
         try {
@@ -117,14 +135,7 @@ class Convert
             }
         //}
 
-        BiggerThanSourceDummyFiles::updateStatus(
-            $source,
-            $destination,
-            Paths::getWebPExpressContentDirAbs(),
-            new ImageRoots(Paths::getImageRootsDef()),
-            $config['destination-folder'],
-            $config['destination-extension']
-        );
+        self::updateBiggerThanOriginalMark($source, $destination, $config);
 
         if ($result['success'] === true) {
             $result['filesize-original'] = @filesize($source);

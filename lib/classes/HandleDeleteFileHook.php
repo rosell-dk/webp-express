@@ -20,12 +20,16 @@ class HandleDeleteFileHook
             return $filename;
         }
 
-        $destination = Convert::getDestination($filename);
+        $config = Config::loadConfigAndFix();
+        $destination = Convert::getDestination($filename, $config);
         if (@file_exists($destination)) {
-            if (!@unlink($destination)) {
+            if (@unlink($destination)) {
+                Convert::updateBiggerThanOriginalMark($filename, $destination, $config);
+            } else {
                 error_log('WebP Express failed deleting webp:' . $destination);
-            }            
+            }
         }
+
         return $filename;
     }
 }
