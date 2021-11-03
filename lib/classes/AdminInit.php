@@ -33,7 +33,7 @@ class AdminInit
         }
 
         // uncomment next line to test-run a migration
-        //include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate13.php';
+        //include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate14.php';
     }
 
     public static function pageNowIs($pageId)
@@ -102,6 +102,11 @@ class AdminInit
         register_activation_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginActivate', 'activate'));
         register_deactivation_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginDeactivate', 'deactivate'));
         register_uninstall_hook(WEBPEXPRESS_PLUGIN, array('\WebPExpress\PluginUninstall', 'uninstall'));
+
+                /*$start = microtime(true);
+                BiggerThanSourceDummyFilesBulk::updateStatus(Config::loadConfig());
+                echo microtime(true) - $start;*/
+
 
         // Some hooks must be registered AFTER admin_init...
         add_action("admin_init", array('\WebPExpress\AdminInit', 'addHooksAfterAdminInit'));
