@@ -38,6 +38,10 @@ class CachePurge
             $numFailed += $f;
         }
 
+        // Now, purge dummy files too
+        $dir = Paths::getBiggerThanSourceDirAbs();
+        self::purgeWebPFilesInDir($dir, $filter, $config);
+        FileHelper::removeEmptySubFolders($dir);
 
         return [
             'delete-count' => $numDeleted,
