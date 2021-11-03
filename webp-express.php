@@ -61,3 +61,6 @@ add_filter('image_make_intermediate_size', array('\WebPExpress\HandleUploadHooks
 add_filter('wp_delete_file', array('\WebPExpress\HandleDeleteFileHook', 'deleteAssociatedWebP'), 10, 2);
 
 //add_action( 'template_redirect', 'webp_express_template_redirect' );
+
+// Add hooks for tasks that might be scheduled for wp_cron
+add_action('webp_express_task_bulk_update_dummy_files', array('\WebPExpress\BiggerThanSourceDummyFilesBulk', 'updateStatus'), 10, 0);

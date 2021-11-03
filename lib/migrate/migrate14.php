@@ -22,6 +22,9 @@ function webpexpress_migrate14() {
         $result = Config::saveConfigurationAndHTAccess($config, $forceHtaccessRegeneration);
     }
 
+    // Schedule bulk update dummy files
+    wp_schedule_single_event(time() + 10, 'webp_express_task_bulk_update_dummy_files');
+
 }
 
 webpexpress_migrate14();
