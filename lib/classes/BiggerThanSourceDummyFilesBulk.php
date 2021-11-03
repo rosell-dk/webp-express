@@ -12,8 +12,11 @@ class BiggerThanSourceDummyFilesBulk
      * Update the status for a all images.
      *
      */
-    public static function updateStatus($config)
+    public static function updateStatus($config = null)
     {
+        if (is_null($config)) {
+            $config = Config::loadConfigAndFix(false);
+        }
         self::$settings = [
             'ext' => $config['destination-extension'],
             'destination-folder' => $config['destination-folder'],  /* hm, "destination-folder" is a bad name... */
@@ -98,6 +101,7 @@ class BiggerThanSourceDummyFilesBulk
                             self::$settings['imageRoots'],
                             self::$settings['destination-folder'],
                             self::$settings['ext'],
+                            // TODO: send rootId so the function doesn't need to try all
                             // $rootId,
                         );
 
