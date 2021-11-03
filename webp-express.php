@@ -64,3 +64,5 @@ add_filter('wp_delete_file', array('\WebPExpress\HandleDeleteFileHook', 'deleteA
 
 // Add hooks for tasks that might be scheduled for wp_cron
 add_action('webp_express_task_bulk_update_dummy_files', array('\WebPExpress\BiggerThanSourceDummyFilesBulk', 'updateStatus'), 10, 0);
+add_action('webp_express_task_regenerate_config', array('\WebPExpress\Config', 'regenerateConfig'), 10, 0);
+add_action('webp_express_task_regenerate_config_and_htaccess', array('\WebPExpress\Config', 'regenerateConfigAndHtaccessFiles'), 10, 0);

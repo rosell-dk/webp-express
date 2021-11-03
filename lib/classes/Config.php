@@ -157,6 +157,12 @@ class Config
         return $config;
     }
 
+    /**
+     *  Fix config.
+     *
+     *  Among other things, the config is merged with default config, to ensure all options are present
+     *
+     */
     public static function fix($config, $checkQualityDetection = true)
     {
         if ($config === false) {
@@ -423,6 +429,9 @@ class Config
         );
     }
 
+    /**
+     * Save configuration file. Also updates autoloaded options (such as alter html options)
+     */
     public static function saveConfigurationFile($config)
     {
         $config['paths-used-in-htaccess'] = [
@@ -643,12 +652,45 @@ class Config
     }
 
     /**
+     * Regenerate config and .htaccess files
+     *
+     * It will only happen if configuration file exists. So the method is meant for updating - ie upon migration.
+     * It updates:
+     * - config files (both) - and ensures that capability tests have been run
+     * - autoloaded options (such as alter html options)
+     * - .htaccess files (all)
+     */
+    public static function regenerateConfigAndHtaccessFiles() {
+        self::regenerateConfig(true);
+    }
+
+    /**
+     * Regenerate config and .htaccess files
+     *
+     * It will only happen if configuration file exists. So the method is meant for updating - ie upon migration.
+     * It updates:
+     * - config files (both) - and ensures that capability tests have been run
+     * - autoloaded options (such as alter html options)
+     * - .htaccess files - but only if needed due to configuration changes
+     */
+    public static function regenerateConfig($forceRuleUpdating = false) {
+        if (!self::isConfigFileThere()) {
+            return;
+        }
+        $config = self::loadConfig();
+        $config = self::fix($config, false);    // fix. We do not need examining if quality detection is working
+        if ($config === false) {
+            return;
+        }
+        self::saveConfigurationAndHTAccess($config, $forceRuleUpdating);
+    }
+
+    /**
      *
      *  $rewriteRulesNeedsUpdate:
      */
     public static function saveConfigurationAndHTAccess($config, $forceRuleUpdating = false)
     {
-
         // Important to do this check before saving config, because the method
         // compares against existing config.
 
