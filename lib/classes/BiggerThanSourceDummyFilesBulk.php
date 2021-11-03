@@ -43,6 +43,11 @@ class BiggerThanSourceDummyFilesBulk
 
     /**
      * Pre-requirement: self::$settings is set.
+     *
+     * Idea for improvement: Traverse destination dirs instead. This will be quicker, as there will not be
+     * as many images (unless all have been converted), and not as many folders (non-image folders will not be present.
+     * however, index does not take too long to traverse, even though it has many non-image folders, so it will only
+     * be a problem if there are plugins or themes with extremely many folders).
      */
     private static function updateStatusForRoot($rootId, $dir = '')
     {
