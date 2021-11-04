@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/rosell-dk/dom-util-for-webp.svg?style=flat-square)](https://packagist.org/packages/rosell-dk/dom-util-for-webp)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net)
-[![Build Status](https://img.shields.io/travis/com/rosell-dk/dom-util-for-webp/master.svg?style=flat-square)](https://travis-ci.com/github/rosell-dk/dom-util-for-webp)
+[![Build Status](https://img.shields.io/github/workflow/status/rosell-dk/dom-util-for-webp/PHP?style=flat-square)](https://github.com/rosell-dk/dom-util-for-webp/actions/workflows/php.yml)
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/rosell-dk/dom-util-for-webp.svg?style=flat-square)](https://scrutinizer-ci.com/g/rosell-dk/dom-util-for-webp/code-structure/master)
 [![Quality Score](https://img.shields.io/scrutinizer/g/rosell-dk/dom-util-for-webp.svg?style=flat-square)](https://scrutinizer-ci.com/g/rosell-dk/dom-util-for-webp/)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/rosell-dk/dom-util-for-webp/blob/master/LICENSE)

@@ -84,6 +84,33 @@ class PictureTags
         );
     }
 
+    /**
+     * Look for attribute such as "src", but also with prefixes such as "data-lazy-src" and "data-src"
+     *
+     * @param  array  $attributes  an array of all attributes for the element
+     * @param  string  $attrName    ie "src", "srcset" or "sizes"
+     *
+     * @return array  an array with "value" key and "attrName" key. ("value" is the value of the attribute and
+     *                                    "attrName" is the name of the attribute used)
+     *
+     */
+    private static function findAttributesWithNameOrPrefixed($attributes, $attrName)
+    {
+        $tryThesePrefixes = ['', 'data-lazy-', 'data-'];
+        $result = [];
+        foreach ($tryThesePrefixes as $prefix) {
+            $name = $prefix . $attrName;
+            if (isset($attributes[$name]) && strlen($attributes[$name])) {
+                /*$result[] = [
+                    'value' => trim($attributes[$name]),
+                    'attrName' => $name,
+                ];*/
+                $result[$name] = trim($attributes[$name]);
+            }
+        }
+        return $result;
+    }
+
     private static function getAttributes($html)
     {
         if (function_exists("mb_convert_encoding")) {
@@ -100,6 +127,10 @@ class PictureTags
             return $attributes;
         } else {
             //$dom = HtmlDomParser::str_get_html($html, false, false, 'UTF-8', false);
+            if (!function_exists('str_get_html')) {
+                require_once __DIR__ . '/../src-vendor/simple_html_dom/simple_html_dom.inc';
+            }
+
             $dom = str_get_html($html, false, false, 'UTF-8', false);
             if ($dom !== false) {
                 $elems = $dom->find('img,IMG');
@@ -151,14 +182,24 @@ class PictureTags
         $srcsetInfo = self::lazyGet($imgAttributes, 'srcset');
         $sizesInfo = self::lazyGet($imgAttributes, 'sizes');
 
+        $srcSetAttributes = self::findAttributesWithNameOrPrefixed($imgAttributes, 'srcset');
+        $srcAttributes = self::findAttributesWithNameOrPrefixed($imgAttributes, 'src');
+
+        if ((!isset($srcSetAttributes['srcset'])) && (!isset($srcAttributes['src']))) {
+            // better not mess with this html...
+            return $imgTag;
+        }
+
         // add the exclude class so if this content is processed again in other filter,
         // the img is not converted again in picture
         $imgAttributes['class'] = (isset($imgAttributes['class']) ? $imgAttributes['class'] . " " : "") .
             "webpexpress-processed";
 
-        $srcsetWebP = '';
-        if ($srcsetInfo['value']) {
-            $srcsetArr = explode(', ', $srcsetInfo["value"]);
+        // Process srcset (also data-srcset etc)
+        $atLeastOneWebp = false;
+        $sourceTagAttributes = [];
+        foreach ($srcSetAttributes as $attrName => $attrValue) {
+            $srcsetArr = explode(', ', $attrValue);
             $srcsetArrWebP = [];
             foreach ($srcsetArr as $i => $srcSetEntry) {
                 // $srcSetEntry is ie "http://example.com/image.jpg 520w"
@@ -167,26 +208,58 @@ class PictureTags
                 $width = null;
                 if ($result && count($result) >= 2) {
                     list($src, $width) = $result;
+
                 }
 
                 $webpUrl = $this->replaceUrlOr($src, false);
                 if ($webpUrl !== false) {
-                    $srcsetArrWebP[] = $webpUrl . (isset($width) ? ' ' . $width : '');
+                    if (substr($src, 0, 5) != 'data:') {
+                        $atLeastOneWebp = true;
+                        $srcsetArrWebP[] = $webpUrl . (isset($width) ? ' ' . $width : '');
+                    }
                 }
             }
-            $srcsetWebP = implode(', ', $srcsetArrWebP);
-            if (strlen($srcsetWebP) == 0) {
-                // We have no webps for you, so no reason to create <picture> tag
+            $sourceTagAttributes[$attrName] = implode(', ', $srcsetArrWebP);
+        }
+
+        foreach ($srcAttributes as $attrName => $attrValue) {
+
+            if (substr($attrValue, 0, 5) == 'data:') {
+                // ignore tags with data urls, such as <img src="data:...
                 return $imgTag;
             }
-            $sizesAttr = ($sizesInfo['value'] ? (' ' . $sizesInfo['attrName'] . '="' . $sizesInfo['value'] . '"') : '');
-            $sourceSrcAttrName = $srcsetInfo['attrName'];
-            if ($sourceSrcAttrName == 'src') {
-                // "src" isn't allowed in <source> tag with <picture> tag as parent.
-                $sourceSrcAttrName = 'srcset';
+            // Make sure not to override existing srcset with src
+            if (!isset($sourceTagAttributes[$attrName . 'set'])) {
+                $srcWebP = $this->replaceUrlOr($attrValue, false);
+                if ($srcWebP !== false) {
+                    $atLeastOneWebp = true;
+                }
+                $sourceTagAttributes[$attrName . 'set'] = $srcWebP;
             }
+        }
+
+        if ($sizesInfo['value']) {
+            $sourceTagAttributes[$sizesInfo['attrName']] = $sizesInfo['value'];
+        }
+
+        if (!$atLeastOneWebp) {
+            // We have no webps for you, so no reason to create <picture> tag
+            return $imgTag;
+        }
+
+        return '<picture>'
+            . '<source' . self::createAttributes($sourceTagAttributes) . ' type="image/webp">'
+            . '<img' . self::createAttributes($imgAttributes) . '>'
+            . '</picture>';
+
+/*
+        //if ($srcsetInfo['value']) {
+        if (isset($srcSetAttributes['srcset'])) {
+            $sourceTagAttributes = $srcSetAttributes;
+
+
             return '<picture>'
-                . '<source ' . $sourceSrcAttrName . '="' . $srcsetWebP . '"' . $sizesAttr . ' type="image/webp">'
+                . '<source' . self::createAttributes($sourceTagAttributes) . ' type="image/webp">'
                 . '<img' . self::createAttributes($imgAttributes) . '>'
                 . '</picture>';
         } else {
@@ -206,7 +279,7 @@ class PictureTags
                 . '<source ' . $sourceSrcAttrName . '="' . $srcWebP . '" type="image/webp">'
                 . '<img' . self::createAttributes($imgAttributes) . '>'
                 . '</picture>';
-        }
+        }*/
     }
 
     /*
@@ -251,9 +324,6 @@ class PictureTags
     /* Main replacer function */
     public static function replace($html)
     {
-        if (!function_exists('str_get_html')) {
-            require_once __DIR__ . '/../src-vendor/simple_html_dom/simple_html_dom.inc';
-        }
         $pt = new static();
         return $pt->replaceHtml($html);
     }
