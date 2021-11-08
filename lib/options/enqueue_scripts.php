@@ -102,6 +102,10 @@ if (!(isset($config['operation-mode']) && ($config['operation-mode'] == 'no-conv
     wp_register_script('purgecache', plugins_url($jsDir . '/purge-cache.js', __FILE__), [], $ver);
     wp_enqueue_script('purgecache');
 
+    // purge log
+    wp_register_script('purgelog', plugins_url($jsDir . '/purge-log.js', __FILE__), [], $ver);
+    wp_enqueue_script('purgelog');
+
 }
 
 //wp_register_script('api_keys', plugins_url($jsDir . 'api-keys.js', __FILE__), ['daspopup'], '0.7.0-dev8');
@@ -115,6 +119,7 @@ $javascriptVars = [
         'convert' => wp_create_nonce('webpexpress-ajax-convert-nonce'),
         'list-unconverted-files' => wp_create_nonce('webpexpress-ajax-list-unconverted-files-nonce'),
         'purge-cache' => wp_create_nonce('webpexpress-ajax-purge-cache-nonce'),
+        'purge-log' => wp_create_nonce('webpexpress-ajax-purge-log-nonce'),
         'view-log' => wp_create_nonce('webpexpress-ajax-view-log-nonce'),
         'self-test' => wp_create_nonce('webpexpress-ajax-self-test-nonce'),
     ],

@@ -14,5 +14,11 @@
     </th>
     <td>
         <input type="checkbox" id="enable_logging" name="enable-logging" value="true" <?php echo ($config['enable-logging'] ? 'checked="checked"' : '') ?> >
+        &nbsp;
+        <button onclick="openDeleteLogFilesPopup()" class="button button-secondary" type="button">Delete log files</button>
+        <div id="purgelogpopup" style="display:none;">
+            <div id="purgelogcontent"></div>
+        </div>
+
     </td>
 </tr>

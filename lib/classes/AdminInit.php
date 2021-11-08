@@ -80,6 +80,7 @@ class AdminInit
             add_action('wp_ajax_convert_file', array('\WebPExpress\Convert', 'processAjaxConvertFile'));
             add_action('wp_ajax_webpexpress_view_log', array('\WebPExpress\ConvertLog', 'processAjaxViewLog'));
             add_action('wp_ajax_webpexpress_purge_cache', array('\WebPExpress\CachePurge', 'processAjaxPurgeCache'));
+            add_action('wp_ajax_webpexpress_purge_log', array('\WebPExpress\LogPurge', 'processAjaxPurgeLog'));
             add_action('wp_ajax_webpexpress_dismiss_message', array('\WebPExpress\DismissableMessages', 'processAjaxDismissMessage'));
             add_action('wp_ajax_webpexpress_dismiss_global_message', array('\WebPExpress\DismissableGlobalMessages', 'processAjaxDismissGlobalMessage'));
             add_action('wp_ajax_webpexpress_self_test', array('\WebPExpress\SelfTest', 'processAjax'));
