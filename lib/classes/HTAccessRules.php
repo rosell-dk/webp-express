@@ -374,7 +374,9 @@ class HTAccessRules
                 $cacheDirRel = Paths::getCacheDirRelToDocRoot() . '/doc-root';
 
                 $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
-                $rules .= "  RewriteCond " . self::$docRootString . "/" . $cacheDirRel . "/" . self::$htaccessDirRelToDocRoot . "/$1.$2.webp -f\n";
+                $rules .= "  RewriteCond " .
+                    self::$docRootString .
+                    "/" . $cacheDirRel . "/" . self::$htaccessDirRelToDocRoot . "/$1.$2.webp -f\n";
                 $rules .= "  RewriteRule ^/?(.+)\.(" . self::$fileExt . ")$ /" . $cacheDirRel . "/" . self::$htaccessDirRelToDocRoot .
                     "/$1.$2.webp [NC,T=image/webp,E=EXISTING:1," . (self::$setAddVaryEnvInRedirect ? 'E=ADDVARY:1,' : '') . "L]\n\n";
 
@@ -392,7 +394,7 @@ class HTAccessRules
                     self::$htaccessDir
                 );
                 $cacheDirForThisRoot = PathHelper::fixAbsPathToUseUnresolvedDocRoot($cacheDirForThisRoot);
-
+                $cacheDirForThisRoot = PathHelper::backslashesToForwardSlashes($cacheDirForThisRoot); #512
                 $rules .= "  RewriteCond " . $cacheDirForThisRoot . "/%2%3.webp -f\n";
                 //RewriteCond /var/www/webp-express-tests/we0/wp-content-moved/webp-express/webp-images/uploads/%2%3.webp -f
 
@@ -1075,7 +1077,9 @@ class HTAccessRules
                     Paths::getBiggerThanSourceDirAbs() . '/' . self::$htaccessDir
                 );
                 $rules .= "  RewriteCond " .
-                    self::replaceDocRootWithApacheTokenIfDocRootAvailable($cacheDirForThisRoot) .
+                    PathHelper::backslashesToForwardSlashes(
+                        self::replaceDocRootWithApacheTokenIfDocRootAvailable($cacheDirForThisRoot)
+                    ) .
                     "/%2%3.webp -f\n";
 
                 $rules .= "  RewriteRule . - [L]\n\n";

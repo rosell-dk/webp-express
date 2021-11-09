@@ -364,10 +364,15 @@ class PathHelper
         //return preg_replace('/\/$/', '', $str);
     }
 
-    // Canonicalize a path by resolving '../' and './'
+    public static function backslashesToForwardSlashes($path) {
+        return str_replace( "\\", '/', $path);
+    }
+
+    // Canonicalize a path by resolving '../' and './'. It also replaces backslashes with forward slash
     // Got it from a comment here: http://php.net/manual/en/function.realpath.php
     // But fixed it (it could not handle './../')
     public static function canonicalize($path) {
+
       $parts = explode('/', $path);
 
       // Remove parts containing just '.' (and the empty holes afterwards)
