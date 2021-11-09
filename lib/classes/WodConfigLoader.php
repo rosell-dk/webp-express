@@ -148,7 +148,7 @@ class WodConfigLoader
                     throw new \Exception('Path to wp-content was not received in any way');
                 }
             }
-            $wpContentDirRelToWEPluginDir = $wpContentDirRelToPluginDir . '/webp-express';
+            $wpContentDirRelToWEPluginDir = $wpContentDirRelToPluginDir . '..';
         }
 
 
