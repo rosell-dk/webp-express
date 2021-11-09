@@ -718,15 +718,16 @@ The following lazy load plugins/frameworks has been tested and works with *WebP 
 I have only tested the above in *Varied image responses* mode, but it should also work in *CDN friendly* mode. Both *Alter HTML* options have been designed to work with standard lazy load attributes.
 
 = Can I make an exceptions for some images? =
-There can be instances where you actually need to serve a jpeg or png. For example if you are demonstrating how a jpeg looks using some compression settings. It is possible to bypass both the redirection and the HTML altering for certain images. Here is how:
+There can be instances where you actually need to serve a jpeg or png. For example if you are demonstrating how a jpeg looks using some compression settings.
 
-*Alter HTML*
-Alter HTML is programmed not to substitute image URLs with query strings (better safe than sorry). You can exploit that and simply add ie ?original to the image URLs in question.
+If you want an image to be served in the original format (jpeg og png), do one of the following things:
+- Add "?original" to the image url.
+- Place an empty file in the same folder as the jpeg/png. The file name must be the same as the jpeg/png with ".do-not-convert" appended
 
-*Redirection*
-To avoid redirecting an image to webp, simply add "?original" to the image url.
+Doing this will bypass redirection to webp and also prevent Alter HTML to use the webp instead of the original.
 
-To bypass redirection for an entire folder, you can put something likke this into your root .htaccess:
+*Bypassing for an entire folder*
+To bypass redirection for an entire folder, you can put something like this into your root .htaccess:
 `
 RewriteRule ^uploads/2021/06/ - [L]
 `

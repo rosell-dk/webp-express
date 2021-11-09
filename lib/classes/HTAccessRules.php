@@ -1058,7 +1058,7 @@ class HTAccessRules
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             $rules .= "  RewriteRule . - [L]\n\n";
 
-            $rules .= "  # Escape hatch #2: Adding an empty file with same file name, but \".do-not-convert\" appended will bypass redirection\n";
+            $rules .= "  # Escape hatch #2: Placing an empty file in the same folder as the jpeg/png which has same file name, but \".do-not-convert\" appended will bypass redirection\n";
             $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(\.jpe?g|\.png)$\n";
             $rules .= "  RewriteCond %1%2\.do-not-convert -f\n";
             $rules .= "  RewriteRule . - [L]\n\n";
