@@ -4,7 +4,7 @@
             '<p>For some images, the converted webp might turns out bigger than the original. ' .
             'These are always kept on disk. However, with this option, you can choose whether they should be used or not. ' .
             'If you are motivated by limiting bandwidth usage and having a fast website, keep this option enabled. ' .
-            'If you are more motivated by fear of google punishment for serving jpegs and pngs, disable it.' .
+            'If you are more concerned about SEO and a penalty for serving jpegs and pngs rather than webps, disable it.' .
             '</p>' .
             '<p>The option is used both when generating .htaccess rules and in Alter HTML.</p>'
         );
