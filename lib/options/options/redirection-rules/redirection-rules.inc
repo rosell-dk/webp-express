@@ -6,7 +6,7 @@
     enables the varied image responses (such that a request for a jpeg/png will result in a webp on browsers that supports webp).
     The first option makes this happen for images that are already converted. The second option makes it happen even for
     images that has not yet been converted, by redirecting the request to the converter, which converts, saves and delivers.</p>
-    <p>The third option is only relevant if you are using Alter HTML as well as serving varied image responses.</p>
+    <p>The third option is only relevant if you are using Alter HTML and want to reference webps that haven't been converted yet.</p>
 <?php elseif ($config['operation-mode'] == 'cdn-friendly') : ?>
     <h2><i>.htaccess</i> rules for webp generation</h2>
 <?php elseif ($config['operation-mode'] == 'no-conversion') : ?>
