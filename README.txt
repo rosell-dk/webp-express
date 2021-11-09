@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.8
-Stable tag: 0.21.1
+Stable tag: 0.22.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -775,6 +775,20 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.22.0 =
+*(released: 09 Nov 2021)*
+* Added option to disable creating log files and button to do delete them. Thanks to Amit Sonkhiya and many others for suggesting this.
+* WebP Express now prevents serving webps when they are bigger than the source. Added option for it (default is to prevent)
+* You can now prevent that a certain image is redirected to webp by appending "?original" to the URL. Also works for Alter HTML.
+* You can now prevent that a certain image is redirected to webp by placing a dummy ".do-not-convert" file next to the original.
+* The conversion manager now uses the new "?original" escape hatch to avoid that the original image is being redirected. Beware that if you are on Nginx and have created rewrite rules, you will need to implement the same escape hatch to avoid the "Original" image to be redirected to webp. However, in a future update, I will probably implement a PHP script for serving the original so you can also just wait.
+* Bugfix: Alter HTML could in some [rare cases](https://github.com/rosell-dk/webp-express/issues/528) produce invalid HTML.
+For more info, see the closed issues on the [webp-express 0.22 milestone](https://github.com/rosell-dk/webp-express/milestone/13?closed=1)
+* Bugfix: The "Enable redirection to converter" functionality was too greedy. It did not only redirect jpegs and pngs, but any file request. The bug occurred when Destination folder was set to "Image roots". The fix updates the .htaccess files if neccessary.
+* Minor bugfix: Symlinking the webp-express plugin folder would break "Redirection to converter" functionality
+
+For more info, see the closed issues on the [webp-express 0.22 milestone](https://github.com/rosell-dk/webp-express/milestone/13?closed=1)
+
 = 0.21.1 =
 *(released: 27 Oct 2021)*
 * Bugfix: File manager could not handle many images. It now loads tree branches on need basis instead of the complete tree in one go
@@ -813,6 +827,9 @@ For more info, see the closed issues on the [0.20.0 milestone on the github repo
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.22.0 =
+* Various improvements and bug fixes
 
 = 0.21.1 =
 * Two bug fixes
