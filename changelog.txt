@@ -1,3 +1,8 @@
+= 0.22.1 =
+*(released: 09 Nov 2021)*
+* Bugfix: Old unupdated rewrite rules for redirecting to converter caused error (bug was introduced in 0.22.0). Thanks, @utrenkner for reacting quickly!
+* Bugfix: Backslashes in file paths in .htaccess on Windows caused redirecting not to work. Thanks to Herb Miller (@bobbingwide) from UK for discovering and debugging this.
+
 = 0.22.0 =
 *(released: 09 Nov 2021)*
 * Added option to disable creating log files and button to do delete them. Thanks to Amit Sonkhiya and many others for suggesting this.

@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.8
-Stable tag: 0.22.0
+Stable tag: 0.22.1
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -775,6 +775,11 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.22.1 =
+*(released: 09 Nov 2021)*
+* Bugfix: Old unupdated rewrite rules for redirecting to converter caused error (bug was introduced in 0.22.0). Thanks, @utrenkner for reacting quickly!
+* Bugfix: Backslashes in file paths in .htaccess on Windows caused redirecting not to work. Thanks to Herb Miller (@bobbingwide) from UK for discovering and debugging this.
+
 = 0.22.0 =
 *(released: 09 Nov 2021)*
 * Added option to disable creating log files and button to do delete them. Thanks to Amit Sonkhiya and many others for suggesting this.
@@ -827,6 +832,9 @@ For more info, see the closed issues on the [0.20.0 milestone on the github repo
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.22.1 =
+* Two bug fixes related to .htaccess files and redirecting to converter
 
 = 0.22.0 =
 * Various improvements and bug fixes
