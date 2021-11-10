@@ -289,6 +289,42 @@ class WCFMApi
       return $result;
     }
 
+    /**
+     * Translate path received (ie "/uploads/2021/...") to absolute path.
+     *
+     * @param string $path
+     *
+     * @return array [$absPath, $relPath, $rootId]
+     * @throws \Exception  if root id is invalid or path doesn't pass sanity check
+     */
+    private static function analyzePathReceived($path) {
+        try {
+          $path = SanityCheck::pathWithoutDirectoryTraversal($path);
+          $path = ltrim($path, '/');
+          $pathTokens = explode('/', $path);
+
+          $rootId = array_shift($pathTokens);
+          $relPath = implode('/', $pathTokens);
+
+          $rootIds = Paths::getImageRootIds();
+          if (!in_array($rootId, $rootIds)) {
+              throw new \Exception('Invalid rootId');
+          }
+          if ($relPath == '') {
+            $relPath = '.';
+          }
+
+          $absPath = PathHelper::canonicalize(Paths::getAbsDirById($rootId) . '/' . $relPath);
+          SanityCheck::absPathExists($absPath);
+
+          return [$absPath, $relPath, $rootId];
+        }
+        catch (\Exception $e) {
+          //throw new \Exception('Invalid path received (' . $e->getMessage() . ')');
+          throw new \Exception('Invalid path');
+        }
+    }
+
     public static function processGetFolder() {
 
         Validate::postHasKey('args');
@@ -328,23 +364,7 @@ class WCFMApi
             }
             return $result;
         }
-        $path = SanityCheck::pathWithoutDirectoryTraversal($path);
-        $path = ltrim($path, '/');
-        $pathTokens = explode('/', $path);
-
-        $rootId = array_shift($pathTokens);
-        $relPath = implode('/', $pathTokens);
-
-        if (!in_array($rootId, $rootIds)) {
-            throw new \Exception('Invalid rootId');
-        }
-
-        if ($relPath == '') {
-          $relPath = '.';
-        }
-
-        $absPath = Paths::getAbsDirById($rootId) . '/' . $relPath;
-        SanityCheck::absPathExists($absPath);
+        list($absPath, $relPath, $rootId) = self::analyzePathReceived($path);
 
         $listOptions = BulkConvert::defaultListOptions($config);
         $listOptions['root'] = Paths::getAbsDirById($rootId);
@@ -404,11 +424,19 @@ class WCFMApi
         if (!array_key_exists('path', $args)) {
             throw new \Exception('"path" argument missing for command');
         }
-        if (!array_key_exists('convertOptions', $args)) {
+
+        $path = SanityCheck::noStreamWrappers($args['path']);
+        list($absPath, $relPath, $rootId) = self::analyzePathReceived($path);
+        $result = Convert::convertFile($absPath);
+        $result['data'] = $result['msg'];
+        return $result;
+
+        /*if (!array_key_exists('convertOptions', $args)) {
             throw new \Exception('"convertOptions" argument missing for command');
         }
+        //return ['success' => true, 'optionsReceived' => $args['convertOptions']];
+        */
 
-        return ['success' => true, 'optionsReceived' => $args['convertOptions']];
 
         /*
         $path = SanityCheck::pathWithoutDirectoryTraversal($args['path']);

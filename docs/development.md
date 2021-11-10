@@ -19,3 +19,26 @@ rmdir vendor/bin
 ```
 
 3. Commit on git
+
+
+## Copying WCFM
+I created the following aliases in my `~/bash_aliases` file to make things easier...
+(Usually I only need one of the last three - the first ones are subcommands)
+
+```
+alias lswcfmcss="ls /home/rosell/github/webp-express/lib/wcfm | grep 'index.*css' | tr '\n' ' ' | sed 's/\s//'"
+alias lswcfmjs="ls /home/rosell/github/webp-express/lib/wcfm | grep 'index.*js' | tr '\n' ' ' | sed 's/\s//'"
+alias updatewebpexpresscss="sed -i \"s/index\..*\.css/$(lswcfmcss)/g\" /home/rosell/github/webp-express/lib/classes/WCFMPage.php"
+alias updatewebpexpressjs="sed -i \"s/index\..*\.js/$(lswcfmjs)/g\" /home/rosell/github/webp-express/lib/classes/WCFMPage.php"
+alias remove_css_in_webp_express="rm -f /home/rosell/github/webp-express/lib/wcfm/index*.css"
+alias remove_js_in_webp_express="rm -f /home/rosell/github/webp-express/lib/wcfm/index*.js"
+alias remove_vendorjs_in_webp_express="rm -f /home/rosell/github/webp-express/lib/wcfm/vendor*.js"
+alias remove_assets_in_webp_express="remove_css_in_webp_express && remove_js_in_webp_express"
+alias copycss="cp ~/github/webp-convert-filemanager/dist/assets/index*.css /home/rosell/github/webp-express/lib/wcfm/"
+alias copymainjs="cp ~/github/webp-convert-filemanager/dist/assets/index*.js /home/rosell/github/webp-express/lib/wcfm/"
+alias copyvendorjs="cp ~/github/webp-convert-filemanager/dist/assets/vendor*.js /home/rosell/github/webp-express/lib/wcfm"
+alias copyassets="remove_assets_in_webp_express && copymainjs && copyvendorjs && copycss"
+alias copywcfm="copyassets && updatewebpexpresscss && updatewebpexpressjs"
+alias buildwcfm="npm run build --prefix ~/github/webp-convert-filemanager"
+alias freshwcfm="buildwcfm && copywcfm"
+```
