@@ -3,6 +3,8 @@
 namespace DOMUtilForWebP;
 
 //use Sunra\PhpSimple\HtmlDomParser;
+use KubAT\PhpSimple\HtmlDomParser;
+
 /**
  * Class PictureTags - convert an <img> tag to a <picture> tag and add the webp versions of the images
  * Code is based on code from the ShortPixel plugin, which in turn used code from Responsify WP plugin
@@ -22,7 +24,6 @@ namespace DOMUtilForWebP;
  * https://packagist.org/packages/masterminds/html5
  */
 
-use \WebPExpress\AlterHtmlHelper;
 
 class PictureTags
 {
@@ -127,11 +128,12 @@ class PictureTags
             return $attributes;
         } else {
             //$dom = HtmlDomParser::str_get_html($html, false, false, 'UTF-8', false);
-            if (!function_exists('str_get_html')) {
+            /*if (!function_exists('str_get_html')) {
                 require_once __DIR__ . '/../src-vendor/simple_html_dom/simple_html_dom.inc';
-            }
+            }*/
 
-            $dom = str_get_html($html, false, false, 'UTF-8', false);
+
+            $dom = HtmlDomParser::str_get_html($html, false, false, 'UTF-8', false);
             if ($dom !== false) {
                 $elems = $dom->find('img,IMG');
                 foreach ($elems as $index => $elem) {

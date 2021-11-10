@@ -155,26 +155,82 @@
             "install-path": "./installers"
         },
         {
-            "name": "rosell-dk/dom-util-for-webp",
-            "version": "0.4.2",
-            "version_normalized": "0.4.2.0",
+            "name": "kub-at/php-simple-html-dom-parser",
+            "version": "1.9.1",
+            "version_normalized": "1.9.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/rosell-dk/dom-util-for-webp.git",
-                "reference": "f33515fbb90067cb982dc3109d7193f27ab97619"
+                "url": "https://github.com/Kub-AT/php-simple-html-dom-parser.git",
+                "reference": "ff22f98bfd9235115c128059076f3eb740d66913"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/f33515fbb90067cb982dc3109d7193f27ab97619",
-                "reference": "f33515fbb90067cb982dc3109d7193f27ab97619",
+                "url": "https://api.github.com/repos/Kub-AT/php-simple-html-dom-parser/zipball/ff22f98bfd9235115c128059076f3eb740d66913",
+                "reference": "ff22f98bfd9235115c128059076f3eb740d66913",
                 "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "time": "2019-10-25T12:34:43+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "KubAT\\PhpSimple\\HtmlDomParser": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "S.C. Chen",
+                    "email": "me578022@gmail.com"
+                },
+                {
+                    "name": "Jakub Stawowy",
+                    "email": "Kub-AT@users.noreply.github.com"
+                }
+            ],
+            "description": "PHP Simple HTML DOM Parser with namespace and PHP 7.3 compatible",
+            "homepage": "http://simplehtmldom.sourceforge.net/",
+            "keywords": [
+                "Simple",
+                "dom",
+                "html"
+            ],
+            "support": {
+                "issues": "https://github.com/Kub-AT/php-simple-html-dom-parser/issues",
+                "source": "https://github.com/Kub-AT/php-simple-html-dom-parser/tree/master"
+            },
+            "install-path": "../kub-at/php-simple-html-dom-parser"
+        },
+        {
+            "name": "rosell-dk/dom-util-for-webp",
+            "version": "0.5.0",
+            "version_normalized": "0.5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rosell-dk/dom-util-for-webp.git",
+                "reference": "d2554c79a0e6ffc710c2c0d646e217a9ac76dcaf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/d2554c79a0e6ffc710c2c0d646e217a9ac76dcaf",
+                "reference": "d2554c79a0e6ffc710c2c0d646e217a9ac76dcaf",
+                "shasum": ""
+            },
+            "require": {
+                "kub-at/php-simple-html-dom-parser": "^1.9"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.11",
                 "phpunit/phpunit": "^9.3",
                 "squizlabs/php_codesniffer": "3.*"
             },
-            "time": "2021-11-04T11:13:34+00:00",
+            "time": "2021-11-10T08:51:27+00:00",
             "type": "library",
             "extra": {
                 "scripts-descriptions": {
@@ -212,7 +268,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rosell-dk/dom-util-for-webp/issues",
-                "source": "https://github.com/rosell-dk/dom-util-for-webp/tree/0.4.2"
+                "source": "https://github.com/rosell-dk/dom-util-for-webp/tree/0.5.0"
             },
             "funding": [
                 {

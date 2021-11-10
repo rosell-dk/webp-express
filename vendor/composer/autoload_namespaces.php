@@ -6,4 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'KubAT\\PhpSimple\\HtmlDomParser' => array($vendorDir . '/kub-at/php-simple-html-dom-parser/src'),
 );

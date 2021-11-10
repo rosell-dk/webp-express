@@ -57,6 +57,16 @@ class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
         ),
     );
 
+    public static $prefixesPsr0 = array (
+        'K' => 
+        array (
+            'KubAT\\PhpSimple\\HtmlDomParser' => 
+            array (
+                0 => __DIR__ . '/..' . '/kub-at/php-simple-html-dom-parser/src',
+            ),
+        ),
+    );
+
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Composer\\Installers\\AglInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/AglInstaller.php',
@@ -196,6 +206,7 @@ class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
         'ImageMimeTypeGuesser\\Detectors\\Stack' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/Detectors/Stack.php',
         'ImageMimeTypeGuesser\\GuessFromExtension' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/GuessFromExtension.php',
         'ImageMimeTypeGuesser\\ImageMimeTypeGuesser' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/ImageMimeTypeGuesser.php',
+        'KubAT\\PhpSimple\\HtmlDomParser' => __DIR__ . '/..' . '/kub-at/php-simple-html-dom-parser/src/KubAT/PhpSimple/HtmlDomParser.php',
         'WebPConvertCloudService\\AccessCheck' => __DIR__ . '/..' . '/rosell-dk/webp-convert-cloud-service/src/AccessCheck.php',
         'WebPConvertCloudService\\Serve' => __DIR__ . '/..' . '/rosell-dk/webp-convert-cloud-service/src/Serve.php',
         'WebPConvertCloudService\\WebPConvertCloudService' => __DIR__ . '/..' . '/rosell-dk/webp-convert-cloud-service/src/WebPConvertCloudService.php',
@@ -280,6 +291,7 @@ class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243::$classMap;
 
         }, null, ClassLoader::class);

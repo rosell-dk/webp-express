@@ -3,6 +3,7 @@
 namespace DOMUtilForWebP;
 
 //use Sunra\PhpSimple\HtmlDomParser;
+use KubAT\PhpSimple\HtmlDomParser;
 
 /**
  *  Highly configurable class for replacing image URLs in HTML (both src and srcset syntax)
@@ -179,8 +180,9 @@ class ImageUrlReplacer
         // function str_get_html($str, $lowercase=true, $forceTagsClosed=true, $target_charset = DEFAULT_TARGET_CHARSET,
         //    $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
 
-        //$dom = HtmlDomParser::str_get_html($html, false, false, 'UTF-8', false);
-        $dom = str_get_html($html, false, false, 'UTF-8', false);
+        $dom = HtmlDomParser::str_get_html($html, false, false, 'UTF-8', false);
+        //$dom = str_get_html($html, false, false, 'UTF-8', false);
+
 
         // MAX_FILE_SIZE is defined in simple_html_dom.
         // For safety sake, we make sure it is defined before using
@@ -232,9 +234,9 @@ class ImageUrlReplacer
     /* Main replacer function */
     public static function replace($html)
     {
-        if (!function_exists('str_get_html')) {
+        /*if (!function_exists('str_get_html')) {
             require_once __DIR__ . '/../src-vendor/simple_html_dom/simple_html_dom.inc';
-        }
+        }*/
         $iur = new static();
         return $iur->replaceHtml($html);
     }
