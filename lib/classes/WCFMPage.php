@@ -13,10 +13,6 @@ class WCFMPage
     public static function display() {
         echo '<div id="wcfmintro">' .
           '<h1>WebP Express Conversion Browser</h1>' .
-          '<p>' .
-          'Note: To convert manually, you still need to use Bulk Convert on the settings page ' .
-          '(or you can use WP CLI)' .
-          '</p>' .
           '</div>';
 
         echo '<div id="webpconvert-filemanager" style="position:relative; min-height:400px">loading</div>';
