@@ -246,15 +246,31 @@ class WCFMApi
           $destinationUrl = Paths::getUrlById($rootId) . '/' . $destRelPath;
 
           SanityCheck::absPath($absPathDest);
+
           if (@file_exists($absPathDest)) {
               $result['converted'] = [
-                'abspath' => $absPathDest,
+                //'abspath' => $absPathDest,
                 'size' => filesize($absPathDest),
                 'url' => $destinationUrl . '?' . SelfTestHelper::randomDigitsAndLetters(8),
-                'log' => ''
               ];
           }
 
+          // Get log, if exists. Ignore errors.
+          $log = '';
+          try {
+            $logFile = ConvertHelperIndependent::getLogFilename($absPath, Paths::getLogDirAbs());
+            if (@file_exists($logFile)) {
+                $logContent = file_get_contents($logFile);
+                if ($log !== false) {
+                    $log = $logContent;
+                }
+            }
+          }
+          catch (\Exception $e) {
+            //throw $e;
+          }
+
+          $result['log'] = $log;
       }
 
 
@@ -427,8 +443,19 @@ class WCFMApi
 
         $path = SanityCheck::noStreamWrappers($args['path']);
         list($absPath, $relPath, $rootId) = self::analyzePathReceived($path);
-        $result = Convert::convertFile($absPath);
-        $result['data'] = $result['msg'];
+        $convertResult = Convert::convertFile($absPath);
+        $result = [
+          'success' => $convertResult['success'],
+          'data' => $convertResult['msg'],
+          'log' => $convertResult['log'],
+        ];
+        if (isset($convertResult['filesize-webp'])) {
+          $info['size'] = $convertResult['filesize-webp'];
+        }
+        if (isset($convertResult['destination-url'])) {
+          $info['url'] = $convertResult['destination-url'] . '?' . SelfTestHelper::randomDigitsAndLetters(8);
+        }
+        $result['converted'] = $info;
         return $result;
 
         /*if (!array_key_exists('convertOptions', $args)) {

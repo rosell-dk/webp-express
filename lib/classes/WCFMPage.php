@@ -43,7 +43,7 @@ class WCFMPage
 
     public static function addToHead() {
         $baseUrl = plugins_url('lib/wcfm', WEBPEXPRESS_PLUGIN);
-        //$url = plugins_url('js/conversion-manager/index.9149ea80.js', WEBPEXPRESS_PLUGIN);
+        //$url = plugins_url('js/conversion-manager/index.ee44cdbf.js  ', WEBPEXPRESS_PLUGIN);
 
         $wcfmNonce = wp_create_nonce('webpexpress-wcfm-nonce');
         echo '<scr' . 'ipt>window.webpExpressWCFMNonce = "' . $wcfmNonce . '";</scr' . 'ipt>';
@@ -51,9 +51,8 @@ class WCFMPage
         echo '<scr' . 'ipt src="' . $baseUrl . '/wcfm-options.js?11"></scr' . 'ipt>';
         //echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/vendor.js?1"></scr' . 'ipt>';
 
-        // TODO:  make a script in npm for automatically updating the filenames below when copying
-        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/index.f8d1bd25.js"></scr' . 'ipt>';
-        echo '<link rel="stylesheet" href="' . $baseUrl . '/index.ab43bb2c.css">';
+        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/index.ee44cdbf.js"></scr' . 'ipt>';
+        echo '<link rel="stylesheet" href="' . $baseUrl . '/index.659b742a.css">';
     }
 
 }
