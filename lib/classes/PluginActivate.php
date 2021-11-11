@@ -78,15 +78,6 @@ class PluginActivate
             );
         }
 
-
-        if ( is_multisite() ) {
-            Messenger::addMessage(
-                'warning',
-                'Multisite functionality in still new in WebP Express (it was added in release 0.12.0). ' .
-                'While it has been tested on several setups, there might be a bug or two yet to be found.'
-            );
-        }
-
         if (!version_compare(PHP_VERSION, '5.5.0', '>=')) {
             Messenger::addMessage(
                 'warning',
