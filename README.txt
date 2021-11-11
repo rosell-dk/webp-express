@@ -727,6 +727,8 @@ If you want an image to be served in the original format (jpeg og png), do one o
 
 Doing this will bypass redirection to webp and also prevent Alter HTML to use the webp instead of the original.
 
+NOTE: You may have to regenerate .htaccess rules (by clicking the button) in order for this to work. The feature was added in 0.23.0 and if you started using WebP Express before that, the necessary rules will not be there, unless you regenerate, that is.
+
 *Bypassing for an entire folder*
 To bypass redirection for an entire folder, you can put something like this into your root .htaccess:
 `
