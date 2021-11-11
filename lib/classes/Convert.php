@@ -142,7 +142,9 @@ class Convert
             $result['filesize-webp'] = @filesize($destination);
             $result['destination-path'] = $destination;
 
-            $rootOfDestination = Paths::destinationRoot($rootId, $config['destination-folder'], $config['destination-structure']);
+            $destinationOptions = DestinationOptions::createFromConfig($config);
+
+            $rootOfDestination = Paths::destinationRoot($rootId, $destinationOptions);
 
             $relPathFromImageRootToSource = PathHelper::getRelDir(
                 realpath(Paths::getAbsDirById($rootId)),
