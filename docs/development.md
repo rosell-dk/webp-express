@@ -22,23 +22,70 @@ rmdir vendor/bin
 
 
 ## Copying WCFM
-I created the following aliases in my `~/bash_aliases` file to make things easier...
-(Usually I only need one of the last three - the first ones are subcommands)
-
+I created the following script for copying WCFM build to webp-express:
 ```
-alias lswcfmcss="ls /home/rosell/github/webp-express/lib/wcfm | grep 'index.*css' | tr '\n' ' ' | sed 's/\s//'"
-alias lswcfmjs="ls /home/rosell/github/webp-express/lib/wcfm | grep 'index.*js' | tr '\n' ' ' | sed 's/\s//'"
-alias updatewebpexpresscss="sed -i \"s/index\..*\.css/$(lswcfmcss)/g\" /home/rosell/github/webp-express/lib/classes/WCFMPage.php"
-alias updatewebpexpressjs="sed -i \"s/index\..*\.js/$(lswcfmjs)/g\" /home/rosell/github/webp-express/lib/classes/WCFMPage.php"
-alias remove_css_in_webp_express="rm -f /home/rosell/github/webp-express/lib/wcfm/index*.css"
-alias remove_js_in_webp_express="rm -f /home/rosell/github/webp-express/lib/wcfm/index*.js"
-alias remove_vendorjs_in_webp_express="rm -f /home/rosell/github/webp-express/lib/wcfm/vendor*.js"
-alias remove_assets_in_webp_express="remove_css_in_webp_express && remove_js_in_webp_express"
-alias copycss="cp ~/github/webp-convert-filemanager/dist/assets/index*.css /home/rosell/github/webp-express/lib/wcfm/"
-alias copymainjs="cp ~/github/webp-convert-filemanager/dist/assets/index*.js /home/rosell/github/webp-express/lib/wcfm/"
-alias copyvendorjs="cp ~/github/webp-convert-filemanager/dist/assets/vendor*.js /home/rosell/github/webp-express/lib/wcfm"
-alias copyassets="remove_assets_in_webp_express && copymainjs && copyvendorjs && copycss"
-alias copywcfm="copyassets && updatewebpexpresscss && updatewebpexpressjs"
-alias buildwcfm="npm run build --prefix ~/github/webp-convert-filemanager"
-alias freshwcfm="buildwcfm && copywcfm"
+#!/bin/bash
+
+WCFM_PATH=/home/rosell/github/webp-convert-filemanager
+WE_PATH=/home/rosell/github/webp-express/lib/wcfm
+WCFMPage_PATH=/home/rosell/github/webp-express/lib/classes/WCFMPage.php
+
+copyassets() {
+  # remove assets in WebP Express
+  rm -f $WE_PATH/index*.css
+  rm -f $WE_PATH/index*.js
+  rm -f $WE_PATH/vendor*.js
+
+  # copy assets from WCFM
+  cp $WCFM_PATH/dist/assets/index*.css $WE_PATH/
+  cp $WCFM_PATH/dist/assets/index*.js $WE_PATH/
+  cp $WCFM_PATH/dist/assets/vendor*.js $WE_PATH/
+
+
+  #CSS_FILE = $(ls /home/rosell/github/webp-express/lib/wcfm | grep 'index.*css' | tr '\n' ' ' | sed 's/\s//')
+  CSS_FILE=$(ls $WE_PATH | grep 'index.*css' | tr '\n' ' ' | sed 's/\s//')
+  JS_FILE=$(ls $WE_PATH | grep 'index.*js' | tr '\n' ' ' | sed 's/\s//')
+
+
+  if [ ! $CSS_FILE ]; then
+    echo "No CSS file! - aborting"
+    exit
+  fi
+  if [ ! $JS_FILE ]; then
+    echo "No JS file! - aborting"
+    exit
+  fi
+
+  echo "CSS file: $CSS_FILE"
+  echo "JS file: $JS_FILE"
+
+  # Update WCFMPage.PHP references
+  sed -i "s/index\..*\.css/$CSS_FILE/g" $WCFMPage_PATH
+  sed -i "s/index\..*\.js/$JS_FILE/g" $WCFMPage_PATH
+}
+
+if [ ! $1 ]; then
+  echo "Missing argument. Must be build, copy or build-copy"
+  exit
+fi
+
+buildwcfm() {
+  npm run build --prefix $WCFM_PATH
+}
+
+if [ $1 = "copy" ]; then
+  echo "copy"
+  copyassets
+fi
+
+if [ $1 = "build" ]; then
+  echo "build"
+  buildwcfm
+fi
+
+if [ $1 = "build-copy" ]; then
+  echo "build-copy"
+  buildwcfm
+  copyassets
+fi
 ```
