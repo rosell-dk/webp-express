@@ -168,7 +168,6 @@ class AlterHtmlHelper
      */
     public static function getWebPUrlInImageRoot($sourceUrl, $rootId, $baseUrl, $baseDir)
     {
-        //error_log('getWebPUrlInImageRoot:' . $sourceUrl . ':' . $baseUrl . ':' . $baseDir);
 
 
         $srcPathRel = self::getRelUrlPath($sourceUrl, $baseUrl);
@@ -199,19 +198,21 @@ class AlterHtmlHelper
 
         // Make sure the options are loaded (and fixed)
         self::getOptions();
+        $destinationOptions = new DestinationOptions(
+            self::$options['destination-folder'] == 'mingled',
+            self::$options['destination-structure'] == 'doc-root',
+            self::$options['destination-extension'] == 'set',
+            self::$options['scope']
+        );
 
         if (!isset(self::$options['scope']) || !in_array($rootId, self::$options['scope'])) {
             return false;
         }
 
-        $destinationRoot = Paths::destinationRoot(
-            $rootId,
-            self::$options['destination-folder'],
-            self::$options['destination-structure']
-        );
+        $destinationRoot = Paths::destinationRoot($rootId, $destinationOptions);
 
         $relPathFromImageRootToSource = PathHelper::getRelDir(
-            realpath(Paths::getAbsDirById($rootId)),
+            realpath(Paths::getAbsDirById($rootId)),  // note: In multisite (subfolders), it contains ie "/site/2/"
             realpath($srcPathAbs)
         );
         $relPathFromImageRootToDest = ConvertHelperIndependent::appendOrSetExtension(
@@ -246,7 +247,25 @@ class AlterHtmlHelper
         $sourceUrlComponents = parse_url($sourceUrl);
         $destUrlComponents = parse_url($destUrl);
         $port = isset($sourceUrlComponents['port']) ? ":" . $sourceUrlComponents['port'] : "";
-        return $sourceUrlComponents['scheme'] . '://' . $sourceUrlComponents['host'] . $port . $destUrlComponents['path'];
+        $result = $sourceUrlComponents['scheme'] . '://' . $sourceUrlComponents['host'] . $port . $destUrlComponents['path'];
+
+        /*
+        error_log(
+            "getWebPUrlInImageRoot:\n" .
+            "- url: " . $sourceUrl . "\n" .
+            "- baseUrl: " . $baseUrl . "\n" .
+            "- baseDir: " . $baseDir . "\n" .
+            "- root id: " . $rootId . "\n" .
+            "- root abs: " . Paths::getAbsDirById($rootId) . "\n" .
+            "- destination root (abs): " . $destinationRoot['abs-path'] . "\n" .
+            "- destination root (url): " . $destinationRoot['url'] . "\n" .
+            "- rel: " . $srcPathRel . "\n" .
+            "- srcPathAbs: " . $srcPathAbs . "\n" .
+            '- relPathFromImageRootToSource: ' . $relPathFromImageRootToSource . "\n" .
+            '- get_blog_details()->path: '  . get_blog_details()->path . "\n" .
+            "- result: " . $result . "\n"
+        );*/
+        return $result;
     }
 
 
@@ -302,7 +321,6 @@ class AlterHtmlHelper
             $baseDir = Paths::getAbsDirById($rootId);
             $baseUrl = Paths::getUrlById($rootId);
 
-            //error_log('baseurl: ' . $baseUrl);
             if (Multisite::isMultisite() && ($rootId == 'uploads')) {
                 $baseUrl = Paths::getUploadUrl();
                 $baseDir = Paths::getUploadDirAbs();

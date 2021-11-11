@@ -90,7 +90,7 @@ class DestinationUrl
             return false;
         }
 
-        $destinationRoot = Paths::destinationRoot2(
+        $destinationRoot = Paths::destinationRoot(
             $rootId,
             $destinationOptions
         );
