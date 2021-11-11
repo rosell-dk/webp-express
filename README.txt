@@ -722,8 +722,8 @@ I have only tested the above in *Varied image responses* mode, but it should als
 There can be instances where you actually need to serve a jpeg or png. For example if you are demonstrating how a jpeg looks using some compression settings.
 
 If you want an image to be served in the original format (jpeg og png), do one of the following things:
-- Add "?original" to the image url.
-- Place an empty file in the same folder as the jpeg/png. The file name must be the same as the jpeg/png with ".do-not-convert" appended
+- Add "?dontreplace" to the image url.
+- Place an empty file in the same folder as the jpeg/png. The file name must be the same as the jpeg/png with ".dontreplace" appended
 
 Doing this will bypass redirection to webp and also prevent Alter HTML to use the webp instead of the original.
 
@@ -775,6 +775,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 1. WebP Express settings
 
 == Changelog ==
+
+= Upcoming =
+* Changed names for preventing replacing image with webp. Use "?dontreplace" / ".dontreplace" instead of "?original" and ".do-not-convert". The old ones are deprecated, but will still work (for a while)
+* You can now convert images in the file manager and view conversion log
 
 = 0.22.1 =
 *(released: 09 Nov 2021)*

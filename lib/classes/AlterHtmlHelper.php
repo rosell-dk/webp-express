@@ -188,6 +188,9 @@ class AlterHtmlHelper
         if (file_exists($srcPathAbs . '.do-not-convert')) {
             return false;
         }
+        if (file_exists($srcPathAbs . '.dontreplace')) {
+            return false;
+        }
 
         // Calculate destination of webp (both path and url)
         // ----------------------------------------

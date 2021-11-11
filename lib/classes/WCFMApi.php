@@ -223,7 +223,8 @@ class WCFMApi
             //'filename' => $absPath,
             //'abspath' => $absPath,
             'size' => filesize($absPath),
-            'url' => Paths::getUrlById($rootId) . '/' . $relPath . '?' . SelfTestHelper::randomDigitsAndLetters(8) . '&original',
+            // PS: I keep "&original" because some might have set up Nginx rules for ?original
+            'url' => Paths::getUrlById($rootId) . '/' . $relPath . '?' . SelfTestHelper::randomDigitsAndLetters(8) . '&dontreplace&original',
           ]
       ];
 

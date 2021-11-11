@@ -1055,12 +1055,22 @@ class HTAccessRules
             $rules .= "<IfModule mod_rewrite.c>\n" .
                 "  RewriteEngine On\n\n";
 
-            $rules .= "  # Escape hatch #1: Adding ?original to an url can be used to bypass redirection\n";
+            $rules .= "  # Escape hatch #1: Adding ?dontreplace to an url can be used to bypass redirection\n";
+            $rules .= "  RewriteCond %{QUERY_STRING} dontreplace$\n";
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
+            $rules .= "  RewriteRule . - [L]\n\n";
+
+            $rules .= "  # Escape hatch #2: Placing an empty file in the same folder as the jpeg/png which has same file name, but \".dontreplace\" appended will bypass redirection\n";
+            $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(\.jpe?g|\.png)$\n";
+            $rules .= "  RewriteCond %1%2\.dontreplace -f\n";
+            $rules .= "  RewriteRule . - [L]\n\n";
+
+            $rules .= "  # Deprecated escape hatch: Adding ?original to an url can be used to bypass redirection\n";
             $rules .= "  RewriteCond %{QUERY_STRING} original$\n";
             $rules .= "  RewriteCond %{REQUEST_FILENAME} -f\n";
             $rules .= "  RewriteRule . - [L]\n\n";
 
-            $rules .= "  # Escape hatch #2: Placing an empty file in the same folder as the jpeg/png which has same file name, but \".do-not-convert\" appended will bypass redirection\n";
+            $rules .= "  # Deprecated escape hatch: Placing an empty file in the same folder as the jpeg/png which has same file name, but \".do-not-convert\" appended will bypass redirection\n";
             $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(\.jpe?g|\.png)$\n";
             $rules .= "  RewriteCond %1%2\.do-not-convert -f\n";
             $rules .= "  RewriteRule . - [L]\n\n";
