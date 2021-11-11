@@ -387,14 +387,22 @@ class HTAccess
         if (count($successfullWrites) > 0) {
             $msg .= '<p>Rewrite rules were saved to the following files:</p>';
             foreach ($successfullWrites as $rootId) {
-                $msg .= '<i>' . Paths::getAbsDirById($rootId) . '/.htaccess</i> (' . $rootId . ')<br>';
+                $rootIdName = $rootId;
+                if ($rootIdName == 'cache') {
+                    $rootIdName = 'webp folder';
+                }
+                $msg .= '<i>' . Paths::getAbsDirById($rootId) . '/.htaccess</i> (' . $rootIdName . ')<br>';
             }
         }
 
         if (count($successfulDeactivations) > 0) {
             $msg .= '<p>Rewrite rules were removed from the following files:</p>';
             foreach ($successfulDeactivations as $rootId) {
-                $msg .= '<i>' . Paths::getAbsDirById($rootId) . '/.htaccess</i> (' . $rootId . ')<br>';
+                $rootIdName = $rootId;
+                if ($rootIdName == 'cache') {
+                    $rootIdName = 'webp folder';
+                }
+                $msg .= '<i>' . Paths::getAbsDirById($rootId) . '/.htaccess</i> (' . $rootIdName . ')<br>';
             }
         }
 
