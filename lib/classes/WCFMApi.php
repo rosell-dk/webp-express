@@ -449,6 +449,7 @@ class WCFMApi
           'data' => $convertResult['msg'],
           'log' => $convertResult['log'],
         ];
+        $info = [];
         if (isset($convertResult['filesize-webp'])) {
           $info['size'] = $convertResult['filesize-webp'];
         }
