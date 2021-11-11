@@ -53,12 +53,12 @@ class AdminInit
         if (current_user_can('manage_options')) {
 
             // Hooks related to conversion page (in media)
-            if (self::pageNowIs('upload.php')) {
+            //if (self::pageNowIs('upload.php')) {
                 if (isset($_GET['page']) && ('webp_express_conversion_page' === $_GET['page'])) {
                     //add_action('admin_enqueue_scripts', array('\WebPExpress\WCFMPage', 'enqueueScripts'));
                     add_action('admin_head', array('\WebPExpress\WCFMPage', 'addToHead'));
                 }
-            }
+            //}
 
             // Hooks related to options page
             if (self::pageNowIs('options-general.php') || self::pageNowIs('settings.php')) {
@@ -123,7 +123,12 @@ class AdminInit
         add_action("admin_notices", array('\WebPExpress\DismissableGlobalMessages', 'printMessages'));
 
         if (Multisite::isNetworkActivated()) {
-            add_action("network_admin_menu", array('\WebPExpress\AdminUi', 'networAdminMenuHook'));
+            if (is_network_admin()) {
+                add_action("network_admin_menu", array('\WebPExpress\AdminUi', 'networAdminMenuHook'));
+            } else {
+                add_action("admin_menu", array('\WebPExpress\AdminUi', 'adminMenuHookMultisite'));
+            }
+
         } else {
             add_action("admin_menu", array('\WebPExpress\AdminUi', 'adminMenuHook'));
         }
