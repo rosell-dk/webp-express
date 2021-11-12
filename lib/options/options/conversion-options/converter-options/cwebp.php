@@ -12,9 +12,15 @@
           <br>If checked, we will look for binaries in common locations, such as <i>/usr/bin/cwebp</i>
       </div>
       <div>
-          <label for="cwebp_try_common_system_paths">Try precompiled cwebp</label>
+          <label for="cwebp_try_supplied_binary">Try precompiled cwebp</label>
           <input type="checkbox" id="cwebp_try_supplied_binary">
           <br>This plugin ships with precompiled cweb binaries for different platforms. If checked, and we have a precompiled binary for your OS, we will try to exectute it
+      </div>
+      <div>
+         <label for="cwebp_skip_these_precompiled_binaries">Skip these precompiled cwebp</label>
+         <input type="text" size="40" id="cwebp_skip_these_precompiled_binaries" style="width:100%">
+         <br>To skip precompiled binaries that are known not to work on current system (check the conversion log). 
+         This will cut down on conversion time. Separate values with comma.
       </div>
       <div>
           <label for="cwebp_method">Method (0-6)</label>

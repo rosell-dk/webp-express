@@ -783,6 +783,9 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 * You can now convert images in the file manager and view conversion log
 * Bugfix: In multisite (subdirs), Alter HTML produced wrong webp urls when destination structure was set to "image roots". Thanks to John A. Huebner II (@hube2) who lives on a big hill in central NY, USA for reporting the issue.
 * Added message to Elementor users on how to configure Elementor to inline CSS in order for Alter HTML to be able to replace image URLs (only displayed when relevant)
+* Add UI for "skip-these-precompiled-binaries" cwebp option. Thanks to @madmax4ever for posting code for this.
+
+For more info, see the closed issues on the [webp-express 0.23 milestone](https://github.com/rosell-dk/webp-express/milestone/43?closed=1)
 
 = 0.22.1 =
 *(released: 09 Nov 2021)*

@@ -229,6 +229,7 @@ function webpexpress_getSanitizedConverters() {
                     // cwebp
                     "try-common-system-paths" => 'boolean',
                     "try-supplied-binary-for-os" => 'boolean',
+                    "skip-these-precompiled-binaries" => 'string',
                     "method" => 'integer',  // 0-6,
                     "size-in-percentage" => 'integer',  // 0-100
                     "low-memory" => 'boolean',
@@ -241,7 +242,7 @@ function webpexpress_getSanitizedConverters() {
                     "crypt-api-key-in-transfer" => 'boolean',
                     "new-api-key" => 'string',
 
-	                //ewww
+	                  //ewww
                     "api-key" => 'string',
                     "api-key-2" => 'string',
                 ];
