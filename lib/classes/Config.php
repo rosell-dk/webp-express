@@ -301,6 +301,7 @@ class Config
             foreach ($config['converters'] as &$converter) {
                 $converterId = $converter['converter'];
                 $hasError = isset($testResult['errors'][$converterId]);
+                $hasWarning = isset($testResult['warnings'][$converterId]);
                 $working = !$hasError;
 
                 /*
@@ -340,6 +341,9 @@ class Config
                     $converter['error'] = $error;
                 } else {
                     unset($converter['error']);
+                }
+                if ($hasWarning) {
+                    $converter['warnings'] = $testResult['warnings'][$converterId];
                 }
             }
         }

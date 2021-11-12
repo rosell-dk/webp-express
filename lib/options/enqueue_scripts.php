@@ -9,7 +9,7 @@ use \WebPExpress\Config;
 // a change of filename is neccessary, as there is a plugin that strips version strings out there...!
 // If only one file update is critical: change the name of the file
 // If several files are critical: rename the folder (ie "js2")
-$ver = '1';  // note: Minimum 1.
+$ver = '3';  // note: Minimum 1.
 $jsDir = 'js';
 
 if (!function_exists('webp_express_add_inline_script')) {

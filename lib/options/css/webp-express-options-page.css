@@ -166,10 +166,13 @@
 #converters li svg#status_not_ok {
     color: #b11010; /* 444444 */
 }
+#converters li svg#status_warning {
+    color: #dc0;
+}
+
 #converters li.deactivated svg#status_not_ok {
     color: #999999;
 }
-
 #converters li.deactivated .status {
     bottom: unset;
 }
@@ -255,6 +258,10 @@
 #converters li.operational .popup {
     background-color: #80ff80;
 }
+#converters li.has-warnings .popup {
+    background-color: #ff5;
+}
+
 /* #converters li .status:hover .popup,*/
 #converters li:hover .status .popup,
 .help:hover .popup {
