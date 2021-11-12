@@ -782,6 +782,7 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 * Changed names for preventing replacing image with webp. Use "?dontreplace" / ".dontreplace" instead of "?original" and ".do-not-convert". The old ones are deprecated, but will still work (for a while)
 * You can now convert images in the file manager and view conversion log
 * Bugfix: In multisite (subdirs), Alter HTML produced wrong webp urls when destination structure was set to "image roots". Thanks to John A. Huebner II (@hube2) who lives on a big hill in central NY, USA for reporting the issue.
+* Added message to Elementor users on how to configure Elementor to inline CSS in order for Alter HTML to be able to replace image URLs (only displayed when relevant)
 
 = 0.22.1 =
 *(released: 09 Nov 2021)*
