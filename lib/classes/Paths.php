@@ -613,8 +613,8 @@ APACHE
                 ];
             } else {
                 $extraPath = '';
-                if (is_multisite() && !is_subdomain_install() && (get_current_blog_id() != 1)) {
-                    $extraPath = '/sites/' . get_current_blog_id();
+                if (is_multisite() && (get_current_blog_id() != 1)) {
+                    $extraPath = '/sites/' . get_current_blog_id();   // #510
                 }
                 return [
                     'url' => $destUrl . '/' . $rootId . $extraPath,
