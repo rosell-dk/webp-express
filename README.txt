@@ -853,6 +853,9 @@ For older releases, check out changelog.txt
 
 == Upgrade Notice ==
 
+= 0.23.0 =
+* Various improvements and bug fixes
+
 = 0.22.1 =
 * Two bug fixes related to .htaccess files and redirecting to converter
 
