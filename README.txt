@@ -781,14 +781,17 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
-= Upcoming =
+= 0.23.0 =
+*(pre-released: 15 Nov 2021)*
 * Changed names for preventing replacing image with webp. Use "?dontreplace" / ".dontreplace" instead of "?original" and ".do-not-convert". The old ones are deprecated, but will still work (for a while)
 * You can now convert images in the file manager and view conversion log
 * The new file manager UI is now available in multisite too
 * Changed names for the escape hatches that was introduced in 0.22. Use "?dontreplace" and ".dontreplace" rather than "?original" and ".do-not-convert". The old names still works
 * Added message to users that have the Elementor plugin installed on how to configure Elementor to inline CSS in order for Alter HTML to be able to replace image URLs (only displayed when relevant)
 * Added UI for "skip-these-precompiled-binaries" cwebp option. Thanks to @madmax4ever for posting code for this.
+* Bumped dom-util-for-webp library to 0.5
 * Bugfix: In multisite, Alter HTML produced wrong webp urls when destination structure was set to "image roots". Thanks to John A. Huebner II (@hube2) who lives on a big hill in central NY, USA for reporting the issue.
+* Bugfix: One of the newly introduced escape hatches didn't work in Alter HTML.
 
 For more info, see the closed issues on the [webp-express 0.23 milestone](https://github.com/rosell-dk/webp-express/milestone/43?closed=1)
 

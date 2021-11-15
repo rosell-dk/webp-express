@@ -44,7 +44,7 @@ before rsync, do this:
   1. the *webp-express.php* file
   2. in `lib/options/enqueue_scripts.php`
   3. in `lib/classes/ConverterHelperIndependent.php`
-  4. in `README.txt` (Stable tag)
+  4. in `README.txt` (Stable tag) - UNLESS IT IS A PRE-RELEASE :)
 - Perhaps make some final improvements of the readme.
     Inspiration: https://www.smashingmagazine.com/2011/11/improve-wordpress-plugins-readme-txt/
 https://pippinsplugins.com/how-to-properly-format-and-enhance-your-plugins-readme-txt-file-for-the-wordpress-org-repository/
