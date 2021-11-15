@@ -709,6 +709,8 @@ The current milestones, their subtasks and their progress can be viewed here: ht
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+### Beta testing
+I generally create a pre-release before publishing. If you [follow me on ko-fi](https://ko-fi.com/rosell), you will get notified when a pre-release is available. I generally create a pre-release on fridays and mark it as stable on mondays. In order to download a pre-release, go to [the advanced page](https://wordpress.org/plugins/webp-express/advanced/) and scroll down to "Please select a specific version to download". I don't name the pre-releases different. You will just see the next version here before it is available the usual way.
 
 ## Changes in 0.21.1
 *(released: 27 Oct 2021)*

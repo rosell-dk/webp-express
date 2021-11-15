@@ -175,10 +175,10 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Ruben Solvang
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
+* 13 Nov: @sween
 * 9 Nov: @utrenkner
 * 26 Oct: Anonymous
 * 29 Aug: Pawa Tecnologia
-* 29 Jul: Brian Laursen
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
@@ -766,6 +766,9 @@ The current milestones, their subtasks and their progress can be viewed here: ht
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+= Beta testing =
+I generally create a pre-release before publishing. If you [follow me on ko-fi](https://ko-fi.com/rosell), you will get notified when a pre-release is available. I generally create a pre-release on fridays and mark it as stable on mondays. In order to download a pre-release, go to [the advanced page](https://wordpress.org/plugins/webp-express/advanced/) and scroll down to "Please select a specific version to download". I don't name the pre-releases different. You will just see the next version here before it is available the usual way.
+
 = Can I buy you a cup of coffee? =
 You sure can! To do so, [go here!](https://ko-fi.com/rosell). If payment doesn't work for your country, [try here instead](https://buymeacoff.ee/rosell).
 
@@ -781,9 +784,11 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 = Upcoming =
 * Changed names for preventing replacing image with webp. Use "?dontreplace" / ".dontreplace" instead of "?original" and ".do-not-convert". The old ones are deprecated, but will still work (for a while)
 * You can now convert images in the file manager and view conversion log
+* The new file manager UI is now available in multisite too
+* Changed names for the escape hatches that was introduced in 0.22. Use "?dontreplace" and ".dontreplace" rather than "?original" and ".do-not-convert". The old names still works
+* Added message to users that have the Elementor plugin installed on how to configure Elementor to inline CSS in order for Alter HTML to be able to replace image URLs (only displayed when relevant)
+* Added UI for "skip-these-precompiled-binaries" cwebp option. Thanks to @madmax4ever for posting code for this.
 * Bugfix: In multisite, Alter HTML produced wrong webp urls when destination structure was set to "image roots". Thanks to John A. Huebner II (@hube2) who lives on a big hill in central NY, USA for reporting the issue.
-* Added message to Elementor users on how to configure Elementor to inline CSS in order for Alter HTML to be able to replace image URLs (only displayed when relevant)
-* Add UI for "skip-these-precompiled-binaries" cwebp option. Thanks to @madmax4ever for posting code for this.
 
 For more info, see the closed issues on the [webp-express 0.23 milestone](https://github.com/rosell-dk/webp-express/milestone/43?closed=1)
 
