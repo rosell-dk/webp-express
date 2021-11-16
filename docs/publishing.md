@@ -79,7 +79,7 @@ rsync -avh --dry-run --exclude '.git' --exclude '.github' --exclude='composer.lo
 
 ```
 cd /var/www/we/svn
-rsync -avh --exclude '.git' --exclude '.github' --exclude='composer.lock' --exclude='scripts' --exclude='vendor/rosell-dk/webp-convert/.git' --exclude='.gitignore' ~/github/webp-express/ /var/www/we/svn/trunk/  --delete
+rsync -avh --exclude '.git' --exclude '.github'            --exclude='composer.lock' --exclude='scripts' --exclude='vendor/rosell-dk/webp-convert/.git' --exclude='.gitignore' ~/github/webp-express/ /var/www/we/svn/trunk/  --delete
 ```
 
 **It should NOT contain a long list of files! (unless you have run phpreplace)**

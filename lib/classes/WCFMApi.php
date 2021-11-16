@@ -4,6 +4,7 @@ namespace WebPExpress;
 
 use \WebPConvert\Convert\Converters\Stack;
 use \WebPConvert\WebPConvert;
+use \ImageMimeTypeGuesser\ImageMimeTypeGuesser;
 
 /**
  *
@@ -190,6 +191,33 @@ class WCFMApi
       ];
     }
 
+    /*
+     * Get mime
+     * @return string
+     */
+    private static function setMime($path, &$info) {
+        $mimeResult = ImageMimeTypeGuesser::detect($path);
+        if (!$mimeResult) {
+            return;
+        }
+        $info['mime'] = $mimeResult;
+        if ($mimeResult == 'image/webp') {
+            $handle = @fopen($path, 'r');
+            if ($handle !== false) {
+                // 20 bytes is sufficient for all our sniffers, except image/svg+xml.
+                // The svg sniffer takes care of reading more
+                $sampleBin = @fread($handle, 20);
+                if ($sampleBin !== false) {
+                    if (preg_match("/^RIFF.{4}WEBPVP8\ /", $sampleBin) === 1) {
+                        $info['mime'] .= ' (lossy)';
+                    } else if (preg_match("/^RIFF.{4}WEBPVP8L/", $sampleBin) === 1) {
+                        $info['mime'] .= ' (lossless)';
+                    }
+                }
+            }
+
+        }
+    }
 
     public static function processInfo() {
 
@@ -218,6 +246,7 @@ class WCFMApi
       $absPath = Paths::getAbsDirById($rootId) . '/' . $relPath;
       //absPathExistsAndIsFile
       SanityCheck::absPathExists($absPath);
+
       $result = [
           'original' => [
             //'filename' => $absPath,
@@ -227,6 +256,7 @@ class WCFMApi
             'url' => Paths::getUrlById($rootId) . '/' . $relPath . '?' . SelfTestHelper::randomDigitsAndLetters(8) . '&dontreplace&original',
           ]
       ];
+      self::setMime($absPath, $result['original']);
 
       // TODO: NO!
       // We must use ConvertHelper::getDestination for the abs path.
@@ -254,6 +284,7 @@ class WCFMApi
                 'size' => filesize($absPathDest),
                 'url' => $destinationUrl . '?' . SelfTestHelper::randomDigitsAndLetters(8),
               ];
+              self::setMime($absPathDest, $result['converted']);
           }
 
           // Get log, if exists. Ignore errors.
@@ -457,6 +488,8 @@ class WCFMApi
         if (isset($convertResult['destination-url'])) {
           $info['url'] = $convertResult['destination-url'] . '?' . SelfTestHelper::randomDigitsAndLetters(8);
         }
+        self::setMime($convertResult['destination-path'], $info);
+
         $result['converted'] = $info;
         return $result;
 
