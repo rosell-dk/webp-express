@@ -151,14 +151,38 @@ class WCFMApi
         }*/
       //}
 
+      $webpConvertOptionDefinitions = WebPConvert::getConverterOptionDefinitions('png', false, true);
+
+      $config = Config::loadConfigAndFix();
+      $defaults = [
+          'auto-limit' => (isset($config['quality-auto']) && $config['quality-auto']),
+          'alpha-quality' => $config['alpha-quality'],
+          'quality' => $config['max-quality'],
+          'encoding' => $config['jpeg-encoding'],
+          'near-lossless' => ($config['jpeg-enable-near-lossless'] ? $config['jpeg-enable-near-lossless'] : 100),
+
+          // TODO:add PNG options
+          // TODO:set stack-converters options
+      ];
+
+
+      // Filter active converters
+      foreach ($config['converters'] as $converter) {
+          /*if (isset($converter['deactivated']) && ($converter['deactivated'])) {
+              //continue;
+          }*/
+          foreach ($converter['options'] as $optionName => $optionValue) {
+              $defaults[$converter['converter'] . '-' . $optionName] = $optionValue;
+          }
+      }
 
 
       $systemStatus = [
         'converterRequirements' => [
-          'gd' => [
-            'extensionLoaded' => extension_loaded('gd'),
-            'compiledWithWebP' => function_exists('imagewebp'),
-          ]
+            'gd' => [
+                'extensionLoaded' => extension_loaded('gd'),
+                'compiledWithWebP' => function_exists('imagewebp'),
+            ]
           // TODO: Add more!
         ]
       ];
@@ -168,7 +192,9 @@ class WCFMApi
 
       return [
         //'converters' => $converters,
-        //'options' => WebPConvert::getConverterOptionDefinitions('png', false, true)['general'],
+        'defaults' => $defaults,
+        'h' => $config['converters'],
+        'options' => $webpConvertOptionDefinitions,
         'systemStatus' => $systemStatus
       ];
 

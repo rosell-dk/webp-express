@@ -89,3 +89,8 @@ if [ $1 = "build-copy" ]; then
   copyassets
 fi
 ```
+
+## rsync webp-convert (in development)
+```
+rsync -avh --dry-run --size-only --exclude '.git' --exclude '.github' --exclude='composer.lock' --exclude='scripts' --exclude='vendor/rosell-dk/webp-convert/.git' --exclude='vendor/rosell-dk/webp-convert/.git' --exclude='.gitignore' ~/github/webp-convert/src/ ~/github/webp-express/vendor/rosell-dk/webp-convert/src  --delete
+```
