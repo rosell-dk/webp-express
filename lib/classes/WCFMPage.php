@@ -39,7 +39,7 @@ class WCFMPage
 
     public static function addToHead() {
         $baseUrl = plugins_url('lib/wcfm', WEBPEXPRESS_PLUGIN);
-        //$url = plugins_url('js/conversion-manager/index.9a86974e.js  ', WEBPEXPRESS_PLUGIN);
+        //$url = plugins_url('js/conversion-manager/index.2f5e50fe.js  ', WEBPEXPRESS_PLUGIN);
 
         $wcfmNonce = wp_create_nonce('webpexpress-wcfm-nonce');
         echo '<scr' . 'ipt>window.webpExpressWCFMNonce = "' . $wcfmNonce . '";</scr' . 'ipt>';
@@ -47,8 +47,8 @@ class WCFMPage
         echo '<scr' . 'ipt src="' . $baseUrl . '/wcfm-options.js?11"></scr' . 'ipt>';
         //echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/vendor.js?1"></scr' . 'ipt>';
 
-        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/index.9a86974e.js"></scr' . 'ipt>';
-        echo '<link rel="stylesheet" href="' . $baseUrl . '/index.b0dbdb18.css">';
+        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/index.2f5e50fe.js"></scr' . 'ipt>';
+        echo '<link rel="stylesheet" href="' . $baseUrl . '/index.f331330a.css">';
     }
 
 }

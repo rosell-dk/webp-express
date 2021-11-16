@@ -36,6 +36,9 @@ class WCFMApi
         case 'convert':
           $result = self::processConvert();
           break;
+        case 'delete-converted':
+          $result = self::processDeleteConverted();
+          break;
       }
 
       $json = wp_json_encode($result, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -517,4 +520,44 @@ class WCFMApi
         //absPathExistsAndIsFile
         SanityCheck::absPathExists($absPath);      */
     }
+
+    public static function processDeleteConverted() {
+
+        Validate::postHasKey('args');
+
+        //$args = json_decode(sanitize_text_field(stripslashes($_POST['args'])), true);
+
+        $args = $_POST['args'];
+        if (!array_key_exists('path', $args)) {
+            throw new \Exception('"path" argument missing for command');
+        }
+
+        $path = SanityCheck::noStreamWrappers($args['path']);
+        list($absPath, $relPath, $rootId) = self::analyzePathReceived($path);
+
+        $config = Config::loadConfigAndFix();
+        $destinationOptions = DestinationOptions::createFromConfig($config);
+        if ($destinationOptions->useDocRoot) {
+            if (!(Paths::canUseDocRootForStructuringCacheDir())) {
+                $destinationOptions->useDocRoot = false;
+            }
+        }
+        $destinationPath = Paths::getDestinationPathCorrespondingToSource($absPath, $destinationOptions);
+
+        if (@!file_exists($destinationPath)) {
+            throw new \Exception('file not found: ' . $destinationPath);
+        }
+
+        if (@!unlink($destinationPath)) {
+            throw new \Exception('failed deleting file');
+        }
+
+        $result = [
+          'success' => true,
+          'data' => $destinationPath
+        ];
+        return $result;
+
+    }
+
 }

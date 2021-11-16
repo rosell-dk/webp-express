@@ -1,3 +1,8 @@
+Upcoming release
+* You can now delete conversions in file manager
+* Mime type is displayed in file manager
+
+
 = 0.23.0 =
 *(pre-released: 15 Nov 2021, scheduled for release 16 Nov 2021)*
 * Changed names for preventing replacing image with webp. Use "?dontreplace" / ".dontreplace" instead of "?original" and ".do-not-convert". The old ones are deprecated, but will still work (for a while)
