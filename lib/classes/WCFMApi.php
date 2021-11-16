@@ -39,6 +39,11 @@ class WCFMApi
         case 'delete-converted':
           $result = self::processDeleteConverted();
           break;
+        default:
+          throw new \Exception('Unknown command');
+      }
+      if (!isset($result)) {
+          throw new \Exception('Command: ' . $command . ' gave no result');
       }
 
       $json = wp_json_encode($result, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -151,7 +156,7 @@ class WCFMApi
         }*/
       //}
 
-      $webpConvertOptionDefinitions = WebPConvert::getConverterOptionDefinitions('png', false, true);
+      $webpConvertOptionDefinitions = WebPConvert::getConverterOptionDefinitions();
 
       $config = Config::loadConfigAndFix();
       $defaults = [
@@ -160,9 +165,23 @@ class WCFMApi
           'quality' => $config['max-quality'],
           'encoding' => $config['jpeg-encoding'],
           'near-lossless' => ($config['jpeg-enable-near-lossless'] ? $config['jpeg-enable-near-lossless'] : 100),
+          'metadata' => $config['metadata'],
 
-          // TODO:add PNG options
           // TODO:set stack-converters options
+
+          // 'method' (I could copy from cwebp...)
+          // 'sharp-yuv' (n/a)
+          // low-memory (n/a)
+          // auto-filter (n/a)
+          // preset (n/a)
+          // size-in-percentage (I could copy from cwebp...)
+      ];
+
+      // TODO:add PNG options
+      $pngDefaults = [
+          'encoding' => $config['png-encoding'],
+          'near-lossless' => ($config['png-enable-near-lossless'] ? $config['png-enable-near-lossless'] : 100),
+          'quality' => $config['png-quality'],
       ];
 
 
@@ -171,8 +190,11 @@ class WCFMApi
           /*if (isset($converter['deactivated']) && ($converter['deactivated'])) {
               //continue;
           }*/
-          foreach ($converter['options'] as $optionName => $optionValue) {
-              $defaults[$converter['converter'] . '-' . $optionName] = $optionValue;
+          if (isset($converter['options'])) {
+            foreach ($converter['options'] as $optionName => $optionValue) {
+                $defaults[$converter['converter'] . '-' . $optionName] = $optionValue;
+            }
+
           }
       }
 
@@ -193,7 +215,7 @@ class WCFMApi
       return [
         //'converters' => $converters,
         'defaults' => $defaults,
-        'h' => $config['converters'],
+        'pngDefaults' => $pngDefaults,
         'options' => $webpConvertOptionDefinitions,
         'systemStatus' => $systemStatus
       ];

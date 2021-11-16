@@ -71,7 +71,8 @@ class Stack extends AbstractConverter
             ['preferred-converters', 'array', [
                 'title' => 'Preferred converters',
                 'description' =>
-                    'With this option you can move specified converters to the top of the stack. The converters are specified by id.',
+                    'With this option you can move specified converters to the top of the stack. ' .
+                    'The converters are specified by id.',
                 'default' => [],
                 'ui' => null
             ]],
