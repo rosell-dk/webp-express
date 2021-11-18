@@ -647,6 +647,7 @@ APACHE
                 $converter = ConverterFactory::makeConverter($converter, $source, $destination, $convertOptions, $logger);
                 $converter->doConvert();
             } else {
+//error_log('options:' . print_r(json_encode($convertOptions,JSON_PRETTY_PRINT), true));
                 WebPConvert::convert($source, $destination, $convertOptions, $logger);
             }
             $success = true;

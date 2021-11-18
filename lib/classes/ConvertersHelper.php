@@ -193,9 +193,44 @@ class ConvertersHelper
         return $result;
     }
 
+    /**
+     * Get active converters.
+     *
+     * @param  object  $config
+     * @return  array  Array of converter objects
+     */
+    public static function getActiveConverters($config)
+    {
+        if (!isset($config['converters'])) {
+            return [];
+        }
+        $converters = $config['converters'];
+        if (!is_array($converters)) {
+            return [];
+        }
+        $result = [];
+        foreach ($converters as $c) {
+            if (isset($c['deactivated']) && $c['deactivated']) {
+                continue;
+            }
+            $result[] = $c;
+        }
+        return $result;
+    }
+
     public static function getWorkingAndActiveConverterIds($config)
     {
         $converters = self::getWorkingAndActiveConverters($config);
+        $result = [];
+        foreach ($converters as $converter) {
+            $result[] = $converter['converter'];
+        }
+        return $result;
+    }
+
+    public static function getActiveConverterIds($config)
+    {
+        $converters = self::getActiveConverters($config);
         $result = [];
         foreach ($converters as $converter) {
             $result[] = $converter['converter'];

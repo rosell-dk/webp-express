@@ -164,10 +164,9 @@ class WCFMApi
           'alpha-quality' => $config['alpha-quality'],
           'quality' => $config['max-quality'],
           'encoding' => $config['jpeg-encoding'],
-          'near-lossless' => ($config['jpeg-enable-near-lossless'] ? $config['jpeg-enable-near-lossless'] : 100),
+          'near-lossless' => ($config['jpeg-enable-near-lossless'] ? $config['jpeg-near-lossless'] : 100),
           'metadata' => $config['metadata'],
-
-          // TODO:set stack-converters options
+          'stack-converters' => ConvertersHelper::getActiveConverterIds($config),
 
           // 'method' (I could copy from cwebp...)
           // 'sharp-yuv' (n/a)
@@ -177,10 +176,17 @@ class WCFMApi
           // size-in-percentage (I could copy from cwebp...)
       ];
 
+      $good = ConvertersHelper::getWorkingAndActiveConverterIds($config);
+      if (isset($good[0])) {
+        $defaults['converter'] = $good[0];
+      }
+      //'converter' => 'ewww',
+
+
       // TODO:add PNG options
       $pngDefaults = [
           'encoding' => $config['png-encoding'],
-          'near-lossless' => ($config['png-enable-near-lossless'] ? $config['png-enable-near-lossless'] : 100),
+          'near-lossless' => ($config['png-enable-near-lossless'] ? $config['png-near-lossless'] : 100),
           'quality' => $config['png-quality'],
       ];
 
@@ -211,11 +217,12 @@ class WCFMApi
 
 //getUnsupportedDefaultOptions
       //supportedStandardOptions: {
+      $defaults['png'] = $pngDefaults;
 
       return [
         //'converters' => $converters,
         'defaults' => $defaults,
-        'pngDefaults' => $pngDefaults,
+        //'pngDefaults' => $pngDefaults,
         'options' => $webpConvertOptionDefinitions,
         'systemStatus' => $systemStatus
       ];
@@ -276,7 +283,8 @@ class WCFMApi
 
       //$args = json_decode(sanitize_text_field(stripslashes($_POST['args'])), true);
 
-      $args = $_POST['args'];
+      //$args = $_POST['args'];
+      $args = self::getArgs();
       if (!array_key_exists('path', $args)) {
           throw new \Exception('"path" argument missing for command');
       }
@@ -430,7 +438,7 @@ class WCFMApi
 
         //$args = json_decode(sanitize_text_field(stripslashes($_POST['args'])), true);
 
-        $args = $_POST['args'];
+        $args = self::getArgs();
         if (!array_key_exists('path', $args)) {
             throw new \Exception('"path" argument missing for command');
         }
@@ -513,24 +521,61 @@ class WCFMApi
 
     }
 
+    private static function getArgs() {
+        //return $_POST['args'];
+
+        $args = $_POST['args'];
+//        $args = '{\"path\":\"\"}';
+        //$args = '{"path":"hollo"}';
+
+        //error_log('get args:' . gettype($args));
+        //error_log(print_r($args, true));
+        //error_log(print_r(($_POST['args'] + ''), true));
+
+        //error_log('type:' . gettype($_POST['args']));
+        $args = json_decode('"' . $args . '"', true);
+        $args = json_decode($args, true);
+        //error_log('decoded:' . gettype($args));
+        //error_log(print_r($args, true));
+        //$args = json_decode($args, true);
+
+        return $args;
+    }
+
     public static function processConvert() {
 
         Validate::postHasKey('args');
 
         //$args = json_decode(sanitize_text_field(stripslashes($_POST['args'])), true);
 
-        $args = $_POST['args'];
+        $args = self::getArgs();
         if (!array_key_exists('path', $args)) {
             throw new \Exception('"path" argument missing for command');
         }
 
         $path = SanityCheck::noStreamWrappers($args['path']);
+
+        $convertOptions = null;
+        if (isset($args['convertOptions'])) {
+            $convertOptions = $args['convertOptions'];
+            $convertOptions['log-call-arguments'] = true;
+            //unset($convertOptions['converter']);
+            //$convertOptions['png'] = ['quality' => 7];
+            //$convertOptions['png-quality'] = 8;
+        }
+
+        //error_log(print_r(json_encode($convertOptions, JSON_PRETTY_PRINT), true));
+
         list($absPath, $relPath, $rootId) = self::analyzePathReceived($path);
-        $convertResult = Convert::convertFile($absPath);
+
+        $convertResult = Convert::convertFile($absPath, null, $convertOptions);
+
         $result = [
           'success' => $convertResult['success'],
           'data' => $convertResult['msg'],
           'log' => $convertResult['log'],
+          'hm' => $convertOptions['quality'],
+          'convertOptions' => $args['convertOptions'],
         ];
         $info = [];
         if (isset($convertResult['filesize-webp'])) {
@@ -539,7 +584,9 @@ class WCFMApi
         if (isset($convertResult['destination-url'])) {
           $info['url'] = $convertResult['destination-url'] . '?' . SelfTestHelper::randomDigitsAndLetters(8);
         }
-        self::setMime($convertResult['destination-path'], $info);
+        if (isset($convertResult['destination-path'])) {
+          self::setMime($convertResult['destination-path'], $info);
+        }
 
         $result['converted'] = $info;
         return $result;
@@ -575,7 +622,8 @@ class WCFMApi
 
         //$args = json_decode(sanitize_text_field(stripslashes($_POST['args'])), true);
 
-        $args = $_POST['args'];
+        //$args = $_POST['args'];
+        $args = self::getArgs();
         if (!array_key_exists('path', $args)) {
             throw new \Exception('"path" argument missing for command');
         }

@@ -22,29 +22,31 @@ rmdir vendor/bin
 
 
 ## Copying WCFM
-I created the following script for copying WCFM build to webp-express:
+I created the following script for building WCFM, copying it to webp-express, etc
 ```
 #!/bin/bash
 
 WCFM_PATH=/home/rosell/github/webp-convert-filemanager
-WE_PATH=/home/rosell/github/webp-express/lib/wcfm
+WE_PATH=/home/rosell/github/webp-express
+WE_PATH_WCFM=$WE_PATH/lib/wcfm
 WCFMPage_PATH=/home/rosell/github/webp-express/lib/classes/WCFMPage.php
+WC_PATH=/home/rosell/github/webp-convert
 
 copyassets() {
   # remove assets in WebP Express
-  rm -f $WE_PATH/index*.css
-  rm -f $WE_PATH/index*.js
-  rm -f $WE_PATH/vendor*.js
+  rm -f $WE_PATH_WCFM/index*.css
+  rm -f $WE_PATH_WCFM/index*.js
+  rm -f $WE_PATH_WCFM/vendor*.js
 
   # copy assets from WCFM
-  cp $WCFM_PATH/dist/assets/index*.css $WE_PATH/
-  cp $WCFM_PATH/dist/assets/index*.js $WE_PATH/
-  cp $WCFM_PATH/dist/assets/vendor*.js $WE_PATH/
+  cp $WCFM_PATH/dist/assets/index*.css $WE_PATH_WCFM/
+  cp $WCFM_PATH/dist/assets/index*.js $WE_PATH_WCFM/
+  cp $WCFM_PATH/dist/assets/vendor*.js $WE_PATH_WCFM/
 
 
   #CSS_FILE = $(ls /home/rosell/github/webp-express/lib/wcfm | grep 'index.*css' | tr '\n' ' ' | sed 's/\s//')
-  CSS_FILE=$(ls $WE_PATH | grep 'index.*css' | tr '\n' ' ' | sed 's/\s//')
-  JS_FILE=$(ls $WE_PATH | grep 'index.*js' | tr '\n' ' ' | sed 's/\s//')
+  CSS_FILE=$(ls $WE_PATH_WCFM | grep 'index.*css' | tr '\n' ' ' | sed 's/\s//')
+  JS_FILE=$(ls $WE_PATH_WCFM | grep 'index.*js' | tr '\n' ' ' | sed 's/\s//')
 
 
   if [ ! $CSS_FILE ]; then
@@ -65,7 +67,7 @@ copyassets() {
 }
 
 if [ ! $1 ]; then
-  echo "Missing argument. Must be build, copy or build-copy"
+  echo "Missing argument. Must be buildfm, copyfm, build-copyfm or rsync-wc"
   exit
 fi
 
@@ -73,24 +75,28 @@ buildwcfm() {
   npm run build --prefix $WCFM_PATH
 }
 
-if [ $1 = "copy" ]; then
-  echo "copy"
+if [ $1 = "copyfm" ]; then
+  echo "copyfm"
   copyassets
 fi
 
-if [ $1 = "build" ]; then
-  echo "build"
+if [ $1 = "buildfm" ]; then
+  echo "buildfm"
   buildwcfm
 fi
 
-if [ $1 = "build-copy" ]; then
-  echo "build-copy"
+if [ $1 = "build-copyfm" ]; then
+  echo "build-copyfm"
   buildwcfm
   copyassets
 fi
-```
 
-## rsync webp-convert (in development)
-```
-rsync -avh --dry-run --size-only --exclude '.git' --exclude '.github' --exclude='composer.lock' --exclude='scripts' --exclude='vendor/rosell-dk/webp-convert/.git' --exclude='vendor/rosell-dk/webp-convert/.git' --exclude='.gitignore' ~/github/webp-convert/src/ ~/github/webp-express/vendor/rosell-dk/webp-convert/src  --delete
+rsyncwc() {
+  rsync -avh --size-only --exclude '.git' --exclude '.github' --exclude='composer.lock' --exclude='scripts' --exclude='vendor/rosell-dk/webp-convert/.git' --exclude='vendor/rosell-dk/webp-convert/.git' --exclude='.gitignore' "$WC_PATH/src/" "$WE_PATH/vendor/rosell-dk/webp-convert/src"  --delete
+}
+
+if [ $1 = "rsync-wc" ]; then
+  echo "rsync-wc"
+  rsyncwc
+fi
 ```

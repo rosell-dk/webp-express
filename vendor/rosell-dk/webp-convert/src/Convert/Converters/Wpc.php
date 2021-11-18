@@ -42,20 +42,30 @@ class Wpc extends AbstractConverter
                'default' => '',
                'sensitive' => true,
                'ui' => [
-                   'component' => 'input',
+                   'component' => 'password',
                    'advanced' => false,
-                   'display' => "option['wpc-api-version'] != 0"
+                   'display' => "option('wpc-api-version') != 0"
                ]
             ]],
             ['secret', 'string', [
                'title' => 'Secret',
+               'description' => '',
+               'default' => '',
+               'sensitive' => true,
+               'ui' => [
+                   'component' => 'password',
+                   'advanced' => false,
+                   'display' => "option('wpc-api-version') == 0"
+               ]
+            ]],
+            ['api-url', 'string', [
+               'title' => 'API url',
                'description' => 'URL to connect to',
                'default' => '',
                'sensitive' => true,
                'ui' => [
-                   'component' => 'input',
+                   'component' => 'password',
                    'advanced' => false,
-                   'display' => "option['wpc-api-version'] == 0"
                ]
             ]],
             ['api-version', 'int', [
@@ -77,7 +87,7 @@ class Wpc extends AbstractConverter
                'ui' => [
                    'component' => 'checkbox',
                    'advanced' => true,
-                   'display' => "option['wpc-api-version'] >= 1"
+                   'display' => "option('wpc-api-version') >= 1"
                ]
             ]],
         ]);
