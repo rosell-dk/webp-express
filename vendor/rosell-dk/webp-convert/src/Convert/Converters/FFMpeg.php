@@ -27,11 +27,9 @@ class FFMpeg extends AbstractConverter
         return [
             'alpha-quality',
             'auto-filter',
-            'encoding',
             'low-memory',
             'metadata',
             'near-lossless',
-            'preset',
             'sharp-yuv',
             'size-in-percentage',
             'use-nice'

@@ -564,7 +564,7 @@ class WCFMApi
             //$convertOptions['png-quality'] = 8;
         }
 
-        //error_log(print_r(json_encode($convertOptions, JSON_PRETTY_PRINT), true));
+        error_log(print_r(json_encode($convertOptions, JSON_PRETTY_PRINT), true));
 
         list($absPath, $relPath, $rootId) = self::analyzePathReceived($path);
 
@@ -574,8 +574,7 @@ class WCFMApi
           'success' => $convertResult['success'],
           'data' => $convertResult['msg'],
           'log' => $convertResult['log'],
-          'hm' => $convertOptions['quality'],
-          'convertOptions' => $args['convertOptions'],
+          'args' => $args,  // for debugging. TODO
         ];
         $info = [];
         if (isset($convertResult['filesize-webp'])) {

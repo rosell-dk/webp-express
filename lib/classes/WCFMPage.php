@@ -39,16 +39,16 @@ class WCFMPage
 
     public static function addToHead() {
         $baseUrl = plugins_url('lib/wcfm', WEBPEXPRESS_PLUGIN);
-        //$url = plugins_url('js/conversion-manager/index.21a17814.js  ', WEBPEXPRESS_PLUGIN);
+        //$url = plugins_url('js/conversion-manager/index.20a24cf4.js  ', WEBPEXPRESS_PLUGIN);
 
         $wcfmNonce = wp_create_nonce('webpexpress-wcfm-nonce');
         echo '<scr' . 'ipt>window.webpExpressWCFMNonce = "' . $wcfmNonce . '";</scr' . 'ipt>';
 
-        echo '<scr' . 'ipt src="' . $baseUrl . '/wcfm-options.js?23"></scr' . 'ipt>';
+        echo '<scr' . 'ipt src="' . $baseUrl . '/wcfm-options.js?25"></scr' . 'ipt>';
         //echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/vendor.js?1"></scr' . 'ipt>';
 
-        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/index.21a17814.js"></scr' . 'ipt>';
-        echo '<link rel="stylesheet" href="' . $baseUrl . '/index.dab1fd42.css">';
+        echo '<scr' . 'ipt type="module" src="' . $baseUrl . '/index.20a24cf4.js"></scr' . 'ipt>';
+        echo '<link rel="stylesheet" href="' . $baseUrl . '/index.70a7ceb0.css">';
     }
 
 }
