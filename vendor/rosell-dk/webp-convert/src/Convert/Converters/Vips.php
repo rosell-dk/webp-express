@@ -27,7 +27,6 @@ class Vips extends AbstractConverter
         return [
             'auto-filter',
             'size-in-percentage',
-            'use-nice'
         ];
     }
 
@@ -246,7 +245,7 @@ class Vips extends AbstractConverter
             }
 
             if ($nameOfPropertyNotFound != '') {
-                $msg = '** Note: Your version of vipslib does not support the "' .
+                $msg = 'Note: Your version of vipslib does not support the "' .
                     $nameOfPropertyNotFound . '" property';
 
                 switch ($nameOfPropertyNotFound) {
@@ -266,10 +265,10 @@ class Vips extends AbstractConverter
                         $msg .= ' (It was introduced in vips 8.4)';
                         break;
                 }
-                $msg .= '. The option is ignored.**';
+                $msg .= '. The option is ignored.';
 
 
-                $this->logLn($msg);
+                $this->logLn($msg, 'bold');
 
                 unset($options[$nameOfPropertyNotFound]);
                 $this->webpsave($im, $options);

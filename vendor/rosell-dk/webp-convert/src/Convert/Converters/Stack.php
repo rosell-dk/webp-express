@@ -39,7 +39,6 @@ class Stack extends AbstractConverter
             'preset',
             'sharp-yuv',
             'size-in-percentage',
-            'use-nice',
             'skip',
             'default-quality',
             'quality',
@@ -54,6 +53,7 @@ class Stack extends AbstractConverter
                 'title' => 'Converters',
                 'description' => 'Converters to try, ordered by priority.',
                 'default' => self::getAvailableConverters(),
+                'sensitive' => true,
                 'ui' => [
                     'component' => 'multi-select',
                     'options' => self::getAvailableConverters(),
@@ -234,7 +234,7 @@ class Stack extends AbstractConverter
             $beginTime = microtime(true);
 
             $this->ln();
-            $this->logLn('Trying: ' . $converterId, 'italic');
+            $this->logLn($converterId . ' converter ignited', 'bold');
 
             $converter = ConverterFactory::makeConverter(
                 $converterId,
