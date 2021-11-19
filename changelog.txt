@@ -1,7 +1,8 @@
 Upcoming release
-* You can now delete conversions in file manager
+* Conversion settings in file manager
+* Delete conversion in file manager
 * Mime type is displayed in file manager
-
+* Logging is more readable
 
 = 0.23.0 =
 *(pre-released: 15 Nov 2021, scheduled for release 16 Nov 2021)*
