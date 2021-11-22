@@ -654,11 +654,11 @@ APACHE
         } catch (\WebpConvert\Exceptions\WebPConvertException $e) {
             $msg = $e->getMessage();
         } catch (\Exception $e) {
-            $msg = 'An exception was thrown!';
-        } catch (Throwable $e) {
-            //Executed only in PHP 7, will not match in PHP 5
-            //$msg = $e->getMessage();
-            //$msg = 'oh no';
+            //$msg = 'An exception was thrown!';
+            $msg = $e->getMessage();
+        } catch (\Throwable $e) {
+            //Executed only in PHP 7 and 8, will not match in PHP 5
+            $msg = $e->getMessage();
         }
 
         if (!is_null($logDir)) {
