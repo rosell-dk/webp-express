@@ -119,6 +119,9 @@ class TestRun
             } catch (\Exception $e) {
                 //echo $e->getMessage() . '<br>';
                 $errors[$converterId] = $e->getMessage();
+            } catch (\Throwable $e) {
+                //echo $e->getMessage() . '<br>';
+                $errors[$converterId] = $e->getMessage();
             }
         }
 
