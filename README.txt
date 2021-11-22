@@ -175,6 +175,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Ruben Solvang
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
+* 20 Nov: Ben J
 * 13 Nov: @sween
 * 9 Nov: @utrenkner
 * 26 Oct: Anonymous
