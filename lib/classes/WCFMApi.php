@@ -564,7 +564,7 @@ class WCFMApi
             //$convertOptions['png-quality'] = 8;
         }
 
-        error_log(print_r(json_encode($convertOptions, JSON_PRETTY_PRINT), true));
+        //error_log(print_r(json_encode($convertOptions, JSON_PRETTY_PRINT), true));
 
         list($absPath, $relPath, $rootId) = self::analyzePathReceived($path);
 
