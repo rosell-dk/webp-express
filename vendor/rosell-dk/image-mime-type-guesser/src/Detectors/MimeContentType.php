@@ -38,7 +38,6 @@ class MimeContentType extends AbstractDetector
                 // TODO:
                 // We should probably throw... - we will do in version 1.0.0
                 //throw $e;
-
             }
         }
         return null;

@@ -1,5 +1,3 @@
-# TODO: Add test when compiled with exif
-# TODO: Add test when compiled with exif
 name: PHP
 
 on:
@@ -90,7 +88,7 @@ jobs:
     - name: Upload Scrutinizer coverage
       uses: sudo-bot/action-scrutinizer@latest
       with:
-        cli-args: "--format=php-clover build/logs/clover.xml"
+        cli-args: "--format=php-clover build/logs/coverage.clover"
 
   php71:
     runs-on: ubuntu-18.04

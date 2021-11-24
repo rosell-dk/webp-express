@@ -27,7 +27,7 @@ class GetImageSize extends AbstractDetector
                 $imageSize = getimagesize($filePath);
                 return (isset($imageSize['mime']) ? $imageSize['mime'] : false);
             } catch (\Exception $e) {
-                // well well, don't let this stop us either                
+                // well well, don't let this stop us either
                 return null;
             }
         }

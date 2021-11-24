@@ -347,17 +347,17 @@
         },
         {
             "name": "rosell-dk/image-mime-type-guesser",
-            "version": "0.3.1",
-            "version_normalized": "0.3.1.0",
+            "version": "0.4.0",
+            "version_normalized": "0.4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rosell-dk/image-mime-type-guesser.git",
-                "reference": "5915934d66a7869cecc7141adf90581aad81023d"
+                "reference": "5ff1c218faccb6ad7146b012e9544229271b30a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rosell-dk/image-mime-type-guesser/zipball/5915934d66a7869cecc7141adf90581aad81023d",
-                "reference": "5915934d66a7869cecc7141adf90581aad81023d",
+                "url": "https://api.github.com/repos/rosell-dk/image-mime-type-guesser/zipball/5ff1c218faccb6ad7146b012e9544229271b30a9",
+                "reference": "5ff1c218faccb6ad7146b012e9544229271b30a9",
                 "shasum": ""
             },
             "require-dev": {
@@ -365,7 +365,7 @@
                 "phpunit/phpunit": "^9.3",
                 "squizlabs/php_codesniffer": "3.*"
             },
-            "time": "2021-06-30T19:14:59+00:00",
+            "time": "2021-07-01T17:31:37+00:00",
             "type": "library",
             "extra": {
                 "scripts-descriptions": {
@@ -403,7 +403,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rosell-dk/image-mime-type-guesser/issues",
-                "source": "https://github.com/rosell-dk/image-mime-type-guesser/tree/0.3.1"
+                "source": "https://github.com/rosell-dk/image-mime-type-guesser/tree/0.4.0"
             },
             "funding": [
                 {
@@ -419,22 +419,22 @@
         },
         {
             "name": "rosell-dk/webp-convert",
-            "version": "2.7.0",
-            "version_normalized": "2.7.0.0",
+            "version": "2.8.0",
+            "version_normalized": "2.8.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rosell-dk/webp-convert.git",
-                "reference": "9f1677e56352b7aa23f00680d4ed41d53f3c4d8a"
+                "reference": "d01977c3db60fe683e292b861c14f2611c3c1f27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/9f1677e56352b7aa23f00680d4ed41d53f3c4d8a",
-                "reference": "9f1677e56352b7aa23f00680d4ed41d53f3c4d8a",
+                "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/d01977c3db60fe683e292b861c14f2611c3c1f27",
+                "reference": "d01977c3db60fe683e292b861c14f2611c3c1f27",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.6 | ^7.0 | ^8.0",
-                "rosell-dk/image-mime-type-guesser": "^0.3"
+                "rosell-dk/image-mime-type-guesser": "^0.4.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.11",
@@ -447,7 +447,7 @@
                 "ext-vips": "to use Vips extension for converting.",
                 "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
             },
-            "time": "2021-10-25T08:34:22+00:00",
+            "time": "2021-11-24T10:18:37+00:00",
             "type": "library",
             "extra": {
                 "scripts-descriptions": {
@@ -496,7 +496,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rosell-dk/webp-convert/issues",
-                "source": "https://github.com/rosell-dk/webp-convert/tree/2.7.0"
+                "source": "https://github.com/rosell-dk/webp-convert/tree/2.8.0"
             },
             "funding": [
                 {

@@ -119,7 +119,7 @@ svn cp trunk tags/0.23.0       (this will copy trunk into a new tag)
 
 And commit!
 ```
-svn ci -m '0.23.0'
+svn ci -m '0.24.0 pre-release'
 ```
 
 
