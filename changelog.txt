@@ -1,8 +1,12 @@
-Upcoming release
-* Conversion settings in file manager
-* Delete conversion in file manager
-* Mime type is displayed in file manager
-* Logging is more readable
+= 0.24.1 =
+* Bugfix: On some systems, the converter test run that is done when showing the settings page could result in an uncatched error.
+
+= 0.24.0 =
+* Improved file manager: You can now tweak conversion settings, delete conversion and see mime type of images.
+* Conversions logs are made more readable
+* Bumped webp-convert to 0.24.0
+
+For more info, see the closed issues on the [webp-express 0.24.0 milestone](https://github.com/rosell-dk/webp-express/milestone/45?closed=1)
 
 = 0.23.0 =
 *(pre-released: 15 Nov 2021, scheduled for release 16 Nov 2021)*

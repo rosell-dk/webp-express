@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.8
-Stable tag: 0.23.0
+Stable tag: 0.24.1
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -782,6 +782,18 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.24.1 =
+*(released: 24 Nov 2021)*
+* Bugfix: On some systems, the converter test run that is done when showing the settings page could result in an uncatched error.
+
+= 0.24.0 =
+*(pre-released: 20 Nov 2021, not "released", in the sense that stable tag never pointed to this release)*
+* Improved file manager: You can now tweak conversion settings, delete conversion and see mime type of images.
+* Conversion logs are made more readable
+* Bumped webp-convert to 0.24.0
+
+For more info, see the closed issues on the [webp-express 0.24.0 milestone](https://github.com/rosell-dk/webp-express/milestone/45?closed=1)
+
 = 0.23.0 =
 *(pre-released: 15 Nov 2021)*
 * Changed names for preventing replacing image with webp. Use "?dontreplace" / ".dontreplace" instead of "?original" and ".do-not-convert". The old ones are deprecated, but will still work (for a while)
@@ -853,6 +865,9 @@ For more info, see the closed issues on the [0.20.0 milestone on the github repo
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.24.1 =
+* Improved file manager and fixed rare PHP error displayed on settings page
 
 = 0.23.0 =
 * Various improvements and bug fixes
