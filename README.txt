@@ -34,7 +34,7 @@ The plugin implements the "WebP On Demand" solution described [here](https://git
 - [DOM Util for WebP](https://github.com/rosell-dk/dom-util-for-webp): For the Alter HTML functionality
 - [Image MimeType Guesser](https://github.com/rosell-dk/image-mime-type-guesser): For detecting mime types of images.
 - [HTAccess Capability Tester](https://github.com/rosell-dk/htaccess-capability-tester): For testing .htaccess capabilities in a given directory, using live tests
-- [WebP Convert File Manager](https://github.com/rosell-dk/webp-convert-filemanager): For browsing conversions (planned feature: triggering conversions).
+- [WebP Convert File Manager](https://github.com/rosell-dk/webp-convert-filemanager): For browsing conversions and triggering conversions.
 
 ### Benefits
 - Much faster load time for images in browsers that supports webp. The converted images are typically *less than half the size* (for jpeg), while maintaining the same quality. Bear in mind that for most web sites, images are responsible for the largest part of the waiting time.
