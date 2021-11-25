@@ -5,7 +5,7 @@
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'f490b77e4af0ab648b9b3f5ae1ebd7cfbfe26603',
+        'reference' => 'd35df4914bfc907d27c5948d18cb05d9048ba3a0',
         'name' => 'rosell-dk/webp-express',
         'dev' => true,
     ),
@@ -38,12 +38,12 @@
             'dev_requirement' => false,
         ),
         'rosell-dk/htaccess-capability-tester' => array(
-            'pretty_version' => '0.9',
-            'version' => '0.9.0.0',
+            'pretty_version' => '0.9.1',
+            'version' => '0.9.1.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../rosell-dk/htaccess-capability-tester',
             'aliases' => array(),
-            'reference' => '2eb2cf38a9f42fc3aa647d6e9c896e124bfebf4c',
+            'reference' => 'b4499dcd9fe8b538a617069fdf34ae3de877c977',
             'dev_requirement' => false,
         ),
         'rosell-dk/image-mime-type-guesser' => array(
@@ -79,7 +79,7 @@
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'f490b77e4af0ab648b9b3f5ae1ebd7cfbfe26603',
+            'reference' => 'd35df4914bfc907d27c5948d18cb05d9048ba3a0',
             'dev_requirement' => false,
         ),
         'roundcube/plugin-installer' => array(

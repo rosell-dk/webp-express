@@ -4,7 +4,7 @@
     "type": "wordpress-plugin",
     "license": "MIT",
     "require": {
-        "composer/installers": "^1.0.0",
+        "composer/installers": "^1.12.0",
         "rosell-dk/webp-convert": "^2.8.0",
         "rosell-dk/webp-convert-cloud-service": "^2.0.0",
         "rosell-dk/dom-util-for-webp": "^0.5.0",
