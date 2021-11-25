@@ -254,6 +254,7 @@ class WCFMApi
      * @return string
      */
     private static function setMime($path, &$info) {
+        require_once __DIR__ . "/../../vendor/autoload.php";
         $mimeResult = ImageMimeTypeGuesser::detect($path);
         if (!$mimeResult) {
             return;
