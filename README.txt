@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.8
-Stable tag: 0.24.1
+Stable tag: 0.24.2
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -782,6 +782,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.24.2 =
+*(released: 25 Nov 2021)*
+* Bugfix: In FileManager, the original image wasn't showing on all systems
+
 = 0.24.1 =
 *(released: 24 Nov 2021)*
 * Bugfix: On some systems, the converter test run that is done when showing the settings page could result in an uncatched error.
@@ -865,6 +869,9 @@ For more info, see the closed issues on the [0.20.0 milestone on the github repo
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.24.2 =
+* Minor bugfix
 
 = 0.24.1 =
 * Improved file manager and fixed rare PHP error displayed on settings page

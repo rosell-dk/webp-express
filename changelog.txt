@@ -1,3 +1,6 @@
+= 0.24.2 =
+* Bugfix: In FileManager, the original image wasn't showing on all systems
+
 = 0.24.1 =
 * Bugfix: On some systems, the converter test run that is done when showing the settings page could result in an uncatched error.
 
