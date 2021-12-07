@@ -4,7 +4,7 @@
 [![Build Status](https://github.com/rosell-dk/exec-with-fallback/actions/workflows/php.yml/badge.svg)](https://github.com/rosell-dk/exec-with-fallback/actions/workflows/php.yml)
 [![Software License](http://poser.pugx.org/rosell-dk/exec-with-fallback/license)](https://github.com/rosell-dk/exec-with-fallback/blob/master/LICENSE)
 [![PHP Version Require](http://poser.pugx.org/rosell-dk/exec-with-fallback/require/php)](https://packagist.org/packages/rosell-dk/exec-with-fallback)
-
+[![Daily Downloads](http://poser.pugx.org/rosell-dk/exec-with-fallback/d/daily)](https://packagist.org/packages/rosell-dk/exec-with-fallback)
 
 Some shared hosts may have disabled *exec()*, but leaved *proc_open()*, *passthru()*, *popen()* or *shell_exec()* open. In case you want to easily fall back to emulating *exec()* with one of these, you have come to the right library.
 
@@ -54,3 +54,9 @@ I made sure that the function behaves exactly like *exec()*, and wrote a lot of 
 
 **going to be maintained**\
 I'm going to use this library in [webp-convert](https://github.com/rosell-dk/webp-convert), which is used in many projects. So it is going to be widely used. While I don't expect much need for maintenance for this project, it is going to be there, if needed.
+
+## Do you like what I do?
+Perhaps you want to support my work, so I can continue doing it :)
+
+- [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell).
+- [Buy me a Coffee](https://ko-fi.com/rosell)
