@@ -1,3 +1,7 @@
+= 0.25.1 =
+(released 7 dec 2021)
+* An innocent text file triggered Windows Defender. It has been removed. Thanks to Javad Naroogheh from Iran for notifying
+
 = 0.25.0 =
 (released 7 dec 2021, on my daughters 10 year birthday!)
 * No exec()? - We don't give up easily, but now emulates it if possible, using proc_open(), passthru() or other alternatives. The result is that the cwebp converter now is available on more systems. Quality detection of jpegs also works on more systems now. The fallback feature with the emulations is btw implemented in a new library, [exec-with-fallback](https://github.com/rosell-dk/exec-with-fallback)

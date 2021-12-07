@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.8
-Stable tag: 0.25.0
+Stable tag: 0.25.1
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -253,7 +253,7 @@ Easy enough. Browsers looks at the *content type* header rather than the URL to 
 
 I am btw considering making an option to have the plugin redirect to the webp instead of serving immediately. That would remove the apparent mismatch between file extension and content type header. However, the cost of doing that will be an extra request for each image, which means extra time and worse performance. I believe you'd be ill advised to use that option, so I guess I will not implement it. But perhaps you have good reasons to use it? If you do, please let me know!
 
-= You mention that I can bulk convert through WP CLI, but how do I use it? =
+= WP CLI, but how do I use it to bulk convert? =
 Well, first, if you don't know WP CLI, here is a [quick start](https://make.wordpress.org/cli/handbook/guides/quick-start/)
 
 WebP Express currently supports commands for converting and flushing webp images throug the CLI. You can use the --help option to learn about the options:
@@ -814,6 +814,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.1 =
+(released 7 dec 2021)
+* An innocent text file triggered Windows Defender. It has been removed. Thanks to Javad Naroogheh from Iran for notifying
+
 = 0.25.0 =
 (released 7 dec 2021, on my daughters 10 year birthday!)
 * No exec()? - We don't give up easily, but now emulates it if possible, using proc_open(), passthru() or other alternatives. The result is that the cwebp converter now is available on more systems. Quality detection of jpegs also works on more systems now. The fallback feature with the emulations is btw implemented in a new library, [exec-with-fallback](https://github.com/rosell-dk/exec-with-fallback)
@@ -906,6 +910,9 @@ For more info, see the closed issues on the [0.20.0 milestone on the github repo
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.1 =
+* An innocent text file was triggering Windows Defender.
 
 = 0.25.0 =
 *  No exec()? - We don't give up so easily anymore.
