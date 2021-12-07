@@ -349,7 +349,7 @@ class FileHelper
      *  @return true if windows; false if not.
      */
     public static function isWindows(){
-        return (boolean) preg_match('/^win/i', PHP_OS);
+        return preg_match('/^win/i', PHP_OS);
     }
 
 
