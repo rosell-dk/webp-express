@@ -1,9 +1,9 @@
 {
-  "name": "rosell-dk/webp-convert",
-  "description": "Convert JPEG & PNG to WebP with PHP",
+  "name": "rosell-dk/exec-with-fallback",
+  "description": "An exec() with fallback to emulations (proc_open, etc)",
   "type": "library",
   "license": "MIT",
-  "keywords": ["webp", "images", "cwebp", "imagick", "gd", "jpg2webp", "png2webp", "jpg", "png", "image conversion"],
+  "keywords": ["exec", "open_proc", "command", "fallback", "sturdy", "resiliant"],
   "scripts": {
     "ci": [
       "@test",
@@ -11,11 +11,10 @@
       "@composer validate --no-check-all --strict",
       "@phpstan-global"
     ],
+    "test": "./vendor/bin/phpunit --coverage-text",
+    "test-41": "phpunit --coverage-text --configuration 'phpunit-41.xml.dist'",
     "phpunit": "phpunit --coverage-text",
-    "test": "phpunit --no-coverage",
-    "test-41": "phpunit --no-coverage --configuration 'phpunit-41.xml.dist'",
-    "test-with-coverage": "phpunit --coverage-text --configuration 'phpunit-with-coverage.xml.dist'",
-    "test-41-with-coverage": "phpunit --coverage-text --configuration 'phpunit-41.xml.dist'",
+    "test-no-cov": "phpunit --no-coverage",
     "cs-fix-all": [
       "php-cs-fixer fix src"
     ],
@@ -39,32 +38,22 @@
       }
   },
   "autoload": {
-    "psr-4": { "WebPConvert\\": "src/" }
+    "psr-4": { "ExecWithFallback\\": "src/" }
   },
   "autoload-dev": {
-    "psr-4": { "WebPConvert\\Tests\\": "tests/" }
+    "psr-4": { "ExecWithFallback\\Tests\\": "tests/" }
   },
   "authors": [
     {
       "name": "Bjørn Rosell",
       "homepage": "https://www.bitwise-it.dk/contact",
       "role": "Project Author"
-    },
-    {
-      "name": "Martin Folkers",
-      "homepage": "https://twobrain.io",
-      "role": "Collaborator"
     }
   ],
   "require": {
-    "php": "^5.6 | ^7.0 | ^8.0",
-    "rosell-dk/exec-with-fallback": "^1.0.0",
-    "rosell-dk/image-mime-type-guesser": "^0.4.0"
+      "php": "^5.6 | ^7.0 | ^8.0"
   },
   "suggest": {
-      "ext-gd": "to use GD extension for converting. Note: Gd must be compiled with webp support",
-      "ext-imagick": "to use Imagick extension for converting. Note: Gd must be compiled with webp support",
-      "ext-vips": "to use Vips extension for converting.",
       "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
   },
   "require-dev": {

@@ -120,7 +120,7 @@ abstract class AbstractConverter
         $this->setProvidedOptions($options);
 
         if (!isset($this->options['_skip_input_check'])) {
-            $this->logLn('WebP Convert 2.8.0 ignited', 'bold');
+            $this->logLn('WebP Convert 2.9.0 ignited', 'bold');
             $this->logLn('PHP version: ' . phpversion());
             if (isset($_SERVER['SERVER_SOFTWARE'])) {
                 $this->logLn('Server software: ' . $_SERVER['SERVER_SOFTWARE']);
@@ -282,7 +282,7 @@ abstract class AbstractConverter
     /**
      * Start conversion.
      *
-     * Usually you would rather call the static convert method, but alternatively you can call
+     * Usually it would be more convenience to call the static convert method, but alternatively you can call
      * call ::createInstance to get an instance and then ::doConvert().
      *
      * @return void
@@ -306,14 +306,12 @@ abstract class AbstractConverter
             throw $e;
         } catch (\Exception $e) {
             $className = get_class($e);
-
             $classNameParts = explode("\\", $className);
             $shortClassName = array_pop($classNameParts);
 
             $this->logLn('');
             $this->logLn($shortClassName . ' thrown in ' . $e->getFile() . ':' . $e->getLine(), 'bold');
             $this->logLn('Message: "' . $e->getMessage() . '"', 'bold');
-            //$this->logLn('Exception class: ' . $className);
 
             $this->logLn('Trace:');
             foreach ($e->getTrace() as $trace) {
@@ -325,9 +323,16 @@ abstract class AbstractConverter
                 }
             }
             throw $e;
-        } /*catch (\Error $e) {
-            $this->logLn('ERROR');
-        }*/
+        } catch (\Throwable $e) {
+            $className = get_class($e);
+            $classNameParts = explode("\\", $className);
+            $shortClassName = array_pop($classNameParts);
+
+            $this->logLn('');
+            $this->logLn($shortClassName . ' thrown in ' . $e->getFile() . ':' . $e->getLine(), 'bold');
+            $this->logLn('Message: "' . $e->getMessage() . '"', 'bold');
+            throw $e;
+        }
     }
 
     /**

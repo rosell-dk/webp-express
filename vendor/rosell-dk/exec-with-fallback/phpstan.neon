@@ -1,0 +1,3 @@
+parameters:
+    ignoreErrors:
+        - '#PHPDoc tag @param.*Unexpected token "&"#'

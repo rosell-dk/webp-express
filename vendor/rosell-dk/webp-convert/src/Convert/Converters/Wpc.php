@@ -38,7 +38,7 @@ class Wpc extends AbstractConverter
         return OptionFactory::createOptions([
             ['api-key', 'string', [
                'title' => 'API key',
-               'description' => '',
+               'description' => 'The API key is set up on the remote. Copy that.',
                'default' => '',
                'sensitive' => true,
                'ui' => [
@@ -60,7 +60,7 @@ class Wpc extends AbstractConverter
             ]],
             ['api-url', 'string', [
                'title' => 'API url',
-               'description' => 'URL to connect to',
+               'description' => 'The endpoint of the web service. Copy it from the remote setup',
                'default' => '',
                'sensitive' => true,
                'ui' => [
@@ -70,19 +70,23 @@ class Wpc extends AbstractConverter
             ]],
             ['api-version', 'int', [
                'title' => 'API version',
-               'description' => '',
+               'description' =>
+                    'Refers to the major version of Wpc. ' .
+                    'It is probably 2, as it is a long time since 2.0 was released',
                'default' => 2,
                'minimum' => 0,
                'maximum' => 2,
                'ui' => [
                    'component' => 'select',
                    'advanced' => false,
-                   'options' => ['0', '1', '2'],
+                   'options' => [0, 1, 2],
                ]
             ]],
             ['crypt-api-key-in-transfer', 'boolean', [
                'title' => 'Crypt API key in transfer',
-               'description' => '',
+               'description' =>
+                  'If checked, the api key will be crypted in requests. ' .
+                  'Crypting the api-key protects it from being stolen during transfer',
                'default' => false,
                'ui' => [
                    'component' => 'checkbox',
@@ -218,7 +222,7 @@ class Wpc extends AbstractConverter
                     );
                 }
             }
-        } elseif ($apiVersion >= 1) {
+        } else {
             if ($options['crypt-api-key-in-transfer']) {
                 if (!function_exists('crypt')) {
                     throw new ConverterNotOperationalException(
@@ -300,7 +304,7 @@ class Wpc extends AbstractConverter
 
         if ($apiVersion == 0) {
             $postData['hash'] = md5(md5_file($this->source) . $apiKey);
-        } elseif ($apiVersion == 1) {
+        } else {
             //$this->logLn('api key: ' . $apiKey);
 
             if ($options['crypt-api-key-in-transfer']) {

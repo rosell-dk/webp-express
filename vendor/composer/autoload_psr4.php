@@ -10,6 +10,7 @@ return array(
     'WebPConvertCloudService\\' => array($vendorDir . '/rosell-dk/webp-convert-cloud-service/src'),
     'ImageMimeTypeGuesser\\' => array($vendorDir . '/rosell-dk/image-mime-type-guesser/src'),
     'HtaccessCapabilityTester\\' => array($vendorDir . '/rosell-dk/htaccess-capability-tester/src'),
+    'ExecWithFallback\\' => array($vendorDir . '/rosell-dk/exec-with-fallback/src'),
     'DOMUtilForWebP\\' => array($vendorDir . '/rosell-dk/dom-util-for-webp/src'),
     'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
 );

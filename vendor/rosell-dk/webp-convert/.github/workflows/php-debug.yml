@@ -1,4 +1,4 @@
-name: Quick test
+name: Debug
 
 on:
   push:
@@ -7,16 +7,15 @@ on:
     branches: [ master ]
 
 jobs:
-  php80:
+  php73:
     runs-on: ${{ matrix.os }}
     env:
       WEBPCONVERT_EWWW_API_KEY: ${{ secrets.WEBPCONVERT_EWWW_API_KEY }}
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-20.04]
-        php: [8.0]
-
+        os: [macos-11]
+        php: [7.3]
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -41,9 +40,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: vendor
-        key: ${{ runner.os }}-php80-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-php73-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          ${{ runner.os }}-php80-
+          ${{ runner.os }}-php73-
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
