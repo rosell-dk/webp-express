@@ -114,12 +114,12 @@ svn status | grep '^!' | awk '{print $2}' | xargs svn delete --force          (t
 Then add a new tag
 ```
 cd svn
-svn cp trunk tags/0.24.1       (this will copy trunk into a new tag)
+svn cp trunk tags/0.24.2       (this will copy trunk into a new tag)
 ```
 
 And commit!
 ```
-svn ci -m '0.24.1'
+svn ci -m '0.24.2'
 ```
 
 

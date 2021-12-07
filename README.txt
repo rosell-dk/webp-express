@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.8
-Stable tag: 0.24.2
+Stable tag: 0.25.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -135,24 +135,26 @@ There are several ways:
 
 ### WP CLI command
 WebP Express currently supports commands for converting and flushing webp images throug the CLI. You can use the --help option to learn about the options:
-`wp webp-express --help`. Displays the available commands
-`wp webp-express convert --help`. Displays the available options for the "convert" command.
+*wp webp-express --help*. Displays the available commands
+*wp webp-express convert --help*. Displays the available options for the "convert" command.
 
 A few examples:
-`wp webp-express convert`: Creates webp images for all unconverted images
-`wp webp-express convert --reconvert`: Also convert images that are already converted
-`wp webp-express convert themes`: Only images in the themes folder
-`wp webp-express convert uploads/2021`: Only images in the "2021" folder inside the uploads folder
-`wp webp-express convert --only-png`: Only the PNG images
-`wp webp-express convert --quality=50`: Use quality 50 (instead of what was entered in settings screen)
-`wp webp-express convert --converter=cwebp`: Specifically use cwebp converter.
+*wp webp-express convert*: Creates webp images for all unconverted images
+*wp webp-express convert --reconvert*: Also convert images that are already converted
+*wp webp-express convert themes*: Only images in the themes folder
+*wp webp-express convert uploads/2021*: Only images in the "2021" folder inside the uploads folder
+*wp webp-express convert --only-png*: Only the PNG images
+*wp webp-express convert --quality=50*: Use quality 50 (instead of what was entered in settings screen)
+*wp webp-express convert --converter=cwebp*: Specifically use cwebp converter.
 
-`wp webp-express flushwebp`: Remove all webp images
-`wp webp-express flushwebp --only-png`: Remove all webp images that are conversions of PNG images
+*wp webp-express flushwebp*: Remove all webp images
+*wp webp-express flushwebp --only-png*: Remove all webp images that are conversions of PNG images
 
 Synopsises:
-`wp webp-express convert [<location>] [--reconvert] [--only-png] [--only-jpeg] [--quality=<number>] [--near-lossless=<number>] [--alpha-quality=<number>] [--encoding=<auto|lossy|lossless>] [--converter=<converter>]`
-`wp webp-express flushwebp [--only-png]`
+`
+wp webp-express convert [<location>] [--reconvert] [--only-png] [--only-jpeg] [--quality=<number>] [--near-lossless=<number>] [--alpha-quality=<number>] [--encoding=<auto|lossy|lossless>] [--converter=<converter>]
+wp webp-express flushwebp [--only-png]
+`
 
 I'm considering adding commands for viewing status, viewing conversion stats, generating the .htaccess files and modifying the settings. Please let me know if you need any of these or perhaps something else.
 
@@ -249,6 +251,35 @@ I shall write more on this FAQ item... Stay tuned.
 Easy enough. Browsers looks at the *content type* header rather than the URL to determine what it is that it gets. So, although it can be confusing that the resource at *example.com/image.jpg* is a webp image, rest assured that the browsers are not confused. To determine if the plugin is working, you must therefore examine the *content type* response header rather than the URL. See the "How do I verify that the plugin is working?" Faq item.
 
 I am btw considering making an option to have the plugin redirect to the webp instead of serving immediately. That would remove the apparent mismatch between file extension and content type header. However, the cost of doing that will be an extra request for each image, which means extra time and worse performance. I believe you'd be ill advised to use that option, so I guess I will not implement it. But perhaps you have good reasons to use it? If you do, please let me know!
+
+= You mention that I can bulk convert through WP CLI, but how do I use it? =
+Well, first, if you don't know WP CLI, here is a [quick start](https://make.wordpress.org/cli/handbook/guides/quick-start/)
+
+WebP Express currently supports commands for converting and flushing webp images throug the CLI. You can use the --help option to learn about the options:
+*wp webp-express --help*. Displays the available commands
+*wp webp-express convert --help*. Displays the available options for the "convert" command.
+
+A few examples:
+*wp webp-express convert*: Creates webp images for all unconverted images
+*wp webp-express convert --reconvert*: Also convert images that are already converted
+*wp webp-express convert themes*: Only images in the themes folder
+*wp webp-express convert uploads/2021*: Only images in the "2021" folder inside the uploads folder
+*wp webp-express convert --only-png*: Only the PNG images
+*wp webp-express convert --quality=50*: Use quality 50 (instead of what was entered in settings screen)
+*wp webp-express convert --quality=50 --near-lossless=50 --alpha-quality=50 --encoding=lossy*: More conversion options. encoding can be "lossy", "lossless" or "auto"
+*wp webp-express convert --converter=cwebp*: Specifically use cwebp converter. Other options: "vips", "imagemagick", "ffmpeg". PS: For "ewww" and "wpc" (remote webp express) does not work here.
+
+*wp webp-express flushwebp*: Remove all webp images
+*wp webp-express flushwebp --only-png*: Remove all webp images that are conversions of PNG images
+
+Synopsises:
+`
+wp webp-express convert [<location>] [--reconvert] [--only-png] [--only-jpeg] [--quality=<number>] [--near-lossless=<number>] [--alpha-quality=<number>] [--encoding=<auto|lossy|lossless>] [--converter=<converter>]
+wp webp-express flushwebp [--only-png]
+`
+
+I'm considering adding commands for viewing status, viewing conversion stats, generating the .htaccess files and modifying the settings. Please let me know if you need any of these or perhaps something else.
+
 
 = Blank images in Safari? =
 WebP Express has three ways of distributing webp to webp-enabled browsers while still sending the originals to webp-disabled browsers. While method 1 can be combined with any of the other methods, you would usually just pick method 1 or one of the others if method 1 cannot be used for you.
@@ -782,6 +813,11 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.0 =
+(released 7 dec 2021, on my daughters 10 year birthday!)
+* No exec()? - We don't give up easily, but now emulates it if possible, using proc_open(), passthru() or other alternatives. The result is that the cwebp converter now is available on more systems. Quality detection of jpegs also works on more systems now. The fallback feature with the emulations is btw implemented in a new library, [exec-with-fallback](https://github.com/rosell-dk/exec-with-fallback)
+* Bugfix: Our WP CLI command "webp-express" has a quality option, but it was not working
+
 = 0.24.2 =
 *(released: 25 Nov 2021)*
 * Bugfix: In FileManager, the original image wasn't showing on all systems
@@ -869,6 +905,9 @@ For more info, see the closed issues on the [0.20.0 milestone on the github repo
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.0 =
+*  No exec()? - We don't give up so easily anymore.
 
 = 0.24.2 =
 * Minor bugfix

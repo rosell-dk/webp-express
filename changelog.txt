@@ -1,10 +1,18 @@
+= 0.25.0 =
+(released 7 dec 2021, on my daughters 10 year birthday!)
+* No exec()? - We don't give up easily, but now emulates it if possible, using proc_open(), passthru() or other alternatives. The result is that the cwebp converter now is available on more systems. Quality detection of jpegs also works on more systems now. The fallback feature with the emulations is btw implemented in a new library, [exec-with-fallback](https://github.com/rosell-dk/exec-with-fallback)
+* Bugfix: Our WP CLI command "webp-express" has a quality option, but it was not working
+
 = 0.24.2 =
+*(released: 25 Nov 2021)*
 * Bugfix: In FileManager, the original image wasn't showing on all systems
 
 = 0.24.1 =
+*(released: 24 Nov 2021)*
 * Bugfix: On some systems, the converter test run that is done when showing the settings page could result in an uncatched error.
 
 = 0.24.0 =
+*(pre-released: 20 Nov 2021, not "released", in the sense that stable tag never pointed to this release)*
 * Improved file manager: You can now tweak conversion settings, delete conversion and see mime type of images.
 * Conversions logs are made more readable
 * Bumped webp-convert to 0.24.0
