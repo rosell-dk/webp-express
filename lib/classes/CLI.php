@@ -26,7 +26,7 @@ class CLI extends \WP_CLI_Command
      * [--only-jpeg]
      * : Only convert jpeg images
      *
-     * [--quality=]
+     * [--quality]
      * : Override quality with specified (0-100)
      *
      * [--near-lossless]
