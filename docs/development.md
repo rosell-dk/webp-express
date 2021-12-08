@@ -100,3 +100,13 @@ if [ $1 = "rsync-wc" ]; then
   rsyncwc
 fi
 ```
+
+# Instruction for installing development version, for non-developers :)
+
+To install the development version:
+1) Go to https://wordpress.org/plugins/webp-express/advanced/
+2) Find the place where it says “Please select a specific version to download”
+3) Click “Download”
+4) Browse to /wp-admin/plugin-install.php (ie by going to the the Plugins page and clicking “Add new” button in the top)
+5) Click “Upload plugin” (button found in the top)
+6) The rest is easy
