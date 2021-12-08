@@ -12,7 +12,7 @@ class ShellExec
 {
 
   /**
-   * Emulate exec() with system()
+   * Emulate exec() with shell_exec()
    *
    * @param string $command  The command to execute
    * @param string &$output (optional)
@@ -22,11 +22,9 @@ class ShellExec
    */
     public static function exec($command, &$output = null, &$result_code = null)
     {
-      //echo "\NSHELL:" . $command . ':' . func_num_args() . "\n";
-
         $resultCodeSupplied = (func_num_args() >= 3);
         if ($resultCodeSupplied) {
-            return false;
+            throw new \Exception('ShellExec::exec() does not support $result_code argument');
         }
 
         $result = shell_exec($command);

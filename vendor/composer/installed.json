@@ -284,17 +284,17 @@
         },
         {
             "name": "rosell-dk/exec-with-fallback",
-            "version": "1.1.1",
-            "version_normalized": "1.1.1.0",
+            "version": "1.2.0",
+            "version_normalized": "1.2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rosell-dk/exec-with-fallback.git",
-                "reference": "af7d9b513edd2a85ce8ad392f27099dab6d9def9"
+                "reference": "f88a6b29abd0b580566056b7c1eb0434eb5db20d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rosell-dk/exec-with-fallback/zipball/af7d9b513edd2a85ce8ad392f27099dab6d9def9",
-                "reference": "af7d9b513edd2a85ce8ad392f27099dab6d9def9",
+                "url": "https://api.github.com/repos/rosell-dk/exec-with-fallback/zipball/f88a6b29abd0b580566056b7c1eb0434eb5db20d",
+                "reference": "f88a6b29abd0b580566056b7c1eb0434eb5db20d",
                 "shasum": ""
             },
             "require": {
@@ -308,7 +308,7 @@
             "suggest": {
                 "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
             },
-            "time": "2021-12-07T10:37:35+00:00",
+            "time": "2021-12-08T12:09:43+00:00",
             "type": "library",
             "extra": {
                 "scripts-descriptions": {
@@ -348,7 +348,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rosell-dk/exec-with-fallback/issues",
-                "source": "https://github.com/rosell-dk/exec-with-fallback/tree/1.1.1"
+                "source": "https://github.com/rosell-dk/exec-with-fallback/tree/1.2.0"
             },
             "funding": [
                 {

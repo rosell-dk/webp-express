@@ -183,6 +183,7 @@ class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
         'DOMUtilForWebP\\PictureTags' => __DIR__ . '/..' . '/rosell-dk/dom-util-for-webp/src/PictureTags.php',
         'ExecWithFallback\\Availability' => __DIR__ . '/..' . '/rosell-dk/exec-with-fallback/src/Availability.php',
         'ExecWithFallback\\ExecWithFallback' => __DIR__ . '/..' . '/rosell-dk/exec-with-fallback/src/ExecWithFallback.php',
+        'ExecWithFallback\\ExecWithFallbackNoMercy' => __DIR__ . '/..' . '/rosell-dk/exec-with-fallback/src/ExecWithFallbackNoMercy.php',
         'ExecWithFallback\\POpen' => __DIR__ . '/..' . '/rosell-dk/exec-with-fallback/src/POpen.php',
         'ExecWithFallback\\Passthru' => __DIR__ . '/..' . '/rosell-dk/exec-with-fallback/src/Passthru.php',
         'ExecWithFallback\\ProcOpen' => __DIR__ . '/..' . '/rosell-dk/exec-with-fallback/src/ProcOpen.php',

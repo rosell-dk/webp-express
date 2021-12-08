@@ -28,7 +28,7 @@ class Availability extends ExecWithFallback
 
     public static function methodAvailable($method, $needResultCode = true)
     {
-        if (!function_exists($method)) {
+        if (!ExecWithFallback::functionEnabled($method)) {
             return false;
         }
         if ($needResultCode) {

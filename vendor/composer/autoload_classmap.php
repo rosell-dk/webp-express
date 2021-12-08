@@ -113,6 +113,7 @@ return array(
     'DOMUtilForWebP\\PictureTags' => $vendorDir . '/rosell-dk/dom-util-for-webp/src/PictureTags.php',
     'ExecWithFallback\\Availability' => $vendorDir . '/rosell-dk/exec-with-fallback/src/Availability.php',
     'ExecWithFallback\\ExecWithFallback' => $vendorDir . '/rosell-dk/exec-with-fallback/src/ExecWithFallback.php',
+    'ExecWithFallback\\ExecWithFallbackNoMercy' => $vendorDir . '/rosell-dk/exec-with-fallback/src/ExecWithFallbackNoMercy.php',
     'ExecWithFallback\\POpen' => $vendorDir . '/rosell-dk/exec-with-fallback/src/POpen.php',
     'ExecWithFallback\\Passthru' => $vendorDir . '/rosell-dk/exec-with-fallback/src/Passthru.php',
     'ExecWithFallback\\ProcOpen' => $vendorDir . '/rosell-dk/exec-with-fallback/src/ProcOpen.php',
