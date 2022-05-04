@@ -1,3 +1,7 @@
+= 0.25.3 =
+(released 4 May 2022)
+* AlterHTML: Fixed BIG BUG introduced in 0.25.2
+
 = 0.25.2 =
 (released 4 May 2022)
 * AlterHTML did not skip existing picture tags when they contained newlines, resulting in picture tags inside picture tags, which is invalid markup. Thanks to Jonas for being very helpful in solving this.

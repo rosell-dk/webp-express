@@ -61,6 +61,8 @@ And then:
 cd /var/www/we/svn
 svn up
 ```
+PS: On a new computer? - checkout first: `svn co http://plugins.svn.wordpress.org/webp-express/``
+
 
 If you have deleted folders (check with rsync --dry-run), then do this:
 ```
@@ -114,12 +116,12 @@ svn status | grep '^!' | awk '{print $2}' | xargs svn delete --force          (t
 Then add a new tag
 ```
 cd svn
-svn cp trunk tags/0.25.1       (this will copy trunk into a new tag)
+svn cp trunk tags/0.25.2       (this will copy trunk into a new tag)
 ```
 
 And commit!
 ```
-svn ci -m '0.25.1'
+svn ci -m '0.25.2'
 ```
 
 
