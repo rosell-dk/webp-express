@@ -1,11 +1,11 @@
 # WebP Convert
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/rosell-dk/webp-convert.svg?style=flat-square)](https://packagist.org/packages/rosell-dk/webp-convert)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net)
-[![Build Status](https://img.shields.io/github/workflow/status/rosell-dk/webp-convert/PHP?logo=GitHub&style=flat-square)](https://github.com/rosell-dk/webp-convert/actions/workflows/php.yml)
-[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/rosell-dk/webp-convert.svg?style=flat-square)](https://scrutinizer-ci.com/g/rosell-dk/webp-convert/code-structure/master)
-[![Quality Score](https://img.shields.io/scrutinizer/g/rosell-dk/webp-convert.svg?style=flat-square)](https://scrutinizer-ci.com/g/rosell-dk/webp-convert/)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/rosell-dk/webp-convert/blob/master/LICENSE)
+[![Latest Stable Version](https://img.shields.io/packagist/v/rosell-dk/webp-convert.svg)](https://packagist.org/packages/rosell-dk/webp-convert)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net)
+[![Build Status](https://img.shields.io/github/workflow/status/rosell-dk/webp-convert/PHP?logo=GitHub)](https://github.com/rosell-dk/webp-convert/actions/workflows/php.yml)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/rosell-dk/webp-convert/blob/master/LICENSE)
+[![Monthly Downloads](http://poser.pugx.org/rosell-dk/webp-convert/d/monthly)](https://packagist.org/packages/rosell-dk/webp-convert)
+[![Dependents](http://poser.pugx.org/rosell-dk/webp-convert/dependents)](https://packagist.org/packages/rosell-dk/webp-convert/dependents?order_by=downloads)
 
 *Convert JPEG & PNG to WebP with PHP*
 
@@ -126,11 +126,11 @@ Bread on the table don't come for free, even though this library does, and alway
 - Ruben Solvang
 
 *Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!*
+* 3 Dec: Dallas
+* 29 Nov: tadesco.org
 * 20 Nov: Ben J
 * 13 Nov: @sween
 * 9 Nov: @utrenkner
-* 26 Oct: Anonymous
-* 29 Aug: Pawa Tecnologia
 
 *Persons who contributed with extra generously amounts of coffee / lifetime backing (>50$) - thanks!:*
 

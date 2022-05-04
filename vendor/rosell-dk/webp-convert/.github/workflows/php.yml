@@ -1,9 +1,11 @@
-name: Quick test
+name: build
 
 on:
   push:
     branches: [ master ]
   pull_request:
+    branches: [ master ]
+  workflow_dispatch:
     branches: [ master ]
 
 jobs:
@@ -15,7 +17,7 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-20.04]
-        php: [8.0]
+        php: [8.1]
 
     steps:
     - name: Checkout

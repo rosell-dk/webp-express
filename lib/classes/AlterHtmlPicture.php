@@ -13,6 +13,8 @@ use DOMUtilForWebP\PictureTags;
 class AlterHtmlPicture extends PictureTags
 {
     public function replaceUrl($url) {
+        return $url . '.webp';
+        //return $url . '.webp:' . AlterHtmlHelper::getWebPUrl($url, null) . ':' . $url;
         return AlterHtmlHelper::getWebPUrl($url, null);
     }
 }

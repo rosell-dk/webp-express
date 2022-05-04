@@ -314,6 +314,7 @@ class AlterHtmlHelper
                 break;
         }
 
+
         //error_log('source url:' . $sourceUrl);
 
         // Try all image roots

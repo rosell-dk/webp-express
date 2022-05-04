@@ -209,17 +209,17 @@
         },
         {
             "name": "rosell-dk/dom-util-for-webp",
-            "version": "0.5.0",
-            "version_normalized": "0.5.0.0",
+            "version": "0.6.0",
+            "version_normalized": "0.6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rosell-dk/dom-util-for-webp.git",
-                "reference": "d2554c79a0e6ffc710c2c0d646e217a9ac76dcaf"
+                "reference": "2c87ff72d8ce49408ed5b2fc1a2e13ee16ab7613"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/d2554c79a0e6ffc710c2c0d646e217a9ac76dcaf",
-                "reference": "d2554c79a0e6ffc710c2c0d646e217a9ac76dcaf",
+                "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/2c87ff72d8ce49408ed5b2fc1a2e13ee16ab7613",
+                "reference": "2c87ff72d8ce49408ed5b2fc1a2e13ee16ab7613",
                 "shasum": ""
             },
             "require": {
@@ -227,10 +227,11 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.11",
+                "phpstan/phpstan": "^1.5",
                 "phpunit/phpunit": "^9.3",
                 "squizlabs/php_codesniffer": "3.*"
             },
-            "time": "2021-11-10T08:51:27+00:00",
+            "time": "2022-05-04T08:15:56+00:00",
             "type": "library",
             "extra": {
                 "scripts-descriptions": {
@@ -268,7 +269,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rosell-dk/dom-util-for-webp/issues",
-                "source": "https://github.com/rosell-dk/dom-util-for-webp/tree/0.5.0"
+                "source": "https://github.com/rosell-dk/dom-util-for-webp/tree/0.6.0"
             },
             "funding": [
                 {
@@ -512,17 +513,17 @@
         },
         {
             "name": "rosell-dk/webp-convert",
-            "version": "2.9.0",
-            "version_normalized": "2.9.0.0",
+            "version": "2.9.1",
+            "version_normalized": "2.9.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rosell-dk/webp-convert.git",
-                "reference": "e8cb8d5bec49e85638d674f34b6eb4e2820d7aee"
+                "reference": "bb29cadb423691c620f395513e82fa414c17e464"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/e8cb8d5bec49e85638d674f34b6eb4e2820d7aee",
-                "reference": "e8cb8d5bec49e85638d674f34b6eb4e2820d7aee",
+                "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/bb29cadb423691c620f395513e82fa414c17e464",
+                "reference": "bb29cadb423691c620f395513e82fa414c17e464",
                 "shasum": ""
             },
             "require": {
@@ -541,7 +542,7 @@
                 "ext-vips": "to use Vips extension for converting.",
                 "php-stan/php-stan": "Suggested for dev, in order to analyse code before committing"
             },
-            "time": "2021-12-07T08:26:21+00:00",
+            "time": "2021-12-09T13:07:20+00:00",
             "type": "library",
             "extra": {
                 "scripts-descriptions": {
@@ -590,7 +591,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rosell-dk/webp-convert/issues",
-                "source": "https://github.com/rosell-dk/webp-convert/tree/2.9.0"
+                "source": "https://github.com/rosell-dk/webp-convert/tree/2.9.1"
             },
             "funding": [
                 {
