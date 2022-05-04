@@ -123,7 +123,7 @@ namespace WebPExpress;
                         'If you enable this option, a small script will be added which detects if picture tags are supported and loads ' .
                         '<a href="https://github.com/scottjehl/picturefill" target="_blank">picturefill.js</a> if not. ' .
                         'It is recommended to activate this option, unless your theme or another plugin adds such a script. ' .
-                        'Picture tag support is currently <a href="https://caniuse.com/#feat=picture" target="_blank">~93%</a>'
+                        'Picture tag support is currently <a href="https://caniuse.com/#feat=picture" target="_blank">~94%</a>'
                     );
                     ?>
                 </div></li>
