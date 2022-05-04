@@ -171,18 +171,16 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 == Supporters of WebP Express ==
 
-**Persons currently backing the project via GitHub Sponsors or patreon - Thanks!**
-
-* Max Kreminsky
-* [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
-* Ruben Solvang
-
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
-* 3 Dec: Dallas
-* 29 Nov: tadesco.org
-* 20 Nov: Ben J
-* 13 Nov: @sween
-* 9 Nov: @utrenkner
+* 3 May: Jonas
+* 27 Apr: Jonas
+* 7 Apr: Anuar
+* 30 Mar: Michael Schober
+* 17 Mar: bluesix
+* 13 Mar: Troglos
+* 25 Feb: ItAdmin
+* 31 Jan: MB
+* 16 Dec: deepa
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
@@ -195,6 +193,10 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Mathieu Gollain-Dupont ($50)
 * Erica Dreisbach ($50)
 * Brian Laursen ($50)
+
+**Persons currently backing the project via GitHub Sponsors or patreon - Thanks!**
+
+* [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
 
 == Frequently Asked Questions ==
 
