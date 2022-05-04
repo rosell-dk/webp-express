@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.8
-Stable tag: 0.25.1
+Stable tag: 0.25.2
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -816,6 +816,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.2 =
+(released 4 May 2022)
+* AlterHTML did not skip existing picture tags when they contained newlines, resulting in picture tags inside picture tags, which is invalid markup. Thanks to Jonas for being very helpful in solving this.
+
 = 0.25.1 =
 (released 7 dec 2021)
 * An innocent text file triggered Windows Defender. It has been removed. Thanks to Javad Naroogheh from Iran for notifying
@@ -912,6 +916,9 @@ For more info, see the closed issues on the [0.20.0 milestone on the github repo
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.2 =
+* Fixed bug in Alter HTML functionality. It did not skip existing picture tags when they contained newlines, resulting in picture tags inside picture tags
 
 = 0.25.1 =
 * An innocent text file was triggering Windows Defender.
