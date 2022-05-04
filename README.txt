@@ -818,7 +818,7 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 = 0.25.3 =
 (released 4 May 2022)
-* AlterHTML: Fixed BIG BUG introduced in 0.25.2
+* AlterHTML: Fixed BIG BUG introduced in 0.25.2 (the webp urls was wrong when using picture tags). So sorry! Thankfully, I was quickly made aware of this and quickly patched it.
 
 = 0.25.2 =
 (released 4 May 2022)
