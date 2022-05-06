@@ -818,7 +818,7 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 = 0.25.4 =
 (released 6 May 2022)
-* AlterHTML (when using picture tags): Fixed charset problems on systems without DOMDocument
+* AlterHTML (when using picture tags): Fixed charset problems for special characters in alt and title attributes. The bug was introduced in 0.25.2. Thanks to Cruglk for first pointing this out.
 
 = 0.25.3 =
 (released 4 May 2022)
@@ -926,7 +926,7 @@ For older releases, check out changelog.txt
 == Upgrade Notice ==
 
 = 0.25.4 =
-* AlterHTML (when using picture tags): Fixed charset problems on systems without DOMDocument
+* AlterHTML (when using picture tags): Fixed charset problems for special characters in alt and title attributes.
 
 = 0.25.3 =
 * AlterHTML: Fixed BIG BUG introduced in 0.25.2

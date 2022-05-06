@@ -209,17 +209,17 @@
         },
         {
             "name": "rosell-dk/dom-util-for-webp",
-            "version": "0.6.1",
-            "version_normalized": "0.6.1.0",
+            "version": "0.6.5",
+            "version_normalized": "0.6.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rosell-dk/dom-util-for-webp.git",
-                "reference": "91fee94198dde2f9c8d2fd4660ff8c4a08063724"
+                "reference": "618d8cb26e744135934b6837e6b0ed9acc925f1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/91fee94198dde2f9c8d2fd4660ff8c4a08063724",
-                "reference": "91fee94198dde2f9c8d2fd4660ff8c4a08063724",
+                "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/618d8cb26e744135934b6837e6b0ed9acc925f1e",
+                "reference": "618d8cb26e744135934b6837e6b0ed9acc925f1e",
                 "shasum": ""
             },
             "require": {
@@ -231,7 +231,7 @@
                 "phpunit/phpunit": "^9.3",
                 "squizlabs/php_codesniffer": "3.*"
             },
-            "time": "2022-05-06T04:44:24+00:00",
+            "time": "2022-05-06T08:19:46+00:00",
             "type": "library",
             "extra": {
                 "scripts-descriptions": {
@@ -269,7 +269,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rosell-dk/dom-util-for-webp/issues",
-                "source": "https://github.com/rosell-dk/dom-util-for-webp/tree/0.6.1"
+                "source": "https://github.com/rosell-dk/dom-util-for-webp/tree/0.6.5"
             },
             "funding": [
                 {

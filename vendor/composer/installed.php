@@ -5,7 +5,7 @@
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '0d79417b872d9089c585a41387182f5ef6da5896',
+        'reference' => '79efca228f2cb7d40e830a9519c4dca1b3dda66f',
         'name' => 'rosell-dk/webp-express',
         'dev' => true,
     ),
@@ -29,12 +29,12 @@
             'dev_requirement' => false,
         ),
         'rosell-dk/dom-util-for-webp' => array(
-            'pretty_version' => '0.6.1',
-            'version' => '0.6.1.0',
+            'pretty_version' => '0.6.5',
+            'version' => '0.6.5.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../rosell-dk/dom-util-for-webp',
             'aliases' => array(),
-            'reference' => '91fee94198dde2f9c8d2fd4660ff8c4a08063724',
+            'reference' => '618d8cb26e744135934b6837e6b0ed9acc925f1e',
             'dev_requirement' => false,
         ),
         'rosell-dk/exec-with-fallback' => array(
@@ -88,7 +88,7 @@
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '0d79417b872d9089c585a41387182f5ef6da5896',
+            'reference' => '79efca228f2cb7d40e830a9519c4dca1b3dda66f',
             'dev_requirement' => false,
         ),
         'roundcube/plugin-installer' => array(

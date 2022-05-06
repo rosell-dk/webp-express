@@ -1,5 +1,5 @@
 = 0.25.4 =
-* AlterHTML (when using picture tags): Fixed charset problems on systems without DOMDocument
+* AlterHTML (when using picture tags): Fixed charset problems for special characters in alt and title attributes. The bug was introduced in 0.25.2. Thanks to Cruglk for first pointing this out.
 
 = 0.25.3 =
 (released 4 May 2022)
