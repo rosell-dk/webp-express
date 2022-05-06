@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.8
-Stable tag: 0.25.3
+Stable tag: 0.25.4
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -816,6 +816,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.4 =
+(released 6 May 2022)
+* AlterHTML (when using picture tags): Fixed charset problems on systems without DOMDocument
+
 = 0.25.3 =
 (released 4 May 2022)
 * AlterHTML: Fixed BIG BUG introduced in 0.25.2 (the webp urls was wrong when using picture tags). So sorry! Thankfully, I was quickly made aware of this and quickly patched it.
@@ -920,6 +924,9 @@ For more info, see the closed issues on the [0.20.0 milestone on the github repo
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.4 =
+* AlterHTML (when using picture tags): Fixed charset problems on systems without DOMDocument
 
 = 0.25.3 =
 * AlterHTML: Fixed BIG BUG introduced in 0.25.2

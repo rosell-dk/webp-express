@@ -8,7 +8,7 @@
   "scripts": {
     "ci": [
       "@build",
-      "@test",
+      "@test-cov-console",
       "@phpcs-all",
       "@composer validate --no-check-all --strict",
       "@phpstan"
@@ -19,6 +19,7 @@
     "cs-fix": "php-cs-fixer fix",
     "cs-dry": "php-cs-fixer fix --dry-run --diff",
     "test": "phpunit --coverage-text=build/coverage.txt --coverage-clover=build/coverage.clover --coverage-html=build/coverage --whitelist=src tests",
+    "test-cov-console": "phpunit --coverage-text --whitelist=src tests",
     "test-41": "phpunit --coverage-text --configuration 'phpunit-41.xml.dist'",
     "test-no-cov": "phpunit --no-coverage tests",
     "phpunit": "phpunit --no-coverage",

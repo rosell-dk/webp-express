@@ -158,3 +158,9 @@ So it is correct behaviour not to copy the *style*, *width*, *class* or any othe
 As with `ImageUrlReplacer`, you can override the *replaceUrl* function. There is however currently no other methods to override.
 
 `PictureTags` currently uses regular expressions to do the replacing. There are plans to change implementation to use `Sunra\PhpSimple\HtmlDomParser`, like our `ImageUrlReplacer` class does.
+
+## Do you like what I do?
+Perhaps you want to support my work, so I can continue doing it :)
+
+- [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell).
+- [Buy me a Coffee](https://ko-fi.com/rosell)
