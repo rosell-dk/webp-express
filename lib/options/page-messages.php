@@ -69,6 +69,10 @@ if ($cacheEnablerActivated && !$webpEnabled) {
             'for webp-enabled browsers.'
     );
 }
+/*
+Commented out.
+In newer PHP, it generates a fatal (uncatchable) error:
+Fatal error: Uncaught Error: Call to a member function is_feature_active() on null
 
 $elementorActivated = in_array('elementor/elementor.php', get_option('active_plugins', []));
 if ($elementorActivated) {
@@ -83,7 +87,7 @@ if ($elementorActivated) {
         // Well, just bad luck.
     }
 }
-
+*/
 
 if (($config['operation-mode'] == 'cdn-friendly') && !$config['alter-html']['enabled']) {
     //echo print_r(get_option('cache-enabler'), true);
