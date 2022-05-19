@@ -1,4 +1,10 @@
+= 0.25.5 =
+(released ?)
+* When using the "Prevent using webps larger than original" with Alter HTML (picture tags) on images with srcset, those webps that where larger than the originals was picked out from the srcset for the webp. This could lead to bad quality images. In the fix, the image will only have a webp source alternative when ALL the webps are smaller than their originals (when the "prevent..." option is set). Note: If you were affected by this and use a page caching plugin, you should flush your page cache!
+* Bugfix: In rare cases, WebP Express could fail detecting mime type
+
 = 0.25.4 =
+(released 6 May 2022)
 * AlterHTML (when using picture tags): Fixed charset problems for special characters in alt and title attributes. The bug was introduced in 0.25.2. Thanks to Cruglk for first pointing this out.
 
 = 0.25.3 =

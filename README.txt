@@ -816,6 +816,11 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.5 =
+(released ?)
+* When using the "Prevent using webps larger than original" with Alter HTML (picture tags) on images with srcset, those webps that where larger than the originals was picked out from the srcset for the webp. This could lead to bad quality images. In the fix, the image will only have a webp source alternative when ALL the webps are smaller than their originals (when the "prevent..." option is set).
+* Bugfix: In rare cases, WebP Express could fail detecting mime type
+
 = 0.25.4 =
 (released 6 May 2022)
 * AlterHTML (when using picture tags): Fixed charset problems for special characters in alt and title attributes. The bug was introduced in 0.25.2. Thanks to Cruglk for first pointing this out.
@@ -837,93 +842,12 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 * No exec()? - We don't give up easily, but now emulates it if possible, using proc_open(), passthru() or other alternatives. The result is that the cwebp converter now is available on more systems. Quality detection of jpegs also works on more systems now. The fallback feature with the emulations is btw implemented in a new library, [exec-with-fallback](https://github.com/rosell-dk/exec-with-fallback)
 * Bugfix: Our WP CLI command "webp-express" has a quality option, but it was not working
 
-= 0.24.2 =
-*(released: 25 Nov 2021)*
-* Bugfix: In FileManager, the original image wasn't showing on all systems
-
-= 0.24.1 =
-*(released: 24 Nov 2021)*
-* Bugfix: On some systems, the converter test run that is done when showing the settings page could result in an uncatched error.
-
-= 0.24.0 =
-*(pre-released: 20 Nov 2021, not "released", in the sense that stable tag never pointed to this release)*
-* Improved file manager: You can now tweak conversion settings, delete conversion and see mime type of images.
-* Conversion logs are made more readable
-* Bumped webp-convert to 0.24.0
-
-For more info, see the closed issues on the [webp-express 0.24.0 milestone](https://github.com/rosell-dk/webp-express/milestone/45?closed=1)
-
-= 0.23.0 =
-*(pre-released: 15 Nov 2021)*
-* Changed names for preventing replacing image with webp. Use "?dontreplace" / ".dontreplace" instead of "?original" and ".do-not-convert". The old ones are deprecated, but will still work (for a while)
-* You can now convert images in the file manager and view conversion log
-* The new file manager UI is now available in multisite too
-* Changed names for the escape hatches that was introduced in 0.22. Use "?dontreplace" and ".dontreplace" rather than "?original" and ".do-not-convert". The old names still works
-* Added message to users that have the Elementor plugin installed on how to configure Elementor to inline CSS in order for Alter HTML to be able to replace image URLs (only displayed when relevant)
-* Added UI for "skip-these-precompiled-binaries" cwebp option. Thanks to @madmax4ever for posting code for this.
-* Bumped dom-util-for-webp library to 0.5
-* Bugfix: In multisite, Alter HTML produced wrong webp urls when destination structure was set to "image roots". Thanks to John A. Huebner II (@hube2) who lives on a big hill in central NY, USA for reporting the issue.
-* Bugfix: One of the newly introduced escape hatches didn't work in Alter HTML.
-
-For more info, see the closed issues on the [webp-express 0.23 milestone](https://github.com/rosell-dk/webp-express/milestone/43?closed=1)
-
-= 0.22.1 =
-*(released: 09 Nov 2021)*
-* Bugfix: Old unupdated rewrite rules for redirecting to converter caused error (bug was introduced in 0.22.0). Thanks, @utrenkner for reacting quickly!
-* Bugfix: Backslashes in file paths in .htaccess on Windows caused redirecting not to work. Thanks to Herb Miller (@bobbingwide) from UK for discovering and debugging this.
-
-= 0.22.0 =
-*(released: 09 Nov 2021)*
-* Added option to disable creating log files and button to do delete them. Thanks to Amit Sonkhiya and many others for suggesting this.
-* WebP Express now prevents serving webps when they are bigger than the source. Added option for it (default is to prevent)
-* You can now prevent that a certain image is redirected to webp by appending "?original" to the URL. Also works for Alter HTML.
-* You can now prevent that a certain image is redirected to webp by placing a dummy ".do-not-convert" file next to the original.
-* The conversion manager now uses the new "?original" escape hatch to avoid that the original image is being redirected. Beware that if you are on Nginx and have created rewrite rules, you will need to implement the same escape hatch to avoid the "Original" image to be redirected to webp. However, in a future update, I will probably implement a PHP script for serving the original so you can also just wait.
-* Bugfix: Alter HTML could in some [rare cases](https://github.com/rosell-dk/webp-express/issues/528) produce invalid HTML.
-For more info, see the closed issues on the [webp-express 0.22 milestone](https://github.com/rosell-dk/webp-express/milestone/13?closed=1)
-* Bugfix: The "Enable redirection to converter" functionality was too greedy. It did not only redirect jpegs and pngs, but any file request. The bug occurred when Destination folder was set to "Image roots". The fix updates the .htaccess files if neccessary.
-* Minor bugfix: Symlinking the webp-express plugin folder would break "Redirection to converter" functionality
-
-For more info, see the closed issues on the [webp-express 0.22 milestone](https://github.com/rosell-dk/webp-express/milestone/13?closed=1)
-
-= 0.21.1 =
-*(released: 27 Oct 2021)*
-* Bugfix: File manager could not handle many images. It now loads tree branches on need basis instead of the complete tree in one go
-* Bugfix: For mulisite, the redirect after settings save was not working (bug introduced in 0.21.0)
-
-For more info, see the closed issues on the [webp-express 0.21.1 milestone](https://github.com/rosell-dk/webp-express/milestone/42?closed=1)
-
-= 0.21.0 =
-*(released: 25 Oct 2021)*
-* Added image browser (in Media tab)
-* Updated webp convert library to 2.7.0.
-* ImageMagick now supports the "near-lossless" option (provided Imagick >= 7.0.10-54)
-* Added "try-common-system-paths" option for ImageMagick (default: true). Thanks to Henrik Alves for adding this option.
-* Bugfix: Handling Uncaught Fatal Exception during .htaccess read failure. Thanks to Manuel D'Orso from Italy for the fix.
-* Bugfix: File names which were not UTF8 caused trouble in the Bulk Convert. Thank to "mills4078" for the fix
-* Bugfix: Redirection back to settings after saving settings failed on some systems. Thanks to Martin Rehberger (@kingkero) from Germany for the fix.
-* Bugfix: Webp urls did not contain port number (only relevant when the website was not on default port number). Thanks to Nicolas LIENART (@nicolnt) from France for providing the fix.
-
-For more info, see the closed issues on the [webp-express 0.21.0 milestone](https://github.com/rosell-dk/webp-express/milestone/41?closed=1) and the
-[webp-convert 2.7.0 milestone](https://github.com/rosell-dk/webp-convert/milestone/24?closed=1)
-
-= 0.20.1 =
-*(released: 20 Jun 2021)*
-* Bugfix: Removed composer.lock. It was locked on PHP 7.2, which caused server error on some sites (only some sites with old php were affected). Also deleted the library which required PHP 7.2 (onnov/detect-encoding/). The functionality is not really needed.
-
-= 0.20.0 =
-*(released: 17 Jun 2021)*
-* Added WP CLI support. Add "wp webp-express convert" to crontab for nightly conversions of new images! Thanks to Isuru Sampath Ratnayake from Sri Lanka for initializing this.
-* Added "sharp-yuv" (not as option, but as always on). Better YUV->RGB color conversion at almost no price. [Read more here](https://www.ctrl.blog/entry/webp-sharp-yuv.html). Supported by cwebp, vips, gmagick, graphicsmagick, imagick and imagemagick
-* Bumped cwebp binaries to 1.2.0
-* cwebp now only validates hash of supplied precompiled binaries when necessary. This cuts down conversion time.
-* Convert on upload now defaults to false, as it may impact upload experience in themes with many formats.
-
-For more info, see the closed issues on the [0.20.0 milestone on the github repository](https://github.com/rosell-dk/webp-express/milestone/38?closed=1)
-
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.5 =
+* A couple of bugfixes. If you are using Alter html with picture tags and have enabled "Prevent using webps larger than original" and are using page caching, you should flush your page cache.
 
 = 0.25.4 =
 * AlterHTML (when using picture tags): Fixed charset problems for special characters in alt and title attributes.

@@ -12,13 +12,22 @@ class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
             'WebPConvert\\' => 12,
             'WebPConvertCloudService\\' => 24,
         ),
+        'L' => 
+        array (
+            'LocateBinaries\\' => 15,
+        ),
         'I' => 
         array (
+            'ImageMimeTypeSniffer\\' => 21,
             'ImageMimeTypeGuesser\\' => 21,
         ),
         'H' => 
         array (
             'HtaccessCapabilityTester\\' => 25,
+        ),
+        'F' => 
+        array (
+            'FileUtil\\' => 9,
         ),
         'E' => 
         array (
@@ -43,6 +52,14 @@ class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/webp-convert-cloud-service/src',
         ),
+        'LocateBinaries\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/rosell-dk/locate-binaries/src',
+        ),
+        'ImageMimeTypeSniffer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/rosell-dk/image-mime-type-sniffer/src',
+        ),
         'ImageMimeTypeGuesser\\' => 
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src',
@@ -50,6 +67,10 @@ class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
         'HtaccessCapabilityTester\\' => 
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/htaccess-capability-tester/src',
+        ),
+        'FileUtil\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/rosell-dk/file-util/src',
         ),
         'ExecWithFallback\\' => 
         array (
@@ -188,6 +209,9 @@ class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
         'ExecWithFallback\\Passthru' => __DIR__ . '/..' . '/rosell-dk/exec-with-fallback/src/Passthru.php',
         'ExecWithFallback\\ProcOpen' => __DIR__ . '/..' . '/rosell-dk/exec-with-fallback/src/ProcOpen.php',
         'ExecWithFallback\\ShellExec' => __DIR__ . '/..' . '/rosell-dk/exec-with-fallback/src/ShellExec.php',
+        'FileUtil\\FileExists' => __DIR__ . '/..' . '/rosell-dk/file-util/src/FileExists.php',
+        'FileUtil\\FileExistsUsingExec' => __DIR__ . '/..' . '/rosell-dk/file-util/src/FileExistsUsingExec.php',
+        'FileUtil\\PathValidator' => __DIR__ . '/..' . '/rosell-dk/file-util/src/PathValidator.php',
         'HtaccessCapabilityTester\\HtaccessCapabilityTester' => __DIR__ . '/..' . '/rosell-dk/htaccess-capability-tester/src/HtaccessCapabilityTester.php',
         'HtaccessCapabilityTester\\HttpRequesterInterface' => __DIR__ . '/..' . '/rosell-dk/htaccess-capability-tester/src/HttpRequesterInterface.php',
         'HtaccessCapabilityTester\\HttpResponse' => __DIR__ . '/..' . '/rosell-dk/htaccess-capability-tester/src/HttpResponse.php',
@@ -217,11 +241,14 @@ class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
         'ImageMimeTypeGuesser\\Detectors\\FInfo' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/Detectors/FInfo.php',
         'ImageMimeTypeGuesser\\Detectors\\GetImageSize' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/Detectors/GetImageSize.php',
         'ImageMimeTypeGuesser\\Detectors\\MimeContentType' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/Detectors/MimeContentType.php',
-        'ImageMimeTypeGuesser\\Detectors\\SniffFirstFourBytes' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/Detectors/SniffFirstFourBytes.php',
+        'ImageMimeTypeGuesser\\Detectors\\SignatureSniffer' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/Detectors/SignatureSniffer.php',
         'ImageMimeTypeGuesser\\Detectors\\Stack' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/Detectors/Stack.php',
         'ImageMimeTypeGuesser\\GuessFromExtension' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/GuessFromExtension.php',
         'ImageMimeTypeGuesser\\ImageMimeTypeGuesser' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/ImageMimeTypeGuesser.php',
+        'ImageMimeTypeGuesser\\MimeMap' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src/MimeMap.php',
+        'ImageMimeTypeSniffer\\ImageMimeTypeSniffer' => __DIR__ . '/..' . '/rosell-dk/image-mime-type-sniffer/src/ImageMimeTypeSniffer.php',
         'KubAT\\PhpSimple\\HtmlDomParser' => __DIR__ . '/..' . '/kub-at/php-simple-html-dom-parser/src/KubAT/PhpSimple/HtmlDomParser.php',
+        'LocateBinaries\\LocateBinaries' => __DIR__ . '/..' . '/rosell-dk/locate-binaries/src/LocateBinaries.php',
         'WebPConvertCloudService\\AccessCheck' => __DIR__ . '/..' . '/rosell-dk/webp-convert-cloud-service/src/AccessCheck.php',
         'WebPConvertCloudService\\Serve' => __DIR__ . '/..' . '/rosell-dk/webp-convert-cloud-service/src/Serve.php',
         'WebPConvertCloudService\\WebPConvertCloudService' => __DIR__ . '/..' . '/rosell-dk/webp-convert-cloud-service/src/WebPConvertCloudService.php',
@@ -267,8 +294,6 @@ class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
         'WebPConvert\\Exceptions\\InvalidInput\\InvalidImageTypeException' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Exceptions/InvalidInput/InvalidImageTypeException.php',
         'WebPConvert\\Exceptions\\InvalidInput\\TargetNotFoundException' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Exceptions/InvalidInput/TargetNotFoundException.php',
         'WebPConvert\\Exceptions\\WebPConvertException' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Exceptions/WebPConvertException.php',
-        'WebPConvert\\Helpers\\BinaryDiscovery' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Helpers/BinaryDiscovery.php',
-        'WebPConvert\\Helpers\\FileExists' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Helpers/FileExists.php',
         'WebPConvert\\Helpers\\InputValidator' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Helpers/InputValidator.php',
         'WebPConvert\\Helpers\\MimeType' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Helpers/MimeType.php',
         'WebPConvert\\Helpers\\PathChecker' => __DIR__ . '/..' . '/rosell-dk/webp-convert/src/Helpers/PathChecker.php',

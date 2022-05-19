@@ -8,19 +8,21 @@
     "ci": [
       "@test",
       "@phpcs-all",
-      "@composer validate --no-check-all --strict"
+      "@composer validate --no-check-all --strict",
+      "@phpstan"
     ],
     "cs-fix-all": [
       "php-cs-fixer fix src"
     ],
     "cs-fix": "php-cs-fixer fix",
     "cs-dry": "php-cs-fixer fix --dry-run --diff",
-    "test": "phpunit --coverage-text --coverage-clover=build/logs/coverage.clover",
+    "test": "phpunit --coverage-text=build/coverage.txt --coverage-clover=build/coverage.clover --coverage-html=build/coverage --whitelist=src tests",
     "test-no-cov": "phpunit tests",
     "test2": "phpunit tests",
-    "phpcs": "phpcs --standard=PSR2",
-    "phpcs-all": "phpcs --standard=PSR2 src",
-    "phpcbf": "phpcbf --standard=PSR2"
+    "phpcs": "phpcs --standard=phpcs-ruleset.xml",
+    "phpcs-all": "phpcs --standard=phpcs-ruleset.xml src",
+    "phpcbf": "phpcbf --standard=PSR2",
+    "phpstan": "vendor/bin/phpstan analyse src --level=4"
   },
   "extra": {
       "scripts-descriptions": {
@@ -45,10 +47,15 @@
       "role": "Project Author"
     }
   ],
+  "require": {
+    "php": "^5.6 | ^7.0 | ^8.0",
+    "rosell-dk/image-mime-type-sniffer": "^1.0"
+  },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.11",
     "phpunit/phpunit": "^9.3",
-    "squizlabs/php_codesniffer": "3.*"
+    "squizlabs/php_codesniffer": "3.*",
+    "phpstan/phpstan": "^1.5"
   },
   "config": {
     "sort-packages": true

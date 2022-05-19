@@ -4,6 +4,7 @@ namespace WebPConvert\Serve;
 use WebPConvert\Convert\Exceptions\ConversionFailedException;
 use WebPConvert\Helpers\InputValidator;
 use WebPConvert\Helpers\MimeType;
+use WebPConvert\Helpers\PathChecker;
 use WebPConvert\Serve\Exceptions\ServeFailedException;
 use WebPConvert\Serve\Header;
 use WebPConvert\Serve\Report;
@@ -72,7 +73,14 @@ class ServeConvertedWebP
      */
     public static function serveOriginal($source, $serveImageOptions = [])
     {
-        InputValidator::checkSource($source);
+        // PS: We do not use InputValidator::checkSource($source) because we want to be
+        // a bit more lenient here and allow any image to be served (even though ie webp does not
+        // qualify for being used as a source when converting)
+
+        // Check that the filename is ok (no control chars, streamwrappers), and that the file exists
+        // and is not a dir
+        PathChecker::checkSourcePath($source);
+
         $contentType = MimeType::getMimeTypeDetectionResult($source);
         if (is_null($contentType)) {
             throw new ServeFailedException('Rejecting to serve original (mime type cannot be determined)');

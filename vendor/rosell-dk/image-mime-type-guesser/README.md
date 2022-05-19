@@ -2,10 +2,11 @@
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/rosell-dk/image-mime-type-guesser.svg?style=flat-square)](https://packagist.org/packages/rosell-dk/image-mime-type-guesser)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net)
-[![Build Status](https://img.shields.io/github/workflow/status/rosell-dk/image-mime-type-guesser/PHP?style=flat-square)](https://github.com/rosell-dk/image-mime-type-guesser/actions/workflows/php.yml)
-[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/rosell-dk/image-mime-type-guesser.svg?style=flat-square)](https://scrutinizer-ci.com/g/rosell-dk/image-mime-type-guesser/code-structure/master)
-[![Quality Score](https://img.shields.io/scrutinizer/g/rosell-dk/image-mime-type-guesser.svg?style=flat-square)](https://scrutinizer-ci.com/g/rosell-dk/image-mime-type-guesser/)
+[![Build Status](https://img.shields.io/github/workflow/status/rosell-dk/image-mime-type-guesser/PHP?logo=GitHub&style=flat-square)](https://github.com/rosell-dk/image-mime-type-guesser/actions/workflows/php.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://little-b.it/image-mime-type-guesser/code-coverage/coverage-badge.json)](http://little-b.it/image-mime-type-guesser/code-coverage/coverage/index.html)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/rosell-dk/image-mime-type-guesser/blob/master/LICENSE)
+[![Monthly Downloads](http://poser.pugx.org/rosell-dk/image-mime-type-guesser/d/monthly)](https://packagist.org/packages/rosell-dk/image-mime-type-guesser)
+[![Dependents](http://poser.pugx.org/rosell-dk/image-mime-type-guesser/dependents)](https://packagist.org/packages/rosell-dk/image-mime-type-guesser/dependents?order_by=downloads)
 
 
 *Detect / guess mime type of an image*
@@ -18,8 +19,8 @@ And perhaps you also want to know the mime type of the image?<br>
 Ok, actually the library cannot offer mime type detection for images which works *on all platforms*, but it can try a whole stack of methods and optionally fall back to guess from the file extension.
 
 The stack of detect methods are currently (and in that order):
+-  [This signature sniffer](https://github.com/rosell-dk/image-mime-type-sniffer) *Does not require any extensions. Recognizes popular image formats only*
 -  [`finfo`](https://www.php.net/manual/en/class.finfo.php) *Requires fileinfo extension to be enabled. (PHP 5 >= 5.3.0, PHP 7, PHP 8, PECL fileinfo >= 0.1.0)*
--  Our signature sniffer (based on [this code](http://phil.lavin.me.uk/2011/12/php-accurately-detecting-the-type-of-a-file/)) *Works on all platforms (PHP 4, PHP 5, PHP 7, PHP 8). Only detects png, gif, jpeg and webp*
 -  [`exif_imagetype`](https://www.php.net/manual/en/function.exif-imagetype.php) *Requires that PHP is compiled with exif (PHP 4 >= 4.3.0, PHP 5, PHP 7, PHP 8)*
 -  [`mime_content_type`](https://www.php.net/manual/en/function.mime-content-type.php) *Requires fileinfo. (PHP 4 >= 4.3.0, PHP 5, PHP 7, PHP 8)*
 
@@ -29,7 +30,10 @@ Besides the detection methods, the library also comes with a method for mapping 
 
 ## Installation
 
-Install with composer
+Install with composer:
+```
+composer require rosell-dk/image-mime-type-guesser
+```
 
 ## Usage
 
@@ -98,3 +102,9 @@ Other sniffers:
 - https://github.com/Intervention/mimesniffer
 - https://github.com/zjsxwc/mime-type-sniffer
 - https://github.com/Tinram/File-Identifier
+
+## Do you like what I do?
+Perhaps you want to support my work, so I can continue doing it :)
+
+- [Become a backer or sponsor on Patreon](https://www.patreon.com/rosell).
+- [Buy me a Coffee](https://ko-fi.com/rosell)

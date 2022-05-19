@@ -8,8 +8,11 @@ $baseDir = dirname($vendorDir);
 return array(
     'WebPConvert\\' => array($vendorDir . '/rosell-dk/webp-convert/src'),
     'WebPConvertCloudService\\' => array($vendorDir . '/rosell-dk/webp-convert-cloud-service/src'),
+    'LocateBinaries\\' => array($vendorDir . '/rosell-dk/locate-binaries/src'),
+    'ImageMimeTypeSniffer\\' => array($vendorDir . '/rosell-dk/image-mime-type-sniffer/src'),
     'ImageMimeTypeGuesser\\' => array($vendorDir . '/rosell-dk/image-mime-type-guesser/src'),
     'HtaccessCapabilityTester\\' => array($vendorDir . '/rosell-dk/htaccess-capability-tester/src'),
+    'FileUtil\\' => array($vendorDir . '/rosell-dk/file-util/src'),
     'ExecWithFallback\\' => array($vendorDir . '/rosell-dk/exec-with-fallback/src'),
     'DOMUtilForWebP\\' => array($vendorDir . '/rosell-dk/dom-util-for-webp/src'),
     'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
