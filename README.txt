@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.8
-Stable tag: 0.25.4
+Stable tag: 0.25.5
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -814,7 +814,7 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 == Changelog ==
 
 = 0.25.5 =
-(released ?)
+(released 23 May 2022)
 * When using the "Prevent using webps larger than original" with Alter HTML (picture tags) on images with srcset, those webps that where larger than the originals was picked out from the srcset for the webp. This could lead to bad quality images. In the fix, the image will only have a webp source alternative when ALL the webps are smaller than their originals (when the "prevent..." option is set).
 * Bugfix: In rare cases, WebP Express could fail detecting mime type
 
@@ -844,7 +844,7 @@ For older releases, check out changelog.txt
 == Upgrade Notice ==
 
 = 0.25.5 =
-* A couple of bugfixes. If you are using Alter html with picture tags and have enabled "Prevent using webps larger than original" and are using page caching, you should flush your page cache.
+* Two bugfixes, one of them in Alter HTML. If you are using Alter HTML with picture tags and have enabled "Prevent using webps larger than original" and are using page caching, you should flush your page cache.
 
 = 0.25.4 =
 * AlterHTML (when using picture tags): Fixed charset problems for special characters in alt and title attributes.
