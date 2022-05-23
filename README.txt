@@ -178,9 +178,6 @@ Bread on the table don't come for free, even though this plugin does, and always
 * 30 Mar: Michael Schober
 * 17 Mar: bluesix
 * 13 Mar: Troglos
-* 25 Feb: ItAdmin
-* 31 Jan: MB
-* 16 Dec: deepa
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
