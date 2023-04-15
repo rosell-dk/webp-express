@@ -5,7 +5,7 @@
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'b03c668fcb064239f0db2faa567a29773f5b902c',
+        'reference' => 'b784a57dff5f0bd072709ccbd6ad995a76fea965',
         'name' => 'rosell-dk/webp-express',
         'dev' => true,
     ),
@@ -115,7 +115,7 @@
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'b03c668fcb064239f0db2faa567a29773f5b902c',
+            'reference' => 'b784a57dff5f0bd072709ccbd6ad995a76fea965',
             'dev_requirement' => false,
         ),
         'roundcube/plugin-installer' => array(
