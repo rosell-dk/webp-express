@@ -5,7 +5,7 @@
     "license": "MIT",
     "require": {
         "composer/installers": "^1.12.0",
-        "rosell-dk/webp-convert": "^2.9.1",
+        "rosell-dk/webp-convert": "^2.9.2",
         "rosell-dk/webp-convert-cloud-service": "^2.0.0",
         "rosell-dk/dom-util-for-webp": "^0.6.3",
         "rosell-dk/htaccess-capability-tester": "^0.9.0",
