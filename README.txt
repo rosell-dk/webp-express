@@ -3,7 +3,7 @@ Contributors: rosell.dk
 Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
-Tested up to: 5.8
+Tested up to: 6.2
 Stable tag: 0.25.6
 Requires PHP: 5.6
 License: GPLv3
