@@ -815,7 +815,8 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 = 0.25.6 =
 (released 15 April 2023)
-* "Bugfix": A bug in another plugin can cause delete file hook to be called with an empty string, which WebP Express was not prepared for (fatal exception). Thanks to Colin Frick from Liechtenstein for providing the fix in a pull request on [github](https://github.com/rosell-dk/webp-express/)
+* Bugfix: A bug in another plugin can cause delete file hook to be called with an empty string, which WebP Express was not prepared for (fatal exception). Thanks to Colin Frick from Liechtenstein for providing the fix in a pull request on [github](https://github.com/rosell-dk/webp-express/)
+* Bugfix: Bug when testing imagick converter from settings page (only PHP 8). Thanks to Sisir from Bangladesh for reporting and providing the fix in a pull request
 
 = 0.25.5 =
 (released 23 May 2022)
@@ -848,7 +849,7 @@ For older releases, check out changelog.txt
 == Upgrade Notice ==
 
 = 0.25.6 =
-* Bugfix: A bug in another plugin could cause WebP Express to go fatal upon file deletion
+* Two bugfixes - thanks for the pull requests on github :)
 
 = 0.25.5 =
 * Two bugfixes, one of them in Alter HTML. If you are using Alter HTML with picture tags and have enabled "Prevent using webps larger than original" and are using page caching, you should flush your page cache.

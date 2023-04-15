@@ -1,6 +1,7 @@
 = 0.25.6 =
 (released 15 April 2023)
-* "Bugfix": A bug in another plugin can cause delete file hook to be called with an empty string, which WebP Express was not prepared for (fatal exception). Thanks to Colin Frick from Liechtenstein for providing the fix in a pull request on [github](https://github.com/rosell-dk/webp-express/)
+* Bugfix: A bug in another plugin can cause delete file hook to be called with an empty string, which WebP Express was not prepared for (fatal exception). Thanks to Colin Frick from Liechtenstein for providing the fix in a pull request on [github](https://github.com/rosell-dk/webp-express/)
+* Bugfix: Bug when testing imagick converter from settings page (only PHP 8). Thanks to Sisir from Bangladesh for reporting and providing the fix in a pull request
 
 = 0.25.5 =
 (released 23 May 2022)
