@@ -10,6 +10,11 @@ class Mime
 
     public static function getMimeTypeOfMedia($filename)
     {
+        // ensure filename is not empty, as wp_get_image_mime() goes fatal if it is
+        if ($filename === '') {
+          return 'unknown';
+        }
+
         // First try the Wordpress function if available (it was introduced in 4.7.1)
         if (function_exists('wp_get_image_mime')) {
 
