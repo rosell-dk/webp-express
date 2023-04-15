@@ -172,12 +172,22 @@ Bread on the table don't come for free, even though this plugin does, and always
 == Supporters of WebP Express ==
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
-* 3 May: Jonas
-* 27 Apr: Jonas
-* 7 Apr: Anuar
-* 30 Mar: Michael Schober
-* 17 Mar: bluesix
-* 13 Mar: Troglos
+* 3 Apr 2023: Jakub
+* 28 Mar: ciriman
+* 31 Jan: Aron
+* 1 Dec: Jayson
+* 8 Oct: Adam Bozsik
+* 14 Sep: Heidi
+* 24 Aug: McCormick
+* 24 Aug: DarnGoodRecipes.com
+* 18 Aug: Sam Carlton
+* 4 Aug: Azzitude
+* 25 Jul: fullbl
+* 8 Jul: altsetup
+* 2 jul: Dimitris Vayenas
+* 15 Jun: xlthlx
+* 6 Jun: sirtimer
+* 28 May: indysigner
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
@@ -190,6 +200,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Mathieu Gollain-Dupont ($50)
 * Erica Dreisbach ($50)
 * Brian Laursen ($50)
+* Dimitris Vayenas ($50)
 
 **Persons currently backing the project via GitHub Sponsors or patreon - Thanks!**
 
