@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 5.8
-Stable tag: 0.25.5
+Stable tag: 0.25.6
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -42,7 +42,7 @@ The plugin implements the "WebP On Demand" solution described [here](https://git
 - Better user experience (whether performance goes from terrible to bad, or from good to impressive, it is a benefit).
 - Better ranking in Google searches (performance is taken into account by Google).
 - Less bandwidth consumption - makes a huge difference in the parts of the world where the internet is slow and costly (you know, ~80% of the world population lives under these circumstances).
-- Currently ~95% of all traffic, and ~96% of mobile browsing traffic are done with browsers supporting webp. Check current numbers on [caniuse.com](https://caniuse.com/webp).
+- Currently ~97% of all traffic are done with browsers supporting webp.
 - It's great for the environment too! Reducing network traffic reduces electricity consumption which reduces CO2 emissions.
 
 == Installation ==
@@ -813,6 +813,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.6 =
+(released 15 April 2023)
+* "Bugfix": A bug in another plugin can cause delete file hook to be called with an empty string, which WebP Express was not prepared for (fatal exception). Thanks to Colin Frick from Liechtenstein for providing the fix in a pull request on [github](https://github.com/rosell-dk/webp-express/)
+
 = 0.25.5 =
 (released 23 May 2022)
 * When using the "Prevent using webps larger than original" with Alter HTML (picture tags) on images with srcset, those webps that where larger than the originals was picked out from the srcset for the webp. This could lead to bad quality images. In the fix, the image will only have a webp source alternative when ALL the webps are smaller than their originals (when the "prevent..." option is set).
@@ -842,6 +846,9 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.6 =
+* Bugfix: A bug in another plugin could cause WebP Express to go fatal upon file deletion
 
 = 0.25.5 =
 * Two bugfixes, one of them in Alter HTML. If you are using Alter HTML with picture tags and have enabled "Prevent using webps larger than original" and are using page caching, you should flush your page cache.
