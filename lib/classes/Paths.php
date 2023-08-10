@@ -792,7 +792,7 @@ APACHE
      */
     public static function getWebPExpressPluginUrl()
     {
-        return untrailingslashit(plugins_url(null, WEBPEXPRESS_PLUGIN));
+        return untrailingslashit(plugins_url('', WEBPEXPRESS_PLUGIN));
     }
 
     public static function getWebPExpressPluginUrlPath()
