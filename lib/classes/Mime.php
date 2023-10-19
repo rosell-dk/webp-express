@@ -36,7 +36,7 @@ class Mime
 
         if (function_exists('wp_check_filetype')) { // introduced in 2.0.4
             // Try wordpress method, which simply uses the file extension and a map
-            $mimeType = wp_check_filetype($filePath)['type'];
+            $mimeType = wp_check_filetype($filename)['type'];
             if ($mimeType !== false) {
                 return $mimeType;
             }

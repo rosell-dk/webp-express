@@ -6,6 +6,9 @@ use \WebPExpress\ImageRoot;
 
 class ImageRoots
 {
+    private $imageRootsDef;
+    private $imageRoots;
+
     /**
      * Constructor.
      *
