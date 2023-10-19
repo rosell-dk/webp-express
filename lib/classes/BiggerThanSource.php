@@ -16,15 +16,14 @@ class BiggerThanSource
      */
     public static function bigger($source, $destination)
     {
-        /*
-        if ((!@file_exists($source)) || (!@file_exists($destination) {
+        if ((!@file_exists($source)) || (!@file_exists($destination))) {
             return null;
-        }*/
+        }
         $filesizeDestination = @filesize($destination);
         $filesizeSource = @filesize($source);
 
         // sizes are FALSE on failure (ie if file does not exists)
-        if (($filesizeDestination === false) || ($filesizeDestination === false)) {
+        if (($filesizeSource === false) || ($filesizeDestination === false)) {
             return null;
         }
 
