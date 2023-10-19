@@ -3,7 +3,7 @@ Contributors: rosell.dk
 Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
-Tested up to: 6.2
+Tested up to: 6.3
 Stable tag: 0.25.6
 Requires PHP: 5.6
 License: GPLv3
@@ -172,28 +172,22 @@ Bread on the table don't come for free, even though this plugin does, and always
 == Supporters of WebP Express ==
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
-* 3 Apr 2023: Jakub
-* 28 Mar: ciriman
-* 31 Jan: Aron
-* 1 Dec: Jayson
-* 8 Oct: Adam Bozsik
-* 14 Sep: Heidi
-* 24 Aug: McCormick
-* 24 Aug: DarnGoodRecipes.com
-* 18 Aug: Sam Carlton
-* 4 Aug: Azzitude
-* 25 Jul: fullbl
-* 8 Jul: altsetup
-* 2 jul: Dimitris Vayenas
-* 15 Jun: xlthlx
-* 6 Jun: sirtimer
-* 28 May: indysigner
+* 18 Oct: Magestyx
+* 10 Oct: Jesper
+* 4 Oct: Caio Nogueira
+* 22 Sep: Mark
+* 8 Sep: Brinsley
+* 4 Aug: Henri
+* 13 Jun: Pat
+* 2 May: Label Vier
+* 28 Apr: Nealboy
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
 * Max Kreminsky ($115)
 * Justin - BigScoots ($105)
 * Bill Vallance ($102)
+* Label Vier ($100)
 * Sebastian ($99)
 * Tammy Lee ($90)
 * Steven Sullivan ($51)
