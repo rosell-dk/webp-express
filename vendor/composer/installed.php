@@ -3,7 +3,7 @@
         'name' => 'rosell-dk/webp-express',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '1dbb0cff816606fb2948a9773bab1061085f7b71',
+        'reference' => 'acfbe44dbbcd786b0d668467532ac4b86cfe5f1a',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -112,7 +112,7 @@
         'rosell-dk/webp-express' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '1dbb0cff816606fb2948a9773bab1061085f7b71',
+            'reference' => 'acfbe44dbbcd786b0d668467532ac4b86cfe5f1a',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
