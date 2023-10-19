@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 6.3
-Stable tag: 0.25.6
+Stable tag: 0.25.7
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -818,6 +818,12 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.7 =
+(released 19 October 2023)
+* Bugfix: Removed depreciation warning on settings screen, which was showing in PHP 8.2. Thanks to Rob Meijerink from the Netherlands for providing the fix in a pull request
+* Bugfix: Removed depreciation warning when converting, happening in PHP 8.2. Thanks to Sophie B for reporting and Rob Meijerink from the Netherlands for providing the fix in a pull request
+* Bugfix: One of the Mime fallback methods did not work. Thanks to gerasart from Ukraine for providing the fix in a pull request
+
 = 0.25.6 =
 (released 15 April 2023)
 * Bugfix: A bug in another plugin can cause delete file hook to be called with an empty string, which WebP Express was not prepared for (fatal exception). Thanks to Colin Frick from Liechtenstein for providing the fix in a pull request on [github](https://github.com/rosell-dk/webp-express/)
@@ -852,6 +858,9 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.7 =
+* PHP 8.2 bugfixes
 
 = 0.25.6 =
 * Two bugfixes - thanks for the pull requests on github :)
