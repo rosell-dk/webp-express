@@ -172,6 +172,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 == Supporters of WebP Express ==
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
+
 * 18 Oct: Magestyx
 * 10 Oct: Jesper
 * 4 Oct: Caio Nogueira
