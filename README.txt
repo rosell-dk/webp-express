@@ -864,6 +864,9 @@ For older releases, check out changelog.txt
 
 == Upgrade Notice ==
 
+= 0.25.8 =
+* PHP 8.2 bugfix
+
 = 0.25.7 =
 * PHP 8.2 bugfixes
 
