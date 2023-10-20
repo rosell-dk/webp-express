@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" backupGlobals="false" backupStaticAttributes="false" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="false" processIsolation="false" stopOnFailure="false" bootstrap="vendor/autoload.php">
+<phpunit 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" 
+  backupGlobals="false" 
+  backupStaticAttributes="false"
+  colors="true"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true" 
+  convertWarningsToExceptions="true"
+  convertDeprecationsToExceptions="true"
+  processIsolation="true"
+  stopOnFailure="false"
+  bootstrap="vendor/autoload.php"
+  failOnWarning="true"
+  failOnRisky="false">
   <testsuites>
     <testsuite name="Dom util for WebP Test Suite">
       <directory>./tests/</directory>

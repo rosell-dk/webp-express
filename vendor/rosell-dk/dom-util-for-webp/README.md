@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/rosell-dk/dom-util-for-webp.svg?style=flat-square)](https://packagist.org/packages/rosell-dk/dom-util-for-webp)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net)
-[![Build Status](https://img.shields.io/github/workflow/status/rosell-dk/dom-util-for-webp/PHP?logo=GitHub&style=flat-square)](https://github.com/rosell-dk/dom-util-for-webp/actions/workflows/php.yml)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/rosell-dk/dom-util-for-webp/ci.yml?branch=master&logo=GitHub&style=flat-square&label=build)](https://github.com/rosell-dk/dom-util-for-webp/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://little-b.it/dom-util-for-webp/code-coverage/coverage-badge.json)](http://little-b.it/dom-util-for-webp/code-coverage/coverage/index.html)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/rosell-dk/dom-util-for-webp/blob/master/LICENSE)
 
@@ -158,6 +158,22 @@ So it is correct behaviour not to copy the *style*, *width*, *class* or any othe
 As with `ImageUrlReplacer`, you can override the *replaceUrl* function. There is however currently no other methods to override.
 
 `PictureTags` currently uses regular expressions to do the replacing. There are plans to change implementation to use `Sunra\PhpSimple\HtmlDomParser`, like our `ImageUrlReplacer` class does.
+
+## Platforms
+Works on (at least):
+- OS: Ubuntu (22.04, 20.04, 18.04), Windows (2022, 2019), Mac OS (13, 12, 11, 10.15)
+- PHP: 5.6 - 8.2 (also tested 8.3 and 8.4 development versions in October 2023)
+
+Each new release will be tested on all combinations of OSs and PHP versions that are [supported](https://github.com/marketplace/actions/setup-php-action) by GitHub-hosted runners. Except that we do not below PHP 5.6.\
+Status: [![Build Status](https://img.shields.io/github/actions/workflow/status/rosell-dk/dom-util-for-webp/release.yml?branch=master&logo=GitHub&style=flat-square&label=Giant%20test)](https://github.com/rosell-dk/dom-util-for-webp/actions/workflows/release.yml)
+
+Testing consists of running the unit tests. The code in this library is almost completely covered by tests (~95% coverage).
+
+We also test future versions of PHP monthly, in order to catch problems early.\
+Status:
+[![PHP 8.3](https://img.shields.io/github/actions/workflow/status/rosell-dk/dom-util-for-webp/php83.yml?branch=master&logo=GitHub&style=flat-square&label=PHP%208.3)](https://github.com/rosell-dk/dom-util-for-webp/actions/workflows/php83.yml)
+[![PHP 8.4](https://img.shields.io/github/actions/workflow/status/rosell-dk/dom-util-for-webp/php84.yml?branch=master&logo=GitHub&style=flat-square&label=PHP%208.4)](https://github.com/rosell-dk/dom-util-for-webp/actions/workflows/php84.yml)
+
 
 ## Do you like what I do?
 Perhaps you want to support my work, so I can continue doing it :)

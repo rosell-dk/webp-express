@@ -184,7 +184,7 @@ class ImageUrlReplacer
         // function str_get_html($str, $lowercase=true, $forceTagsClosed=true, $target_charset = DEFAULT_TARGET_CHARSET,
         //    $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
 
-        $dom = HtmlDomParser::str_get_html($html, false, false, 'UTF-8', false);
+        $dom = HtmlDomParser::str_get_html($html, false, true, 'UTF-8', false);
         //$dom = str_get_html($html, false, false, 'UTF-8', false);
 
 
