@@ -1,3 +1,7 @@
+= 0.25.8 =
+(released 20 October 2023)
+* Bugfix: Depreciation warning on PHP 8.2 with Alter HTML. Thanks to @igamingsolustions for reporting the bug
+
 = 0.25.7 =
 (released 19 October 2023)
 * Bugfix: Removed depreciation warning on settings screen, which was showing in PHP 8.2. Thanks to Rob Meijerink from the Netherlands for providing the fix in a pull request

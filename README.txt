@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 6.3
-Stable tag: 0.25.7
+Stable tag: 0.25.8
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -818,6 +818,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 1. WebP Express settings
 
 == Changelog ==
+
+= 0.25.8 =
+(released 20 October 2023)
+* Bugfix: Depreciation warning on PHP 8.2 with Alter HTML. Thanks to @igamingsolustions for reporting the bug
 
 = 0.25.7 =
 (released 19 October 2023)
