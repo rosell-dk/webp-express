@@ -389,7 +389,7 @@ class Paths
     // ------------ Upload Dir -------------
     public static function getUploadDirAbs()
     {
-        $upload_dir = wp_upload_dir(null, false);
+        $upload_dir = wp_get_upload_dir();
         return self::getAbsDir($upload_dir['basedir']);
     }
     public static function getUploadDirRel()
@@ -755,7 +755,7 @@ APACHE
 
     public static function getUploadUrl()
     {
-        $uploadDir = wp_upload_dir(null, false);
+        $uploadDir = wp_get_upload_dir();
         return untrailingslashit($uploadDir['baseurl']);
     }
 
