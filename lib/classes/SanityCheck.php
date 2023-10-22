@@ -290,7 +290,8 @@ class SanityCheck
             return $input;
         }
 
-        $docRoot = self::absPath($_SERVER["DOCUMENT_ROOT"]);
+        $correctRootPath = self::correctRootPath();
+        $docRoot = self::absPath($correctRootPath);
         $docRoot = rtrim($docRoot, '/');
 
         try {
@@ -325,6 +326,16 @@ class SanityCheck
         self::pathBeginsWithSymLinksExpanded($input, $docRootSymLinksExpanded . $directorySeparator, $errorMsg);
 
         return $input;
+    }
+
+    /**
+     * @return string
+     */
+    public static function correctRootPath()
+    {
+       $path = rtrim(realpath($_SERVER['DOCUMENT_ROOT']), '/');
+
+       return dirname($path);
     }
 
     public static function absPathExists($input, $errorMsg = 'Path does not exist or it is outside restricted basedir')
