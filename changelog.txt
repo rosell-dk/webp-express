@@ -1,3 +1,7 @@
+= 0.25.9 =
+(released 7 April 2024)
+* Bugfix: Fixed ewww conversion method after ewww API change
+
 = 0.25.8 =
 (released 20 October 2023)
 * Bugfix: Depreciation warning on PHP 8.2 with Alter HTML. Thanks to @igamingsolustions for reporting the bug

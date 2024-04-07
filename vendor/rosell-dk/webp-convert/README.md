@@ -1,8 +1,8 @@
 # WebP Convert
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/rosell-dk/webp-convert.svg)](https://packagist.org/packages/rosell-dk/webp-convert)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net)
-[![Build Status](https://img.shields.io/github/workflow/status/rosell-dk/webp-convert/PHP?logo=GitHub)](https://github.com/rosell-dk/webp-convert/actions/workflows/php.yml)
+[![Minimum PHP Version](https://img.shields.io/packagist/dependency-v/rosell-dk/webp-convert/php.svg)](https://php.net)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/rosell-dk/webp-convert/ci.yml?logo=GitHub&style=flat-square)](https://github.com/rosell-dk/webp-convert/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://little-b.it/webp-convert/code-coverage/coverage-badge.json)](http://little-b.it/webp-convert/code-coverage/coverage/index.html)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/rosell-dk/webp-convert/blob/master/LICENSE)
 [![Monthly Downloads](http://poser.pugx.org/rosell-dk/webp-convert/d/monthly)](https://packagist.org/packages/rosell-dk/webp-convert)
@@ -127,19 +127,33 @@ Bread on the table don't come for free, even though this library does, and alway
 - Ruben Solvang
 
 *Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!*
-* 3 Dec: Dallas
-* 29 Nov: tadesco.org
-* 20 Nov: Ben J
-* 13 Nov: @sween
-* 9 Nov: @utrenkner
+* 18 Oct: Magestyx
+* 10 Oct: Jesper
+* 4 Oct: Caio Nogueira
+* 22 Sep: Mark
+* 8 Sep: Brinsley
+* 4 Aug: Henri
+* 13 Jun: Pat
+* 2 May: Label Vier
+* 28 Apr: Nealboy
+* 11 Apr: Anonymous
+* 3 Apr: Jakub
+* 28 Mar: ciriman
+* 31 Jan: Aron
 
 *Persons who contributed with extra generously amounts of coffee / lifetime backing (>50$) - thanks!:*
 
-- Justin - BigScoots ($105)
-- Sebastian ($99)
-- Tammy Lee ($90)
-- Max Kreminsky ($65)
-- Steven Sullivan ($51)
+* Max Kreminsky ($115)
+* Justin - BigScoots ($105)
+* Bill Vallance ($102)
+* Label Vier ($100)
+* Sebastian ($99)
+* Tammy Lee ($90)
+* Steven Sullivan ($51)
+* Mathieu Gollain-Dupont ($50)
+* Erica Dreisbach ($50)
+* Brian Laursen ($50)
+* Dimitris Vayenas ($50)
 
 ## New in 2.9.0 (released 7 dec 2021, on my daughters 10 years birthday!)
 - When exec() is unavailable, alternatives are now tried (emulations with proc_open(), passthru() etc). Using [this library](https://github.com/rosell-dk/exec-with-fallback) to do it.

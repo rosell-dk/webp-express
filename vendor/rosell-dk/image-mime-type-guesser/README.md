@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/rosell-dk/image-mime-type-guesser.svg?style=flat-square)](https://packagist.org/packages/rosell-dk/image-mime-type-guesser)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net)
-[![Build Status](https://img.shields.io/github/workflow/status/rosell-dk/image-mime-type-guesser/PHP?logo=GitHub&style=flat-square)](https://github.com/rosell-dk/image-mime-type-guesser/actions/workflows/php.yml)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/rosell-dk/image-mime-type-guesser/ci.yml?branch=master&logo=GitHub&style=flat-square)](https://github.com/rosell-dk/image-mime-type-guesser/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://little-b.it/image-mime-type-guesser/code-coverage/coverage-badge.json)](http://little-b.it/image-mime-type-guesser/code-coverage/coverage/index.html)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/rosell-dk/image-mime-type-guesser/blob/master/LICENSE)
 [![Monthly Downloads](http://poser.pugx.org/rosell-dk/image-mime-type-guesser/d/monthly)](https://packagist.org/packages/rosell-dk/image-mime-type-guesser)

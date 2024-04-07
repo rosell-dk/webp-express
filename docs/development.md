@@ -10,7 +10,7 @@ It actually seems that the mappings are not needed. It seems to work fine when I
 - Open bash
 - cd into the folder
 
-```
+```console
 rm -r vendor/rosell-dk/webp-convert/docs
 rm -r vendor/rosell-dk/webp-convert/src/Helpers/*.txt
 rm composer.lock

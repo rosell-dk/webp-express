@@ -1,6 +1,11 @@
-name: Giant test
+name: CI
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 permissions:
   contents: read
@@ -12,16 +17,13 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-22.04, ubuntu-20.04, windows-2022, windows-2019, macos-13, macos-12, macos-11]
-        php: [8.4, 8.3, 8.2, 8.1, 8.0, 7.4, 7.3, 7.2, 7.1, 7.0, 5.6]
-        #os: [windows-2022]
-        #php: [7.1]
+        os: [ubuntu-20.04, windows-2022]  # We pick something other than in coverage.yml, which is also run on pushes
+        php: [5.6, 7.2]                   # We pick something other than in coverage.yml, which is also run on pushes
         exclude:  # phpunit is malfunctioning on Windows / PHP 5.6, so disable those tests
             - os: windows-2019
               php: 5.6
             - os: windows-2022
               php: 5.6
-
 
     steps:
     - name: Checkout
@@ -70,7 +72,6 @@ jobs:
         echo "Downgrading phpunit to ^5.0, which is the highest version that supports PHP 5.6"
         composer require "phpunit/phpunit:^5.0" --dev --no-update
 
-    # Create composer.lock, which is going to be used in the cache key
     - name: Create composer.lock for cache key (this is a library, so composer.lock is not part of repo)
       run: composer update --no-install
 
@@ -89,7 +90,7 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
     - name: Run phpunit (test cases)
-      run: composer run-script test-no-cov
+      run: composer run-script test
 
     - name: Run phpstan on PHP>=7.2 (to check php syntax)
       if: (matrix.php != '5.6') && (matrix.php != '7.0') && (matrix.php != '7.1') && (matrix.php != '7.2')

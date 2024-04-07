@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 6.3
-Stable tag: 0.25.8
+Stable tag: 0.25.9
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -173,15 +173,14 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
 
-* 18 Oct: Magestyx
-* 10 Oct: Jesper
-* 4 Oct: Caio Nogueira
-* 22 Sep: Mark
-* 8 Sep: Brinsley
-* 4 Aug: Henri
-* 13 Jun: Pat
-* 2 May: Label Vier
-* 28 Apr: Nealboy
+* 3 Nov: Tobi
+* 5 Nov: Anon
+* 18 Nov: Oleksii
+* 20 Feb: Assen Kovatchev
+* 22 Feb: Peter
+* 29 Feb: Luis Méndez Alejo
+* 5 Mar: tomottoe
+* 9 Mar: La Braud
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
@@ -819,6 +818,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.9 =
+(released 7 April 2024)
+* Bugfix: Fixed ewww conversion method after ewww API change
+
 = 0.25.8 =
 (released 20 October 2023)
 * Bugfix: Depreciation warning on PHP 8.2 with Alter HTML. Thanks to @igamingsolustions for reporting the bug
@@ -863,6 +866,9 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.9 =
+* Fixed ewww conversion method after ewww API change
 
 = 0.25.8 =
 * PHP 8.2 bugfix
