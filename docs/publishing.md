@@ -79,11 +79,6 @@ cd /var/www/we/svn
 rsync -avh --dry-run --exclude '.git' --exclude '.github' --exclude='composer.lock' --exclude='scripts' --exclude='vendor/rosell-dk/webp-convert/.git' --exclude='vendor/rosell-dk/webp-convert/.git' --exclude='.gitignore' ~/github/webp-express/ /var/www/we/svn/trunk/  --delete
 ```
 
-```
-cd /var/www/we/svn
-rsync -avh --exclude '.git' --exclude '.github'            --exclude='composer.lock' --exclude='scripts' --exclude='vendor/rosell-dk/webp-convert/.git' --exclude='.gitignore' ~/github/webp-express/ /var/www/we/svn/trunk/  --delete
-```
-
 **It should NOT contain a long list of files! (unless you have run phpreplace)**
 
 *- and then WITHOUT "--dry-run" (remove "--dry-run" from above, and run)*
@@ -116,12 +111,12 @@ svn status | grep '^!' | awk '{print $2}' | xargs svn delete --force          (t
 Then add a new tag
 ```
 cd svn
-svn cp trunk tags/0.25.8       (this will copy trunk into a new tag)
+svn cp trunk tags/0.25.9       (this will copy trunk into a new tag)
 ```
 
 And commit!
 ```
-svn ci -m '0.25.8'
+svn ci -m '0.25.9'
 ```
 
 
