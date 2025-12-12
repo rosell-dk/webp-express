@@ -30,6 +30,9 @@ function webpexpress_autoload($class) {
 }
 
 if (is_admin()) {
+    // CVE-2025-11379 fix: Migrate config files early on admin load
+    \WebPExpress\Config::checkAndMigrateConfigIfNeeded();
+    // Initialize admin hooks
     \WebPExpress\AdminInit::init();
 }
 
