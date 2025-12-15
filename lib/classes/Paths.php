@@ -442,7 +442,7 @@ class Paths
                 $hash = bin2hex(random_bytes(16));
             } else {
                 // Fallback for older PHP versions
-                $hash = md5(uniqid(mt_rand(), true) . AUTH_KEY . SECURE_AUTH_KEY);
+                $hash = md5(uniqid(mt_rand(), true) . microtime(true));
             }
             \WebPExpress\Option::updateOption('webp-express-config-hash', $hash, true);
         }
