@@ -429,6 +429,26 @@ class Paths
         return PathHelper::getRelPathFromDocRootToDirNoDirectoryTraversalAllowed(self::getConfigDirAbs());
     }
 
+    /**
+     * Get or create a random hash for config filename obfuscation (CVE-2025-11379 fix)
+     * This prevents predictable config file access on Nginx servers
+     */
+    private static function getConfigHash()
+    {
+        $hash = \WebPExpress\Option::getOption('webp-express-config-hash', false);
+        if (!$hash) {
+            // Generate a cryptographically secure random hash
+            if (function_exists('random_bytes')) {
+                $hash = bin2hex(random_bytes(16));
+            } else {
+                // Fallback for older PHP versions
+                $hash = md5(uniqid(mt_rand(), true) . microtime(true));
+            }
+            \WebPExpress\Option::updateOption('webp-express-config-hash', $hash, true);
+        }
+        return $hash;
+    }
+
     public static function createConfigDirIfMissing()
     {
         $configDir = self::getConfigDirAbs();
@@ -449,16 +469,48 @@ Deny from all
 APACHE
             );
             @chmod($configDir . '/.htaccess', 0664);
+            
+            // Additional protection for Nginx: PHP-based access control (CVE-2025-11379 fix)
+            @file_put_contents(rtrim($configDir . '/') . '/index.php', <<<'PHP'
+<?php
+// Prevent direct access to config files on Nginx (CVE-2025-11379 fix)
+if (!defined('ABSPATH')) {
+    http_response_code(403);
+    die('Direct access forbidden');
+}
+PHP
+            );
+            @chmod($configDir . '/index.php', 0644);
         }
         return is_dir($configDir);
     }
 
     public static function getConfigFileName()
     {
-        return self::getConfigDirAbs() . '/config.json';
+        // Use randomized filename to prevent predictable access on Nginx (CVE-2025-11379 fix)
+        $hash = self::getConfigHash();
+        return self::getConfigDirAbs() . '/config.' . $hash . '.json';
     }
 
     public static function getWodOptionsFileName()
+    {
+        // Use randomized filename to prevent predictable access on Nginx (CVE-2025-11379 fix)
+        $hash = self::getConfigHash();
+        return self::getConfigDirAbs() . '/wod-options.' . $hash . '.json';
+    }
+    
+    /**
+     * Get old predictable config filename for migration purposes
+     */
+    public static function getOldConfigFileName()
+    {
+        return self::getConfigDirAbs() . '/config.json';
+    }
+    
+    /**
+     * Get old predictable wod-options filename for migration purposes
+     */
+    public static function getOldWodOptionsFileName()
     {
         return self::getConfigDirAbs() . '/wod-options.json';
     }
