@@ -20,6 +20,8 @@ function webpexpress_migrate15() {
             // so they get the new ConfigHash
             wp_schedule_single_event(time() + 1, 'webp_express_task_regenerate_config_and_htaccess');
         }
+        DismissableGlobalMessages::addDismissableMessage('0.25.10/renamed-config-file');
+
     } else {
         DismissableGlobalMessages::addDismissableMessage('0.25.10/failed-renaming-config-file');
     }

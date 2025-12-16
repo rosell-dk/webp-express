@@ -33,7 +33,7 @@ class AdminInit
         }
 
         // uncomment next line to test-run a migration
-        //include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate14.php';
+        //include WEBPEXPRESS_PLUGIN_DIR . '/lib/migrate/migrate15.php';
     }
 
     public static function pageNowIs($pageId)
