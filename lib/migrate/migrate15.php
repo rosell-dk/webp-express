@@ -9,6 +9,7 @@ use \WebPExpress\Option;
 function webpexpress_migrate15() {
 
     // Update migrate version right away to minimize risk of running the update twice in a multithreaded environment
+    Option::updateOption('webp-express-migration-version', '15');
 
     $configMigrateSuccess = Config::checkAndMigrateConfigIfNeeded();
     if ($configMigrateSuccess) {
@@ -19,7 +20,6 @@ function webpexpress_migrate15() {
             // so they get the new ConfigHash
             wp_schedule_single_event(time() + 1, 'webp_express_task_regenerate_config_and_htaccess');
         }
-        Option::updateOption('webp-express-migration-version', '15');
     } else {
         DismissableGlobalMessages::addDismissableMessage('0.25.10/failed-renaming-config-file');
     }
