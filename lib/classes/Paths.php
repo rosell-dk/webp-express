@@ -433,7 +433,7 @@ class Paths
      * Get or create a random hash for config filename obfuscation (CVE-2025-11379 fix)
      * This prevents predictable config file access on Nginx servers
      */
-    private static function getConfigHash()
+    public static function getConfigHash()
     {
         $hash = \WebPExpress\Option::getOption('webp-express-config-hash', false);
         if (!$hash) {
@@ -449,6 +449,58 @@ class Paths
         return $hash;
     }
 
+    // Only call if certain that config dir exists
+    private static function doCreateIndexPHPInConfigDirIfMissing()
+    {
+        $configDir = self::getConfigDirAbs();
+        $indexPHPfilename = rtrim($configDir, '/') . '/index.php';
+
+        if (!@file_exists($indexPHPfilename)) {
+          // Additional protection for Nginx: PHP-based access control (CVE-2025-11379 fix)
+          @file_put_contents($indexPHPfilename, <<<'PHP'
+<?php
+// Prevent direct access to config files on Nginx (CVE-2025-11379 fix)
+if (!defined('ABSPATH')) {
+  http_response_code(403);
+  die('Direct access forbidden');
+}
+PHP
+          );
+          @chmod($indexPHPfilename, 0644);
+        }
+    }
+
+    // Only call if certain that config dir exists
+    private static function doCreateHTAccessInConfigDirIfMissing()
+    {
+        $configDir = self::getConfigDirAbs();
+        $filename = rtrim($configDir, '/') . '/.htaccess';
+
+        if (!@file_exists($filename)) {
+          // Additional protection for Nginx: PHP-based access control (CVE-2025-11379 fix)
+          @file_put_contents(rtrim($configDir . '/') . '/.htaccess', <<<APACHE
+<IfModule mod_authz_core.c>
+Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+Order deny,allow
+Deny from all
+</IfModule>
+APACHE
+          );
+          @chmod($filename, 0664);
+        }
+    }
+
+    public static function createIndexPHPInConfigDirIfMissing()
+    {
+        $configDir = self::getConfigDirAbs();
+
+        if (is_dir($configDir)) {
+          self::doCreateIndexPHPInConfigDirIfMissing();
+        }
+    }
+
     public static function createConfigDirIfMissing()
     {
         $configDir = self::getConfigDirAbs();
@@ -458,29 +510,10 @@ class Paths
         if (!is_dir($configDir)) {
             @mkdir($configDir, 0775);
             @chmod($configDir, 0775);
-            @file_put_contents(rtrim($configDir . '/') . '/.htaccess', <<<APACHE
-<IfModule mod_authz_core.c>
-Require all denied
-</IfModule>
-<IfModule !mod_authz_core.c>
-Order deny,allow
-Deny from all
-</IfModule>
-APACHE
-            );
-            @chmod($configDir . '/.htaccess', 0664);
-            
-            // Additional protection for Nginx: PHP-based access control (CVE-2025-11379 fix)
-            @file_put_contents(rtrim($configDir . '/') . '/index.php', <<<'PHP'
-<?php
-// Prevent direct access to config files on Nginx (CVE-2025-11379 fix)
-if (!defined('ABSPATH')) {
-    http_response_code(403);
-    die('Direct access forbidden');
-}
-PHP
-            );
-            @chmod($configDir . '/index.php', 0644);
+
+            self::doCreateIndexPHPInConfigDirIfMissing();
+            self::doCreateHTAccessInConfigDirIfMissing();
+
         }
         return is_dir($configDir);
     }
@@ -498,7 +531,7 @@ PHP
         $hash = self::getConfigHash();
         return self::getConfigDirAbs() . '/wod-options.' . $hash . '.json';
     }
-    
+
     /**
      * Get old predictable config filename for migration purposes
      */
@@ -506,7 +539,7 @@ PHP
     {
         return self::getConfigDirAbs() . '/config.json';
     }
-    
+
     /**
      * Get old predictable wod-options filename for migration purposes
      */

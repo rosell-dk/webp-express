@@ -434,6 +434,8 @@ class HTAccessRules
             "  RewriteEngine On\n";
 
 
+        $configHash = Paths::getConfigHash();
+
         if (self::$useDocRootForStructuringCacheDir) {
             /*
             Generate something like this:
@@ -446,9 +448,8 @@ class HTAccessRules
             $flags = [];
             if (!self::$passThroughEnvVarDefinitelyUnavailable) {
                 $flags[] = 'E=DESTINATIONREL:' . self::$htaccessDirRelToDocRoot . '/$0';
-            }
-            if (!self::$passThroughEnvVarDefinitelyUnavailable) {
-                $flags[] = 'E=WPCONTENT:' . Paths::getContentDirRel();
+                $flags[] = 'E=WPCONTENT:' . Paths::getContentDirRel() . '/$0';
+                $flags[] = 'E=HASH:' . $configHash;
             }
             $flags[] = 'NC';
             $flags[] = 'L';
@@ -459,6 +460,7 @@ class HTAccessRules
             }
             if (!self::$passThroughEnvVarDefinitelyAvailable) {
                 $params[] = "wp-content=" . Paths::getContentDirRel();
+                $params[] = "hash=" . $configHash;
             }
 
             // When matching from the beginning (^), we need the "/?" in order to make it work on litespeed too.
@@ -485,6 +487,7 @@ class HTAccessRules
                 $flags[] = 'E=WE_WP_CONTENT_REL_TO_WE_PLUGIN_DIR:' . Paths::getContentDirRelToWebPExpressPluginDir();
                 $flags[] = 'E=WE_DESTINATION_REL_HTACCESS:$0';
                 $flags[] = 'E=WE_HTACCESS_ID:' . self::$htaccessDir;    // this will btw either be "uploads" or "cache"
+                $flags[] = 'E=HASH:' . $configHash;
             }
             $flags[] = 'NC';  // case-insensitive match (so file extension can be jpg, JPG or even jPg)
             $flags[] = 'L';
@@ -494,6 +497,7 @@ class HTAccessRules
                 $params[] = 'xwp-content-rel-to-we-plugin-dir=x' . Paths::getContentDirRelToWebPExpressPluginDir();
                 $params[] = 'xdestination-rel-htaccess=x$0';
                 $params[] = 'htaccess-id=' . self::$htaccessDir;
+                $params[] = "hash=" . $configHash;
             }
 
             // self::$appendWebP cannot be used, we need the following in order for
@@ -632,6 +636,7 @@ class HTAccessRules
             $rules .= "  RewriteCond %{HTTP_ACCEPT} image/webp\n";
         }
 
+        $configHash = Paths::getConfigHash();
         if (self::$useDocRootForStructuringCacheDir) {
             /*
             Generate something like this:
@@ -652,9 +657,11 @@ class HTAccessRules
             }
             if (!self::$passThroughEnvVarDefinitelyAvailable) {
                 $params[] = "wp-content=" . Paths::getContentDirRel();
+                $params[] = "hash=" . $configHash;
             }
             if (!self::$passThroughEnvVarDefinitelyUnavailable) {
                 $flags[] = 'E=WPCONTENT:' . Paths::getContentDirRel();
+                $flags[] = 'E=HASH:' . $configHash;
             }
 
             // TODO: When $rewriteRuleStart is empty, we don't need the .*, do we? - test
@@ -683,7 +690,8 @@ class HTAccessRules
                 //$flags[] = 'E=WE_WP_CONTENT_REL_TO_PLUGIN_DIR:' . Paths::getContentDirRelToPluginDir();
                 $flags[] = 'E=WE_WP_CONTENT_REL_TO_WE_PLUGIN_DIR:' . Paths::getContentDirRelToWebPExpressPluginDir();
                 $flags[] = 'E=WE_SOURCE_REL_HTACCESS:$0';
-                $flags[] = 'E=WE_HTACCESS_ID:' . self::$htaccessDir;    // this will btw be one of the image roots. It will not be "cache"
+                $flags[] = 'E=WE_HTACCESS_ID:' . self::$htaccessDir;
+                $flags[] = 'E=HASH:' . $configHash;  // this will btw be one of the image roots. It will not be "cache"
             }
             $flags[] = 'NC';  // case-insensitive match (so file extension can be jpg, JPG or even jPg)
             $flags[] = 'L';
@@ -693,6 +701,7 @@ class HTAccessRules
                 $params[] = 'xwp-content-rel-to-we-plugin-dir=x' . Paths::getContentDirRelToWebPExpressPluginDir();
                 $params[] = 'xsource-rel-htaccess=x$0';
                 $params[] = 'htaccess-id=' . self::$htaccessDir;
+                $params[] = "hash=" . $configHash;
             }
 
             $rules .= "  RewriteCond %{REQUEST_FILENAME} (?i)(.*)(" . self::$fileExtIncludingDot . ")$\n";

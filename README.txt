@@ -816,7 +816,7 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 = 0.25.10 =
 (released 15 December 2025)
-* Security fix: Config file was exposed on systems running on NGINX. Herr Patrick Müller from Switzerland for creating the patch as well as Rune Philosof from Denmark for improving it. Sorry for slacking on the maintenance. There are good reasons for this, but I can and will do better in the future
+* Security fix: Config file was exposed on systems running on NGINX. Herr Patrick Müller from Switzerland for creating a patch as well as Rune Philosof from Denmark for improving it. Some credit also goes to myself for perfecting the patch. Sorry for slacking on the maintenance. There are good reasons for this, but I can and will do better in the future
 
 = 0.25.9 =
 (released 7 April 2024)
