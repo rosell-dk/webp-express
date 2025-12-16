@@ -5,11 +5,14 @@ namespace WebPExpress;
 use \WebPExpress\Config;
 use \WebPExpress\Messenger;
 use \WebPExpress\Option;
+use \WebPExpress\Paths;
 
 function webpexpress_migrate15() {
 
     // Update migrate version right away to minimize risk of running the update twice in a multithreaded environment
     Option::updateOption('webp-express-migration-version', '15');
+
+    Paths::createIndexPHPInConfigDirIfMissing();
 
     $configMigrateSuccess = Config::checkAndMigrateConfigIfNeeded();
     if ($configMigrateSuccess) {
