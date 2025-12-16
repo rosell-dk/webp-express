@@ -3,8 +3,8 @@ Contributors: rosell.dk
 Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
-Tested up to: 6.5
-Stable tag: 0.25.9
+Tested up to: 6.9
+Stable tag: 0.25.10
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -173,14 +173,14 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
 
-* 3 Nov: Tobi
-* 5 Nov: Anon
-* 18 Nov: Oleksii
-* 20 Feb: Assen Kovatchev
-* 22 Feb: Peter
-* 29 Feb: Luis Méndez Alejo
-* 5 Mar: tomottoe
-* 9 Mar: La Braud
+* 9 Aug: Tanzi
+* 3 Jul: Jen
+* 26 Jun: Per
+* 16 May: Erick Danzer
+* 8 May: Mike
+* 31 May: parallactic
+* 14 May: Gitte Rebsdorf
+* 9 May: La Braud
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
@@ -195,10 +195,6 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Erica Dreisbach ($50)
 * Brian Laursen ($50)
 * Dimitris Vayenas ($50)
-
-**Persons currently backing the project via GitHub Sponsors or patreon - Thanks!**
-
-* [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
 
 == Frequently Asked Questions ==
 
@@ -818,6 +814,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.10 =
+(released 15 December 2025)
+* Security fix: Config file was exposed on systems running on NGINX. Herr Patrick Müller from Switzerland for creating the patch as well as Rune Philosof from Denmark for improving it. Sorry for slacking on the maintenance. There are good reasons for this, but I can and will do better in the future
+
 = 0.25.9 =
 (released 7 April 2024)
 * Bugfix: Fixed ewww conversion method after ewww API change
@@ -866,6 +866,9 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.10 =
+* Security fix. The config file could be exposed on NGINX
 
 = 0.25.9 =
 * Fixed ewww conversion method after ewww API change

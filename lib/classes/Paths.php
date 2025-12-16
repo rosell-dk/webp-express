@@ -433,7 +433,7 @@ class Paths
      * Get or create a random hash for config filename obfuscation (CVE-2025-11379 fix)
      * This prevents predictable config file access on Nginx servers
      */
-    private static function getConfigHash()
+    public static function getConfigHash()
     {
         $hash = \WebPExpress\Option::getOption('webp-express-config-hash', false);
         if (!$hash) {
@@ -469,7 +469,7 @@ Deny from all
 APACHE
             );
             @chmod($configDir . '/.htaccess', 0664);
-            
+
             // Additional protection for Nginx: PHP-based access control (CVE-2025-11379 fix)
             @file_put_contents(rtrim($configDir . '/') . '/index.php', <<<'PHP'
 <?php
@@ -498,7 +498,7 @@ PHP
         $hash = self::getConfigHash();
         return self::getConfigDirAbs() . '/wod-options.' . $hash . '.json';
     }
-    
+
     /**
      * Get old predictable config filename for migration purposes
      */
@@ -506,7 +506,7 @@ PHP
     {
         return self::getConfigDirAbs() . '/config.json';
     }
-    
+
     /**
      * Get old predictable wod-options filename for migration purposes
      */

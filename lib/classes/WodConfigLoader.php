@@ -182,6 +182,24 @@ class WodConfigLoader
 
     protected static function loadConfig() {
 
+        $hash = self::getEnvPassedInRewriteRule('HASH');
+        if ($hash === false) {
+            // Passed in QS?
+            if (isset($_GET['hash'])) {
+                $hash = $_GET['hash'];
+            } else {
+                // In case above fails, fall back to standard location
+                $hash = '';
+            }
+        }
+        $filename = '';
+
+        if ($hash == '') {
+            $filename = 'wod-options.json';
+        } else {
+            $filename = 'wod-options.' . $hash . '.json';
+        }
+
         $usingDocRoot = !(
             isset($_GET['xwp-content-rel-to-we-plugin-dir']) ||
             self::getEnvPassedInRewriteRule('WE_WP_CONTENT_REL_TO_WE_PLUGIN_DIR') ||
@@ -217,9 +235,9 @@ class WodConfigLoader
         // ---------------------------------
         self::$checking = 'config file';
 
-        $configFilename = self::$webExpressContentDirAbs . '/config/wod-options.json';
+        $configFilename = self::$webExpressContentDirAbs . '/config/' . $filename;
         if (!file_exists($configFilename)) {
-            throw new \Exception('Configuration file was not found (wod-options.json)');
+            throw new \Exception('Configuration file was not found (wod-options.some-hash.json)');
         }
 
         // Check config file
