@@ -25,7 +25,7 @@ class AdminInit
     public static function runMigrationIfNeeded()
     {
         // When an update requires a migration, the number should be increased
-        define('WEBPEXPRESS_MIGRATION_VERSION', '16');
+        define('WEBPEXPRESS_MIGRATION_VERSION', '17');
 
         if (WEBPEXPRESS_MIGRATION_VERSION != Option::getOption('webp-express-migration-version', 0)) {
             // run migration logic
