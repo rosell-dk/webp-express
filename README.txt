@@ -505,6 +505,46 @@ And here: https://github.com/rosell-dk/webp-express/issues/166
 
 Here are rules if you need to *replace* the file extension with ".webp" rather than appending ".webp" to it: https://www.keycdn.com/support/optimus/configuration-to-deliver-webp
 
+### Important: WebP On Demand on NGINX requires a hash parameter
+Recent versions of WebP Express require an instance-specific hash parameter
+when using WebP On Demand.
+
+Apache (.htaccess) rules include this automatically, but NGINX users must
+pass the hash explicitly.
+
+If the hash is missing, NGINX may serve `webp-on-demand.php` as a static file
+instead of executing it, resulting in a PHP file download.
+
+#### Example NGINX configuration (doc-root mode with hash)
+
+```nginx
+# Serve WebP images when supported
+location ~* ^/wp-content/uploads/(.+)\.(png|jpe?g)$ {
+    add_header Vary Accept;
+    expires 365d;
+
+    if ($http_accept !~* image/webp) {
+        break;
+    }
+
+    # Serve existing WebP file if available
+    if (-f $document_root/wp-content/webp-express/webp-images/doc-root/wp-content/uploads/$1.$2.webp) {
+        rewrite ^ /wp-content/webp-express/webp-images/doc-root/wp-content/uploads/$1.$2.webp break;
+    }
+
+    # Fallback to WebP On Demand (hash is required)
+    rewrite ^/wp-content/uploads/(.+)\.(png|jpe?g)$ \
+        /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource-rel=xwp-content/uploads/$1.$2&wp-content=wp-content&hash=YOUR_HASH_HERE \
+        last;
+}
+
+# Handle direct .webp requests
+location ~* ^/wp-content/uploads/(.+)\.(png|jpe?g)\.webp$ {
+    rewrite ^/wp-content/uploads/(.+)\.(png|jpe?g)\.webp$ \
+        /wp-content/plugins/webp-express/wod/webp-realizer.php?xdestination-rel=xwp-content/uploads/$1.$2&wp-content=wp-content&hash=YOUR_HASH_HERE \
+        last;
+}
+```
 = I am on a Windows server =
 Good news! It should work now, thanks to a guy that calls himself lwxbr. At least on XAMPP 7.3.1, Windows 10. https://github.com/rosell-dk/webp-express/pull/213.
 
