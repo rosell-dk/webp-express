@@ -247,8 +247,15 @@ For multisite on NGINX, read [here](https://github.com/rosell-dk/webp-express/is
 
 #### Recommended rules (using "try_files")
 
-__Preparational step:__
+__Preparational step 1:__
 The rules looks for existing webp files by appending ".webp" to the URL. So for this to work, you must configure *WebP Express* to store the converted files like that by setting *General > File extension* to *Append ".webp"*
+
+__Preparational step 2:__
+From 0.25.10 and up, the configuration file has been renamed so the filename contains a "hash" of random characters (a security meassure).
+You will have to find the hash by inspecting the filename of the config file.
+Look in the /wp-content/webp-express/config folder for a file called something like "config.c513fe386c6b8793f9bf9ad1071d2266.json".
+The string of random characters between "config." and ".json" is what we here call the "hash".
+You will need to use that string of characters instead of "[your-hash-here]" in the rules suggested below.
 
 __The rules:__
 Insert the following in the `server` context of your configuration file (usually found in `/etc/nginx/sites-available`). "The `server` context" refers to the part of the configuration that starts with "server {" and ends with the matching "}".
@@ -265,7 +272,7 @@ location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
   try_files
     /wp-content/webp-express/webp-images/doc-root/$uri.webp
     $uri.webp
-    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content
+    /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content&hash=[your-hash-here]
     ;
 }
 
@@ -273,7 +280,7 @@ location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
 location ~* ^/?wp-content/.*\.(png|jpe?g)\.webp$ {
     try_files
       $uri
-      /wp-content/plugins/webp-express/wod/webp-realizer.php?xdestination=x$request_filename&wp-content=wp-content
+      /wp-content/plugins/webp-express/wod/webp-realizer.php?xdestination=x$request_filename&wp-content=wp-content&hash=[your-hash-here]
       ;
 }
 # ------------------- (WebP Express rules ends here)
@@ -312,6 +319,13 @@ The reason I recommend the *try_files* approach above over these alternative rul
 __Preparational step:__
 The rules looks for existing webp files by appending ".webp" to the URL. So for this to work, you must configure *WebP Express* to store the converted files like that by setting *General > File extension* to *Append ".webp"*. Also make sure that WebP Express is configured with "Destination" set to "Mingled".
 
+__Preparational step 2:__
+From 0.25.10 and up, the configuration file has been renamed so the filename contains a "hash" of random characters (a security meassure).
+You will have to find the hash by inspecting the filename of the config file.
+Look in the /wp-content/webp-express/config folder for a file called something like "config.c513fe386c6b8793f9bf9ad1071d2266.json".
+The string of random characters between "config." and ".json" is what we here call the "hash".
+You will need to use that string of characters instead of "[your-hash-here]" in the rules suggested below.
+
 __The rules:__
 Insert the following in the `server` context of your configuration file (usually found in `/etc/nginx/sites-available`). "The `server` context" refers to the part of the configuration that starts with "server {" and ends with the matching "}".
 
@@ -338,7 +352,7 @@ if ($whattodo = AB) {
     rewrite ^(.*) $1.webp last;
 }
 if ($whattodo = A) {
-    rewrite ^/wp-content/.*\.(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content break;
+    rewrite ^/wp-content/.*\.(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content&hash=[your-hash-here] break;
 }
 # ------------------- (WebP Express rules ends here)
 ```
@@ -380,7 +394,7 @@ location ~* ^/wp-content/.*\.(png|jpe?g)$ {
         rewrite ^(.*) $1.webp last;
     }
     if ($whattodo = A) {
-        rewrite ^/wp-content/.*\.(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content last;
+        rewrite ^/wp-content/.*\.(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content&hash=[your-hash-here] last;
     }
 }
 
@@ -399,7 +413,7 @@ PS: In case you only want to redirect images to the script (and not to existing)
 # WebP Express rules
 # --------------------
 if ($http_accept ~* "webp"){
-  rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content break;
+  rewrite ^/(.*).(jpe?g|png)$ /wp-content/plugins/webp-express/wod/webp-on-demand.php?xsource=x$request_filename&wp-content=wp-content&hash=[your-hash-here] break;
 }
 # ------------------- (WebP Express rules ends here)
 ```
