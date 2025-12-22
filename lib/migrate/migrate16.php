@@ -7,12 +7,10 @@ use \WebPExpress\Messenger;
 use \WebPExpress\Option;
 use \WebPExpress\Paths;
 
-function webpexpress_migrate15() {
+function webpexpress_migrate16() {
 
     // Update migrate version right away to minimize risk of running the update twice in a multithreaded environment
-    Option::updateOption('webp-express-migration-version', '16');   // Skip the next migration! Originally, this was set to '15'. Users that did not install 0.25.10 will not need the next update (migrate16).
-
-    Paths::createIndexPHPInConfigDirIfMissing();
+    Option::updateOption('webp-express-migration-version', '16');
 
     $configMigrateSuccess = Config::checkAndMigrateConfigIfNeeded();
     if ($configMigrateSuccess) {
@@ -22,12 +20,10 @@ function webpexpress_migrate15() {
             // We need to regenerate .htaccess files if web-realizer or webp-on-demand is active,
             // so they get the new ConfigHash
             wp_schedule_single_event(time() + 1, 'webp_express_task_regenerate_config_and_htaccess');
-        }
-        DismissableGlobalMessages::addDismissableMessage('0.25.10/renamed-config-file');
+            DismissableGlobalMessages::addDismissableMessage('0.25.11/updated-htaccess');
 
-    } else {
-        DismissableGlobalMessages::addDismissableMessage('0.25.10/failed-renaming-config-file');
+        }
     }
 }
 
-webpexpress_migrate15();
+webpexpress_migrate16();

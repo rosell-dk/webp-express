@@ -448,7 +448,7 @@ class HTAccessRules
             $flags = [];
             if (!self::$passThroughEnvVarDefinitelyUnavailable) {
                 $flags[] = 'E=DESTINATIONREL:' . self::$htaccessDirRelToDocRoot . '/$0';
-                $flags[] = 'E=WPCONTENT:' . Paths::getContentDirRel() . '/$0';
+                $flags[] = 'E=WPCONTENT:' . Paths::getContentDirRel();
                 $flags[] = 'E=HASH:' . $configHash;
             }
             $flags[] = 'NC';
