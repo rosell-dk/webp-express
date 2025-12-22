@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 6.9
-Stable tag: 0.25.10
+Stable tag: 0.25.11
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -173,6 +173,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
 
+* 16 Dec: Dragos
 * 9 Aug: Tanzi
 * 3 Jul: Jen
 * 26 Jun: Per
@@ -181,6 +182,10 @@ Bread on the table don't come for free, even though this plugin does, and always
 * 31 May: parallactic
 * 14 May: Gitte Rebsdorf
 * 9 May: La Braud
+
+**Persons who recently contributed on [github sponsors](https://github.com/sponsors/rosell-dk) - Thanks!**
+* 16 Dec: kcrlost
+* 16 Dec: Yakovos Frountas (Greece)
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
@@ -815,6 +820,9 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 == Changelog ==
 
 = 0.25.10 =
+(released 22 December 2025)
+* Fixes .htaccess rules for redirecting to converter. The bug was introduced in 0.25.10. It caused the conversion not to work on some systems. Thanks to Jon Wallace for reporting the issue on github and assisting in the debugging.
+
 (released 15 December 2025)
 * Security fix: Config file was exposed on systems running on NGINX. Herr Patrick Müller from Switzerland for creating a patch as well as Rune Philosof from Denmark for improving it. Some credit also goes to myself for perfecting the patch. Sorry for slacking on the maintenance. There are good reasons for this, but I can and will do better in the future
 
@@ -866,6 +874,9 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.11 =
+* Bugfix. Fixes .htaccess rules for redirecting to converter. The bug was introduced in 0.25.10. It caused the conversion not to work on some systems
 
 = 0.25.10 =
 * Security fix. The config file could be exposed on NGINX
