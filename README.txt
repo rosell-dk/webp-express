@@ -539,7 +539,7 @@ location ~* ^/wp-content/uploads/(.+)\.(png|jpe?g)\.webp$ {
         /wp-content/plugins/webp-express/wod/webp-realizer.php?xdestination-rel=xwp-content/uploads/$1.$2&wp-content=wp-content&hash=YOUR_HASH_HERE \
         last;
 }
-
+```
 = I am on a Windows server =
 Good news! It should work now, thanks to a guy that calls himself lwxbr. At least on XAMPP 7.3.1, Windows 10. https://github.com/rosell-dk/webp-express/pull/213.
 
