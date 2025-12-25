@@ -180,26 +180,41 @@ class WodConfigLoader
         return new ImageRoots(self::$wodOptions['image-roots']);
     }
 
+    /**
+     * Find the hash from config.[hash].json inside a directory.
+     *
+     * @param string $configDir Absolute or relative path to the config directory
+     * @return string Hash string, or empty string if not found
+     */
+    protected static function findConfigHash($configDir)
+    {
+        // Normalize directory path
+        $configDir = rtrim($configDir, DIRECTORY_SEPARATOR);
+
+        if (!is_dir($configDir) || !is_readable($configDir)) {
+            return '';
+        }
+
+        $files = glob($configDir . DIRECTORY_SEPARATOR . 'config.*.json');
+
+        if ($files === false || empty($files)) {
+            return '';
+        }
+
+        // Take the first match
+        $filename = basename($files[0]);
+
+        // Extract hash between "config." and ".json"
+        if (preg_match('/^config\.([a-f0-9]+)\.json$/i', $filename, $matches)) {
+            return $matches[1];
+        }
+
+        return '';
+    }
+
     protected static function loadConfig() {
 
-        $hash = self::getEnvPassedInRewriteRule('HASH');
-        if ($hash === false) {
-            // Passed in QS?
-            if (isset($_GET['hash'])) {
-                $hash = $_GET['hash'];
-            } else {
-                // In case above fails, fall back to standard location
-                $hash = '';
-            }
-        }
-        $filename = '';
-
-        if ($hash == '') {
-            $filename = 'wod-options.json';
-        } else {
-            $filename = 'wod-options.' . $hash . '.json';
-        }
-
+        self::$checking = 'config folder';
         $usingDocRoot = !(
             isset($_GET['xwp-content-rel-to-we-plugin-dir']) ||
             self::getEnvPassedInRewriteRule('WE_WP_CONTENT_REL_TO_WE_PLUGIN_DIR') ||
@@ -235,9 +250,29 @@ class WodConfigLoader
         // ---------------------------------
         self::$checking = 'config file';
 
+        $hash = self::getEnvPassedInRewriteRule('HASH');
+        if ($hash === false) {
+            // Passed in QS?
+            if (isset($_GET['hash'])) {
+                $hash = $_GET['hash'];
+            } else {
+                // In case above fails, find the hash by browsing the config dir
+                $hash = self::findConfigHash(self::$webExpressContentDirAbs . '/config/');
+            }
+        }
+
+        $filename = '';
+
+        if ($hash == '') {
+            $filename = 'wod-options.json';
+        } else {
+            $filename = 'wod-options.' . $hash . '.json';
+        }
+
+
         $configFilename = self::$webExpressContentDirAbs . '/config/' . $filename;
         if (!file_exists($configFilename)) {
-            throw new \Exception('Configuration file was not found (wod-options.some-hash.json)');
+            throw new \Exception('Configuration file was not found (' . $filename . ')');
         }
 
         // Check config file
