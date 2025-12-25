@@ -10,7 +10,7 @@ use \WebPExpress\Paths;
 function webpexpress_migrate16() {
 
     // Update migrate version right away to minimize risk of running the update twice in a multithreaded environment
-    Option::updateOption('webp-express-migration-version', '16');
+    Option::updateOption('webp-express-migration-version', '17'); // Skip the next migration! Originally, this was set to '16'. Users no longer need the next update (migrate17), as &hash is no longer required.
 
     $configMigrateSuccess = Config::checkAndMigrateConfigIfNeeded();
     if ($configMigrateSuccess) {

@@ -10,7 +10,7 @@ use \WebPExpress\Paths;
 function webpexpress_migrate15() {
 
     // Update migrate version right away to minimize risk of running the update twice in a multithreaded environment
-    Option::updateOption('webp-express-migration-version', '16');   // Skip the next migration! Originally, this was set to '15'. Users that did not install 0.25.10 will not need the next update (migrate16).
+    Option::updateOption('webp-express-migration-version', '17');   // Skip the next migration! Originally, this was set to '15'. Users that did not install 0.25.10 will not need the next update (migrate16). And migrate17 is also no longer needed
 
     Paths::createIndexPHPInConfigDirIfMissing();
 

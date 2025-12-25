@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 6.9
-Stable tag: 0.25.12
+Stable tag: 0.25.13
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -173,6 +173,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
 
+* 24 Dec: Patrick Müller
 * 16 Dec: Dragos
 * 9 Aug: Tanzi
 * 3 Jul: Jen
@@ -189,6 +190,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 **Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
 
+* Patrick Müller ($250)
 * Max Kreminsky ($115)
 * Justin - BigScoots ($105)
 * Bill Vallance ($102)
@@ -832,9 +834,13 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.13 =
+(released 25 December 2025)
+* It is no longer a requirement on Nginx to modify redirection rules by adding a "hash" parameter. This was briefly required in 0.25.10-12. Btw, thanks Patrick Müller, for an extraordinary large donation on Christmas Eve - on top of the recent security fix that he originated. When I see engagement like that, it makes it meaningful for me to prioritize this project
+
 = 0.25.12 =
 (released 22 December 2025)
-* Added notification for users on Nginx which uses redirect rules to change their rewrite rules manually. They must now pass a "hash" parameter in the querystring to the WebP conversion script
+* Added notification for users on Nginx which uses redirect rules to change their rewrite rules manually. They must now pass a "hash" parameter in the querystring to the WebP conversion script. Thanks to Luka Paunović for bringing the issue to my attention and updating the README.
 
 = 0.25.11 =
 (released 22 December 2025)
@@ -891,6 +897,9 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.13 =
+* It is no longer a requirement on Nginx to modify redirection rules by adding a "hash" parameter. This was briefly required in 0.25.10-12
 
 = 0.25.12 =
 * Added notification for users on Nginx which uses redirect rules to change their rewrite rules to point to the new configuration file containing randomized characters

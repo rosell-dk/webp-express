@@ -186,7 +186,7 @@ class WodConfigLoader
      * @param string $configDir Absolute or relative path to the config directory
      * @return string Hash string, or empty string if not found
      */
-    protected static function findConfigHash($configDir)
+    protected static function findConfigHashByInspection($configDir)
     {
         // Normalize directory path
         $configDir = rtrim($configDir, DIRECTORY_SEPARATOR);
@@ -257,7 +257,7 @@ class WodConfigLoader
                 $hash = $_GET['hash'];
             } else {
                 // In case above fails, find the hash by browsing the config dir
-                $hash = self::findConfigHash(self::$webExpressContentDirAbs . '/config/');
+                $hash = self::findConfigHashByInspection(self::$webExpressContentDirAbs . '/config/');
             }
         }
 
