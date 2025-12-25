@@ -788,28 +788,30 @@ Bread on the table don't come for free, even though this plugin does, and always
 - [Buy me coffee on a regular basis](https://github.com/sponsors/rosell-dk) and help ensuring my coffee supplies doesn't run dry.
 
 
-**Persons / Companies currently backing the project via patreon - Thanks!**
+**Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
 
-- Max Kreminsky
-- Nodeflame
-- [Mathieu Gollain-Dupont](https://www.linkedin.com/in/mathieu-gollain-dupont-9938a4a/)
-- Ruben Solvang
-
-**Persons who contributed with coffee within the last 30 days:**
-
-| Name                   | Date           | Message      |
-| ---------------------- | -------------- | ------------ |
-| Anon                   | 2020-08-18     | - |
-| Eder Ribeiro           | 2020-08-08     | Hello Bjørn I believe that it is a fantastic solution and that it deserves maximum support to keep getting better! If you can, check out my configuration tip, https://github.com/rosell-dk/webp-express/issues/433 |
-| Christian              | 2020-08-05     | Merci pour votre plugin. Exceptionnel et gratuit. |
+* 24 Dec: Patrick Müller
+* 16 Dec: Dragos
+* 9 Aug: Tanzi
+* 3 Jul: Jen
+* 26 Jun: Per
 
 
-**Persons who contributed with extra generously amounts of coffee / lifetime backing (>50$) - thanks!:**
+**Persons who recently contributed on [github sponsors](https://github.com/sponsors/rosell-dk) - Thanks!**
+* 16 Dec: kcrlost
+* 16 Dec: Yakovos Frountas (Greece)
 
-| Name                   | Amount     |  Message  |
-| ---------------------- | -----------| --------- |
-| Justin - BigScoots     | $105       | Such an amazing plugin for so many reasons, thank you! |
-| Sebastian              | $99        | WebP for Wordpress – what a great plugin! Thank you!   |
-| Tammy Lee              | $90        |  |
-| Max Kreminsky          | $65        |  |
-| Steven Sullivan        | $51        | Thank you for such a wonderful plugin. |
+**Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
+
+* Patrick Müller ($250)
+* Max Kreminsky ($115)
+* Justin - BigScoots ($105)
+* Bill Vallance ($102)
+* Label Vier ($100)
+* Sebastian ($99)
+* Tammy Lee ($90)
+* Steven Sullivan ($51)
+* Mathieu Gollain-Dupont ($50)
+* Erica Dreisbach ($50)
+* Brian Laursen ($50)
+* Dimitris Vayenas ($50)
