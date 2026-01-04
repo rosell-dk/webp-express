@@ -40,8 +40,12 @@ if ( class_exists( 'WP_CLI' ) ) {
 
 function webp_express_process_post() {
     // strip query string
-    $requestUriNoQS = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-    //echo '<pre>' . print_r($_SERVER, true) . '</pre>'; die();
+    $requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+    $requestUriNoQS = parse_url($requestUri, PHP_URL_PATH);
+
+    if (!is_string($requestUriNoQS)) {
+        $requestUriNoQS = '';
+    }
 
     if (preg_match('/webp-express-web-service$/', $requestUriNoQS)) {
         include __DIR__ . '/web-service/wpc.php';
