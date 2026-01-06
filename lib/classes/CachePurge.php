@@ -6,6 +6,9 @@ use \WebPExpress\Convert;
 use \WebPExpress\FileHelper;
 use \WebPExpress\DismissableMessages;
 use \WebPExpress\Paths;
+use WebPExpress\MediaLibraryHelper;
+
+
 
 // TODO! Needs to be updated to work with the new "destination-structure" setting
 
@@ -53,45 +56,6 @@ class CachePurge
 
     }
 
-    public static function isRegisteredAttachmentOrSize($absolutePath)
-    {
-        global $wpdb;
-
-        $uploadsBase = rtrim(Paths::getUploadDirAbs(), '/');
-        if (strpos($absolutePath, $uploadsBase . '/') !== 0) {
-            return false;
-        }
-
-        $relativePath = substr($absolutePath, strlen($uploadsBase) + 1);
-        $filename = basename($relativePath);
-
-        // Detect if this is a thumbnail by the -WxH pattern before extension
-        if (preg_match('/^(.*?)-\d+x\d+(\.\w+)$/', $filename, $matches)) {
-            $originalFilename = $matches[1] . $matches[2];
-
-            // Look for an attachment whose _wp_attached_file ends with this original filename
-            $attachmentId = $wpdb->get_var($wpdb->prepare(
-                "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s",
-                '%' . $wpdb->esc_like($originalFilename)
-            ));
-
-            if ($attachmentId) {
-                return true;
-            }
-        }
-
-        // Check the exact relative path for main attachments
-        $attachmentId = $wpdb->get_var($wpdb->prepare(
-            "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value = %s",
-            $relativePath
-        ));
-
-        return !empty($attachmentId);
-    }
-
-
-
-
     /**
      *  Purge webp files in a dir
      *  Warning: the "only-png" option only works for mingled mode.
@@ -134,8 +98,9 @@ class CachePurge
                     }
 
                     // filter: never delete media library originals
-                    if (!$skipThis && $filter['check-if-registered'] && self::isRegisteredAttachmentOrSize($dir . '/' . $filename)) {
+                    if (!$skipThis && $filter['check-if-registered'] && MediaLibraryHelper::isRegisteredAttachmentOrThumbnail($dir . '/' . $filename)) {
                         $skipThis = true;
+
                     }
 
                     // filter: only with corresponding original
