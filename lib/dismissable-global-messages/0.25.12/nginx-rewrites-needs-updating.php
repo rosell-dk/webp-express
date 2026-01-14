@@ -4,6 +4,7 @@ namespace WebPExpress;
 
 $msgId = '0.25.12/nginx-rewrites-needs-updating';
 
+/*
 DismissableGlobalMessages::printDismissableMessage(
     'info',
     '<p>WebP Express needed to rename its configuration files to contain random characters - for security reasons. ' .
@@ -15,6 +16,8 @@ DismissableGlobalMessages::printDismissableMessage(
         ['text' => 'Ok'],
     ]
 );
+*/
 
-// In next version, after 0.25.13, we can dismiss the message completely, like this:
-// DismissableGlobalMessages::dismissMessage($msgId);
+// The message is no longer relevant, as it is no longer neccessary to pass the hash
+// So dismiss it, so this code is not run again
+DismissableGlobalMessages::dismissMessage($msgId);

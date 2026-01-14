@@ -4,6 +4,7 @@ namespace WebPExpress;
 
 $msgId = '0.25.10/renamed-config-file';
 
+/*
 DismissableGlobalMessages::printDismissableMessage(
     'info',
     'WebP Express has renamed its configuration files to something unique. ' .
@@ -14,3 +15,7 @@ DismissableGlobalMessages::printDismissableMessage(
         ['text' => 'Ok'],
     ]
 );
+*/
+
+// The message is old news, so dismiss it, so this code is not run again
+DismissableGlobalMessages::dismissMessage($msgId);
