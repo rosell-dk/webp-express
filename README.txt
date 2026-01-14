@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 6.9
-Stable tag: 0.25.13
+Stable tag: 0.25.14
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -173,6 +173,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
 
+* 5 Jan: Joel
 * 24 Dec: Patrick Müller
 * 16 Dec: Dragos
 * 9 Aug: Tanzi
@@ -188,20 +189,16 @@ Bread on the table don't come for free, even though this plugin does, and always
 * 16 Dec: kcrlost
 * 16 Dec: Yakovos Frountas (Greece)
 
-**Persons who contributed with extra generously amounts of coffee / lifetime backing (>30$) - thanks!:**
+**Persons who contributed with extra generously amounts of coffee / lifetime backing (>80$) - thanks!:**
 
 * Patrick Müller ($250)
 * Max Kreminsky ($115)
 * Justin - BigScoots ($105)
 * Bill Vallance ($102)
+* Joal ($100)
 * Label Vier ($100)
 * Sebastian ($99)
 * Tammy Lee ($90)
-* Steven Sullivan ($51)
-* Mathieu Gollain-Dupont ($50)
-* Erica Dreisbach ($50)
-* Brian Laursen ($50)
-* Dimitris Vayenas ($50)
 
 == Frequently Asked Questions ==
 
@@ -834,6 +831,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.14 =
+(released 25 December 2025)
+* Fixed issue that the delete images feature also deleted webp-images that was uploaded as such, when webp-express was configured to store converted images in same folder as originals (not the default option). Also fixed conversion triggered by redirection, which broke on a few systems in a recent update, causing images in the media library not to appear. It may however still be a problem on a very few systems. In that case: Simply disable "Enable redirection to converter" and "Create webp files upon request" and submit an issue.
+
 = 0.25.13 =
 (released 25 December 2025)
 * It is no longer a requirement on Nginx to modify redirection rules by adding a "hash" parameter. This was briefly required in 0.25.10-12. Btw, thanks Patrick Müller, for an extraordinary large donation on Christmas Eve - on top of the recent security fix that he originated. When I see engagement like that, it makes it meaningful for me to prioritize this project
@@ -897,6 +898,9 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.14 =
+* Fixed issue that the delete images feature also deleted webp-images that was uploaded as such, when webp-express was configured to store converted images in same folder as originals (not the default option). Also fixed conversion triggered by redirection, which broke on a few systems in a recent update, causing images in the media library not to appear. It may however still be a problem on a very few systems. In that case: Simply disable "Enable redirection to converter" and "Create webp files upon request" and submit an issue
 
 = 0.25.13 =
 * It is no longer a requirement on Nginx to modify redirection rules by adding a "hash" parameter. This was briefly required in 0.25.10-12
