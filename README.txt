@@ -195,7 +195,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Max Kreminsky ($115)
 * Justin - BigScoots ($105)
 * Bill Vallance ($102)
-* Joal ($100)
+* Joel ($100)
 * Label Vier ($100)
 * Sebastian ($99)
 * Tammy Lee ($90)
