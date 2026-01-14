@@ -726,60 +726,6 @@ If you wish to affect priorities, it is certainly possible. You can try to argue
 ### Beta testing
 I generally create a pre-release before publishing. If you [follow me on ko-fi](https://ko-fi.com/rosell), you will get notified when a pre-release is available. I generally create a pre-release on fridays and mark it as stable on mondays. In order to download a pre-release, go to [the advanced page](https://wordpress.org/plugins/webp-express/advanced/) and scroll down to "Please select a specific version to download". I don't name the pre-releases different. You will just see the next version here before it is available the usual way.
 
-## Changes in 0.21.1
-*(released: 27 Oct 2021)*
-* Bugfix: File manager could not handle many images. It now loads tree branches on need basis instead of the complete tree in one go
-* Bugfix: For mulisite, the redirect after settings save was not working (bug introduced in 0.21.0)
-
-For more info, see the closed issues on the [webp-express 0.21.1 milestone](https://github.com/rosell-dk/webp-express/milestone/42?closed=1)
-
-## Changes in 0.21.0
-*(released: 25 Oct 2021)*
-* Added image browser (in Media tab)
-* Updated webp convert library to 2.7.0.
-* ImageMagick now supports the "near-lossless" option (provided Imagick >= 7.0.10-54)
-* Added "try-common-system-paths" option for ImageMagick (default: true). Thanks to Henrik Alves for adding this option.
-* Bugfix: Handling Uncaught Fatal Exception during .htaccess read failure. Thanks to Manuel D'Orso from Italy for the fix.
-* Bugfix: File names which were not UTF8 caused trouble in the Bulk Convert. Thank to "mills4078" for the fix
-* Bugfix: Redirection back to settings after saving settings failed on some systems. Thanks to Martin Rehberger (@kingkero) from Germany for the fix.
-* Bugfix: Webp urls did not contain port number (only relevant when the website was not on default port number). Thanks to Nicolas LIENART (@nicolnt) from France for providing the fix.
-
-For more info, see the closed issues on the [webp-express 0.21.0 milestone](https://github.com/rosell-dk/webp-express/milestone/41?closed=1) and the
-[webp-convert 2.7.0 milestone](https://github.com/rosell-dk/webp-convert/milestone/24?closed=1)
-
-
-## Changes in 0.20.1
-*(released: 20 Jun 2021)*
-* Bugfix: Removed composer.lock. It was locked on PHP 7.2, which caused server error on some sites.
-
-## Changes in 0.20.0
-*(released: 17 Jun 2021)*
-* Added WP CLI support. Add "wp webp-express convert" to crontab for nightly conversions of new images! Thanks to Isuru Sampath Ratnayake from Sri Lanka for initializing this.
-* Added "sharp-yuv" (not as option, but as always on). Better YUV->RGB color conversion at almost no price. [Read more here](https://www.ctrl.blog/entry/webp-sharp-yuv.html). Supported by cwebp, vips, gmagick, graphicsmagick, imagick and imagemagick
-* Bumped cwebp binaries to 1.2.0
-* cwebp now only validates hash of supplied precompiled binaries when necessary. This cuts down conversion time.
-* Convert on upload now defaults to false, as it may impact upload experience in themes with many formats.
-* bugfix: Alpha quality was saved incorrectly for PNG. Thanks to Chriss Gibbs from the UK for finding and fixing this.
-* bugfix: wp-debug log could be flooded with "Undefined index: HTTP_ACCEPT". Thanks to @markusreis for finding and fixing this.
-
-## Changes in 0.19.0
-*(released: 13 Nov 2020)*
-* New convertion method: ffmpeg
-* Fixed problem in Bulk Convert when files had special characters in their filename
-* Prevented problems if the plugin gets included twice (can anybody enlighten me on how this might happen?)
-
-For more info, see the closed issues on the [0.19.0 milestone on the github repository](https://github.com/rosell-dk/webp-express/milestone/36?closed=1)
-
-## Changes in 0.18.3
-*(released: 5 Nov 2020)*
-* Bugfix: WebP Express uses live tests to determine the capabilities of the server in respect to .htaccess files (using the htaccess-capability-tester library). The results are used for warnings and also for optimizing the rules in the .htaccess files. However, HTTP Requests can fail due to other reasons than the feature not working (ie timeout). Such failures should lead to an indeterminate result, but it was interpreted as if the feature was not working.
-* The Live test now displays a bit more information if the HTTP request failed.
-* Changed default value for "destination structure" to "Image roots", as "Document root" doesn't work on hosts that have defined DOCUMENT_ROOT in an unusual way.
-* Added possibility to change "%{DOCUMENT_ROOT}" part of RewriteCond by adding a line to wp-config.php. THIS IS A BETA FEATURE AND MIGHT BE REVOKED IF NOBODY ACTUALLY NEEDS IT.
-* Got rid of PHP notice Constant WEBPEXPRESS_MIGRATION_VERSION already defined
-* Fixed donation link. It now points to https://ko-fi.com/rosell again
-
-For more info, see the closed issues on the 0.18.3 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/34?closed=1
 
 ## Supporting WebP Express
 Bread on the table don't come for free, even though this plugin does, and always will. I enjoy developing this, and supporting you guys, but I kind of need the bread too. Please make it possible for me to continue putting effort into this plugin:
@@ -790,6 +736,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
 
+* 5 Jan: Joel
 * 24 Dec: Patrick Müller
 * 16 Dec: Dragos
 * 9 Aug: Tanzi
@@ -807,6 +754,7 @@ Bread on the table don't come for free, even though this plugin does, and always
 * Max Kreminsky ($115)
 * Justin - BigScoots ($105)
 * Bill Vallance ($102)
+* Joel ($100)
 * Label Vier ($100)
 * Sebastian ($99)
 * Tammy Lee ($90)

@@ -52,6 +52,7 @@ https://pippinsplugins.com/how-to-properly-format-and-enhance-your-plugins-readm
 - Skim: https://codex.wordpress.org/Writing_a_Plugin
 - https://developer.wordpress.org/plugins/wordpress-org/
 - Validate the readme: https://wordpress.org/plugins/developers/readme-validator/
+- Update contributions sections in `README.txt` as well as `README.md`
 - Make sure you have pushed the latest commits to github
 - Make sure you have released the new version on github
 
