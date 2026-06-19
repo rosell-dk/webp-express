@@ -96,6 +96,7 @@ rsync -avh --dry-run --exclude '.git' --exclude '.github' --exclude='composer.lo
 3. Upload the zip to other sites and test
    - https://lutzenmanagement.dk/wp-admin/plugin-install.php
    - http://mystress.dk/wp-admin/plugin-install.php
+   - fabeldyr.dk
    ... etc
 
 
@@ -112,12 +113,12 @@ svn status | grep '^!' | awk '{print $2}' | xargs svn delete --force          (t
 Then add a new tag
 ```
 cd svn
-svn cp trunk tags/0.25.14       (this will copy trunk into a new tag)
+svn cp trunk tags/0.25.15       (this will copy trunk into a new tag)
 ```
 
 And commit!
 ```
-svn ci -m '0.25.14'
+svn ci -m '0.25.15'
 ```
 
 
