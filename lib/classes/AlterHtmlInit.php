@@ -75,7 +75,7 @@ class AlterHtmlInit
            . 'if(!window.HTMLPictureElement && document.addEventListener) {'
                 . 'window.addEventListener("DOMContentLoaded", function() {'
                     . 'var s = document.createElement("script");'
-                    . 's.src = "' . plugins_url('/js/picturefill.min.js', WEBPEXPRESS_PLUGIN) . '";'
+                    . 's.src = "' . esc_url(plugins_url('/js/picturefill.min.js', WEBPEXPRESS_PLUGIN)) . '";'
                     . 'document.body.appendChild(s);'
                 . '});'
             . '}'
