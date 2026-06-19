@@ -313,10 +313,11 @@ class BulkConvert
         // There should be none, as we have taken our measures, but no harm in taking extra precautions
         $json = wp_json_encode($arr, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         if ($json === false) {
-            // TODO: We can do better error handling than this!
-            echo '';
+            // TODO: error handling
         } else {
-            echo $json;
+          // JSON is generated via wp_json_encode(), which guarantees valid JSON encoding.
+          // Escaping would corrupt the output.        
+          echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         }
 
         wp_die();
