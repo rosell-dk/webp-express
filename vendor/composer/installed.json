@@ -751,17 +751,17 @@
         },
         {
             "name": "rosell-dk/webp-convert",
-            "version": "2.9.4",
-            "version_normalized": "2.9.4.0",
+            "version": "2.9.5",
+            "version_normalized": "2.9.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rosell-dk/webp-convert.git",
-                "reference": "04eee34878dcd623271f204df1e313a0636ce9f6"
+                "reference": "bce87de61cff098e899a91960f9fdb08e8867194"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/04eee34878dcd623271f204df1e313a0636ce9f6",
-                "reference": "04eee34878dcd623271f204df1e313a0636ce9f6",
+                "url": "https://api.github.com/repos/rosell-dk/webp-convert/zipball/bce87de61cff098e899a91960f9fdb08e8867194",
+                "reference": "bce87de61cff098e899a91960f9fdb08e8867194",
                 "shasum": ""
             },
             "require": {
@@ -781,7 +781,7 @@
                 "ext-imagick": "to use Imagick extension for converting. Note: Gd must be compiled with webp support",
                 "ext-vips": "to use Vips extension for converting."
             },
-            "time": "2026-06-18T06:36:38+00:00",
+            "time": "2026-06-18T11:53:25+00:00",
             "type": "library",
             "extra": {
                 "scripts-descriptions": {
@@ -830,7 +830,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rosell-dk/webp-convert/issues",
-                "source": "https://github.com/rosell-dk/webp-convert/tree/2.9.4"
+                "source": "https://github.com/rosell-dk/webp-convert/tree/2.9.5"
             },
             "funding": [
                 {

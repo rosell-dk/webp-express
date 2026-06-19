@@ -7,89 +7,89 @@ namespace Composer\Autoload;
 class ComposerStaticInit16597e36dd1bfcd787ed5a8e6d908243
 {
     public static $prefixLengthsPsr4 = array (
-        'W' =>
+        'W' => 
         array (
             'WebPConvert\\' => 12,
             'WebPConvertCloudService\\' => 24,
         ),
-        'L' =>
+        'L' => 
         array (
             'LocateBinaries\\' => 15,
         ),
-        'I' =>
+        'I' => 
         array (
             'ImageMimeTypeSniffer\\' => 21,
             'ImageMimeTypeGuesser\\' => 21,
         ),
-        'H' =>
+        'H' => 
         array (
             'HtaccessCapabilityTester\\' => 25,
         ),
-        'F' =>
+        'F' => 
         array (
             'FileUtil\\' => 9,
         ),
-        'E' =>
+        'E' => 
         array (
             'ExecWithFallback\\' => 17,
         ),
-        'D' =>
+        'D' => 
         array (
             'DOMUtilForWebP\\' => 15,
         ),
-        'C' =>
+        'C' => 
         array (
             'Composer\\Installers\\' => 20,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'WebPConvert\\' =>
+        'WebPConvert\\' => 
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/webp-convert/src',
         ),
-        'WebPConvertCloudService\\' =>
+        'WebPConvertCloudService\\' => 
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/webp-convert-cloud-service/src',
         ),
-        'LocateBinaries\\' =>
+        'LocateBinaries\\' => 
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/locate-binaries/src',
         ),
-        'ImageMimeTypeSniffer\\' =>
+        'ImageMimeTypeSniffer\\' => 
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/image-mime-type-sniffer/src',
         ),
-        'ImageMimeTypeGuesser\\' =>
+        'ImageMimeTypeGuesser\\' => 
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/image-mime-type-guesser/src',
         ),
-        'HtaccessCapabilityTester\\' =>
+        'HtaccessCapabilityTester\\' => 
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/htaccess-capability-tester/src',
         ),
-        'FileUtil\\' =>
+        'FileUtil\\' => 
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/file-util/src',
         ),
-        'ExecWithFallback\\' =>
+        'ExecWithFallback\\' => 
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/exec-with-fallback/src',
         ),
-        'DOMUtilForWebP\\' =>
+        'DOMUtilForWebP\\' => 
         array (
             0 => __DIR__ . '/..' . '/rosell-dk/dom-util-for-webp/src',
         ),
-        'Composer\\Installers\\' =>
+        'Composer\\Installers\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'K' =>
+        'K' => 
         array (
-            'KubAT\\PhpSimple\\HtmlDomParser' =>
+            'KubAT\\PhpSimple\\HtmlDomParser' => 
             array (
                 0 => __DIR__ . '/..' . '/kub-at/php-simple-html-dom-parser/src',
             ),
