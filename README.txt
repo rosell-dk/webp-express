@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 6.9
-Stable tag: 0.25.14
+Stable tag: 0.25.15
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -831,6 +831,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.15 =
+(released 19 May 2026)
+* Fixed medium security problem with the WPC converter and got rid of some deprecated warnings on newer PHP versions (thanks to hostep from Belgium, dmitryuk from Kazakhstan and AH72KING from Pakistan for those contributions to the webp-convert library)
+
 = 0.25.14 =
 (released 25 December 2025)
 * Fixed issue that the delete images feature also deleted webp-images that was uploaded as such, when webp-express was configured to store converted images in same folder as originals (not the default option). Also fixed conversion triggered by redirection, which broke on a few systems in a recent update, causing images in the media library not to appear. It may however still be a problem on a very few systems. In that case: Simply disable "Enable redirection to converter" and "Create webp files upon request" and submit an issue.
@@ -898,6 +902,9 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.25.15 =
+* Fixed medium security problem with the WPC converter
 
 = 0.25.14 =
 * Fixed issue that the delete images feature also deleted webp-images that was uploaded as such, when webp-express was configured to store converted images in same folder as originals (not the default option). Also fixed conversion triggered by redirection, which broke on a few systems in a recent update, causing images in the media library not to appear. It may however still be a problem on a very few systems. In that case: Simply disable "Enable redirection to converter" and "Create webp files upon request" and submit an issue

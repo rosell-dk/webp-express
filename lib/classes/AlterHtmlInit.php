@@ -75,7 +75,7 @@ class AlterHtmlInit
            . 'if(!window.HTMLPictureElement && document.addEventListener) {'
                 . 'window.addEventListener("DOMContentLoaded", function() {'
                     . 'var s = document.createElement("script");'
-                    . 's.src = "' . plugins_url('/js/picturefill.min.js', WEBPEXPRESS_PLUGIN) . '";'
+                    . 's.src = "' . esc_url(plugins_url('/js/picturefill.min.js', WEBPEXPRESS_PLUGIN)) . '";'
                     . 'document.body.appendChild(s);'
                 . '});'
             . '}'
@@ -91,8 +91,11 @@ class AlterHtmlInit
     {
         $content = ob_get_clean();
 
-        echo self::alterHtml($content);
-
+        // Output is intentionally unescaped.
+        // We are essentially filtering the sidebar html here (which is grabbed with output buffering).
+        // alterHtml takes HTML and makes minimal adjustments, wrapping images in picture tags or adjusting the urls to point to webp images
+        echo self::alterHtml($content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        
         unset($content);
     }
 

@@ -64,9 +64,32 @@ trait CurlTrait
     {
         // Get curl handle
         $ch = \curl_init();
+
+        if (defined('CURLOPT_PROTOCOLS_STR')) {
+            curl_setopt($ch, CURLOPT_PROTOCOLS_STR, 'http,https');
+            curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS_STR, 'http,https');
+        } else {
+            curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+            curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+        }
         if ($ch === false) {
             throw new SystemRequirementsNotMetException('Could not initialise cURL.');
         }
         return $ch;
+    }
+
+    /**
+     * Close curl.
+     *
+     * Before PHP 8.0, we need to call curl_close
+     * After PHP 8.0, PHP is smart enough to destroy the object by itself
+     *
+     * @param resource $curlHandle
+     */
+    protected static function closeCurl($curlHandle)
+    {
+        if (PHP_VERSION_ID < 80000) {
+            curl_close($curlHandle);
+        }
     }
 }
