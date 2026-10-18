@@ -5,6 +5,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/rosell-dk/dom-util-for-webp/ci.yml?branch=master&logo=GitHub&style=flat-square&label=build)](https://github.com/rosell-dk/dom-util-for-webp/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://little-b.it/dom-util-for-webp/code-coverage/coverage-badge.json)](http://little-b.it/dom-util-for-webp/code-coverage/coverage/index.html)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/rosell-dk/dom-util-for-webp/blob/master/LICENSE)
+[![Dependents](http://poser.pugx.org/rosell-dk/dom-util-for-webp/dependents)](https://packagist.org/packages/rosell-dk/dom-util-for-webp/dependents?order_by=downloads)
 
 *Replace image URLs found in HTML*
 

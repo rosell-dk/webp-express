@@ -209,17 +209,17 @@
         },
         {
             "name": "rosell-dk/dom-util-for-webp",
-            "version": "0.7.1",
-            "version_normalized": "0.7.1.0",
+            "version": "0.7.2",
+            "version_normalized": "0.7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rosell-dk/dom-util-for-webp.git",
-                "reference": "4f9102e404ee137a781c8580b829a340c5a5d428"
+                "reference": "a69c667eb7a2449e402147586d3863d932f3f660"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/4f9102e404ee137a781c8580b829a340c5a5d428",
-                "reference": "4f9102e404ee137a781c8580b829a340c5a5d428",
+                "url": "https://api.github.com/repos/rosell-dk/dom-util-for-webp/zipball/a69c667eb7a2449e402147586d3863d932f3f660",
+                "reference": "a69c667eb7a2449e402147586d3863d932f3f660",
                 "shasum": ""
             },
             "require": {
@@ -231,16 +231,16 @@
                 "phpunit/phpunit": "^9.3",
                 "squizlabs/php_codesniffer": "3.*"
             },
-            "time": "2023-10-20T12:10:28+00:00",
+            "time": "2026-10-18T08:43:30+00:00",
             "type": "library",
             "extra": {
                 "scripts-descriptions": {
                     "ci": "Run tests before CI",
+                    "test": "Launches the preconfigured PHPUnit",
                     "phpcs": "Checks coding styles (PSR2) of file/dir, which you must supply. To check all, supply 'src'",
-                    "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
-                    "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard",
                     "cs-fix": "Fix the coding style of a PHP file or directory, which you must specify.",
-                    "test": "Launches the preconfigured PHPUnit"
+                    "phpcbf": "Fix coding styles (PSR2) of file/dir, which you must supply. To fix all, supply 'src'",
+                    "cs-fix-all": "Fix the coding style of all the source files, to comply with the PSR-2 coding standard"
                 }
             },
             "installation-source": "dist",
@@ -269,7 +269,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rosell-dk/dom-util-for-webp/issues",
-                "source": "https://github.com/rosell-dk/dom-util-for-webp/tree/0.7.1"
+                "source": "https://github.com/rosell-dk/dom-util-for-webp/tree/0.7.2"
             },
             "funding": [
                 {

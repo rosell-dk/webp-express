@@ -38,8 +38,9 @@ jobs:
     - name: Run phpunit (test cases)
       run: composer run-script test
 
-    - name: Run phpstan
-      run: composer run-script phpstan
+    # Skip phpstan as it currently doesn't work with PHP 8.4
+    #- name: Run phpstan
+    #  run: composer run-script phpstan
 
     - name: run phpcs (to check coding style)
       run: composer run-script phpcs-all
