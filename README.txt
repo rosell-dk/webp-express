@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
 Tested up to: 6.9
-Stable tag: 0.25.15
+Stable tag: 0.25.16
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -173,17 +173,11 @@ Bread on the table don't come for free, even though this plugin does, and always
 
 **Persons who recently contributed with [ko-fi](https://ko-fi.com/rosell) - Thanks!**
 
+* 20 Sep: Greg
+* 5 Aug: Abilio Varjao
+* 23 Mar: hung minh dang
 * 5 Jan: Joel
-* 24 Dec: Patrick Müller
-* 16 Dec: Dragos
-* 9 Aug: Tanzi
-* 3 Jul: Jen
-* 26 Jun: Per
-* 16 May: Erick Danzer
-* 8 May: Mike
-* 31 May: parallactic
-* 14 May: Gitte Rebsdorf
-* 9 May: La Braud
+* 24 Dec 2025: Patrick Müller
 
 **Persons who recently contributed on [github sponsors](https://github.com/sponsors/rosell-dk) - Thanks!**
 * 16 Dec: kcrlost
@@ -831,6 +825,10 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 
 == Changelog ==
 
+= 0.25.16 =
+(released 18 Oct 2026)
+* Fixed vulnerability in dom parser library used for altering html. Credit goes to Jakub Herman for discovering the problem. Also fixed a loophole that made it possible to use the web service (if activated) with carefully crafted inputs, even without an api key. Thanks to the third party that found and reported this to the Wordpress security team - and thanks to the security team for bringing the issue to my attention
+
 = 0.25.15 =
 (released 19 May 2026)
 * Fixed medium security problem with the WPC converter and got rid of some deprecated warnings on newer PHP versions (thanks to hostep from Belgium, dmitryuk from Kazakhstan and AH72KING from Pakistan for those contributions to the webp-convert library)
@@ -902,6 +900,8 @@ If you want to make sure that my coffee supplies don't run dry, you can even buy
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+= 0.25.16 =
+* Fixed vulnerability in dom parser library used for altering html. Credit goes to Jakub Herman for discovering the problem. Also fixed a loophole that made it possible to use the web service (if activated) with carefully crafted inputs, even without an api key. Thanks to the third party that found and reported this to the Wordpress security team - and thanks to the security team for bringing the issue to my attention
 
 = 0.25.15 =
 * Fixed medium security problem with the WPC converter
