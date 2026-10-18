@@ -119,16 +119,24 @@ class Serve
             }
 
             try {
-                WebPConvert::convert($source, $destination, $convertOptions);
-                header('Content-type: application/octet-stream');
-                echo file_get_contents($destination);
-
-                unlink($source);
-                unlink($destination);
+              WebPConvert::convert($source, $destination, $convertOptions);
+              header('Content-type: application/octet-stream');
+              echo file_get_contents($destination);
             } catch (\Exception $e) {
-                echo 'Conversion failed!';
-                echo $e->getMessage();
-            }
+              echo 'Conversion failed!';
+              //echo $e->getMessage();  // disabled, in order to be sure we dont leak server paths. TODO: provide a safe alternative
+            } finally {
+              // Always remove the uploaded file and any partial output,
+              // whether conversion succeeded, failed, or threw something
+              // other than \Exception (e.g. a \Throwable/\Error on PHP 7+).
+              if (file_exists($source)) {
+                  @unlink($source);
+              }
+              if (file_exists($destination)) {
+                  @unlink($destination);
+              }
+          }
+
         } else {
             // Possible file upload attack!
             self::configurationError('Failed to move uploaded file');

@@ -46,27 +46,53 @@ class AccessCheck
                 }
 
                 if (isset($_POST['salt']) && isset($_POST['api-key-crypted'])) {
-                    if (CRYPT_BLOWFISH == 1) {
-                        // Strip off the first 28 characters (the first 6 are always "$2y$10$". The next 22 is the salt)
-                        $cryptedKey = substr(crypt($whitelistItem['api-key'], '$2y$10$' . $_POST['salt'] . '$'), 28);
-                        if ($_POST['api-key-crypted'] == $cryptedKey) {
-                            // Access granted!
-                            return;
-                        }
-                    } else {
-                        // trouble...
-                    }
-                } else {
+                  if (CRYPT_BLOWFISH == 1) {
+                      $salt = $_POST['salt'];
+                      $apiKeyCrypted = $_POST['api-key-crypted'];
+              
+                      // Step 1: salt must be exactly 22 bcrypt-alphabet characters
+                      if (!is_string($salt) || !preg_match('/^[.\/0-9A-Za-z]{22}$/D', $salt)) {
+                          continue;
+                      }
+              
+                      // Step 2a: the submitted crypted key must be a non-empty string
+                      if (!is_string($apiKeyCrypted) || $apiKeyCrypted === '') {
+                          continue;
+                      }
+              
+                      $fullHash = crypt($whitelistItem['api-key'], '$2y$10$' . $salt . '$');
+              
+                      // Step 2b: crypt() must have returned a genuine bcrypt hash.
+                      // (On failure it returns "*0" or "*1")
+                      if (!is_string($fullHash) || strlen($fullHash) !== 60 || strpos($fullHash, '$2y$10$') !== 0) {
+                          continue;
+                      }
+              
+                      // Strip off the first 28 characters (7 for "$2y$10$", then the 22-char salt)
+                      $cryptedKey = substr($fullHash, 28);
+                      if (hash_equals($cryptedKey, $apiKeyCrypted)) {
+                          // Access granted!
+                          return;
+                      }
+                  } else {
+                      // crypt_blowfish not available, access cannot be granted
+                      // we fail silently
+                  }
+              } else {
                     $hashingRequired = (
                         isset($whitelistItem['require-api-key-to-be-crypted-in-transfer']) &&
                         $whitelistItem['require-api-key-to-be-crypted-in-transfer']
                     );
                     if (!$hashingRequired && isset($_POST['api-key'])) {
-                        if ($_POST['api-key'] == $whitelistItem['api-key']) {
-                            // Access granted!
-                            return;
-                        }
-                    }
+                      if (
+                          is_string($_POST['api-key']) &&
+                          is_string($whitelistItem['api-key']) &&
+                          hash_equals($whitelistItem['api-key'], $_POST['api-key'])
+                      ) {
+                          // Access granted!
+                          return;
+                      }
+                  }
                 }
             }
         }
