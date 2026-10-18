@@ -179,6 +179,23 @@ class ImageUrlReplacer
             return '';
         }
 
+        // The parser (simple_html_dom) lifts content out of the HTML (script, style, code, comments,
+        // CDATA, PHP tags...) and leaves placeholders starting with "___noise___" in its place. It
+        // restores them later, in text and in attribute values, without escaping, and it keeps
+        // expanding until no marker is left.
+        //
+        // Input that contains the marker, or that ends in the start of it right before something the
+        // parser replaces with a placeholder (ie "___noise<![CDATA[x]]>"), breaks that assumption:
+        // - an attacker can make the parser restore a <code> body into an attribute value, which
+        //   breaks out of the quotes (stored XSS via comments)
+        // - a marker that cannot be resolved makes restore_noise() loop forever (denial of service)
+        //
+        // Real pages never contain "___noise", so leave such HTML untouched rather than risk it.
+        // This check mitigates the vulnerability discovered by Jakub Herman        
+        if (stripos($html, '___noise') !== false) {
+            return $html;
+        }
+
         // https://stackoverflow.com/questions/4812691/preserve-line-breaks-simple-html-dom-parser
 
         // function str_get_html($str, $lowercase=true, $forceTagsClosed=true, $target_charset = DEFAULT_TARGET_CHARSET,
