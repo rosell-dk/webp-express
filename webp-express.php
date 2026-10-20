@@ -71,3 +71,24 @@ add_filter('wp_delete_file', array('\WebPExpress\HandleDeleteFileHook', 'deleteA
 add_action('webp_express_task_bulk_update_dummy_files', array('\WebPExpress\BiggerThanSourceDummyFilesBulk', 'updateStatus'), 10, 0);
 add_action('webp_express_task_regenerate_config', array('\WebPExpress\Config', 'regenerateConfig'), 10, 0);
 add_action('webp_express_task_regenerate_config_and_htaccess', array('\WebPExpress\Config', 'regenerateConfigAndHtaccessFiles'), 10, 0);
+
+
+/**
+ * Adds "dontreplace"-parameter to wordpress favicons to prevent nonindexable favicons
+ *
+ * @param string $url     Original Favicon URL.
+ * @param int    $size    Requested Icon size in pixels.
+ * @param int    $blog_id Active Blog ID.
+ * @return string Altered URL.
+ */
+function webp_express_add_dontreplace_to_site_icon_url( string $url, int $size, int $blog_id ): string {
+    if ( empty( $url ) ) {
+        return $url;
+    }
+    if ( false === strpos( $url, 'dontreplace' ) ) {
+        $separator = ( false === strpos( $url, '?' ) ) ? '?' : '&';
+        $url .= $separator . 'dontreplace';
+    }
+    return $url;
+}
+add_filter( 'get_site_icon_url', 'webp_express_add_dontreplace_to_site_icon_url', 10, 3 );
